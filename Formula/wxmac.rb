@@ -1,9 +1,9 @@
 class Wxmac < Formula
   desc "Cross-platform C++ GUI toolkit (wxWidgets for macOS)"
   homepage "https://www.wxwidgets.org"
-  url "https://github.com/wxWidgets/wxWidgets/releases/download/v3.0.5.1/wxWidgets-3.0.5.1.tar.bz2"
-  sha256 "440f6e73cf5afb2cbf9af10cec8da6cdd3d3998d527598a53db87099524ac807"
-  license "wxWindows"
+  url "https://github.com/wxWidgets/wxWidgets/releases/download/v3.1.4/wxWidgets-3.1.4.7z"
+  sha256 "37ed0f7e5b627d4325b86c759bc78fadee51cb265cd54c7107f993fda376f81b"
+  license "LGPL-2.0-or-later"
   revision 1
   head "https://github.com/wxWidgets/wxWidgets.git"
 
