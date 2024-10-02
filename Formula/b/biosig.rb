@@ -24,6 +24,7 @@ class Biosig < Formula
   depends_on "gawk" => :build
   depends_on "libb64" => :build
   depends_on "dcmtk"
+  depends_on "tinyxml"
   depends_on "suite-sparse"
 
   # Work around build failure when using BSD iconv (e.g. macOS Sonoma) as
