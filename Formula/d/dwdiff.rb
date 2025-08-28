@@ -4,27 +4,28 @@ class Dwdiff < Formula
   url "https://os.ghalkes.nl/dist/dwdiff-2.1.4.tar.bz2"
   sha256 "df16fec44dcb467d65a4246a43628f93741996c1773e930b90c6dde22dd58e0a"
   license "GPL-3.0-only"
-  revision 7
+  revision 10
 
   livecheck do
     url "https://os.ghalkes.nl/dist/"
     regex(/href=.*?dwdiff[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 arm64_sequoia:  "f440a8c2be059583d2da83fdc36309b25b47177c94cb96c654b6c9f9a507b196"
-    sha256 arm64_sonoma:   "4ecea415e9ce886fbc53a585d4b55234dfbfce34ff47a2cbae47f4a10665d8c7"
-    sha256 arm64_ventura:  "9101edfc5fa160b947b6559afb793a8fff4c104fea7986dbb8f87df87e14732b"
-    sha256 arm64_monterey: "a174992f4aa3ca4e50c472fddc8104e1cef39795b4cca874827c490adbbd4f37"
-    sha256 sonoma:         "c946589544e7b59a942693c70248be5bbb6e7e33233d8464d560b46e34aa5864"
-    sha256 ventura:        "78d059b173f9943ef16596254cf228ba8183b3935bb7c3071ead89c4672fa24a"
-    sha256 monterey:       "5cfa1933f2f8408600997499ae8afca84d78e1d86ffe76ea083cf6e991eebfc0"
-    sha256 x86_64_linux:   "ed0a917b98a26ca0217e9e22fafa289fbc6f5092db481c10115811475d29007e"
+    sha256 arm64_sequoia: "2bda3e2dc11d88fe1187f0c479198d710779c408f9debd48eaa848916e64e593"
+    sha256 arm64_sonoma:  "cf43f7fbb5c7c51a9e8405ac9ea2e9a980ba17359af8aa027863ee012a7442b0"
+    sha256 arm64_ventura: "511603ea7b355abb986d9b45e2912b59e719e2ec7f6c415eb0bb778e64258416"
+    sha256 sonoma:        "7730f283a9efac877b8453ca6bc8e5e607070a7f8709c8f88954cec6f46e9f3a"
+    sha256 ventura:       "ac4571535c285d3dcbd6adf7e79db5dc50995947ec677a003565f2a9df314fb2"
+    sha256 arm64_linux:   "90ca067849e43e2acfa5c08132957517e9501a05c14bca444faa07e42ffef37d"
+    sha256 x86_64_linux:  "99b048bb74cafa479edca91407c074c45b6047b08a4c2f75ab67ddc3094e6215"
   end
 
   depends_on "gettext" => :build
-  depends_on "pkg-config" => :build
-  depends_on "icu4c"
+  depends_on "pkgconf" => :build
+  depends_on "icu4c@77"
 
   on_macos do
     depends_on "gettext"

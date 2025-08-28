@@ -1,9 +1,9 @@
 class I386ElfGdb < Formula
   desc "GNU debugger for i386-elf cross development"
   homepage "https://www.gnu.org/software/gdb/"
-  url "https://ftp.gnu.org/gnu/gdb/gdb-15.2.tar.xz"
-  mirror "https://ftpmirror.gnu.org/gdb/gdb-15.2.tar.xz"
-  sha256 "83350ccd35b5b5a0cba6b334c41294ea968158c573940904f00b92f76345314d"
+  url "https://ftpmirror.gnu.org/gnu/gdb/gdb-16.3.tar.xz"
+  mirror "https://ftp.gnu.org/gnu/gdb/gdb-16.3.tar.xz"
+  sha256 "bcfcd095528a987917acf9fff3f1672181694926cc18d609c99d0042c00224c5"
   license "GPL-3.0-or-later"
   head "https://sourceware.org/git/binutils-gdb.git", branch: "master"
 
@@ -11,24 +11,38 @@ class I386ElfGdb < Formula
     formula "gdb"
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 arm64_sequoia: "be8a2a2f0f18a53349a0f6103a4ef0859768f7ab41e5c2c52d604b2429ed8039"
-    sha256 arm64_sonoma:  "6070a72caa2528c08bff3f308faa1bb181e106415a7fda814b88b3d9dc068943"
-    sha256 arm64_ventura: "516c2c1674652d852968a86967e603fecca37b0c011f9e41c3b53d1289964585"
-    sha256 sonoma:        "f42540c98d2ecd220c569272d1f0dce591f38fde394c70bf7b5ea513ea78144c"
-    sha256 ventura:       "c524423fa98380fcb953e7ef6bc539f1822dc1c36e9a6706997515877121f66c"
-    sha256 x86_64_linux:  "1167a22ec9850be75bf301911ceb7250f0964e491a92fd50d50d2896d517c783"
+    rebuild 1
+    sha256 arm64_sequoia: "a8404abfee4bdd057c859323a3d3860c0e3dc91d6d1eaa9a8e8b396cd06f16ea"
+    sha256 arm64_sonoma:  "38e6e069cd8ffc3947627429e9623de6c142f334691b2cf5916aeabe1213d637"
+    sha256 arm64_ventura: "e78e568042d2142374827e9f972b311f24f09dbbc9ab93ad2169f38892fc1a19"
+    sha256 sonoma:        "234fff305c7934001f7bbdd0b85126c4ea4c93698bda3d2309e61b63b182b72a"
+    sha256 ventura:       "d34cc34bc0868a65dbafaf5abb4058f9ec41c393955e5afeaff27f348eeb6d90"
+    sha256 arm64_linux:   "17d3006eac24ac4a60269370022370cec2433938e2e3ea9d5ff3c9caf1c03d1a"
+    sha256 x86_64_linux:  "c29025ac9d4d8f200925d8e326e16c2691bda17c1efecfca873b1900b60317e0"
   end
 
+  depends_on "pkgconf" => :build
   depends_on "i686-elf-gcc" => :test
   depends_on "gmp"
   depends_on "mpfr"
-  depends_on "python@3.12"
+  depends_on "ncurses" # https://github.com/Homebrew/homebrew-core/issues/224294
+  depends_on "python@3.13"
+  depends_on "readline"
   depends_on "xz" # required for lzma support
+  depends_on "zstd"
 
-  uses_from_macos "expat"
-  uses_from_macos "ncurses"
+  uses_from_macos "expat", since: :sequoia # minimum macOS due to python
   uses_from_macos "zlib"
+
+  # Workaround for https://github.com/Homebrew/brew/issues/19315
+  on_sequoia :or_newer do
+    on_intel do
+      depends_on "expat"
+    end
+  end
 
   on_system :linux, macos: :ventura_or_newer do
     depends_on "texinfo" => :build
@@ -42,10 +56,16 @@ class I386ElfGdb < Formula
       --includedir=#{include}/#{target}
       --infodir=#{info}/#{target}
       --mandir=#{man}
-      --with-lzma
-      --with-python=#{which("python3.12")}
-      --with-system-zlib
       --disable-binutils
+      --disable-nls
+      --enable-tui
+      --with-curses
+      --with-expat
+      --with-lzma
+      --with-python=#{which("python3.13")}
+      --with-system-readline
+      --with-system-zlib
+      --with-zstd
     ]
 
     mkdir "build" do

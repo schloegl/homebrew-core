@@ -1,8 +1,8 @@
 class Fping < Formula
   desc "Scriptable ping program for checking if multiple hosts are up"
   homepage "https://fping.org/"
-  url "https://fping.org/dist/fping-5.2.tar.gz"
-  sha256 "a7692d10d73fb0bb76e1f7459aa7f19bbcdbfc5adbedef02f468974b18b0e42f"
+  url "https://fping.org/dist/fping-5.4.tar.gz"
+  sha256 "be320771f075e47dd7e5704b485e9bdc7dd11107884345c0f7c18749357f668d"
   license "BSD-3-Clause"
 
   livecheck do
@@ -11,14 +11,13 @@ class Fping < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "5a1d7975f60df86c80b264d204c5477e93d4075c62b85fd206bf8fa9f6793b66"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "4423ec7fed15ac1c3c77b38e94a558509cdd653e7c8c8a6f5614bd1a1440b205"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "af03b2f649dc3f6dd40665bdaa3ad678072b520f8fcee99adffa3c37e8308c65"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "be35f1c21a4d9bb9ec325098f1657525517c8e8a0145edbd0be4745a93d2aefe"
-    sha256 cellar: :any_skip_relocation, sonoma:         "4502b4d3010674df0e2b12a176e70dfef11755f955cc7d40849d933984d632d1"
-    sha256 cellar: :any_skip_relocation, ventura:        "55b47df6f6aefd32e91638b0c079176cbd852cac55aa5f1c70456e516ceebc7c"
-    sha256 cellar: :any_skip_relocation, monterey:       "81505d83664af7408ce69debeaff2612316c3b356b696e4935e9e96052459e55"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "2ca9f76165721fab77165b38b482909fd28e6460cc3fd39b5c072a25f5d4684f"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "b71b5530f094ee89dc363ff4c467b7b7c8bf7d1fec8bc58115902519c01f75e0"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "ddc1f9f33b3118bfb502a76da0eb5be15848ed9bfe07d52a7e100e372c107868"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "686f4d1537b0c0fd71e317bb14457861c32939cca5a2074a219b052f519f2134"
+    sha256 cellar: :any_skip_relocation, sonoma:        "53e66712d26fc23dddc6d6ba045a9ba555eb21cbc8131b8f7f8daa6c4f3dadf9"
+    sha256 cellar: :any_skip_relocation, ventura:       "3066894f8efde5abf4aa22bb9a0220cf9d5a19e5b3c175cdbc08802ee5234fb4"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "3e2633d859c39e4e49c4eae05cf72e6d608014c90cadd62c54edac5e02000fe1"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "bc460b6d9a105579d6a1341c78e789f76a375cca9a68d2c2b3c3fa813d62b6a0"
   end
 
   head do

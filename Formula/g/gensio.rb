@@ -1,34 +1,33 @@
 class Gensio < Formula
   desc "Stream I/O Library"
   homepage "https://github.com/cminyard/gensio"
-  url "https://github.com/cminyard/gensio/releases/download/v2.8.9/gensio-2.8.9.tar.gz"
-  sha256 "00bb5f0aa80d9978195f5efab5db403af22e5e7ed0f75c682da47577248bd333"
+  url "https://github.com/cminyard/gensio/releases/download/v2.8.15/gensio-2.8.15.tar.gz"
+  sha256 "1cfa7d6ef19b8d98808b1f4bce225454781299f885815c22ab59d85585f54ee3"
   license all_of: ["LGPL-2.1-only", "GPL-2.0-only", "Apache-2.0"]
 
   bottle do
-    sha256 arm64_sequoia:  "2fbbf769092237b2ad692909a156018d332448cd4f9746d4500a7e9fe6246341"
-    sha256 arm64_sonoma:   "815af93c530cceb6397e6bb7c562f075d2365778f8b5737eafacba3701c90fc8"
-    sha256 arm64_ventura:  "6fefc05cde05c6b163c5b5172d7c37521bf3e3c709fbd4d9ed5a20e7b804470e"
-    sha256 arm64_monterey: "b7ced27a12b0b7b82943387d985ba0f306038a3a720d7befd0b42afe4dc290aa"
-    sha256 sonoma:         "adf86af724ab78586bded8df4c1042acac126d7568c248f5ad17f890b2c0d9bc"
-    sha256 ventura:        "9474bf1436704a1745dce9b1d8f6aea8b294fd17553e23fa3c5f19d413223595"
-    sha256 monterey:       "411f1e3c17029edbf1634508a1a53c0df79cbcf007d394eeb59ff0dcbf04902a"
-    sha256 x86_64_linux:   "557f6c57c37b8b39caed264af6b9c3194573e279891dd99d7d4149cedb1a3e1d"
+    sha256 arm64_sequoia: "55f26f4519d626685977d8698f239dd144b28d5dff6f2bd08182335f6026af4d"
+    sha256 arm64_sonoma:  "a26e4a132a4f4099ce49f56c17b7c24f0e509a9e944ef54634151b10c02657dc"
+    sha256 arm64_ventura: "e2a24dac5ea15c6235327c5028e8ed34e59e09c64e35830e1f7f4b699c3e5987"
+    sha256 sonoma:        "74eced1fc82f3d172aee5eef3194d8e5e401f160fd1554c85c3352f6bf305ecf"
+    sha256 ventura:       "f76906e1351966419ed1617b3cba3fa43ab37f1b9dd4d4dc2547f15604336325"
+    sha256 arm64_linux:   "7849c953dc4d197d70ecc835d47b25e7de0f0cd51a2b02b163570ab79fbe0dcd"
+    sha256 x86_64_linux:  "f0654ac13d972321059009c5d0b971b3c7a7206239bc6db5045125e0a04b283e"
   end
 
   depends_on "go" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "swig" => :build
 
   depends_on "glib"
   depends_on "openssl@3"
-  depends_on "portaudio"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   uses_from_macos "tcl-tk"
 
   on_macos do
     depends_on "gettext"
+    depends_on "portaudio"
   end
 
   on_linux do
@@ -36,23 +35,24 @@ class Gensio < Formula
     depends_on "avahi"
     depends_on "linux-pam"
     depends_on "systemd"
-    depends_on "tcl-tk"
   end
 
   def python3
-    "python3.12"
+    "python3.13"
   end
 
   def install
     args = %W[
       --disable-silent-rules
+      --with-python=#{which(python3)}
       --with-pythoninstall=#{lib}/gensio-python
       --sysconfdir=#{etc}
     ]
-    args << "--with-tclcflags=-I #{HOMEBREW_PREFIX}/include/tcl-tk" if OS.linux?
+    args << "--with-tclcflags=-I#{HOMEBREW_PREFIX}/include/tcl-tk" if OS.linux?
+
     system "./configure", *args, *std_configure_args
     system "make", "install"
-    (prefix/Language::Python.site_packages(python3)).install_symlink Dir["#{lib}/gensio-python/*"]
+    (prefix/Language::Python.site_packages(python3)).install_symlink lib.glob("gensio-python/*")
   end
 
   service do

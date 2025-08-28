@@ -1,8 +1,8 @@
 class Xmrig < Formula
   desc "Monero (XMR) CPU miner"
   homepage "https://github.com/xmrig/xmrig"
-  url "https://github.com/xmrig/xmrig/archive/refs/tags/v6.22.0.tar.gz"
-  sha256 "8a5b047cbbb67e508fd5c2cfb75e138d36b1eb19aaadcbe59a5034ca9af0ebb0"
+  url "https://github.com/xmrig/xmrig/archive/refs/tags/v6.24.0.tar.gz"
+  sha256 "3521c592a18ada781d79c919ea6c1b7e5a8bcfe2ec666789bc55fd88a2aee8d3"
   license "GPL-3.0-or-later"
   head "https://github.com/xmrig/xmrig.git", branch: "dev"
 
@@ -12,14 +12,13 @@ class Xmrig < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "27d0f6fb789504cd2f216e5e90def793af7150333e61180ca255599d942fb2f3"
-    sha256 cellar: :any,                 arm64_sonoma:   "edd0b049a3afa8a78f85eb82ab06c9cbf0f89fd10e1f7f540e1b492a31eed33a"
-    sha256 cellar: :any,                 arm64_ventura:  "87c40602af0dd95350df0c885450d0ea025a78cf874578c91d3f2b4069aa1136"
-    sha256 cellar: :any,                 arm64_monterey: "356a15cc0f5a411aaf2672c5929da18abab1cb2a854e34b3688495f3ed8d06e2"
-    sha256 cellar: :any,                 sonoma:         "28f8d520663634784ab2d9f02fac8b0086388c9db0c2103fb22ebd6fc550760a"
-    sha256 cellar: :any,                 ventura:        "4fdc148d529141755f516e941df2bb9a0db28aa345029444c551cb676cc7c48c"
-    sha256 cellar: :any,                 monterey:       "dcf29d82456b49be131f62511659ad3de7003b7eab9292d2ebd7c43ec36b831b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "0f365ac3515b8821c8dd22a415ea1e4e5802bf9af8e368c8668c01662b82c80f"
+    sha256 cellar: :any,                 arm64_sequoia: "f84460bc7617a39bbd1d1cc7f2fa93d0cdd692bd935ca313ff482fa81d8175da"
+    sha256 cellar: :any,                 arm64_sonoma:  "76050f2e875de91d54caeb895b385f60a324515b359b314d2d0e303d5aa2d808"
+    sha256 cellar: :any,                 arm64_ventura: "499692d0ece7d0207b23e6f11a77d55f4cd96e99a57ebe787ff995232753bf3e"
+    sha256 cellar: :any,                 sonoma:        "523eedc13a5e34ca81d8ab372449b633af5945c827cd74b826feed152b2bc5d3"
+    sha256 cellar: :any,                 ventura:       "496fb01300b5ac730090858b2ec0bcb680935262c04964b0b0c6a066ef22ab31"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "38467683be8b9ba68eab0fe01caa3a4fc03bcd4d758f4235d4002bae52f067c3"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5adb790b5d9a38b7348293fbce85964cee1396abfb68da54f18af699b88c1138"
   end
 
   depends_on "cmake" => :build
@@ -72,7 +71,7 @@ class Xmrig < Formula
     if OS.mac?
       assert_match "#{test_server} DNS error: \"unknown node or service\"", output
     else
-      assert_match "#{test_server} 127.0.0.1 connect error: \"connection refused\"", output
+      assert_match(/#{Regexp.escape(test_server)} (?:::1|127\.0\.0\.1) connect error: "connection refused"/, output)
     end
   end
 end

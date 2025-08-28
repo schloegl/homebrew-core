@@ -2,27 +2,26 @@ class Borgbackup < Formula
   include Language::Python::Virtualenv
 
   desc "Deduplicating archiver with compression and authenticated encryption"
-  homepage "https://borgbackup.org/"
-  url "https://files.pythonhosted.org/packages/dd/0d/28e60180ce4ae171adba65ce9f8878fce3580c6d2cfdfa998929175105dd/borgbackup-1.4.0.tar.gz"
-  sha256 "c54c45155643fa66fed7f9ff2d134ea0a58d0ac197c18781ddc2fb236bf6ed29"
+  homepage "https://www.borgbackup.org/"
+  url "https://files.pythonhosted.org/packages/d3/8b/f24d8ab37b8d8cd85a55fa6cfaf98754bb7b6c7534c03ffe087506080a53/borgbackup-1.4.1.tar.gz"
+  sha256 "b8fbf8f1c19d900b6b32a5a1dc131c5d8665a7c7eea409e9095209100b903839"
   license "BSD-3-Clause"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "4c8325832666a9addf04599433874ea15cd07951ca32013569f6841349e48336"
-    sha256 cellar: :any,                 arm64_sonoma:   "b7bfd8881fa3546f8effad205346aa78da12f9a9ec7bc0cb2ff566c93a798ac7"
-    sha256 cellar: :any,                 arm64_ventura:  "055cbe7be0447046b1755395f3a3a76b8ba99ba6cbeecb33ec2a013c9c5d9d63"
-    sha256 cellar: :any,                 arm64_monterey: "253d5ada3336930310dadd2f9462984df0d661fa53f31c10120d40aa6e16ef68"
-    sha256 cellar: :any,                 sonoma:         "0acc28647161578f2f5e410e91cacd86efc8526e7428c5829f90e9725d304320"
-    sha256 cellar: :any,                 ventura:        "af265bcac6b0ab45247f15ecd2f3e8ed5f681e09ec5be3a22c8651f5d1e2d24b"
-    sha256 cellar: :any,                 monterey:       "b1ce3fce36603971bf5bc74c4a8bcd059429269c9cfceec13a99f731642362fb"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "536671fbfb5abcf19e5ad7ddb383bf5cbb26c2553f114aa96f50bd448a950cfc"
+    sha256 cellar: :any,                 arm64_sequoia: "9c79fdc448cb708b9508b0860965a57921a1698f951efd0eea11272509949085"
+    sha256 cellar: :any,                 arm64_sonoma:  "6cf7a454cf9b38e348594a6965c07c21947cbb2d7f9cc737a4289032898d2d7e"
+    sha256 cellar: :any,                 arm64_ventura: "c1a05f137139afdb6252f12d3408a6f8b6924bded32c81c21fd913b5a00352d6"
+    sha256 cellar: :any,                 sonoma:        "efa12e14fae859240c6b9c6878246d757e8ee756a0bac43ce22bc1f8c21b5ba9"
+    sha256 cellar: :any,                 ventura:       "cd24f51bf718fd2d4b2ff427972b35ec6c40c946e544f5884aaafee30fe9c5ac"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "d8f9a96fb57c0342d32dc41591d53b22342ac0086a67d4ed6aaaf80451ec301f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a1de924be5f22308b7414f2a70173315d2d33f116564d734ec9ae5b75741fdec"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "libb2"
   depends_on "lz4"
   depends_on "openssl@3"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "xxhash"
   depends_on "zstd"
 
@@ -31,13 +30,13 @@ class Borgbackup < Formula
   end
 
   resource "msgpack" do
-    url "https://files.pythonhosted.org/packages/08/4c/17adf86a8fbb02c144c7569dc4919483c01a2ac270307e2d59e1ce394087/msgpack-1.0.8.tar.gz"
-    sha256 "95c02b0e27e706e48d0e5426d1710ca78e0f0628d6e89d5b5a5b91a5f12274f3"
+    url "https://files.pythonhosted.org/packages/cb/d0/7555686ae7ff5731205df1012ede15dd9d927f6227ea151e901c7406af4f/msgpack-1.1.0.tar.gz"
+    sha256 "dd432ccc2c72b914e4cb77afce64aab761c1137cc698be3984eee260bcb2896e"
   end
 
   resource "packaging" do
-    url "https://files.pythonhosted.org/packages/51/65/50db4dda066951078f0a96cf12f4b9ada6e4b811516bf0262c0f4f7064d4/packaging-24.1.tar.gz"
-    sha256 "026ed72c8ed3fcce5bf8950572258698927fd1dbda10a5e981cdf0ac37f4f002"
+    url "https://files.pythonhosted.org/packages/d0/63/68dbb6eb2de9cb10ee4c9c14a0148804425e13c4fb20d61cce69f53106da/packaging-24.2.tar.gz"
+    sha256 "c228a6dc5e932d346bc5739379109d49e8853dd8223571c7c5b55260edc0b97f"
   end
 
   def install
@@ -67,7 +66,7 @@ class Borgbackup < Formula
       system bin/"borg", "extract", testpath/"test-repo::test-archive"
     end
 
-    assert_predicate testpath/"restore/test.pdf", :exist?
+    assert_path_exists testpath/"restore/test.pdf"
     assert_equal File.size(testpath/"restore/test.pdf"), File.size(testpath/"test.pdf")
   end
 end

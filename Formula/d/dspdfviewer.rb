@@ -4,23 +4,27 @@ class Dspdfviewer < Formula
   url "https://github.com/dannyedel/dspdfviewer/archive/refs/tags/v1.15.1.tar.gz"
   sha256 "c5b6f8c93d732e65a27810286d49a4b1c6f777d725e26a207b14f6b792307b03"
   license "GPL-2.0-or-later"
-  revision 22
+  revision 25
   head "https://github.com/dannyedel/dspdfviewer.git", branch: "master"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "ce3347f631f796c57c1fe421fd402cdd77df6c8bb245efeaf64eb6fb2c561363"
-    sha256 cellar: :any,                 arm64_sonoma:   "5db996084e2c7e06c3c474933cb6e4255fa1c37dea5a111f82a971a8e2dfec73"
-    sha256 cellar: :any,                 arm64_ventura:  "52596ae451143f2669614d9694c304c3123168d7db50d79bdcd12aa6684040d7"
-    sha256 cellar: :any,                 arm64_monterey: "84ee197efe13c91f1f127e68796c2d77cb5d694dab0943b1b3372bede5158c68"
-    sha256 cellar: :any,                 sonoma:         "4f23c224799ec83898e871f708bad7da8817b85d68580bbcf58c14b30cedb768"
-    sha256 cellar: :any,                 ventura:        "06d12144f5919f8068177086a482988e116e88091e771c6e91918f0cd720f776"
-    sha256 cellar: :any,                 monterey:       "efeeee0f226a452c50e0077ac08d82e8c588de102fbf41deff4c2047a6f098c7"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "2e95e14b53711e78ccd607afb0f44ba040f27b381d23cd4a7b6cec8ebb7d09ba"
+    sha256 cellar: :any,                 arm64_sequoia: "e8b8666c1dd37cbedb7baef9520a0f780f4414948c77dfffc155e2a3d4f1d007"
+    sha256 cellar: :any,                 arm64_sonoma:  "1368c4d2b3c8f30845218d18990407f50447c80ad4d5d12468914649056cdb37"
+    sha256 cellar: :any,                 arm64_ventura: "81fa4722ff6720d27cdf0e957db4ac26ace3098ecf9f930c9a62967e8b4cf8fc"
+    sha256 cellar: :any,                 sonoma:        "45c98311e0f15c0e2a49aa93dd4d8d1099af2b003d973f9d7990e63fe8506f5e"
+    sha256 cellar: :any,                 ventura:       "3ba36d9baaab63c71303b97c63aaf80de5a26771c1054d660d604f9ebdea7c4c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ca5f6fc6b6b9ddbaa85c87107317aba3bf14fd5a9c0824460efeb612e34be2ae"
   end
+
+  # Last release on 2016-09-13, last commit on 2023-04-27.
+  # Can undeprecate if new release with Qt 6 support is available.
+  deprecate! date: "2026-05-19", because: "needs end-of-life Qt 5"
 
   depends_on "cmake" => :build
   depends_on "gobject-introspection" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "boost"
   depends_on "cairo"
@@ -38,15 +42,19 @@ class Dspdfviewer < Formula
     depends_on "gettext"
   end
 
-  fails_with gcc: "5"
-
   def install
+    # Allow setting CMAKE_CXX_STANDARD in args
+    inreplace "cmake/compiler_clang.cmake", 'add_definitions("-std=c++11")', ""
+    inreplace "cmake/compiler_gnu_gcc.cmake", "add_definitions(-std=c++11)", ""
+    inreplace "cmake/compiler_unknown.cmake", "add_definitions(-std=c++11)", ""
+
     args = %w[
       -DRunDualScreenTests=OFF
       -DUsePrerenderedPDF=ON
       -DUseQtFive=ON
       -DCMAKE_CXX_STANDARD=14
       -DCMAKE_CXX_FLAGS=-Wno-deprecated-declaration
+      -DCMAKE_POLICY_VERSION_MINIMUM=3.5
     ]
 
     system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args

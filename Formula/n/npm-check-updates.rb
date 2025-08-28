@@ -1,17 +1,12 @@
 class NpmCheckUpdates < Formula
   desc "Find newer versions of dependencies than what your package.json allows"
   homepage "https://github.com/raineorshine/npm-check-updates"
-  url "https://registry.npmjs.org/npm-check-updates/-/npm-check-updates-17.1.3.tgz"
-  sha256 "c1406d101dd6de4635beb0bd8fe1d45175d1cd79bea8f3e1c3c6272c9fc696be"
+  url "https://registry.npmjs.org/npm-check-updates/-/npm-check-updates-18.0.3.tgz"
+  sha256 "bbb0d62cb62b4890022bace748335e3355ca421dd6af05ca82d884d2dd44d578"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "d81ec15d8d6c8845cd1646491c221ce9affea17215dfbfbce5eb97dc80635aba"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "d81ec15d8d6c8845cd1646491c221ce9affea17215dfbfbce5eb97dc80635aba"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "d81ec15d8d6c8845cd1646491c221ce9affea17215dfbfbce5eb97dc80635aba"
-    sha256 cellar: :any_skip_relocation, sonoma:        "6769d07f01f8630abfec7cff8845ee4738b3d302727669d2e860574fe324da66"
-    sha256 cellar: :any_skip_relocation, ventura:       "6769d07f01f8630abfec7cff8845ee4738b3d302727669d2e860574fe324da66"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d81ec15d8d6c8845cd1646491c221ce9affea17215dfbfbce5eb97dc80635aba"
+    sha256 cellar: :any_skip_relocation, all: "357646a23f8adc528ca7a25d1f9a754b52043994b9b921de544a1eda5539f474"
   end
 
   depends_on "node"
@@ -23,14 +18,14 @@ class NpmCheckUpdates < Formula
 
   test do
     test_package_json = testpath/"package.json"
-    test_package_json.write <<~EOS
+    test_package_json.write <<~JSON
       {
         "dependencies": {
           "express": "1.8.7",
           "lodash": "3.6.1"
         }
       }
-    EOS
+    JSON
 
     system bin/"ncu", "-u"
 

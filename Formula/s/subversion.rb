@@ -2,12 +2,12 @@ class Subversion < Formula
   desc "Version control system designed to be a better CVS"
   homepage "https://subversion.apache.org/"
   license "Apache-2.0"
-  revision 1
+  revision 2
 
   stable do
-    url "https://www.apache.org/dyn/closer.lua?path=subversion/subversion-1.14.3.tar.bz2"
-    mirror "https://archive.apache.org/dist/subversion/subversion-1.14.3.tar.bz2"
-    sha256 "949efd451a09435f7e8573574c71c7b71b194d844890fa49cd61d2262ea1a440"
+    url "https://www.apache.org/dyn/closer.lua?path=subversion/subversion-1.14.5.tar.bz2"
+    mirror "https://archive.apache.org/dist/subversion/subversion-1.14.5.tar.bz2"
+    sha256 "e78a29e7766b8b7b354497d08f71a55641abc53675ce1875584781aae35644a1"
 
     # Fix -flat_namespace being used on Big Sur and later.
     patch do
@@ -17,14 +17,13 @@ class Subversion < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "babcf99d6491d32ac8df655f5d4c5ba4cc994a68708e8729e8985d2822ba4bb8"
-    sha256 arm64_sonoma:   "559c4a78e3be6fb5dc1edd5198c5e8a6bfdcd3755392cef75c007b77e86a5d5b"
-    sha256 arm64_ventura:  "ff31811eda0a1c661ecac4645c7e41a425206bff94394db1b59e199e85da6089"
-    sha256 arm64_monterey: "f98360a8fdf96edfd3f41266114b074837b2e7dfcb8a5c842e3f23a82aa2796b"
-    sha256 sonoma:         "8ee0ca47c591f62de107314fa3b283f6ba2547763d99f0b6f7bbeea6219450b5"
-    sha256 ventura:        "773e23c8908efbf6aa61c3501ec04a286fa27518b94237fb67113b29bab0336c"
-    sha256 monterey:       "02802ae1c865b6599b9ee54367d6ad9fdab4f59d209bdb285fbf9bee59ee6bc3"
-    sha256 x86_64_linux:   "178d0721f3dfbb4cff77d69dfbae34457d8900343b11a5751fdf35a37ad60cf4"
+    sha256 arm64_sequoia: "dfd28a5fbb1065e271418d833393b6506c38517b8e1035271291cf32c0fbb09d"
+    sha256 arm64_sonoma:  "868351aba4efe60c49f906c85d312d845796566347983b65dd99c8181f84a77f"
+    sha256 arm64_ventura: "21091b526648e54c2925f039e602bde901534dec8bdba8492b7d7ba249b7d664"
+    sha256 sonoma:        "ab78f975d20697547a90ece32b942d1cc6f293409e03f9697125475fcd8f3369"
+    sha256 ventura:       "1769f8d068953dc7565a6258e35c1a8d04473dcb76a3d47e3ad5c9016cf13968"
+    sha256 arm64_linux:   "b72fd0fe9d755c3af711869c33ed08674c0d8c93716156cbd68c345107aab22f"
+    sha256 x86_64_linux:  "ae18ae190c2e2331dfad6c352068449cf677587692a9580ba3b9f7afa6469545"
   end
 
   head do
@@ -35,9 +34,9 @@ class Subversion < Formula
     depends_on "gettext" => :build
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "python-setuptools" => :build
-  depends_on "python@3.12" => [:build, :test]
+  depends_on "python@3.13" => [:build, :test]
   depends_on "scons" => :build # For Serf
   depends_on "swig" => :build
   depends_on "apr"
@@ -78,7 +77,7 @@ class Subversion < Formula
   end
 
   def python3
-    "python3.12"
+    "python3.13"
   end
 
   def install
@@ -245,7 +244,8 @@ class Subversion < Formula
     platform = if OS.mac?
       "darwin-thread-multi-2level"
     else
-      "#{Hardware::CPU.arch}-#{OS.kernel_name.downcase}-thread-multi"
+      arch = Hardware::CPU.arm? ? :aarch64 : Hardware::CPU.arch
+      "#{arch}-#{OS.kernel_name.downcase}-thread-multi"
     end
 
     perl = DevelopmentTools.locate("perl")

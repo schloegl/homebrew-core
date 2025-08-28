@@ -11,6 +11,7 @@ class Libgsf < Formula
     sha256 arm64_ventura: "cbb7b8877bf62f1721c27235d5a76ce890341063e428bf17bc8b03e91512f6eb"
     sha256 sonoma:        "07cc0b89f9b8cf89e170f72122e452446b292bcc882aab9a8d18504083fc4c17"
     sha256 ventura:       "502444a3812646ac8a35a9beb5f06346ca33ad5b968f904f0fba056d63ffa315"
+    sha256 arm64_linux:   "f561fa5685eb784fec3189a59041d8e2ac2a7bdd660347310420dca43dbc9f76"
     sha256 x86_64_linux:  "fa65b00122a957bacfebe171cc2ee998d059cd2e43c88784cbb1e7da47ba1934"
   end
 
@@ -23,7 +24,7 @@ class Libgsf < Formula
     depends_on "libtool" => :build
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "glib"
 
   uses_from_macos "bzip2"
@@ -36,13 +37,13 @@ class Libgsf < Formula
 
   def install
     configure = build.head? ? "./autogen.sh" : "./configure"
-    system configure, *std_configure_args, "--disable-silent-rules"
+    system configure, "--disable-silent-rules", *std_configure_args
     system "make", "install"
   end
 
   test do
     system bin/"gsf", "--help"
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <gsf/gsf-utils.h>
       int main()
       {
@@ -50,11 +51,11 @@ class Libgsf < Formula
           gsf_init (void);
           return 0;
       }
-    EOS
-    system ENV.cc, "-I#{include}/libgsf-1",
+    C
+    system ENV.cc, "test.c", "-o", "test",
+           "-I#{include}/libgsf-1",
            "-I#{Formula["glib"].opt_include}/glib-2.0",
-           "-I#{Formula["glib"].opt_lib}/glib-2.0/include",
-           testpath/"test.c", "-o", testpath/"test"
+           "-I#{Formula["glib"].opt_lib}/glib-2.0/include"
     system "./test"
   end
 end

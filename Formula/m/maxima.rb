@@ -1,10 +1,9 @@
 class Maxima < Formula
   desc "Computer algebra system"
   homepage "https://maxima.sourceforge.io/"
-  url "https://downloads.sourceforge.net/project/maxima/Maxima-source/5.47.0-source/maxima-5.47.0.tar.gz"
-  sha256 "9104021b24fd53e8c03a983509cb42e937a925e8c0c85c335d7709a14fd40f7a"
+  url "https://downloads.sourceforge.net/project/maxima/Maxima-source/5.48.1-source/maxima-5.48.1.tar.gz"
+  sha256 "b0916b5fb37b6eeaae400083175e68e28f80b9a1ab580c106a05448cf1c496b2"
   license "GPL-2.0-only"
-  revision 13
 
   livecheck do
     url :stable
@@ -12,13 +11,11 @@ class Maxima < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "27547435a5946bfd24894f45e918ea72f93cc96972b3c883cee2f201bb05737b"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "bf44456e3ee19d48c66d252122ae56f2446f1075c0087a03dd82c62c81230e69"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "d25115b1fff7fece24f30563f3c663da7db54ca05d8c5b45da570d51236963fb"
-    sha256 cellar: :any_skip_relocation, sonoma:         "ed79594d0832e6d7e7610c65db2caba4c72c241b64a034b862fecff54921f7ab"
-    sha256 cellar: :any_skip_relocation, ventura:        "f721524a9c09dc6457960de1c802d062aece44ecadda8f22f85b56bd3feea23e"
-    sha256 cellar: :any_skip_relocation, monterey:       "b3168150ee0b2289671049089e54551bf16497c67084d0fa5939546b9fea0eb0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "df28315c027ab0783ceae7e3060f2c2796e9365c104caa7d3f50d08d763f40dd"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "6c9f756377219625574fb5e55a9ee0b7f579ee4b369721acd5e1c2c7d13e780e"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "d7f0615bfb4d74e12d4deaea80be2f9dbbcb74e003120e8de3d0f5029ff34002"
+    sha256 cellar: :any_skip_relocation, sonoma:        "814828bd990cee365efb77ab78ec361090c7ec6859f2ee45efc6883f3a2f7e7f"
+    sha256 cellar: :any_skip_relocation, ventura:       "1c802bebb4d39ee7cfe07bd3b4849720aa1e7f5f87c375fe7fd24bf58997bf37"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c511db7fac6aa967629771d44921e2f5df7f2224fa0a420cd641d180148fe7a8"
   end
 
   depends_on "gawk" => :build

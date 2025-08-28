@@ -1,20 +1,20 @@
 class Ctl < Formula
   desc "Programming language for digital color management"
   homepage "https://github.com/ampas/CTL"
-  url "https://github.com/ampas/CTL/archive/refs/tags/ctl-1.5.3.tar.gz"
-  sha256 "0a9f5f3de8964ac5cca31597aca74bf915a3d8214e3276fdcb52c80ad25b0096"
+  url "https://github.com/ampas/CTL/archive/refs/tags/ctl-1.5.4.tar.gz"
+  sha256 "fb84925320d053827fce965d7aeea5bb8690d7093bb083c8e3915d7a600e25fc"
   license "AMPAS"
+  revision 1
   head "https://github.com/ampas/CTL.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "194f18d23d49f058dc3d8ec67493370ee81c741e6463a8688c5285e8fdf88062"
-    sha256 cellar: :any,                 arm64_sonoma:   "09e00ca81ea0579317522d47dc94b7569c0ec006779af1688e321db694be4039"
-    sha256 cellar: :any,                 arm64_ventura:  "7a3fd5eca1686d5396816bc4f7110e49fa03d0c4e1d5a31e4e7a1797661e9379"
-    sha256 cellar: :any,                 arm64_monterey: "18d01a3812983c2dda174e54a1ba361545be2e26977520d30209a232e67bd34b"
-    sha256 cellar: :any,                 sonoma:         "87183233f8b431d80d3e3e0cc48a63640ab648cf8f8ee9e28ef28388a5f00ebe"
-    sha256 cellar: :any,                 ventura:        "99dad1064acd32072818f9461897f7e135b3e83e74327470dee8fa471dbb67a6"
-    sha256 cellar: :any,                 monterey:       "4654b4b1cd581df25409b0953009b57b7e8e58c15e55a459e068cee4b1c18661"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "41978658fbcaa4a098be2a6cb93fc4ee0240b3bc3fc7663a84f54a04e58d3fcf"
+    sha256 cellar: :any,                 arm64_sequoia: "db5e063fcfd89cf4b8c9273bf21bdc9c8e966318943aa3833482c0d49f54198c"
+    sha256 cellar: :any,                 arm64_sonoma:  "ce1952823a31890334ca1473a1de258f7d85fa7081a9f7c798ee553f66113743"
+    sha256 cellar: :any,                 arm64_ventura: "c8ae2967280c8efe51f1aa2139093e1692b53a7c3860d3722aa75a8ca0e520c9"
+    sha256 cellar: :any,                 sonoma:        "e5292cf76de6a6edd88b63c011ac83c9db76dea99c1b9402238f8e4348366a44"
+    sha256 cellar: :any,                 ventura:       "e85c76f90b9d3fb90164b3cc5551b89d8d367f1bf390b9cbe0ef8242dfb2d698"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "065461580cc518d5a13f44b3b6330988353f9de56309f39b5473874781a229f6"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "076e7df7853a39ef9f21ac0492f0f328aa1db171279ac28404493a35c3b3525f"
   end
 
   depends_on "cmake" => :build

@@ -1,8 +1,8 @@
 class GitCredentialLibsecret < Formula
   desc "Git helper for accessing credentials via libsecret"
   homepage "https://git-scm.com"
-  url "https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.46.2.tar.xz"
-  sha256 "5ee8a1c68536094a4f7f9515edc154b12a275b8a57dda4c21ecfbf1afbae2ca3"
+  url "https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.51.0.tar.xz"
+  sha256 "60a7c2251cc2e588d5cd87bae567260617c6de0c22dca9cdbfc4c7d2b8990b62"
   license "GPL-2.0-or-later"
   head "https://github.com/git/git.git", branch: "master"
 
@@ -11,15 +11,16 @@ class GitCredentialLibsecret < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "967b71e4d74639c54def7a32b295add6726d455296b03af9a3b986c9bc500d7e"
-    sha256 cellar: :any,                 arm64_sonoma:  "4b40ff5b85b56472fa41bd18812fc1783a8a6fee349251131ea1d9b6ef62d662"
-    sha256 cellar: :any,                 arm64_ventura: "5fda3e70001e0a02c08b03a63298018b8e655dacc4b2580132a987bf8d373032"
-    sha256 cellar: :any,                 sonoma:        "de74e36b8e71980ddd17239eb55f2a95d0aeba692cb35fd1e0327b2cecd54ab1"
-    sha256 cellar: :any,                 ventura:       "6db09cdd3dbda27cda1f5f6efbb559dc06d0e82d42de46cd986cfa55623b7810"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "68263d29359e7bc23b038bd45f2d41c3ee1902b862db20db157e511d13864967"
+    sha256 cellar: :any,                 arm64_sequoia: "e0a6ab1fd669ee633767dd3317da6ec4f5772a8840905aef4fc3f776bc26faaa"
+    sha256 cellar: :any,                 arm64_sonoma:  "e68447227619ea5a782a05255b2d9625f04d950e097f7aab8c15d45ae8b1df6e"
+    sha256 cellar: :any,                 arm64_ventura: "171b2c262e64b401dbad3a4c1b6883895e39630d564d44176db0a1e3d9c2b8b9"
+    sha256 cellar: :any,                 sonoma:        "7cb4d864c7c2126bd37dee96599f644fd9d7d79e10f73a7153a4cea112e29696"
+    sha256 cellar: :any,                 ventura:       "01383968b805f7969218fdcb10770d6741e490d991a1270ce4065fad53566e30"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "a214cebf4c8d4d4be1ffe3553a7bd79c2378d5ed11295c8c49af7b6916ce08f9"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b3972cfb76d09ba4c6e288cfbf566dc9a5f1f510f1f320288515dde09b24aca4"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "glib"
   depends_on "libsecret"

@@ -1,20 +1,19 @@
 class Rbw < Formula
   desc "Unofficial Bitwarden CLI client"
   homepage "https://github.com/doy/rbw"
-  url "https://github.com/doy/rbw/archive/refs/tags/1.12.1.tar.gz"
-  sha256 "c564484f1054a85014b6b2a1fbade24d56b1b221dbac681c682ffaeba158b697"
+  url "https://github.com/doy/rbw/archive/refs/tags/1.14.0.tar.gz"
+  sha256 "e754da1cca32593e8af6b5d24d7a1eb82bf00e9811a8e42fd7293a6e36724f1d"
   license "MIT"
-  head "https://github.com/doy/rbw.git", branch: "master"
+  head "https://github.com/doy/rbw.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "bf58edcb974c14024158cd6717c2de3e9b4c7faff3c9a753524da0a577cdba3d"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "2930df93c82e9803324ac4af1ebf8327eddbac674d3d4606321d27d9b006b0c4"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "3286046b7802ae7b9104fde56bd5f37c5c57cc96b22075baedc7bcfc2c312b67"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "0f218ed659ec9155aa9d614917786365a5f052a3f8a68a902bb57c468ba300f1"
-    sha256 cellar: :any_skip_relocation, sonoma:         "08977594fcba3088250ece14efd9b348ad2731f0337c5ad531cecf47b99e71ab"
-    sha256 cellar: :any_skip_relocation, ventura:        "888778c497c7823faf7ee952eff994d263ebb5c45bf96f0209037cd5d69911a0"
-    sha256 cellar: :any_skip_relocation, monterey:       "5b30aedb03ad04e5d792adcf3151fd9e7c3f2f779da6e66fcb16c3592d546776"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "4463edf9cdf55b007acef78cb394d01d49dfa592216c7885cf7a27e06b19ae48"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "771d388b6d3980a74668957f512ca60771ad5dc29a9dc497b238b52e6c23b330"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "05dc3bed3f817d0468ed56f0a3517af452658e7067a1009d16f9110ec66de880"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "233ad3a9f2fc4644ac307daf4c9483ed330c50f61bc941f5ef7632e373767d95"
+    sha256 cellar: :any_skip_relocation, sonoma:        "38c19f5ebef4ab0e778d558e3c6e89c1ebc4f5ae00a764343802797ee9c205ee"
+    sha256 cellar: :any_skip_relocation, ventura:       "02926b436afeb63fa56b0eaf886152f1fd6a50ee75c729671bf7f38e0b1a461f"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "836ce02ed905d8626c421bd4d423e444d3d0189c8df14bc59ea294cc33dca80c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "eec34ffa444825ad12980a226d6c6f9ecba4e5eecf87845066319346941529fa"
   end
 
   depends_on "rust" => :build

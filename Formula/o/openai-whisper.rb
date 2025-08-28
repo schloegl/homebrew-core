@@ -3,35 +3,34 @@ class OpenaiWhisper < Formula
 
   desc "General-purpose speech recognition model"
   homepage "https://github.com/openai/whisper"
-  url "https://files.pythonhosted.org/packages/ed/a9/81f65f3443778a1e1088e80089fc970f1f160abec2bfc3d71abfed8cbc34/openai-whisper-20240927.tar.gz"
-  sha256 "5b322442b03704e245e3d6d3a577d7a3845f884e50edbf15990cb26a134dffff"
+  url "https://files.pythonhosted.org/packages/35/8e/d36f8880bcf18ec026a55807d02fe4c7357da9f25aebd92f85178000c0dc/openai_whisper-20250625.tar.gz"
+  sha256 "37a91a3921809d9f44748ffc73c0a55c9f366c85a3ef5c2ae0cc09540432eb96"
   license "MIT"
   head "https://github.com/openai/whisper.git", branch: "main"
 
+  no_autobump! because: "`update-python-resources` cannot update resource blocks"
+
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "4092af8c5fad2fee89cd1f28b82b626e50b19d176f2ef219e0cd0bb756a56e75"
-    sha256 cellar: :any,                 arm64_sonoma:  "56f16928126b8bee871d9318a75b5b45dd75bb986c894791a3256162d05e3077"
-    sha256 cellar: :any,                 arm64_ventura: "e6350871277be207c949e3167831437174a2d46e9d7c58d62da81d3496763ce0"
-    sha256 cellar: :any,                 sonoma:        "b4dec42f4aa1753adf2f1220dd2543649d0652d952b47131116f8b3a0c0939a9"
-    sha256 cellar: :any,                 ventura:       "fa170824bcd2e7d2435c1316cdd0bb4c10d1eb615f102b3ccd8593867a8c9c4a"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a0d9d31767023ccc24c34d321d558b3a354f328f76938157c640ee5fdfdc5060"
+    sha256 cellar: :any,                 arm64_sequoia: "5ddbd99e57d4b6d19776eb845a391f8931bbb5e33388fb3bf6e729187e34bc0c"
+    sha256 cellar: :any,                 arm64_sonoma:  "9a4150879ebc0737f996fa9db9f01f6754297ea33062fc620bc9c3e329bb9437"
+    sha256 cellar: :any,                 arm64_ventura: "e83c8ed541c46dcf5c6d4f3b5af8dcead2737336ea2d56d8d70c289cbdc2b794"
+    sha256 cellar: :any,                 sonoma:        "2affb4484990c8b5cb1d8a26eaa1eff042f767d07df3608e462aeffe1303ad33"
+    sha256 cellar: :any,                 ventura:       "2a2a57ad2865ddae3533923c430b49e48bfac19b38ca21964c46f294e8e571e1"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "11f8ae38e585df14c4aa677b49377d397d4d0acce45e0719277c611cfe68e9f6"
   end
 
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build # for tiktoken
   depends_on "certifi"
   depends_on "ffmpeg"
-  depends_on "llvm@16" # LLVM 17 PR: https://github.com/numba/llvmlite/pull/1042
+  depends_on "llvm@16" # LLVM 20 PR: https://github.com/numba/llvmlite/pull/1092
   depends_on "numpy"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "pytorch"
 
-  on_linux do
-    depends_on "pkg-config" => :build
-  end
-
   resource "charset-normalizer" do
-    url "https://files.pythonhosted.org/packages/63/09/c1bc53dab74b1816a00d8d030de5bf98f724c52c1635e07681d312f20be8/charset-normalizer-3.3.2.tar.gz"
-    sha256 "f30c3cb33b24454a82faecaf01b19c18562b1e89558fb6c56de4d9118a032fd5"
+    url "https://files.pythonhosted.org/packages/e4/33/89c2ced2b67d1c2a61c19c6751aa8902d46ce3dacb23600a283619f5a12d/charset_normalizer-3.4.2.tar.gz"
+    sha256 "5baececa9ecba31eff645232d59845c07aa030f0c81ee70184a90d35099a0e63"
   end
 
   resource "idna" do
@@ -40,47 +39,46 @@ class OpenaiWhisper < Formula
   end
 
   resource "llvmlite" do
-    # Fetch from Git hash for compatibility with the new version of `numba` below.
-    # Use git checkout to avoid .gitattributes causing checksum changes and unknown version info
-    url "https://github.com/numba/llvmlite.git",
-        revision: "ca123c3ae2a6f7db865661ae509862277ec5d692"
+    url "https://files.pythonhosted.org/packages/89/6a/95a3d3610d5c75293d5dbbb2a76480d5d4eeba641557b69fe90af6c5b84e/llvmlite-0.44.0.tar.gz"
+    sha256 "07667d66a5d150abed9157ab6c0b9393c9356f229784a4385c02f99e94fc94d4"
   end
 
   resource "more-itertools" do
-    url "https://files.pythonhosted.org/packages/51/78/65922308c4248e0eb08ebcbe67c95d48615cc6f27854b6f2e57143e9178f/more-itertools-10.5.0.tar.gz"
-    sha256 "5482bfef7849c25dc3c6dd53a6173ae4795da2a41a80faea6700d9f5846c5da6"
+    url "https://files.pythonhosted.org/packages/ce/a0/834b0cebabbfc7e311f30b46c8188790a37f89fc8d756660346fe5abfd09/more_itertools-10.7.0.tar.gz"
+    sha256 "9fddd5403be01a94b204faadcff459ec3568cf110265d3c54323e1e866ad29d3"
   end
 
   resource "numba" do
-    # Fetch from Git hash for numpy 2.1 compatibility.
-    # Use git checkout to avoid .gitattributes causing checksum changes and unknown version info
-    url "https://github.com/numba/numba.git",
-        revision: "a344e8f55440c91d40c5221e93a38ce0c149b803"
+    url "https://files.pythonhosted.org/packages/1c/a0/e21f57604304aa03ebb8e098429222722ad99176a4f979d34af1d1ee80da/numba-0.61.2.tar.gz"
+    sha256 "8750ee147940a6637b80ecf7f95062185ad8726c8c28a2295b8ec1160a196f7d"
+
+    # Support numpy 2.3, upstream issue, https://github.com/numba/numba/issues/10105
+    patch :DATA
   end
 
   resource "regex" do
-    url "https://files.pythonhosted.org/packages/f9/38/148df33b4dbca3bd069b963acab5e0fa1a9dbd6820f8c322d0dd6faeff96/regex-2024.9.11.tar.gz"
-    sha256 "6c188c307e8433bcb63dc1915022deb553b4203a70722fc542c363bf120a01fd"
+    url "https://files.pythonhosted.org/packages/8e/5f/bd69653fbfb76cf8604468d3b4ec4c403197144c7bfe0e6a5fc9e02a07cb/regex-2024.11.6.tar.gz"
+    sha256 "7ab159b063c52a0333c884e4679f8d7a85112ee3078fe3d9004b2dd875585519"
   end
 
   resource "requests" do
-    url "https://files.pythonhosted.org/packages/63/70/2bf7780ad2d390a8d301ad0b550f1581eadbd9a20f896afe06353c2a2913/requests-2.32.3.tar.gz"
-    sha256 "55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760"
+    url "https://files.pythonhosted.org/packages/e1/0a/929373653770d8a0d7ea76c37de6e41f11eb07559b103b1c02cafb3f7cf8/requests-2.32.4.tar.gz"
+    sha256 "27d0316682c8a29834d3264820024b62a36942083d52caf2f14c0591336d3422"
   end
 
   resource "tiktoken" do
-    url "https://files.pythonhosted.org/packages/c4/4a/abaec53e93e3ef37224a4dd9e2fc6bb871e7a538c2b6b9d2a6397271daf4/tiktoken-0.7.0.tar.gz"
-    sha256 "1077266e949c24e0291f6c350433c6f0971365ece2b173a23bc3b9f9defef6b6"
+    url "https://files.pythonhosted.org/packages/ea/cf/756fedf6981e82897f2d570dd25fa597eb3f4459068ae0572d7e888cfd6f/tiktoken-0.9.0.tar.gz"
+    sha256 "d02a5ca6a938e0490e1ff957bc48c8b078c88cb83977be1625b1fd8aac792c5d"
   end
 
   resource "tqdm" do
-    url "https://files.pythonhosted.org/packages/58/83/6ba9844a41128c62e810fddddd72473201f3eacde02046066142a2d96cc5/tqdm-4.66.5.tar.gz"
-    sha256 "e1020aef2e5096702d8a025ac7d16b1577279c9d63f8375b63083e9a5f0fcbad"
+    url "https://files.pythonhosted.org/packages/a8/4b/29b4ef32e036bb34e4ab51796dd745cdba7ed47ad142a9f4a1eb8e0c744d/tqdm-4.67.1.tar.gz"
+    sha256 "f8aef9c52c08c13a65f30ea34f4e5aac3fd1a34959879d7e59e63027286627f2"
   end
 
   resource "urllib3" do
-    url "https://files.pythonhosted.org/packages/ed/63/22ba4ebfe7430b76388e7cd448d5478814d3032121827c12a2cc287e2260/urllib3-2.2.3.tar.gz"
-    sha256 "e7d814a81dad81e6caf2ec9fdedb284ecc9c73076b62654547cc64ccdcae26e9"
+    url "https://files.pythonhosted.org/packages/15/22/9ee70a2574a4f4599c47dd506532914ce044817c7752a79b6a51286319bc/urllib3-2.5.0.tar.gz"
+    sha256 "3fc47733c7e419d4bc3f6b3dc2b4f890bb743906a30d56ba4a5bfa4bbff92760"
   end
 
   def install
@@ -118,3 +116,32 @@ class OpenaiWhisper < Formula
     EOS
   end
 end
+
+__END__
+diff --git a/numba/__init__.py b/numba/__init__.py
+index ab1081d..44fe64a 100644
+--- a/numba/__init__.py
++++ b/numba/__init__.py
+@@ -39,8 +39,8 @@ def _ensure_critical_deps():
+                f"{numpy_version[0]}.{numpy_version[1]}.")
+         raise ImportError(msg)
+
+-    if numpy_version > (2, 2):
+-        msg = (f"Numba needs NumPy 2.2 or less. Got NumPy "
++    if numpy_version > (2, 3):
++        msg = (f"Numba needs NumPy 2.3 or less. Got NumPy "
+                f"{numpy_version[0]}.{numpy_version[1]}.")
+         raise ImportError(msg)
+
+diff --git a/setup.py b/setup.py
+index d40c84c..3d407c1 100644
+--- a/setup.py
++++ b/setup.py
+@@ -23,7 +23,7 @@ min_python_version = "3.10"
+ max_python_version = "3.14"  # exclusive
+ min_numpy_build_version = "2.0.0rc1"
+ min_numpy_run_version = "1.24"
+-max_numpy_run_version = "2.3"
++max_numpy_run_version = "2.4"
+ min_llvmlite_version = "0.44.0dev0"
+ max_llvmlite_version = "0.45"

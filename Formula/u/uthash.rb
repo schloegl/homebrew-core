@@ -6,6 +6,8 @@ class Uthash < Formula
   license "BSD-1-Clause"
   head "https://github.com/troydhanson/uthash.git", branch: "master"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     rebuild 1
     sha256 cellar: :any_skip_relocation, all: "7332f52405884ffd9db409700b607565d8afeca373d6954ef84f03ed5842ddbe"
@@ -16,7 +18,7 @@ class Uthash < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <assert.h>
       #include <stdio.h>
       #include <stdlib.h>
@@ -52,7 +54,7 @@ class Uthash < Formula
         assert(s == NULL);
         printf("ok");
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-I#{include}", "-o", "test"
     assert_equal "ok", shell_output("./test")
   end

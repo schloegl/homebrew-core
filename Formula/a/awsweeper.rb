@@ -6,6 +6,8 @@ class Awsweeper < Formula
   license "MPL-2.0"
   head "https://github.com/jckuester/awsweeper.git", branch: "master"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_sequoia:  "f22735ca83b553b980c8c4c965b82c74661f63b05b42535f1cf182c6e80d6eb4"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "b5010b86841f22dddef64df08c14003a9f8b67be8799a2fd2c25f123b4d87404"
@@ -33,12 +35,12 @@ class Awsweeper < Formula
   end
 
   test do
-    (testpath/"filter.yml").write <<~EOS
+    (testpath/"filter.yml").write <<~YAML
       aws_autoscaling_group:
       aws_instance:
         - tags:
             Name: foo
-    EOS
+    YAML
 
     assert_match "Error: failed to configure provider (name=aws",
       shell_output("#{bin}/awsweeper --dry-run #{testpath}/filter.yml 2>&1", 1)

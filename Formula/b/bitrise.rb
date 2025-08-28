@@ -1,9 +1,10 @@
 class Bitrise < Formula
   desc "Command-line automation tool"
   homepage "https://github.com/bitrise-io/bitrise"
-  url "https://github.com/bitrise-io/bitrise/archive/refs/tags/2.22.0.tar.gz"
-  sha256 "3b930c90d0ff296026d065fb586d66f9fb5c7bd86267b417a4f9dbc6f7b07126"
+  url "https://github.com/bitrise-io/bitrise/archive/refs/tags/v2.33.2.tar.gz"
+  sha256 "7d6510c5b35e82cf74a50e52287568ff227ac0bc3f486eb604be70913cbcb108"
   license "MIT"
+  head "https://github.com/bitrise-io/bitrise.git", branch: "master"
 
   livecheck do
     url :stable
@@ -11,12 +12,12 @@ class Bitrise < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "71758acc4fb87e19eb1066c9e3afa3259b1aa36289b1986bcbc665a8d78b6d69"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "71758acc4fb87e19eb1066c9e3afa3259b1aa36289b1986bcbc665a8d78b6d69"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "71758acc4fb87e19eb1066c9e3afa3259b1aa36289b1986bcbc665a8d78b6d69"
-    sha256 cellar: :any_skip_relocation, sonoma:        "daa0a19c4d35278af901e3a220a863551ad7660d536d85c09d7505e0458ce100"
-    sha256 cellar: :any_skip_relocation, ventura:       "daa0a19c4d35278af901e3a220a863551ad7660d536d85c09d7505e0458ce100"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "400e7174f14c1540d406d171756cb0e7219c0967a3dfa729de06d4944d621b4d"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "91deac1c3ebbd9085e123d9a90666af6303a0129f2a5e6eac7fca6f49ed83fa3"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "91deac1c3ebbd9085e123d9a90666af6303a0129f2a5e6eac7fca6f49ed83fa3"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "91deac1c3ebbd9085e123d9a90666af6303a0129f2a5e6eac7fca6f49ed83fa3"
+    sha256 cellar: :any_skip_relocation, sonoma:        "e6db6ef207a11b87750fa86c39a8e85c57c28b940ee3cc026162911c57bc0377"
+    sha256 cellar: :any_skip_relocation, ventura:       "e6db6ef207a11b87750fa86c39a8e85c57c28b940ee3cc026162911c57bc0377"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "90192b0e7e1457a2fcd07905759d43edd69e3ae9e42df79e193d2128cf1bd735"
   end
 
   depends_on "go" => :build
@@ -27,13 +28,14 @@ class Bitrise < Formula
     ldflags = %W[
       -s -w
       -X github.com/bitrise-io/bitrise/version.VERSION=#{version}
+      -X github.com/bitrise-io/bitrise/version.Commit=#{tap.user}
     ]
 
-    system "go", "build", *std_go_args(ldflags: ldflags.join(" "))
+    system "go", "build", *std_go_args(ldflags: ldflags)
   end
 
   test do
-    (testpath/"bitrise.yml").write <<~EOS
+    (testpath/"bitrise.yml").write <<~YAML
       format_version: 1.3.1
       default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
       workflows:
@@ -42,7 +44,7 @@ class Bitrise < Formula
           - script:
               inputs:
               - content: printf 'Test - OK' > brew.test.file
-    EOS
+    YAML
 
     system bin/"bitrise", "setup"
     system bin/"bitrise", "run", "test_wf"

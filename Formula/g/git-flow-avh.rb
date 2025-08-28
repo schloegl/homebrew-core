@@ -37,10 +37,9 @@ class GitFlowAvh < Formula
   end
 
   deprecate! date: "2024-03-03", because: :repo_archived
+  disable! date: "2025-03-04", because: :repo_archived
 
   depends_on "gnu-getopt"
-
-  conflicts_with "git-flow", because: "both install `git-flow` binaries and completions"
 
   def install
     system "make", "prefix=#{libexec}", "install"

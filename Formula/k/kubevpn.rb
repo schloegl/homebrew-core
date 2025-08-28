@@ -1,19 +1,19 @@
 class Kubevpn < Formula
   desc "Offers a Cloud-Native Dev Environment that connects to your K8s cluster network"
-  homepage "https://www.kubevpn.cn"
-  url "https://github.com/kubenetworks/kubevpn/archive/refs/tags/v2.2.18.tar.gz"
-  sha256 "bb5c2f19d5dc256794d118a36d9ff2ac7382c38fb7b8ac376e037ea50d99a7c0"
+  homepage "https://www.kubevpn.dev"
+  url "https://github.com/kubenetworks/kubevpn/archive/refs/tags/v2.9.7.tar.gz"
+  sha256 "e3ba565f4e5411ff52b2b68929eddbcca3e91a180bd4c3491c3d9023e68e064d"
   license "MIT"
+  head "https://github.com/kubenetworks/kubevpn.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "a4ed5fe18276664830115f5891bdd77da89e1c75d0f289c1c71c3e211d03b271"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "f1e534b5f7ec7240900cf60b714078437b8605f195da81f64060cb0c84041730"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "95f72ab88ce032cd83ff1866f3024119163d4d61b771a5aa3ab33d741bac6f67"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "84f63a07bf9ccfcdf03df6e3c6092bd2d838c0aff2d8e15eea766aca1916a145"
-    sha256 cellar: :any_skip_relocation, sonoma:         "4d286cb7124bb1de1e4a9a1dd5546d659e20148d4417a69431e0d36bbcb37808"
-    sha256 cellar: :any_skip_relocation, ventura:        "6009f099391d1c56310390899e65b1cbf1c57a6a09748a64827d7daf6e3074a6"
-    sha256 cellar: :any_skip_relocation, monterey:       "ea9905751ef5c016879af60ccb55f77f94989e9efe09267493a866bc78eb431a"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "2729148906821b485fbc6a70ebff8d97b907e2970edd2a7c15598740a3006017"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "72931f97f1f5bdce3e8df74e98013e9e05ca727f3b9676dc28ee07ee816e149a"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "dc7589b468b9d7ae04f172a6c169cf797c1fcd952c5fd794914debc727576cf4"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "0590cb9e03ebc6e653382b429d4a8cf1de4ffb4edb65fc242fc8ac389150fa28"
+    sha256 cellar: :any_skip_relocation, sonoma:        "7617b6edd35c4df2eaf484847172bbd882a21cf18ccce9db71c0e9559d1e2c64"
+    sha256 cellar: :any_skip_relocation, ventura:       "ac199d4de224de747b3eb422e7f73b3093bd90b1ad468b4c1c4e90fce21b085b"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "16ea8bb1dc16904099000ae0b61661b7b7ad037e190fe06b4aad62448f139452"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "725d4a75f0243c9ba35451c9ad03522365ece3f8332a2fb09ed6546c7cbf9fe8"
   end
 
   depends_on "go" => :build
@@ -21,25 +21,24 @@ class Kubevpn < Formula
   def install
     goos = Utils.safe_popen_read("#{Formula["go"].bin}/go", "env", "GOOS").chomp
     goarch = Utils.safe_popen_read("#{Formula["go"].bin}/go", "env", "GOARCH").chomp
-    tags = "noassets"
     project = "github.com/wencaiwulue/kubevpn/v2"
     ldflags = %W[
       -s -w
-      -X #{project}/pkg/config.Image=docker.io/naison/kubevpn:v#{version}
+      -X #{project}/pkg/config.Image=ghcr.io/kubenetworks/kubevpn:v#{version}
       -X #{project}/pkg/config.Version=v#{version}
       -X #{project}/pkg/config.GitCommit=brew
       -X #{project}/cmd/kubevpn/cmds.BuildTime=#{time.iso8601}
       -X #{project}/cmd/kubevpn/cmds.Branch=master
       -X #{project}/cmd/kubevpn/cmds.OsArch=#{goos}/#{goarch}
     ]
-    system "go", "build", *std_go_args(ldflags:), "-tags", tags, "./cmd/kubevpn"
+    system "go", "build", *std_go_args(ldflags:), "./cmd/kubevpn"
 
     generate_completions_from_executable(bin/"kubevpn", "completion")
   end
 
   test do
     assert_match "Version: v#{version}", shell_output("#{bin}/kubevpn version")
-    assert_predicate testpath/".kubevpn/config.yaml", :exist?
-    assert_predicate testpath/".kubevpn/daemon", :exist?
+    assert_path_exists testpath/".kubevpn/config.yaml"
+    assert_path_exists testpath/".kubevpn/daemon"
   end
 end

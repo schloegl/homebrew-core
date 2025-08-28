@@ -1,20 +1,18 @@
 class Subfinder < Formula
   desc "Subdomain discovery tool"
   homepage "https://github.com/projectdiscovery/subfinder"
-  url "https://github.com/projectdiscovery/subfinder/archive/refs/tags/v2.6.6.tar.gz"
-  sha256 "636bccb8b5a18b709f735f29979e53752f3d71e1c246b7ce845d802766937bf2"
+  url "https://github.com/projectdiscovery/subfinder/archive/refs/tags/v2.8.0.tar.gz"
+  sha256 "d4273408c6eeeb9e69fe04e5d7400247502575841c79371dc680fc6b2e3aaaa8"
   license "MIT"
   head "https://github.com/projectdiscovery/subfinder.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "aa46dddfe62e7e55267898f9ad74962c22f55e8519ef394f3417f6c8baba20a5"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "efaf677e10be0712b55d5ecaa52d051d28a86042d8a3acd1461422604d32f43c"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "fd5648f025089584199f224c175687e4df53cfa1277ce0739de7ca4709c37344"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "9c6357c4aa97ac5bc6c653fb3677c44af1b7420ff6249173220abb57db29b2c3"
-    sha256 cellar: :any_skip_relocation, sonoma:         "61cfaf4f2557aea241ab54cf3a084d8a672def4e6fbc8e6571742747c0705a4a"
-    sha256 cellar: :any_skip_relocation, ventura:        "d2f308d9d78009e06dd4329dc68acb2ffd8a4e0ec34328a3e882e50a1354c12b"
-    sha256 cellar: :any_skip_relocation, monterey:       "807fdb2b92e0e61aa94698c09c35113b79972d73111521effa4f4633597e1e7b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "b6c890b75d2c4ad273867b4fb1206cfe620a49c0c666f1b491adf92e4a03243b"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "e4bb33f0b28d7c5a0582927b1fbb47543dfc495af2f8ca6b8ac36585e6a061b7"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "0d016d52ab0e1fd1a47cbcd4175d16436f0fc148e0883ce021324ce5f149b4ec"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "7284c7ab3e13f87e17c2ca36d4f52ac2a1fe9fff5a1182d50e88e3de2498ff59"
+    sha256 cellar: :any_skip_relocation, sonoma:        "8cf9736a33684adcb7efeca52e55e01777f05927b4e5b97ae2fe2fbb882b297d"
+    sha256 cellar: :any_skip_relocation, ventura:       "8094944b73a10f682b0b915b8f4978490cc895f237d1c40e3e2794f6ad07d35e"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "cbf3866c7396c20b2684c1883edf264c2ad8df5eaf9b8e9ba02f7f07ca8df4f0"
   end
 
   depends_on "go" => :build
@@ -30,11 +28,11 @@ class Subfinder < Formula
 
     # upstream issue, https://github.com/projectdiscovery/subfinder/issues/1124
     if OS.mac?
-      assert_predicate testpath/"Library/Application Support/subfinder/config.yaml", :exist?
-      assert_predicate testpath/"Library/Application Support/subfinder/provider-config.yaml", :exist?
+      assert_path_exists testpath/"Library/Application Support/subfinder/config.yaml"
+      assert_path_exists testpath/"Library/Application Support/subfinder/provider-config.yaml"
     else
-      assert_predicate testpath/".config/subfinder/config.yaml", :exist?
-      assert_predicate testpath/".config/subfinder/provider-config.yaml", :exist?
+      assert_path_exists testpath/".config/subfinder/config.yaml"
+      assert_path_exists testpath/".config/subfinder/provider-config.yaml"
     end
 
     assert_match version.to_s, shell_output("#{bin}/subfinder -version 2>&1")

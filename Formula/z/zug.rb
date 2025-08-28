@@ -5,6 +5,8 @@ class Zug < Formula
   sha256 "1b9c8f962e40baa6f0c6af35f957444850063d550078a3ebd0227727b8ef193c"
   license "BSL-1.0"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     rebuild 1
     sha256 cellar: :any_skip_relocation, all: "33a7f1d34c98cd5ee378621ce802982e1e74416ace1e10eb9c2c7d48efc8cb17"
@@ -23,7 +25,7 @@ class Zug < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <string>
       #include <zug/transducer/filter.hpp>
       #include <zug/transducer/map.hpp>
@@ -32,7 +34,7 @@ class Zug < Formula
       auto xf = zug::filter([](int x) { return x > 0; })
           | zug::map([](int x) { return std::to_string(x); });
       }
-    EOS
+    CPP
 
     system ENV.cxx, "-std=c++17", "-I#{include}", "test.cpp", "-o", "test"
     system "./test"

@@ -7,24 +7,23 @@ class Klee < Formula
   url "https://github.com/klee/klee/archive/refs/tags/v3.1.tar.gz"
   sha256 "ae3d97209fa480ce6498ffaa7eaa7ecbbe22748c739cb7b2389391d0d9c940f7"
   license "NCSA"
-  revision 1
+  revision 4
   head "https://github.com/klee/klee.git", branch: "master"
 
   bottle do
-    rebuild 1
-    sha256 arm64_sequoia: "262a3321fd86fffaa6272a26fae9ffccde49bda2285893d31370347522abc8c4"
-    sha256 arm64_sonoma:  "b6afa2ba09a0726ddfea174a3a2662f9de112c1c4fc717a3499ad4d7b040a3c1"
-    sha256 arm64_ventura: "7add7340e6771b415d2144a610c175530e2f65ec3bd64533b763be1f7ea931ea"
-    sha256 sonoma:        "7de8d29c9fa862bac0789f3a37073df7921f3c3498efbab9ddc0299dfffab371"
-    sha256 ventura:       "295c6e0c2e66ec6d30ab71526ccb44e2f667decb1ac0c187fde988c617a1587f"
-    sha256 x86_64_linux:  "f18180b6872624ad20c474f8d998c942fefa20a3bde2bf5a01cff48b61f451d3"
+    sha256 arm64_sequoia: "ca3c457d1beb7493b543de0e7f437e553d3f8e4b3189e1cf8aed4af2def34b43"
+    sha256 arm64_sonoma:  "acae2eb29a27f2dba222d8a9ac0f7bd4e04c5f88f181a98f4acc8519817a9f1a"
+    sha256 arm64_ventura: "7681f61b63db83b4d972127364af4787b34cec6820e26f997bf955c2a5b7e277"
+    sha256 sonoma:        "529fb661a9bbab5e12aab061ccb627029807e2b66c08b567eadc0f1f4752f965"
+    sha256 ventura:       "3141e8037c193771a86ef0ec281a4d90dc7a1b41b6f23645d21f4a70f4308a68"
+    sha256 x86_64_linux:  "21be2951cd4759590f36a5c021c1531a595fd3b80e2813f41ff336625f4efabd"
   end
 
   depends_on "cmake" => :build
 
   depends_on "gperftools"
-  depends_on "llvm@16"
-  depends_on "python@3.12"
+  depends_on "llvm@16" # LLVM 17+ issue: https://github.com/klee/klee/issues/1754
+  depends_on "python@3.13"
   depends_on "sqlite"
   depends_on "stp"
   depends_on "wllvm"
@@ -34,10 +33,9 @@ class Klee < Formula
 
   on_macos do
     depends_on "cryptominisat"
+    depends_on "gmp"
     depends_on "minisat"
   end
-
-  fails_with gcc: "5"
 
   # klee needs a version of libc++ compiled with wllvm
   resource "libcxx" do
@@ -122,7 +120,7 @@ class Klee < Formula
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
 
-    venv = virtualenv_create(libexec/"venv", "python3.12")
+    venv = virtualenv_create(libexec/"venv", "python3.13")
     venv.pip_install resource("tabulate")
     rewrite_shebang python_shebang_rewrite_info(venv.root/"bin/python"), *bin.children
   end
@@ -130,7 +128,7 @@ class Klee < Formula
   # Test adapted from
   # http://klee.github.io/tutorials/testing-function/
   test do
-    (testpath/"get_sign.c").write <<~EOS
+    (testpath/"get_sign.c").write <<~C
       #include "klee/klee.h"
 
       int get_sign(int x) {
@@ -147,7 +145,7 @@ class Klee < Formula
         klee_make_symbolic(&a, sizeof(a), "a");
         return get_sign(a);
       }
-    EOS
+    C
 
     ENV["CC"] = llvm.opt_bin/"clang"
 
@@ -163,7 +161,7 @@ class Klee < Formula
       KLEE: done: generated tests = 3
     EOS
     assert_match expected_output, shell_output("#{bin}/klee get_sign.bc 2>&1")
-    assert_predicate testpath/"klee-out-0", :exist?
+    assert_path_exists testpath/"klee-out-0"
 
     assert_match "['get_sign.bc']", shell_output("#{bin}/ktest-tool klee-last/test000001.ktest")
 

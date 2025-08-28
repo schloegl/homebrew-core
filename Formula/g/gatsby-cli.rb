@@ -1,20 +1,18 @@
 class GatsbyCli < Formula
   desc "Gatsby command-line interface"
-  homepage "https://www.gatsbyjs.org/docs/gatsby-cli/"
-  url "https://registry.npmjs.org/gatsby-cli/-/gatsby-cli-5.13.3.tgz"
-  sha256 "22419fe3354ce4a4e373aaa54160294b8d5cc5ab95ad6b632b07a047c6287378"
+  homepage "https://www.gatsbyjs.com/docs/reference/gatsby-cli/"
+  url "https://registry.npmjs.org/gatsby-cli/-/gatsby-cli-5.15.0.tgz"
+  sha256 "c0da7d8dc8c58801afc1e2b762f929114476ef0bafe087e0d785448d55505209"
   license "MIT"
 
   bottle do
-    rebuild 1
-    sha256                               arm64_sequoia:  "f7db10ee18620b1843ff8cd40dab82efe76c49c28f9cb9be0fd4c09c5dd4f010"
-    sha256                               arm64_sonoma:   "b8fe2d5de1dd51bad67a53ebe805254ebd9e503a98c9812a16236eeef69c08e0"
-    sha256                               arm64_ventura:  "5d245f32ae46a4fa1592417d2cf745c4a7446c3546991ab494e3f27ff6416086"
-    sha256                               arm64_monterey: "25049c42733ca1a7df09263eccbcdf1be5545c41d81c33ca5b42979f1e34bc33"
-    sha256                               sonoma:         "20a2a322dc10ed9a59548605a0887b4f924c69fbf654bc1dc353b7d911b5d107"
-    sha256                               ventura:        "78b5062144fe068949bd4ee0bad05d93969f1b8cee88dc936411bfa95da06b9b"
-    sha256                               monterey:       "85597b5631817d7ee9f5d37b36f20666b756909dc0f9057a5c35a8019784a42c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "42e95da9728038e6b7a8a8916700f4853f1157703a90c3cc6e99c6a887e1f624"
+    sha256                               arm64_sequoia: "60c32c25f7895358b0b2debd6101c7d8398836cf7a8c94e0a31f38c60e82f78a"
+    sha256                               arm64_sonoma:  "ae8617098d7c76f819ea7b9622498499948d7ed50485b70afa27e9e75a153f90"
+    sha256                               arm64_ventura: "d8249abdf0fa71a4aff5bd81b35c07e15ec472e412398c3ac5dd6412687003f4"
+    sha256                               sonoma:        "4f4f4f367edfbf6c36601931e8a7e2f55e7a4bc84399806788ff2f0a97d26f2d"
+    sha256                               ventura:       "6935e6c506d55ceebe9fbf1394002bc876fe8dcd71eff263bc7deccf3b955864"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "ad7eaaecb438fe059642fa74f84d9ea3784d437acc091ab9ee94f7d4219bcd28"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "aad21bdf988aa03d28ab847d627f4c63025fad8c86ecadd1bd822b772fcc3f24"
   end
 
   depends_on "node"
@@ -49,7 +47,10 @@ class GatsbyCli < Formula
   end
 
   test do
+    # Workaround for https://github.com/nodejs/node-addon-api/issues/1007
+    ENV.append "CXXFLAGS", "-std=c++17" if OS.linux?
+
     system bin/"gatsby", "new", "hello-world", "https://github.com/gatsbyjs/gatsby-starter-hello-world"
-    assert_predicate testpath/"hello-world/package.json", :exist?, "package.json was not cloned"
+    assert_path_exists testpath/"hello-world/package.json", "package.json was not cloned"
   end
 end

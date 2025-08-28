@@ -1,19 +1,21 @@
 class Bfs < Formula
   desc "Breadth-first version of find"
   homepage "https://tavianator.com/projects/bfs.html"
-  url "https://github.com/tavianator/bfs/archive/refs/tags/4.0.2.tar.gz"
-  sha256 "26ee5bf5a35cfbb589bf33df49ca05b8964e017b45faf16e520322c0e0ffad3b"
+  url "https://github.com/tavianator/bfs/archive/refs/tags/4.1.tar.gz"
+  sha256 "7a2ccafc87803b6c42009019e0786cb1307f492c2d61d2fcb0be5dcfdd0049da"
   license "0BSD"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "d669af8d7e55974136ab5c720992b0d6b05e1673dab97148efcece18839dc88c"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "17236cce2be60931029d5ba9ff2394a0aefdb9a64fb9ca39d5ecbf70029e4562"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "f734ac0b70cf848147e5e5cdb741ea1d0e9ab45555df9ee2586e82928d8d83e0"
-    sha256 cellar: :any_skip_relocation, sonoma:        "51a3b3a3ff6342652e58dcfbed78909db2649fa125c4c4bb3ecbfa55a4709344"
-    sha256 cellar: :any_skip_relocation, ventura:       "acbc09521674531442125184ddaec20177dc4f4f3127aebb8dc10f37db8e113c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "dac57e6473e18ea0097cf2592894f925923a08aae3ca5a1f46e3fbb9253943bb"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia: "cc95849810fe6c692160249cc81d38f1a2cd3e0f5d6f033e0bd9342429116e40"
+    sha256 cellar: :any,                 arm64_sonoma:  "dd75c7c57aa181eb29832ee8c1fb6d4530f8509672d9bfb27e19134309507d2d"
+    sha256 cellar: :any,                 arm64_ventura: "5b0fccf7829272c6a2c9d10c7432b70c912fbb5174eeff38a64ddbbb165bdce2"
+    sha256 cellar: :any,                 sonoma:        "4c121ba08ed118750411c1003e9e078420e98a819258816f133b6ca0c83f2473"
+    sha256 cellar: :any,                 ventura:       "50c78795197923422f8f51d5099dd604027a289701f9af875e7f942e6443e9be"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "724d215224af855240f52ca8f0ad7fccc8c1d2dace5f770692f699a8dd91c09f"
   end
 
+  depends_on "pkgconf" => :build
   depends_on "oniguruma"
 
   on_macos do
@@ -38,6 +40,6 @@ class Bfs < Formula
   test do
     touch "foo_file"
     touch "test_file"
-    assert_equal "./test_file", shell_output("#{bin}/bfs -name 'test*' -depth 1").chomp
+    assert_equal "./test_file", shell_output("#{bin}/bfs -name 'test*' -regextype emacs -depth 1").chomp
   end
 end

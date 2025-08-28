@@ -6,6 +6,8 @@ class GenerateJsonSchema < Formula
   license "MIT"
   head "https://github.com/Nijikokun/generate-schema.git", branch: "master"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     rebuild 3
     sha256 cellar: :any_skip_relocation, all: "455469fbc5354030c4c7e62fcaba25fb9610bd32078ced0b95502195f9b6972a"
@@ -19,7 +21,7 @@ class GenerateJsonSchema < Formula
   end
 
   test do
-    (testpath/"test.json").write <<~EOS
+    (testpath/"test.json").write <<~JSON
       {
           "id": 2,
           "name": "An ice sculpture",
@@ -35,7 +37,7 @@ class GenerateJsonSchema < Formula
               "longitude": 20.4
           }
       }
-    EOS
+    JSON
     assert_match "schema.org", shell_output("#{bin}/generate-schema test.json", 1)
   end
 end

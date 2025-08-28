@@ -1,8 +1,8 @@
 class WildflyAs < Formula
   desc "Managed application runtime for building applications"
   homepage "https://www.wildfly.org/"
-  url "https://github.com/wildfly/wildfly/releases/download/32.0.0.Final/wildfly-32.0.0.Final.tar.gz"
-  sha256 "b88fb653edaa14c20263477f591bc0b60576a877afae031094589509de1c1c48"
+  url "https://github.com/wildfly/wildfly/releases/download/37.0.0.Final/wildfly-37.0.0.Final.tar.gz"
+  sha256 "b48985ad8408f53b8bc7e52d0e1031fcad9ff062aa2cc583ca5fe4d2efbef82d"
   license "Apache-2.0"
 
   livecheck do
@@ -11,13 +11,11 @@ class WildflyAs < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_sequoia:  "113a457ae82b16310f14fb36c456e0fc9c553cef07ad66d153b9756d3c2cae19"
-    sha256 cellar: :any, arm64_sonoma:   "28a71d375be16bd07e7266ea845afc3e554737c025271b63ac954fe82d10128e"
-    sha256 cellar: :any, arm64_ventura:  "28a71d375be16bd07e7266ea845afc3e554737c025271b63ac954fe82d10128e"
-    sha256 cellar: :any, arm64_monterey: "28a71d375be16bd07e7266ea845afc3e554737c025271b63ac954fe82d10128e"
-    sha256 cellar: :any, sonoma:         "4bab2b736f7ba859ae705e461cf156ff35d9779f548aaef64484ab6e938ece48"
-    sha256 cellar: :any, ventura:        "4bab2b736f7ba859ae705e461cf156ff35d9779f548aaef64484ab6e938ece48"
-    sha256 cellar: :any, monterey:       "4bab2b736f7ba859ae705e461cf156ff35d9779f548aaef64484ab6e938ece48"
+    sha256 cellar: :any, arm64_sequoia: "ababc88c007d571aa29a4a9776bde17f899fba1491f271277781d40aa45a02e9"
+    sha256 cellar: :any, arm64_sonoma:  "ababc88c007d571aa29a4a9776bde17f899fba1491f271277781d40aa45a02e9"
+    sha256 cellar: :any, arm64_ventura: "ababc88c007d571aa29a4a9776bde17f899fba1491f271277781d40aa45a02e9"
+    sha256 cellar: :any, sonoma:        "78737e3d3140877fe50560ae589e7032473f4eed5166ef74befbda66d088173e"
+    sha256 cellar: :any, ventura:       "78737e3d3140877fe50560ae589e7032473f4eed5166ef74befbda66d088173e"
   end
 
   # Installs a pre-built `libartemis-native-64.so` file with linkage to libaio.so.1
@@ -26,15 +24,15 @@ class WildflyAs < Formula
 
   def install
     buildpath.glob("bin/*.{bat,ps1}").map(&:unlink)
-    buildpath.glob("**/win-x86_64").map(&:rmtree)
-    buildpath.glob("**/linux-i686").map(&:rmtree)
-    buildpath.glob("**/linux-s390x").map(&:rmtree)
-    buildpath.glob("**/linux-x86_64").map(&:rmtree)
-    buildpath.glob("**/netty-transport-native-epoll/**/native").map(&:rmtree)
+    rm_r buildpath.glob("**/win-x86_64")
+    rm_r buildpath.glob("**/linux-i686")
+    rm_r buildpath.glob("**/linux-s390x")
+    rm_r buildpath.glob("**/linux-x86_64")
+    rm_r buildpath.glob("**/netty-transport-native-epoll/**/native")
     if Hardware::CPU.intel?
       buildpath.glob("**/*_aarch_64.jnilib").map(&:unlink)
     else
-      buildpath.glob("**/macosx-x86_64").map(&:rmtree)
+      rm_r buildpath.glob("**/macosx-x86_64")
       buildpath.glob("**/*_x86_64.jnilib").map(&:unlink)
     end
 
@@ -79,6 +77,7 @@ class WildflyAs < Formula
                                             "-Djboss.server.base.dir=#{testpath}/standalone"
     end
     sleep 10
+    sleep 10 if Hardware::CPU.intel?
 
     begin
       system "curl", "-X", "GET", "localhost:#{port}/"

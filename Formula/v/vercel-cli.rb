@@ -1,17 +1,18 @@
 class VercelCli < Formula
   desc "Command-line interface for Vercel"
   homepage "https://vercel.com/home"
-  url "https://registry.npmjs.org/vercel/-/vercel-37.6.0.tgz"
-  sha256 "12dd490fb6dc4f61e891870ee02b55865d25a98ee2115ee5ecd10ba50da52031"
+  url "https://registry.npmjs.org/vercel/-/vercel-46.0.5.tgz"
+  sha256 "94b33b188c148853408b9667508b250e463c6cb7cba415e4f504f3b4e39e8b73"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "262619a6f3049f7ea756ab7807144c2040a56644748f3eb458873b8a196bdf0f"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "262619a6f3049f7ea756ab7807144c2040a56644748f3eb458873b8a196bdf0f"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "262619a6f3049f7ea756ab7807144c2040a56644748f3eb458873b8a196bdf0f"
-    sha256 cellar: :any_skip_relocation, sonoma:        "bd33213db121432cdd342dfaba8089fc603f407a67804b50fefc398f9700e966"
-    sha256 cellar: :any_skip_relocation, ventura:       "bd33213db121432cdd342dfaba8089fc603f407a67804b50fefc398f9700e966"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b09b0bc663e435de5161a6750e771ac39ec69d8ec48af3d1093a6fcde3a49c9d"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "f6af4cd3f9e66c12d41529320be7df6a833607e346d41778b8bf2d06f8158f94"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "f6af4cd3f9e66c12d41529320be7df6a833607e346d41778b8bf2d06f8158f94"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "f6af4cd3f9e66c12d41529320be7df6a833607e346d41778b8bf2d06f8158f94"
+    sha256 cellar: :any_skip_relocation, sonoma:        "23a99264866347573e1196cea08571f2b2a2d547bbebf6e0712d654cf43fd0d1"
+    sha256 cellar: :any_skip_relocation, ventura:       "23a99264866347573e1196cea08571f2b2a2d547bbebf6e0712d654cf43fd0d1"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "a30030f63efde7abc906203b0b04ba8f285580e5dd366ac8ea23b99e8624c299"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2eca6e8f9415766fb6af5aaeb87c39118b872e7137cbacf637c3fac948789069"
   end
 
   depends_on "node"
@@ -32,7 +33,7 @@ class VercelCli < Formula
 
   test do
     system bin/"vercel", "init", "jekyll"
-    assert_predicate testpath/"jekyll/_config.yml", :exist?, "_config.yml must exist"
-    assert_predicate testpath/"jekyll/README.md", :exist?, "README.md must exist"
+    assert_path_exists testpath/"jekyll/_config.yml", "_config.yml must exist"
+    assert_path_exists testpath/"jekyll/README.md", "README.md must exist"
   end
 end

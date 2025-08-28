@@ -1,8 +1,8 @@
 class PgpoolIi < Formula
   desc "PostgreSQL connection pool server"
   homepage "https://www.pgpool.net/mediawiki/index.php/Main_Page"
-  url "https://www.pgpool.net/mediawiki/images/pgpool-II-4.5.4.tar.gz"
-  sha256 "d1392e74ce2807f8ae628872cb1ab7914249921180dc99df40a1d602647a10fd"
+  url "https://www.pgpool.net/mediawiki/images/pgpool-II-4.6.3.tar.gz"
+  sha256 "46688668b2ace67d8161a320256252d98698bc7d9788cc6727269d5720299f2c"
   license all_of: ["HPND", "ISC"] # ISC is only for src/utils/strlcpy.c
 
   livecheck do
@@ -11,14 +11,13 @@ class PgpoolIi < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "c5cadac99e760730866866a92b9876016432aeb6c3daca16852054fd3bf8a948"
-    sha256 arm64_sonoma:   "e94257f4d550e65a06e4eeeda0d058fc5a13c0af6810d459cb2e258d8889c95a"
-    sha256 arm64_ventura:  "e6c6ef25b196c05f2b838206e52e55667f8e46a274dd8e957bacb970435e6613"
-    sha256 arm64_monterey: "9eccb085af5582d16e3263973604fe30e48d94ecd440aab8013235016a8aae86"
-    sha256 sonoma:         "81c69f26dbdb46ab89c873fc6afc99c37ca847ced2559e514ece31a1f1aa01f8"
-    sha256 ventura:        "515495e829260efcf080d89548fdd3efda95f92ee6244edc0dcbd54353314646"
-    sha256 monterey:       "9ec67ed16c9a3b036c86bd33eddd1d15ee2cdbe8444732325acd562f981981d1"
-    sha256 x86_64_linux:   "5e795abe5b903b131e37e956395f5a9af9a6e8ab5d8cb584210c92d7cb28eba2"
+    sha256               arm64_sequoia: "3062a0e20358f8e941be43ebdafc4be5b332258494933a7ba1d5d35d1157c06e"
+    sha256               arm64_sonoma:  "263936a2aa00c0996b06cadc34a28cf70cd27389f69de3f10ab79d0cfe19a052"
+    sha256               arm64_ventura: "b0c66cc882f57bec2e56dcce1fb3487680b9e183e09bdcb6f96ec97f01e0f947"
+    sha256 cellar: :any, sonoma:        "82fcc1e906022b1a61ce212c0cb68350497c503a05be8405b12f10ec67e753bf"
+    sha256 cellar: :any, ventura:       "6ba91098cf31925d19ab65de6c9870428ef5422cd64e2415d5b30ef1ec10f4d3"
+    sha256               arm64_linux:   "95096edfd72538ac1b6c4e4226bd7e9ad7b7278ca138078c533538a8207869ba"
+    sha256               x86_64_linux:  "8959b7c3cb8529ef2f429b98097f070e716bd80af8e0a5e71720d8bc06634487"
   end
 
   depends_on "libmemcached"
@@ -28,14 +27,14 @@ class PgpoolIi < Formula
 
   # Fix -flat_namespace being used on Big Sur and later.
   patch do
-    url "https://raw.githubusercontent.com/Homebrew/formula-patches/03cf8088210822aa2c1ab544ed58ea04c897d9c4/libtool/configure-pre-0.4.2.418-big_sur.diff"
-    sha256 "83af02f2aa2b746bb7225872cab29a253264be49db0ecebb12f841562d9a2923"
+    url "https://raw.githubusercontent.com/Homebrew/formula-patches/03cf8088210822aa2c1ab544ed58ea04c897d9c4/libtool/configure-big_sur.diff"
+    sha256 "35acd6aebc19843f1a2b3a63e880baceb0f5278ab1ace661e57a502d9d78c93c"
   end
 
   def install
-    system "./configure", *std_configure_args,
-                          "--sysconfdir=#{etc}",
-                          "--with-memcached=#{Formula["libmemcached"].opt_include}"
+    system "./configure", "--sysconfdir=#{etc}",
+                          "--with-memcached=#{Formula["libmemcached"].opt_include}",
+                          *std_configure_args
     system "make", "install"
 
     # Install conf file with low enough memory limits for default `memqcache_method = 'shmem'`

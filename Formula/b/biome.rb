@@ -1,23 +1,24 @@
 class Biome < Formula
   desc "Toolchain of the web"
   homepage "https://biomejs.dev/"
-  url "https://github.com/biomejs/biome/archive/refs/tags/cli/v1.9.3.tar.gz"
-  sha256 "031326783e528b18b3e6545cb7f8585342cfeae34ff0c15db146d32257bf5fcd"
+  url "https://github.com/biomejs/biome/archive/refs/tags/@biomejs/biome@2.2.2.tar.gz"
+  sha256 "673d7775a5b9abc86e4446a63f237ba313f1565159398888ffd2f00158dbde23"
   license any_of: ["Apache-2.0", "MIT"]
   head "https://github.com/biomejs/biome.git", branch: "main"
 
   livecheck do
     url :stable
-    regex(%r{^cli/v(\d+(?:\.\d+)+)$}i)
+    regex(%r{^@biomejs/biome@v?(\d+(?:\.\d+)+)$}i)
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "3a0cc396570cb91fab6b4b9cfa2af88b6c6c3c30cfd1cd78f47cb8e6987e2358"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "345ea4940cbedbd3d3c98bc8b7b6d6c63a8a56cac2836072a3b2780b63102172"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "18ffa40b625492bc93dbcdb979a66fa9c79e64aad6c3132ff209e7b804c6e33c"
-    sha256 cellar: :any_skip_relocation, sonoma:        "349f3e2329a1d5e9105cec2e482310479c048fe67118450b7ed16121ca0fb8d7"
-    sha256 cellar: :any_skip_relocation, ventura:       "9ad7cf30ffbf1e8752858772e616afac2971bcf78ab46f2e1410e58f959f4cdb"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5605ebf7ac4a81519cc28c09f7a69abecd37a34a8e3740f9d4c1a8403e8b9dc6"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "2ab6a7796bc074197b1790f57b680fe7809837a5b38c998791b31bfb24e0ec5d"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "eeaef0623e1449b169d7348e58bbb2ebb52eff1225d3a9c8d12e3365f881018d"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "ab90ecd6ede2127375623a04a3c7ec5d58cc3c5f7de3931b6175bc4ce2b1b66e"
+    sha256 cellar: :any_skip_relocation, sonoma:        "87d9f2bdf6a3bea77e2021b6c86bf0099d9f1b17aadbeaaa75a5a0a959d4fea1"
+    sha256 cellar: :any_skip_relocation, ventura:       "b216126f0892da598f9a8a1626a86ee77c4adee5f05b4204dfa988a54a912b4e"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "8411868aaec4670fedd0ef768fd5fa442db678b6fb6bf04a606b3a10f86b0f8b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5038e11f6f46c333890a16be44795505a7ff05b13a77f25e91c5dd09b897ccc2"
   end
 
   depends_on "rust" => :build

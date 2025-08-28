@@ -1,20 +1,18 @@
 class Sqlboiler < Formula
   desc "Generate a Go ORM tailored to your database schema"
   homepage "https://github.com/volatiletech/sqlboiler"
-  url "https://github.com/volatiletech/sqlboiler/archive/refs/tags/v4.16.2.tar.gz"
-  sha256 "18f5f8d6440e9f61e5f6de81b014db7be59b2156a0cd81bc721bb9c3fdc0ddbc"
+  url "https://github.com/volatiletech/sqlboiler/archive/refs/tags/v4.19.5.tar.gz"
+  sha256 "fae160e36637c5d0c57db53bafc11439cf61b02dc30656277d7e90c546b04a4d"
   license "BSD-3-Clause"
   head "https://github.com/volatiletech/sqlboiler.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "6f759cd888c85871333bcd1085045c261371523abd65cbbd32a38c8172c23a8f"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "f8a10325fdfb7fa68999dd6e469e48b74d50641148a07da4505994efebbbc8a8"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "cf85c025cb7b30284ea00c1a7bcc0fd9a2e995a3374d027ea717cfc6f6d5bf98"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "c0730d42769f760f1b51dabb7f5dad6f37606dfab87a8a6d8ad31d7f31775f16"
-    sha256 cellar: :any_skip_relocation, sonoma:         "732c6fae0fadaaa51a80e33350c39e0b0efeec39fde51a87fcbeb7839ef6d577"
-    sha256 cellar: :any_skip_relocation, ventura:        "f64783e957da7ebd081d351d6f082cb1eb79f1b8c08819334022f22fc155dc74"
-    sha256 cellar: :any_skip_relocation, monterey:       "b0b6265bc8b76126336b657514b49e2958905e74a852651243d2d2cb2ce92186"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "e34ce15ae9aa6b89e29522c06c5a4d50fb8f5edcad8f8d6e19ce20cd814f1a6d"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "24bf4847e512fc0c4987ffb7aa9731270eb83642f874cceac6e3163be7ac7da5"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "24bf4847e512fc0c4987ffb7aa9731270eb83642f874cceac6e3163be7ac7da5"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "24bf4847e512fc0c4987ffb7aa9731270eb83642f874cceac6e3163be7ac7da5"
+    sha256 cellar: :any_skip_relocation, sonoma:        "cd3b13555a393652a4f08d29c23239f57677db9f1ee7d451107ee660ce4c1aa7"
+    sha256 cellar: :any_skip_relocation, ventura:       "cd3b13555a393652a4f08d29c23239f57677db9f1ee7d451107ee660ce4c1aa7"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d0d778d654efc38ee84e8f54d3a75a2286993a13c0ea8a5b28d160defa6367cb"
   end
 
   depends_on "go" => :build

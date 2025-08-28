@@ -1,16 +1,17 @@
 class Solr < Formula
   desc "Enterprise search platform from the Apache Lucene project"
   homepage "https://solr.apache.org/"
-  url "https://dlcdn.apache.org/solr/solr/9.7.0/solr-9.7.0.tgz"
-  mirror "https://archive.apache.org/dist/solr/solr/9.7.0/solr-9.7.0.tgz"
-  sha256 "38548b86fa4e3c87883875952da124bf7d742cb8f7b25d37a1176833588e8552"
+  url "https://dlcdn.apache.org/solr/solr/9.9.0/solr-9.9.0.tgz"
+  mirror "https://archive.apache.org/dist/solr/solr/9.9.0/solr-9.9.0.tgz"
+  sha256 "eb4a888593a58c8415ed959148dd70ae7379a14199195f9bb3743a5bb10a9169"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "82efa5f25dcb617a3019748c12705ea9ad6195cbdd2f3647a7a986e8ed039cc1"
+    sha256 cellar: :any_skip_relocation, all: "8b84655f53aa8dde2b606f93d4a70ad64e86c40abe7d4ac8f2be1c90b218d986"
   end
 
-  depends_on "openjdk"
+  # Can be updated after https://github.com/apache/solr/pull/3153
+  depends_on "openjdk@21"
 
   def install
     pkgshare.install "bin/solr.in.sh"
@@ -45,7 +46,7 @@ class Solr < Formula
 
     # Start a Solr node => exit code 0
     shell_output("#{bin}/solr start -p #{port} -Djava.io.tmpdir=/tmp")
-    assert_match "Found 1 Solr nodes", shell_output("#{bin}/solr status")
+    assert_match(/Solr process \d+ running on port #{port}/, shell_output("#{bin}/solr status"))
 
     # Impossible to start a second Solr node on the same port => exit code 1
     shell_output("#{bin}/solr start -p #{port}", 1)

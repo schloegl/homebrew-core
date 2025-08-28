@@ -4,17 +4,18 @@ class C10t < Formula
   url "https://github.com/udoprog/c10t/archive/refs/tags/1.7.tar.gz"
   sha256 "0e5779d517105bfdd14944c849a395e1a8670bedba5bdab281a0165c3eb077dc"
   license "BSD-3-Clause"
-  revision 9
+  revision 12
+
+  no_autobump! because: :requires_manual_review
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "0221ec0b0d70aa261b1de4b8bf9d6233f03938cd664e7507c032b90804679deb"
-    sha256 cellar: :any,                 arm64_sonoma:   "65c200e6b93a21b12be0194fa4115c56bf86a919e73a9b77a005db40bc5e00f2"
-    sha256 cellar: :any,                 arm64_ventura:  "359e543872760a9b52bda1a3fce09dee9fe58ede5dc73b9ee2002f61ed95cb31"
-    sha256 cellar: :any,                 arm64_monterey: "865a9cd8ba52885d3a1954bc546afd9795e70e23d93daa92defa558d1aede4ad"
-    sha256 cellar: :any,                 sonoma:         "33d13682f5689fd63f5134c293e63512472ba98f588cdb0ce7d546989b41cf85"
-    sha256 cellar: :any,                 ventura:        "7ea5fc2b7cc4c542a65c5548bd8d5a178b4953a99f7003b72e42a6701190f909"
-    sha256 cellar: :any,                 monterey:       "4f861dcd0ad936fa7fd4bbbe4ac529d99fc94c3d0b86b8806d11744cd9bdb093"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "927f577767bb086cb2e8ca6350abceffb3c5cb859bb8c1e2e195a7d596afead7"
+    sha256 cellar: :any,                 arm64_sequoia: "ca8927a16ee21b13da4ccf12f9cc600c01c4a692b35f09bb061c81f9dabe1650"
+    sha256 cellar: :any,                 arm64_sonoma:  "d785224c143b4df6cdf3ffc6e2a6cb5b8cb0cdfaf06ff6221a1d39b3ba71ad19"
+    sha256 cellar: :any,                 arm64_ventura: "c2056939dd01e763b8687f77646edba021fac9653ce866afa94144868934a04f"
+    sha256 cellar: :any,                 sonoma:        "e51497da78d4b2948f1d71a6ccf360d98bc6135465f059820f593f0091e2987e"
+    sha256 cellar: :any,                 ventura:       "aa46dea07945ea582d8046585db329c555ccca9136fe5ebf604f15e57746fd23"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "b91294ec460d53d9509da20a9ca2df6675fc4a5f478d64a6762f9570911ff4f2"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "bd4e37bdf7a3cf012fb736e1b84539877c80ba65ccd2c812e26ee5df81ac95ba"
   end
 
   depends_on "cmake" => :build
@@ -45,15 +46,12 @@ class C10t < Formula
     sha256 "c7a37f866b42ff352bb58720ad6c672cde940e1b8ab79de4b6fa0be968b97b66"
   end
 
-  # Fix build with Boost 1.85.0.
-  # Issue ref: https://github.com/udoprog/c10t/issues/313
+  # Fix build with Boost 1.85.0, issue ref: https://github.com/udoprog/c10t/issues/313
+  # Fix build with Boost 1.89.0, issue ref: https://github.com/udoprog/c10t/issues/315
   patch :DATA
 
   def install
-    ENV.cxx11
-    inreplace "test/CMakeLists.txt", "boost_unit_test_framework", "boost_unit_test_framework-mt"
-
-    args = []
+    args = ["-DCMAKE_CXX_STANDARD=11", "-DCMAKE_POLICY_VERSION_MINIMUM=3.5"]
     unless OS.mac?
       args += %W[
         -DCMAKE_LINK_WHAT_YOU_USE=ON
@@ -164,3 +162,16 @@ index 21b0883..b4afef6 100644
    pos_c(0), xPos(0), yPos(0), zPos(0)
  {
    nbt::Parser<player> parser(this);
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 3f1531a..280cb2b 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -23,7 +23,7 @@ find_package(ZLIB REQUIRED)
+ find_package(PNG REQUIRED)
+ find_package(FreeType REQUIRED)
+ find_package(Threads REQUIRED)
+-find_package(Boost COMPONENTS thread filesystem system REQUIRED)
++find_package(Boost COMPONENTS thread filesystem REQUIRED)
+ 
+ include_directories(${ZLIB_INCLUDE_DIR})
+ include_directories(${PNG_INCLUDE_DIR})

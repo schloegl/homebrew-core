@@ -1,25 +1,26 @@
 class Hpack < Formula
   desc "Modern format for Haskell packages"
   homepage "https://github.com/sol/hpack"
-  url "https://github.com/sol/hpack/archive/refs/tags/0.37.0.tar.gz"
-  sha256 "5d292d70744435d67586f9a8a759debbf160cb70a069a8d65403f123fac84091"
+  url "https://github.com/sol/hpack/archive/refs/tags/0.38.2.tar.gz"
+  sha256 "cc759633a27cdd5aaa741c37a45cc62b4c63d265cc5bb734d4bb86b2c7cfd5f3"
   license "MIT"
   head "https://github.com/sol/hpack.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "e23ea1c56e7a987105a80b4c54d14ac248ac89731b13af28c49f8dbba17a51a2"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "5c9a4675bb72bc2fe3e8335fc830c16a6c56e879d1979acfff71ec995de5eca0"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "e5d0c25fba0d13f0c209bd62a4645c6a9d580a7f80f75d0d795a6eb51d52f814"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "57e145e9a7bf924201a002e423ae6a137d1e018b8eb3daa18ad42ba43712ac7c"
-    sha256 cellar: :any_skip_relocation, sonoma:         "77832296bb8708c4aac8643bd20e5fe2fd0516e543799e1d1ca01b7586a9c1ab"
-    sha256 cellar: :any_skip_relocation, ventura:        "b7d2d5abf43bb2f0a489d5b106317fb456a8e88bfee0dbfdebd5378f3bae8ccd"
-    sha256 cellar: :any_skip_relocation, monterey:       "7f556437b6cc2b49f48e11d3dc2ba23af7352ca79218b3cfb98cc919c545f861"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "87c5256ee39899b3842e8faf9d9bdbfbdacfbd0cf10e45ec8bea4c6592e248f5"
+    sha256 cellar: :any,                 arm64_sequoia: "3384cd197e944d0dd4bdf289d9435b4c82710720f9a1f3575bc58e87a9cf66ed"
+    sha256 cellar: :any,                 arm64_sonoma:  "23cdb2e9ef07960f5a60141e1e71d7adcea01cc9ba625477dffe597ec2593031"
+    sha256 cellar: :any,                 arm64_ventura: "91b709472b6a94551d833fe6740f3ac65b45d05f6cf0dccc7439bb5ff4f7a6f7"
+    sha256 cellar: :any,                 sonoma:        "0f56d0cbf567be266c336d79d23a29648ea73431098f238a58ff16bc71b7ddf7"
+    sha256 cellar: :any,                 ventura:       "e292137413a5d053c19ccddc18da1ce517ca2e36ff6648f784fc9d14055b6c10"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "c88e6b6ad29cb94737ca20be50349d3eb580b0d67760c52ae3ff81ecea533058"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "acca8343acdd4ee4d27339a80c49378c5c886ce317b3ffb52786b1d7b18c1b35"
   end
 
   depends_on "cabal-install" => :build
   depends_on "ghc" => :build
+  depends_on "gmp"
 
+  uses_from_macos "libffi"
   uses_from_macos "zlib"
 
   def install
@@ -33,12 +34,12 @@ class Hpack < Formula
   # be aware that failures here can probably be fixed by tweaking the
   # expected output a bit.
   test do
-    (testpath/"package.yaml").write <<~EOS
+    (testpath/"package.yaml").write <<~YAML
       name: homebrew
       dependencies: base
       library:
         exposed-modules: Homebrew
-    EOS
+    YAML
     expected = <<~EOS
       name:           homebrew
       version:        0.0.0

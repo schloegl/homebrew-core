@@ -1,22 +1,20 @@
 class QalculateQt < Formula
   desc "Multi-purpose desktop calculator"
   homepage "https://qalculate.github.io/"
-  url "https://github.com/Qalculate/qalculate-qt/releases/download/v5.2.0/qalculate-qt-5.2.0.tar.gz"
-  sha256 "6daef548376d1a941515f3ee5c268ec97a64668474ff6c31e02890eee12f2b75"
+  url "https://github.com/Qalculate/qalculate-qt/releases/download/v5.7.0/qalculate-qt-5.7.0.tar.gz"
+  sha256 "76e03b976a7b1347a6e8779b6be83ea053ab74e8ddeafb0aa62d20b3fadc0b9c"
   license "GPL-2.0-or-later"
   head "https://github.com/Qalculate/qalculate-qt.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "a7e63fd639f49eb31601f6c2eea7e8429418d2b43d86f70dc6f39fd1e14055a8"
-    sha256 cellar: :any,                 arm64_ventura:  "f671fe56040a83b515f0a65b47b2fafbd5d497749b0d7b26637bc710f00d9a40"
-    sha256 cellar: :any,                 arm64_monterey: "d5837f81d2d6ad0b890d6fec89c8a148b074eb0620bd84bce51f173e344d9d7d"
-    sha256 cellar: :any,                 sonoma:         "88c910592227c1a2b78ea726d66633ba8946d6f33aff5b817ba33a54a5f8b295"
-    sha256 cellar: :any,                 ventura:        "8ceccec8881002a8d86867ff05af3054e46999316d71647c93202a6f62d9f8f7"
-    sha256 cellar: :any,                 monterey:       "aa72351f073595ef463d56b91ac5042761b9cbc43769e03775c151bd816d5109"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "a5715165b6ed170d9c4aad20084f426266e0aeb65fa3171d182f358f41be18d4"
+    sha256 cellar: :any,                 arm64_sonoma:  "ecbc0902df9615ab02cc14c7821b763df4cd91815c320790e2d37227dea33ab6"
+    sha256 cellar: :any,                 arm64_ventura: "f2cad1739fd3afa7ccd0d56ba2309f528505de2bdc97120dbe11870d82fe9b78"
+    sha256 cellar: :any,                 sonoma:        "6f457c9182a94f0b80ec5b59f735c88e9e7f58de4af63d52a6ea535be56dbcff"
+    sha256 cellar: :any,                 ventura:       "9c10be6c17d81fd8f881e87e0b4119f115895c310cfeb26fd0e4e99314312fba"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "63e9383503ff926b1bb7c0646624d8589eab2530eb83e52f5a496d5ad52305d2"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "libqalculate"
   depends_on "qt"

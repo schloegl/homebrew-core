@@ -1,20 +1,24 @@
 class Rover < Formula
   desc "CLI for managing and maintaining data graphs with Apollo Studio"
   homepage "https://www.apollographql.com/docs/rover/"
-  url "https://github.com/apollographql/rover/archive/refs/tags/v0.26.2.tar.gz"
-  sha256 "a94a3515b9a0c18b38b38154ccea6a6ba75b9ecd6b5c968f133da4f3e336e96c"
+  url "https://github.com/apollographql/rover/archive/refs/tags/v0.35.0.tar.gz"
+  sha256 "4d84b790f46397ac609b10f0e1368589368868fc00f3390fdc78b24791989fda"
   license "MIT"
   head "https://github.com/apollographql/rover.git", branch: "main"
 
+  livecheck do
+    url :stable
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
+  end
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "7238fd929323c3ffd985ef08502ca9299d32d575f46f03504d812b61267d6568"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "b3bf0944e38a713f89215781848e2114a97d4f8386a44555d08a1c4903ead366"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "e730616dabf142202cc1c55f9129c6707fd12d978346c9f94d64a551e3edbb4a"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "c5a3907fd2d05661fb4c06eaba1c4c373e88332306e7a2ceb6c13ffcc6b58651"
-    sha256 cellar: :any_skip_relocation, sonoma:         "5684b6c9bb461e52fe4fb97e9df31130121798acd967566e0aab7330ec2fd4bd"
-    sha256 cellar: :any_skip_relocation, ventura:        "a685ad6c9c1961a87941baa3c05c4e748dbacd96b293a5ad8cc2002b5818b2d5"
-    sha256 cellar: :any_skip_relocation, monterey:       "cb42db02e1f9546e3c1f37a2808a1e24a2ab5eb41ade3cd5d98258fc16532b8d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "5fec84919e047f3dc24fe30bcc57669c879884419e7248d6a67381969dd6ded4"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "cc80cc14363b750794696eab6e5e8261b361766a625897b7a06894236dce8e25"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "ee2417a2c55c355a0e5105bb4447e9869109733b29c32156817e234cb018051c"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "177325ce99b866531f9966a6e114c1602659757ad3e4b1afa790ac6ef5da9f20"
+    sha256 cellar: :any_skip_relocation, sonoma:        "f6b7f0ff32e0448116a3c1c029efceb64ec4d933d1911ebfcfc14c840d190feb"
+    sha256 cellar: :any_skip_relocation, ventura:       "6c34804ea6565007187889364e6804d5eab177a18ac9b11bdfc9ed67de907a1a"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "74057934b2ec9d6a94b39366e04a49d4f8e096708a1b3fc1e38e4ca630dec0d5"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "58fb5612b786ceb39a554b5db17defdcf5f83ef9edcb418178f867407a4aeb72"
   end
 
   depends_on "rust" => :build

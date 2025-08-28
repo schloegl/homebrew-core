@@ -3,34 +3,34 @@ class Libjcat < Formula
 
   desc "Library for reading Jcat files"
   homepage "https://github.com/hughsie/libjcat"
-  url "https://github.com/hughsie/libjcat/releases/download/0.2.1/libjcat-0.2.1.tar.xz"
-  sha256 "a6232aeca3c3fab6dbb3bed06ec3832088b49a4b278a7119558d72be60ce921f"
+  url "https://github.com/hughsie/libjcat/releases/download/0.2.3/libjcat-0.2.3.tar.xz"
+  sha256 "f2f115aad8a8f16b8dde1ed55de7abacb91d0878539aa29b2b60854b499db639"
   license "LGPL-2.1-or-later"
   head "https://github.com/hughsie/libjcat.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any, arm64_sequoia:  "79a836689a8ea886bbf92da4e02370203845ff20294eda322434de2c9083e21f"
-    sha256 cellar: :any, arm64_sonoma:   "4733498c501d59b3d93741887a4e92636623da610df0ff02c8f079d0438122ce"
-    sha256 cellar: :any, arm64_ventura:  "3dd9795bd86dc7ef60589a83a3d0d04202baf1db231c79d25fe9670f8a583a75"
-    sha256 cellar: :any, arm64_monterey: "0ac0e2f9bb63e03f0c7d58cd57cfdb981a6cb59c65406bee4621a72a06dc03bc"
-    sha256 cellar: :any, sonoma:         "4ec0a50d5444e68a3323a1af854018bd3bbdd1a4ba0c605eb23b410344dfc7be"
-    sha256 cellar: :any, ventura:        "23f5aaca4cd024e16ccff3af9206409fd1b710c7eaeef4660478f50c117926ab"
-    sha256 cellar: :any, monterey:       "a67038985fc59bd9c240b243f38a4896ea4ae41d5e090d67362caa59a9515f5b"
-    sha256               x86_64_linux:   "99e04fd49c127b969406b628da90fbef3b179ff1044cbdd595c931f8cd39046a"
+    sha256 cellar: :any, arm64_sequoia: "f81dac6097133f01ba6dc2890ea638bc19157b5532262f651523c5daf3a36ade"
+    sha256 cellar: :any, arm64_sonoma:  "008c768443345295eb167faf45cdca4cca66450522e430c1b5754335488f5a30"
+    sha256 cellar: :any, arm64_ventura: "40b6538beb4dcfc8a8eacffe717dccd84595284b564c43c4da4828f7683d1dc4"
+    sha256 cellar: :any, sonoma:        "e531fcf0517371bd203e66ac885f2a89b5f0f1e184d02e2c4949a3a2d92a644f"
+    sha256 cellar: :any, ventura:       "927a664154de77bcedf12dbb4f9232851ef9cc811b3b80308f9ccaca88d1d5b4"
+    sha256               arm64_linux:   "88a16575b027306459c033e2d982e34f1c0d22fb2f368482ede91f36a930dd01"
+    sha256               x86_64_linux:  "1d5b42e6de499edbb2107b66428da6be5d1695e7dd61b4cb5bc937f597e9ada9"
   end
 
   depends_on "gi-docgen" => :build
   depends_on "gobject-introspection" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
-  depends_on "python@3.12" => :build
+  depends_on "pkgconf" => [:build, :test]
   depends_on "vala" => :build
 
   depends_on "glib"
   depends_on "gnutls"
   depends_on "json-glib"
   depends_on "nettle"
+
+  uses_from_macos "python" => :build
 
   on_macos do
     depends_on "gettext"
@@ -50,31 +50,16 @@ class Libjcat < Formula
 
   test do
     system bin/"jcat-tool", "-h"
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <jcat.h>
       int main(int argc, char *argv[]) {
         JcatContext *ctx = jcat_context_new();
         g_assert_nonnull(ctx);
         return 0;
       }
-    EOS
-    gettext = Formula["gettext"]
-    glib = Formula["glib"]
-    gnutls = Formula["gnutls"]
-    flags = %W[
-      -I#{glib.opt_include}/glib-2.0
-      -I#{glib.opt_lib}/glib-2.0/include
-      -I#{include}/libjcat-1
-      -L#{gettext.opt_lib}
-      -L#{glib.opt_lib}
-      -L#{gnutls.opt_lib}
-      -L#{lib}
-      -lgio-2.0
-      -lglib-2.0
-      -lgobject-2.0
-      -ljcat
-    ]
-    flags << "-lintl" if OS.mac?
+    C
+
+    flags = shell_output("pkgconf --cflags --libs jcat").chomp.split
     system ENV.cc, "test.c", "-o", "test", *flags
     system "./test"
   end

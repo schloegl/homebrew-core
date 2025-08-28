@@ -1,22 +1,23 @@
 class VirtManager < Formula
   include Language::Python::Virtualenv
+  include Language::Python::Shebang
 
   desc "App for managing virtual machines"
   homepage "https://virt-manager.org/"
-  url "https://releases.pagure.org/virt-manager/virt-manager-4.1.0.tar.gz"
-  sha256 "950681d7b32dc61669278ad94ef31da33109bf6fcf0426ed82dfd7379aa590a2"
+  url "https://releases.pagure.org/virt-manager/virt-manager-5.1.0.tar.xz"
+  sha256 "ccfc44b6c1c0be8398beb687c675d9ea4ca1c721dfb67bd639209a7b0dec11b1"
   license "GPL-2.0-or-later"
-  revision 7
   head "https://github.com/virt-manager/virt-manager.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "67acfb8187105c4c0f551dd26980cfdc44a8aba4b478034facc0d9e29cd3fbd9"
+    sha256 cellar: :any_skip_relocation, all: "6a9031975c00c1b3ffa88be6dcae578062fe6bc082728e6eed5323b4fb6847f5"
   end
 
   depends_on "docutils" => :build
   depends_on "intltool" => :build
-  depends_on "pkg-config" => :build
-  depends_on "python-setuptools" => :build
+  depends_on "meson" => :build
+  depends_on "ninja" => :build
+  depends_on "pkgconf" => :build
   depends_on "adwaita-icon-theme"
   depends_on "certifi"
   depends_on "cpio"
@@ -30,42 +31,44 @@ class VirtManager < Formula
   depends_on "osinfo-db"
   depends_on "py3cairo"
   depends_on "pygobject3"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "spice-gtk"
   depends_on "vte3"
 
   resource "charset-normalizer" do
-    url "https://files.pythonhosted.org/packages/63/09/c1bc53dab74b1816a00d8d030de5bf98f724c52c1635e07681d312f20be8/charset-normalizer-3.3.2.tar.gz"
-    sha256 "f30c3cb33b24454a82faecaf01b19c18562b1e89558fb6c56de4d9118a032fd5"
+    url "https://files.pythonhosted.org/packages/83/2d/5fd176ceb9b2fc619e63405525573493ca23441330fcdaee6bef9460e924/charset_normalizer-3.4.3.tar.gz"
+    sha256 "6fce4b8500244f6fcb71465d4a4930d132ba9ab8e71a7859e6a5d59851068d14"
   end
 
   resource "idna" do
-    url "https://files.pythonhosted.org/packages/21/ed/f86a79a07470cb07819390452f178b3bef1d375f2ec021ecfc709fc7cf07/idna-3.7.tar.gz"
-    sha256 "028ff3aadf0609c1fd278d8ea3089299412a7a8b9bd005dd08b9f8285bcb5cfc"
+    url "https://files.pythonhosted.org/packages/f1/70/7703c29685631f5a7590aa73f1f1d3fa9a380e654b86af429e0934a32f7d/idna-3.10.tar.gz"
+    sha256 "12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9"
   end
 
   resource "requests" do
-    url "https://files.pythonhosted.org/packages/63/70/2bf7780ad2d390a8d301ad0b550f1581eadbd9a20f896afe06353c2a2913/requests-2.32.3.tar.gz"
-    sha256 "55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760"
+    url "https://files.pythonhosted.org/packages/c9/74/b3ff8e6c8446842c3f5c837e9c3dfcfe2018ea6ecef224c710c85ef728f4/requests-2.32.5.tar.gz"
+    sha256 "dbba0bac56e100853db0ea71b82b4dfd5fe2bf6d3754a8893c3af500cec7d7cf"
   end
 
   resource "urllib3" do
-    url "https://files.pythonhosted.org/packages/43/6d/fa469ae21497ddc8bc93e5877702dca7cb8f911e337aca7452b5724f1bb6/urllib3-2.2.2.tar.gz"
-    sha256 "dd505485549a7a552833da5e6063639d0d177c04f23bc3864e41e5dc5f612168"
+    url "https://files.pythonhosted.org/packages/15/22/9ee70a2574a4f4599c47dd506532914ce044817c7752a79b6a51286319bc/urllib3-2.5.0.tar.gz"
+    sha256 "3fc47733c7e419d4bc3f6b3dc2b4f890bb743906a30d56ba4a5bfa4bbff92760"
   end
 
   def install
-    python3 = "python3.12"
+    python3 = "python3.13"
     venv = virtualenv_create(libexec, python3)
     venv.pip_install resources
+    ENV.prepend_path "PATH", venv.root/"bin"
 
-    # Restore disabled egg_info command
-    inreplace "setup.py", "'install_egg_info': my_egg_info,", ""
-    system libexec/"bin/python", "setup.py", "configure", "--prefix=#{prefix}"
-    ENV["PIP_CONFIG_SETTINGS"] = "--global-option=--no-update-icon-cache --no-compile-schemas"
-    venv.pip_install_and_link buildpath
+    system "meson", "setup", "build", "-Dtests=disabled",
+                                      "-Dupdate-icon-cache=false",
+                                      "-Dcompile-schemas=false",
+                                      *std_meson_args
+    system "meson", "compile", "-C", "build", "--verbose"
+    system "meson", "install", "-C", "build"
 
-    prefix.install libexec/"share"
+    rewrite_shebang python_shebang_rewrite_info(venv.root/"bin/python"), *bin.children
   end
 
   def post_install
@@ -76,9 +79,7 @@ class VirtManager < Formula
   end
 
   test do
-    libvirt_pid = fork do
-      exec Formula["libvirt"].opt_sbin/"libvirtd", "-f", Formula["libvirt"].etc/"libvirt/libvirtd.conf"
-    end
+    libvirt_pid = spawn Formula["libvirt"].opt_sbin/"libvirtd", "-f", Formula["libvirt"].etc/"libvirt/libvirtd.conf"
 
     output = testpath/"virt-manager.log"
     virt_manager_pid = fork do
@@ -86,7 +87,8 @@ class VirtManager < Formula
       $stderr.reopen(output)
       exec bin/"virt-manager", "-c", "test:///default", "--debug"
     end
-    sleep 10
+    sleep 20
+    sleep 10 if OS.mac? && Hardware::CPU.intel?
 
     assert_match "conn=test:///default changed to state=Active", output.read
   ensure

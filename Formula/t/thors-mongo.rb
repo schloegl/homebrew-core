@@ -2,17 +2,21 @@ class ThorsMongo < Formula
   desc "Mongo API and Serialization library"
   homepage "https://github.com/Loki-Astari/ThorsMongo"
   url "https://github.com/Loki-Astari/ThorsMongo.git",
-      tag:      "4.3.00",
-      revision: "37f11c9e9426b21136d1337cd4e6c5d0c5b71967"
+      tag:      "6.0.06",
+      revision: "9ff64c7f7d52415a9f09d764078a9d2b29b06f16"
   license "GPL-3.0-only"
+  revision 1
+
+  no_autobump! because: :requires_manual_review
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "e9017ccb37ea3c2ed2aea98ab47c83b9e38d6efb413ada227a02246746762c53"
-    sha256 cellar: :any,                 arm64_sonoma:  "70888b3bfaada2dd06eeb32d3dcdc8603d5b3b8858f73e3b486a84e7edc99f8f"
-    sha256 cellar: :any,                 arm64_ventura: "6c4f2697e44f5688393517170b08bcec639e7ac42619fd5e3f8d2837cb41147c"
-    sha256 cellar: :any,                 sonoma:        "5ff46bb6d3b72f7cf9f8f4676c365264e552302b49af66072b865fb98a218b9d"
-    sha256 cellar: :any,                 ventura:       "185909cf9dcbe3ea3294eef15ee49e44d8677844233156fa037e46028e4b4707"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f24213994777a8e8e64e149b789e55bfc8e24fcd028c0a9c0d0eb510b7198000"
+    sha256 cellar: :any,                 arm64_sequoia: "df22574c3d8d42c2acd7545936aac68e10fb01a62d468e8a37737fdf29d0d61e"
+    sha256 cellar: :any,                 arm64_sonoma:  "ba80135aa78d5bbd0bd423da47424b2f2ecf57321971e20574c91e92ea9bc299"
+    sha256 cellar: :any,                 arm64_ventura: "45f3b9efe0946ceb9b65e733276324e0627dee6935c6de01a754db430fc74ef7"
+    sha256 cellar: :any,                 sonoma:        "685f7324a917a8a8c535483572c45fdb40324be940c5ac3347792df6f43898c9"
+    sha256 cellar: :any,                 ventura:       "5f2ef80e0b25ca4b261d310ce1f4e3d555024c9681e445dc6881575f55de48e5"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "9fdff2c40dd5efb489fad7025d5e026a9dc69163bfbb5fb0ff938a7ad1410b40"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e075ff4433d7bfe5d4a31dc004ca0a3243e8de78d7046866174d493d90d57118"
   end
 
   depends_on "libyaml"
@@ -21,8 +25,6 @@ class ThorsMongo < Formula
   depends_on "snappy"
   uses_from_macos "bzip2"
   uses_from_macos "zlib"
-
-  fails_with gcc: "5"
 
   def install
     ENV["COV"] = "gcov"
@@ -40,7 +42,7 @@ class ThorsMongo < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include "ThorSerialize/JsonThor.h"
       #include "ThorSerialize/SerUtil.h"
       #include <sstream>
@@ -71,7 +73,7 @@ class ThorsMongo < Formula
           std::cerr << "OK";
           return 0;
       }
-    EOS
+    CPP
     system ENV.cxx, "-std=c++20", "test.cpp", "-o", "test",
            "-I#{include}", "-L#{lib}", "-lThorSerialize", "-lThorsLogging", "-ldl"
     system "./test"

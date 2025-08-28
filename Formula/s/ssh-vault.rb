@@ -1,26 +1,27 @@
 class SshVault < Formula
   desc "Encrypt/decrypt using SSH keys"
   homepage "https://ssh-vault.com/"
-  url "https://github.com/ssh-vault/ssh-vault/archive/refs/tags/1.0.13.tar.gz"
-  sha256 "38887f44b31094d164a767bb027813d8a958721bb4278373a255dc4c76ad5a27"
+  url "https://github.com/ssh-vault/ssh-vault/archive/refs/tags/1.1.0.tar.gz"
+  sha256 "3bde1ad4d1f8f0eb7ade501e4b12a89e83b6508675d46286462af1eccbda646c"
   license "BSD-3-Clause"
   head "https://github.com/ssh-vault/ssh-vault.git", branch: "main"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "ebb093bd0d1774bf4d78f6799a6976501afca67b3c20f3a835eb43de8d711305"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "8b3cf1073d31eddb1021c44a3abfdbcaba54039881f6af5b07db543b6bc9b4c2"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "1b5d72d5e7aa2a80d1606167afdebe617c59f720fc0f2eb87151111af1005608"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "ed47c467ec8f7bbff0d2c345028c305e5d7ae914aae376da0ccc835d9601af24"
-    sha256 cellar: :any_skip_relocation, sonoma:         "6ef42de7d4be4691cdf0c30b7fce78c0ff1dfcd2de8b94fe638df8fc7e1d98ff"
-    sha256 cellar: :any_skip_relocation, ventura:        "953cdf9819a345f2e0a99e2919c839b3c5a3b975cb92d0305abe22ec0951a231"
-    sha256 cellar: :any_skip_relocation, monterey:       "65dc8174379e6262d6982be11508645dba4fb934b262644d46013688a9aac59c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "97fed43c8a9f28b090935758d917783b09995d0e8c3bb76ca159a87988563506"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "c27ff2adc2e2a950011fb85982e3475dd00f95696354090bd0d498448a65aa76"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "8b55c4f946385ceff1df3a4f742f53a895d1582faff4b3ed155b2c8947a2d5e8"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "dd1ab07e07ca2ab36d424d8840d7926aecf18d4b223d5289adf982c219c60112"
+    sha256 cellar: :any_skip_relocation, sonoma:        "f21314b53412c0c49618b3384a885eeed3e58784e797d067f12d89dffb57241f"
+    sha256 cellar: :any_skip_relocation, ventura:       "cee7b74f65d8e5d79dac9fc296a4fadfd02939790a94208c167f3aec805d0f30"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "d73c8e8b90a8ffdb58c8eb42810e8c1db67330ed559bee688f9a5fdf0c1946ed"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5e813a71072ece7cdca7723f9fe65f7d79709de88ee0240f9fdfe8febac4929a"
   end
 
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
 
   on_linux do
-    depends_on "pkg-config" => :build
     depends_on "openssl@3"
   end
 
@@ -32,15 +33,9 @@ class SshVault < Formula
     system "cargo", "install", *std_cargo_args
   end
 
-  def check_binary_linkage(binary, library)
-    binary.dynamically_linked_libraries.any? do |dll|
-      next false unless dll.start_with?(HOMEBREW_PREFIX.to_s)
-
-      File.realpath(dll) == File.realpath(library)
-    end
-  end
-
   test do
+    require "utils/linkage"
+
     test_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINixf2m2nj8TDeazbWuemUY8ZHNg7znA7hVPN8TJLr2W"
     (testpath/"public_key").write test_key
     cmd = "#{bin}/ssh-vault f -k  #{testpath}/public_key"
@@ -51,7 +46,7 @@ class SshVault < Formula
         Formula["openssl@3"].opt_lib/shared_library("libssl"),
         Formula["openssl@3"].opt_lib/shared_library("libcrypto"),
       ].each do |library|
-        assert check_binary_linkage(bin/"ssh-vault", library),
+        assert Utils.binary_linked_to_library?(bin/"ssh-vault", library),
               "No linkage with #{library.basename}! Cargo is likely using a vendored version."
       end
     end

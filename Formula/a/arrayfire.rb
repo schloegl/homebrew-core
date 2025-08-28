@@ -4,21 +4,21 @@ class Arrayfire < Formula
   url "https://github.com/arrayfire/arrayfire/releases/download/v3.9.0/arrayfire-full-3.9.0.tar.bz2"
   sha256 "8356c52bf3b5243e28297f4b56822191355216f002f3e301d83c9310a4b22348"
   license "BSD-3-Clause"
-  revision 3
+  revision 4
 
   bottle do
-    sha256 cellar: :any, arm64_sequoia:  "62c059c02e2c6680c7c3fd3a9006243389ec2a2f272596f2c1c77f7826a6e0dd"
-    sha256 cellar: :any, arm64_sonoma:   "aef59074ff5628ef41c629de9af481140971fb67d0dd952cf2624ad6add73f70"
-    sha256 cellar: :any, arm64_ventura:  "e206b29e0790322ed14a06082e80a4ab2b804c79e3a98db0a134e71aa5f74ebe"
-    sha256 cellar: :any, arm64_monterey: "2e1b6dcef1a94a00aface53d21cb5ded7977d9f9f9db74606250f47f82ec6f59"
-    sha256 cellar: :any, sonoma:         "0347b552c78ae2da175819625d20bdc8de8cba7b6eb800f713a43b1690dbe3bd"
-    sha256 cellar: :any, ventura:        "f0e961ea63dc30a6b72b23afcbd9181d94d43c7a24c0f75d9add33cb9420ffdd"
-    sha256 cellar: :any, monterey:       "e0cdfa9839ea984d846c2fd7c9df45c337ae7159d07a590256896b1934d9670e"
+    rebuild 1
+    sha256 cellar: :any, arm64_sequoia: "fdf1c8013720008558454d66f2390c04bb82d33416f82d69cb35632bc6dc266c"
+    sha256 cellar: :any, arm64_sonoma:  "f94b4f07a17c86b0e56ac0ee0e6bb5a75d91112b79213977685a06cd9e072b5a"
+    sha256 cellar: :any, arm64_ventura: "5005319ee0b289f49222ba08554d0e911fed8def11055f5bc0e3eac338b278ad"
+    sha256 cellar: :any, sonoma:        "17b8f29a9302e75f8ed5924930a712b6637c1a4878bd222f22dbfa5344161b09"
+    sha256 cellar: :any, ventura:       "76d0d5e3e17d25ce307003d9f7a608f6869afcc6128d82241613ea39473ac6f4"
   end
 
   depends_on "boost" => :build
   depends_on "cmake" => :build
   depends_on "doxygen" => :build
+  depends_on "clblast"
   depends_on "fftw"
   depends_on "fmt"
   depends_on "freeimage"
@@ -31,7 +31,11 @@ class Arrayfire < Formula
     depends_on "pocl"
   end
 
-  fails_with gcc: "5"
+  # Backport fix for missing include for climits header
+  patch do
+    url "https://github.com/arrayfire/arrayfire/commit/cb09bfc5457489d6da434a7841b9098dded58cc0.patch?full_index=1"
+    sha256 "4b5628d1b6164e3b6747868adaa8aeccb92d87d8df2ac6baca6f01580a8b10f7"
+  end
 
   # fmt 11 compatibility
   # https://github.com/arrayfire/arrayfire/issues/3596
@@ -45,19 +49,14 @@ class Arrayfire < Formula
       rpath(source: lib, target: HOMEBREW_PREFIX/"lib"),
     ]
 
-    if OS.mac?
-      # Our compiler shims strip `-Werror`, which breaks upstream detection of linker features.
-      # https://github.com/arrayfire/arrayfire/blob/715e21fcd6e989793d01c5781908f221720e7d48/src/backend/opencl/CMakeLists.txt#L598
-      inreplace "src/backend/opencl/CMakeLists.txt", "if(group_flags)", "if(FALSE)"
-    else
-      # Work around missing include for climits header
-      # Issue ref: https://github.com/arrayfire/arrayfire/issues/3543
-      ENV.append "CXXFLAGS", "-include climits"
-    end
+    # Our compiler shims strip `-Werror`, which breaks upstream detection of linker features.
+    # https://github.com/arrayfire/arrayfire/blob/715e21fcd6e989793d01c5781908f221720e7d48/src/backend/opencl/CMakeLists.txt#L598
+    inreplace "src/backend/opencl/CMakeLists.txt", "if(group_flags)", "if(FALSE)" if OS.mac?
 
     system "cmake", "-S", ".", "-B", "build",
                     "-DAF_BUILD_CUDA=OFF",
                     "-DAF_COMPUTE_LIBRARY=FFTW/LAPACK/BLAS",
+                    "-DAF_WITH_EXTERNAL_PACKAGES_ONLY=ON",
                     "-DCMAKE_CXX_STANDARD=14",
                     "-DCMAKE_INSTALL_RPATH=#{rpaths.join(";")}",
                     *std_cmake_args
@@ -99,14 +98,14 @@ index ac149d9..edffdfa 100644
 +    auto format(const arrayfire::common::Node& node, FormatContext& ctx) const
          -> decltype(ctx.out()) {
          // ctx.out() is an output iterator to write to.
- 
+
 diff --git a/src/backend/common/ArrayFireTypesIO.hpp b/src/backend/common/ArrayFireTypesIO.hpp
 index e7a2e08..5da74a9 100644
 --- a/src/backend/common/ArrayFireTypesIO.hpp
 +++ b/src/backend/common/ArrayFireTypesIO.hpp
 @@ -21,7 +21,7 @@ struct fmt::formatter<af_seq> {
      }
- 
+
      template<typename FormatContext>
 -    auto format(const af_seq& p, FormatContext& ctx) -> decltype(ctx.out()) {
 +    auto format(const af_seq& p, FormatContext& ctx) const -> decltype(ctx.out()) {
@@ -115,7 +114,7 @@ index e7a2e08..5da74a9 100644
              p.step == af_span.step) {
 @@ -73,18 +73,16 @@ struct fmt::formatter<arrayfire::common::Version> {
      }
- 
+
      template<typename FormatContext>
 -    auto format(const arrayfire::common::Version& ver, FormatContext& ctx)
 +    auto format(const arrayfire::common::Version& ver, FormatContext& ctx) const
@@ -147,7 +146,7 @@ index 54e74a2..07fa589 100644
 +#include <fmt/ranges.h>
  #include <spdlog/fmt/bundled/format.h>
  #include <iostream>
- 
+
 diff --git a/src/backend/opencl/compile_module.cpp b/src/backend/opencl/compile_module.cpp
 index 89d382c..2c979fd 100644
 --- a/src/backend/opencl/compile_module.cpp
@@ -155,7 +154,7 @@ index 89d382c..2c979fd 100644
 @@ -22,6 +22,8 @@
  #include <platform.hpp>
  #include <traits.hpp>
- 
+
 +#include <fmt/ranges.h>
 +
  #include <algorithm>

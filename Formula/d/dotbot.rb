@@ -3,28 +3,26 @@ class Dotbot < Formula
 
   desc "Tool that bootstraps your dotfiles"
   homepage "https://github.com/anishathalye/dotbot"
-  url "https://files.pythonhosted.org/packages/04/8b/0899638625ff6443b627294b10f3fa95b84da330d7caf9936ba991baf504/dotbot-1.20.1.tar.gz"
-  sha256 "b0c5e5100015e163dd5bcc07f546187a61adbbf759d630be27111e6cc137c4de"
+  url "https://files.pythonhosted.org/packages/05/4b/8308f726306d3d983323dd9bfa55e3610a07168f56ef612ecae05998ed55/dotbot-1.23.1.tar.gz"
+  sha256 "b6e419a898c03d2ecaaf802af9764041ac583fc59e367bdde509640c5d193f3b"
   license "MIT"
 
   bottle do
-    rebuild 3
-    sha256 cellar: :any,                 arm64_sequoia:  "710e79cff7b51c07e673e881764741e1b6ab8416f5b5e10bc1855c23d65a71f7"
-    sha256 cellar: :any,                 arm64_sonoma:   "7c915e69334d507f8e07d710e01b9a0962e187d9a02d590ef6167a6afc5aea62"
-    sha256 cellar: :any,                 arm64_ventura:  "f7c36c60cad2f30b4c5f9d8d56bfcdbda2388338f2a56fdc010106682023a201"
-    sha256 cellar: :any,                 arm64_monterey: "d61bef91100b62a3921baabef23f4bd85ed4c0b5086b20fbe387c243622330d7"
-    sha256 cellar: :any,                 sonoma:         "5912bf49d4f31ac781030eebb2817ea2f1b21119080dc3325d1758a2ab2f7512"
-    sha256 cellar: :any,                 ventura:        "9237f9d6d443b4f661a9dd696a32472a0bdc0ca444bb0df892cac1a03690ec09"
-    sha256 cellar: :any,                 monterey:       "744736579abe5adf4efebc62512b71c32c6949e1bc0acc5e2a055fd9945b804a"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "84e71d8131a14f8ef5284ef4c71b2b0a9de2742d715da2e70f5c55fb7454c63d"
+    sha256 cellar: :any,                 arm64_sequoia: "be2cdb7ea682b1e1e80be3c35a99d3c6fe4f9ed8c092947906f6ad34500b00d2"
+    sha256 cellar: :any,                 arm64_sonoma:  "4a6df17f0e78bde62efd47b191afb7ab06f471fe4bc8b3c2e621e8832f8a7c53"
+    sha256 cellar: :any,                 arm64_ventura: "bee58a558d1c9e7db2dcd3f2092a82366bd87e0e3828b782c70ebdef79acdc91"
+    sha256 cellar: :any,                 sonoma:        "c5d3c4cd7e5a6d48e01b811910ce5993f11a15ca2e751f7f91df0f75899189d3"
+    sha256 cellar: :any,                 ventura:       "34ced83c25613d7962ec02e3fa1cc743b9a42c8c4a9cd02546362deb35317101"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "534e2e0087255d7558b1bc0f84192d181c85c389b1f3c54aa982e8c320f4786a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f95f6647267c2121a5f386ed902b95e0e8ed067bb3c0b705096199210139f53b"
   end
 
   depends_on "libyaml"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "pyyaml" do
-    url "https://files.pythonhosted.org/packages/cd/e5/af35f7ea75cf72f2cd079c95ee16797de7cd71f29ea7c68ae5ce7be1eda0/PyYAML-6.0.1.tar.gz"
-    sha256 "bfdf460b1736c775f2ba9f6a92bca30bc2095067b8a9d77876d1fad6cc3b4a43"
+    url "https://files.pythonhosted.org/packages/54/ed/79a089b6be93607fa5cdaedf301d7dfb23af5f25c398d5ead2525b063e17/pyyaml-6.0.2.tar.gz"
+    sha256 "d584d9ec91ad65861cc08d42e834324ef890a082e591037abe114850ff7bbc3e"
   end
 
   def install
@@ -32,15 +30,15 @@ class Dotbot < Formula
   end
 
   test do
-    (testpath/"install.conf.yaml").write <<~EOS
+    (testpath/"install.conf.yaml").write <<~YAML
       - create:
         - brew
         - .brew/test
-    EOS
+    YAML
 
-    output = shell_output("#{bin}/dotbot -c #{testpath}/install.conf.yaml")
+    output = shell_output("#{bin}/dotbot --verbose -c #{testpath}/install.conf.yaml")
     assert_match "All tasks executed successfully", output
-    assert_predicate testpath/"brew", :exist?
-    assert_predicate testpath/".brew/test", :exist?
+    assert_path_exists testpath/"brew"
+    assert_path_exists testpath/".brew/test"
   end
 end

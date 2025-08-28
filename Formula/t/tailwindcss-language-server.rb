@@ -1,36 +1,36 @@
 class TailwindcssLanguageServer < Formula
   desc "LSP for TailwindCSS"
   homepage "https://github.com/tailwindlabs/tailwindcss-intellisense/tree/HEAD/packages/tailwindcss-language-server"
-  url "https://registry.npmjs.org/@tailwindcss/language-server/-/language-server-0.0.25.tgz"
-  sha256 "d9dbfb8d0beb4f4f6032fe11c2935da50096a4506cf3c4954af48741865c3dd6"
+  url "https://github.com/tailwindlabs/tailwindcss-intellisense/archive/refs/tags/v0.14.26.tar.gz"
+  sha256 "a5b6115d6300b59227b6920c4a8801ed354e7d8e60c04c2434e81e5217a9b350"
   license "MIT"
 
-  bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "b06a662e763a33e0889881ef40106fcdd7f4de64235647a5ae8310f303d71f29"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "b06a662e763a33e0889881ef40106fcdd7f4de64235647a5ae8310f303d71f29"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "b06a662e763a33e0889881ef40106fcdd7f4de64235647a5ae8310f303d71f29"
-    sha256 cellar: :any_skip_relocation, sonoma:        "c91eb06193445ef906eb1e4dc1249f5923d8ba0cd910b1b96f09a7f38802ae4b"
-    sha256 cellar: :any_skip_relocation, ventura:       "c91eb06193445ef906eb1e4dc1249f5923d8ba0cd910b1b96f09a7f38802ae4b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8b504733af7143d471aff34c3aacfd7c908aff8ec12cbe73ccec108a74398bff"
+  livecheck do
+    url "https://registry.npmjs.org/@tailwindcss/language-server/latest"
+    strategy :json do |json|
+      json["version"]
+    end
   end
 
+  bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "19d3d062fd2908486d1f9b6d416912f54c2bff349810af41907cd49429790989"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "19d3d062fd2908486d1f9b6d416912f54c2bff349810af41907cd49429790989"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "19d3d062fd2908486d1f9b6d416912f54c2bff349810af41907cd49429790989"
+    sha256 cellar: :any_skip_relocation, sonoma:        "19d3d062fd2908486d1f9b6d416912f54c2bff349810af41907cd49429790989"
+    sha256 cellar: :any_skip_relocation, ventura:       "19d3d062fd2908486d1f9b6d416912f54c2bff349810af41907cd49429790989"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "b5138ce9a6456ad60769d0cd3b01e63633e0c27b4212cb735ceb80fa7c9c2617"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b5138ce9a6456ad60769d0cd3b01e63633e0c27b4212cb735ceb80fa7c9c2617"
+  end
+
+  depends_on "pnpm@9" => :build
   depends_on "node"
 
   def install
-    system "npm", "install", *std_npm_args
-    bin.install_symlink Dir["#{libexec}/bin/*"]
-
-    # Replace universal binaries with their native slices
-    (libexec/"lib/node_modules/@tailwindcss/language-server/bin").glob("*.node").each do |f|
-      next if f.arch == Hardware::CPU.arch
-
-      if OS.mac? && f.universal?
-        deuniversalize_machos f
-      else
-        rm f
-      end
+    cd "packages/tailwindcss-language-server" do
+      system "pnpm", "install", "--frozen-lockfile"
+      system "pnpm", "run", "build"
+      bin.install "bin/tailwindcss-language-server"
     end
-    (libexec/"lib/node_modules/@tailwindcss/language-server/bin").glob("*.musl-*.node").map(&:unlink) if OS.linux?
   end
 
   test do

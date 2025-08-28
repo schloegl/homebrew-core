@@ -1,8 +1,8 @@
 class Rlwrap < Formula
   desc "Readline wrapper: adds readline support to tools that lack it"
   homepage "https://github.com/hanslub42/rlwrap"
-  url "https://github.com/hanslub42/rlwrap/archive/refs/tags/0.46.1.tar.gz"
-  sha256 "c537e8a53df36f1f996601d776203478ad56fab1d67b3c1a63057badb0851cec"
+  url "https://github.com/hanslub42/rlwrap/archive/refs/tags/v0.47.1.tar.gz"
+  sha256 "944bc0e4812e61b2b7c4cd17b1b37b41325deffa0b84192aff8c0eace1a5da4c"
   license "GPL-2.0-or-later"
   head "https://github.com/hanslub42/rlwrap.git", branch: "master"
 
@@ -12,17 +12,13 @@ class Rlwrap < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "b9e569a7c00c9fd78141b579eeeeef23afc1fb54ed91505b0ee3a5ca93e195c1"
-    sha256 arm64_sonoma:   "62d18bcd615a559341ee325e3a8ed7266b952efd2c1d45ca4fdddb095575fa47"
-    sha256 arm64_ventura:  "6cc64e120040bde8ff3680d02a5233073756f3a9ecfa159230636574747be809"
-    sha256 arm64_monterey: "800128c200ac5cd3ba45d50a835bd48f9ffb62e04886d1d615604477a599b91b"
-    sha256 arm64_big_sur:  "4273ede2a9d3c9c7812e596db58b7ec36446fb9e26d9fcbe908f8afa68cf8672"
-    sha256 sonoma:         "705d9ee6f55fbef3f852a3b75aa8a9230cb4e4081665a70afebc5e17a528f91e"
-    sha256 ventura:        "9e480ae1326e022bbec1454240504e1361fb8b62c9df64b378f5072d6e27fb35"
-    sha256 monterey:       "073698b12b6cb3cb5bc9934bd1b0048562ba32b320fcc2cef9b5652b7354f825"
-    sha256 big_sur:        "b4b03c2fa68bfb2210e7fda2153bc6a6866ae3c16105465d14818e3ea87795b6"
-    sha256 catalina:       "a46ae39723ca361493eb0b81e15cd85de9a2b0b9ff26d8de49d0f606b328658c"
-    sha256 x86_64_linux:   "d8ea0283b1103d38b58122b54334229769b61fd78cf1d9f1d4716437389cbc3e"
+    sha256 arm64_sequoia: "76c14a9650e463ea35aefd0e09e459bf675656d90e413266be8633dbc6a3bb6f"
+    sha256 arm64_sonoma:  "9c9130f7da8da6d0e0208a3ae152e240d0ec49402c96833548e01fc3ebde26f6"
+    sha256 arm64_ventura: "173c7b946ed5a9b59f4bfe77ffedd5d2f8c3319dc23fba0213c2e6864833a2bc"
+    sha256 sonoma:        "04e97f15e237b8bba5503e37ae068fea5e19bc270212dc5fd90d2d3b998f4ae4"
+    sha256 ventura:       "0ef750a1247f43d8781c95f655f8ece83e2f401f41dca53b6421b2b80d99f8d5"
+    sha256 arm64_linux:   "4dc693d78c25778cb5bb669c0792fbbbede81d1779691de52e19eed3b9c6b36b"
+    sha256 x86_64_linux:  "d8872767bff66175ea7bdcc9654489ad2f285a6a8f4e7fb32f237f575ec93e59"
   end
 
   depends_on "autoconf" => :build
@@ -30,11 +26,10 @@ class Rlwrap < Formula
   depends_on "readline"
 
   def install
-    system "autoreconf", "-v", "-i"
+    system "autoreconf", "--force", "--install", "--verbose"
 
-    system "./configure", "--disable-debug",
-                          "--disable-dependency-tracking",
-                          "--prefix=#{prefix}"
+    # TODO: add `libptytty` as a formula, there is a fallback for now
+    system "./configure", "--without-libptytty", *std_configure_args
     system "make", "install"
   end
 

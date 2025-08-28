@@ -1,20 +1,19 @@
 class WasmPack < Formula
   desc "Your favorite rust -> wasm workflow tool!"
   homepage "https://rustwasm.github.io/wasm-pack/"
-  url "https://github.com/rustwasm/wasm-pack/archive/refs/tags/v0.13.0.tar.gz"
-  sha256 "d9eeb1116a584afc50ccb7c4ca15e0256453d4d2b4bc437b83f312b78432fdab"
+  url "https://github.com/rustwasm/wasm-pack/archive/refs/tags/v0.13.1.tar.gz"
+  sha256 "3c28be53174fd12a6f3c3a018f14c8383b2eec6c6699c74751c1f3c51a2346c0"
   license any_of: ["Apache-2.0", "MIT"]
   head "https://github.com/rustwasm/wasm-pack.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "b291a2b6ff4b245bd920d183e9d6568386adbf6a7a7b837bdc599187ea3dec60"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "9f9874054430a355a1b89f89a61ee567443b08034408848ea2921b7f98969499"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "ed6e00095ccaa2ba64277113d6a4e12d41a16933c61e94f8ba1ac2a666f2e9b5"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "19284846b04cc4435caed6a9ef012ea03fdb5dfdc35c9854c343b143e5cddb6b"
-    sha256 cellar: :any_skip_relocation, sonoma:         "92f0033ece6cc83109306625ab03dcbf3aafa11d350bb972d5dbf4d6babd1231"
-    sha256 cellar: :any_skip_relocation, ventura:        "e9fcecc4da9399e5db97298e3270fd7b1ae2b2664a45285eb7ad9b82d4ecaf85"
-    sha256 cellar: :any_skip_relocation, monterey:       "afbf975761f20b901d3b44540d0ba2cdd1493c4e8bf371b2c1577313faa55ff7"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "82499d28c9b6cbbc017bc939fbaef4b755c8605e4376da07dd1a482bdfdd02a7"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "747c2699cacc93a426a98bab721cf4fcf70d04f041b9f985c5c28351823a3179"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "5efb6426299ccfea3127cb7132c7583fd54d88072e623cb02f11532da201f243"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "c4721dbfd0281026391ea9d413a1e23c0bfecf803f370305a1c2e209234c1326"
+    sha256 cellar: :any_skip_relocation, sonoma:        "05ad5721098c7a62a35a817ca06af6a249d02d102e3739ce029809b6946824f4"
+    sha256 cellar: :any_skip_relocation, ventura:       "e42e4af8958a1593cbf06ed54a645512e1fd3f51e447b5c12882bd67f6fe0528"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "a30ccc8550215b641f2203ce5375b53b5167f6368421243fd549fa68a4920a2a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3ddf3a9d0f664911152c681c589f4751b92c4ac1c172b0f366b275a4dabfd5ff"
   end
 
   depends_on "cmake" => :build
@@ -22,6 +21,15 @@ class WasmPack < Formula
   depends_on "rustup"
 
   def install
+    # We hit a segfault in test using pre-built cargo-generate < 0.21.2 on arm64 linux.
+    # The logic to use a global copy from PATH is broken[^1] and a PR[^2] to fix stalled.
+    # There is another PR[^3] to provide an environment variable to bypass version check.
+    #
+    # [^1]: https://github.com/rustwasm/wasm-pack/issues/1457
+    # [^2]: https://github.com/rustwasm/wasm-pack/pull/1330
+    # [^3]: https://github.com/rustwasm/wasm-pack/pull/1482
+    inreplace "src/install/mod.rs", '"0.18.2"', '"0.21.3"' if OS.linux? && Hardware::CPU.arm?
+
     system "cargo", "install", *std_cargo_args
   end
 
@@ -29,11 +37,11 @@ class WasmPack < Formula
     assert_match "wasm-pack #{version}", shell_output("#{bin}/wasm-pack --version")
 
     ENV.prepend_path "PATH", Formula["rustup"].bin
-    system "rustup", "default", "stable"
     system "rustup", "set", "profile", "minimal"
+    system "rustup", "default", "stable"
 
     system bin/"wasm-pack", "new", "hello-wasm"
     system bin/"wasm-pack", "build", "hello-wasm"
-    assert_predicate testpath/"hello-wasm/pkg/hello_wasm_bg.wasm", :exist?
+    assert_path_exists testpath/"hello-wasm/pkg/hello_wasm_bg.wasm"
   end
 end

@@ -1,8 +1,8 @@
 class Squashfs < Formula
   desc "Compressed read-only file system for Linux"
   homepage "https://github.com/plougher/squashfs-tools"
-  url "https://github.com/plougher/squashfs-tools/archive/refs/tags/4.6.1.tar.gz"
-  sha256 "94201754b36121a9f022a190c75f718441df15402df32c2b520ca331a107511c"
+  url "https://github.com/plougher/squashfs-tools/archive/refs/tags/4.7.2.tar.gz"
+  sha256 "4672b5c47d9418d3a5ae5b243defc6d9eae8275b9771022247c6a6082c815914"
   license "GPL-2.0-or-later"
   head "https://github.com/plougher/squashfs-tools.git", branch: "master"
 
@@ -13,16 +13,13 @@ class Squashfs < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "e18983058459bb34a878aa55400fdb33fffe5dd01d7ed52601f8228cb1e3d8f2"
-    sha256 cellar: :any,                 arm64_sonoma:   "21f37d4cd4db720d9c1f15ce0cad88397a816b7801f30d715cf2f28fc91df08d"
-    sha256 cellar: :any,                 arm64_ventura:  "2d8bf130f1b58fa03252b6cccbab2f0d4ffa600b33996a40e61d91d73f7fd55f"
-    sha256 cellar: :any,                 arm64_monterey: "6cef6a569617ae5135c3eb170ee09f7fea7736da13b953f2efb44d024e947a4e"
-    sha256 cellar: :any,                 arm64_big_sur:  "fd3ad11d7192e0faad3906f5556aca470d2b8404ce07f6cded1514af2c286689"
-    sha256 cellar: :any,                 sonoma:         "7c2ba3c8a22abeba1f4f2e5d4118d62b169124cd61f0c3fbdeecd16ccd158927"
-    sha256 cellar: :any,                 ventura:        "f77526a0a06e07ffba3e86a57c09391f3e962f221543ba424276beea2de6be29"
-    sha256 cellar: :any,                 monterey:       "0f4721b581fa57db435d884bc4af98ce7c58e3ba92262e2277676b1e44e4cb1f"
-    sha256 cellar: :any,                 big_sur:        "821ae58379b5a2465979686d50f3f54d26b7707e5aaa8180eea6d6da5559b07d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "48347e06cf3d3bd099d441f38de0d32296340334bebefa048550d8b8afcb426d"
+    sha256 cellar: :any,                 arm64_sequoia: "e14ece392f8839650c3c27cfdc8b225d63f6fa84eef0783dc9a4c59ba06f7cc6"
+    sha256 cellar: :any,                 arm64_sonoma:  "dc48cced5cf0810b4fdc220a6b967296057dd02365453d2e2eface15938e962d"
+    sha256 cellar: :any,                 arm64_ventura: "77773e74b3052034873568c8c9e14541eac01fe4a5a3815919561a8cae72ed24"
+    sha256 cellar: :any,                 sonoma:        "a40660ed6e73724773716f7e823daa9feaf10f453a0ed4e4829bc6ae9519b173"
+    sha256 cellar: :any,                 ventura:       "33a23dafbf737cb4c48eb987ec92af8a029a2547c45a1b78f4e588a6ef9d61d0"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "c06087b02d6708073d7a5cfa6de460c4bc31d0f6355cb178d92d7702cf8077f8"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a268a6b8f83b8f16ddfdffae4c9e30cfaf827ad4d36e84aaaf6311bedc37f914"
   end
 
   depends_on "gnu-sed" => :build
@@ -37,7 +34,7 @@ class Squashfs < Formula
 
   def install
     args = %W[
-      EXTRA_CFLAGS=-std=gnu89
+      EXTRA_CFLAGS=-std=gnu99
       LZ4_DIR=#{Formula["lz4"].opt_prefix}
       LZ4_SUPPORT=1
       LZO_DIR=#{Formula["lzo"].opt_prefix}
@@ -59,21 +56,13 @@ class Squashfs < Formula
 
     ENV.prepend_path "PATH", Formula["gnu-sed"].opt_libexec/"gnubin"
     mkdir_p man1
-    cd "generate-manpages" do
+    cd "squashfs-tools/generate-manpages" do
       commands.each do |command|
         system "./#{command}-manpage.sh", bin, man1/"#{command}.1"
       end
     end
 
-    doc.install %W[
-      README-#{version}
-      USAGE-#{version.major_minor}
-      USAGE-MKSQUASHFS-#{version.major_minor}
-      USAGE-SQFSCAT-#{version.major_minor}
-      USAGE-SQFSTAR-#{version.major_minor}
-      USAGE-UNSQUASHFS-#{version.major_minor}
-      COPYING
-    ]
+    doc.install Dir["Documentation/#{version.major_minor}/*"]
   end
 
   test do
@@ -88,15 +77,15 @@ class Squashfs < Formula
     # Test mksquashfs can make a valid squashimg.
     #   (Also tests that `xz` support is properly linked.)
     system bin/"mksquashfs", "in/test1", "in/test2", "in/test3", "test.xz.sqsh", "-quiet", "-comp", "xz"
-    assert_predicate testpath/"test.xz.sqsh", :exist?
+    assert_path_exists testpath/"test.xz.sqsh"
     assert_match "Found a valid SQUASHFS 4:0 superblock on test.xz.sqsh.",
       shell_output("#{bin}/unsquashfs -s test.xz.sqsh")
 
     # Test unsquashfs can extract files verbatim.
     system bin/"unsquashfs", "-d", "out", "test.xz.sqsh"
-    assert_predicate testpath/"out/test1", :exist?
-    assert_predicate testpath/"out/test2", :exist?
-    assert_predicate testpath/"out/test3", :exist?
+    assert_path_exists testpath/"out/test1"
+    assert_path_exists testpath/"out/test2"
+    assert_path_exists testpath/"out/test3"
     assert shell_output("diff -r in/ out/")
   end
 end

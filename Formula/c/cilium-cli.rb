@@ -1,9 +1,10 @@
 class CiliumCli < Formula
   desc "CLI to install, manage & troubleshoot Kubernetes clusters running Cilium"
   homepage "https://cilium.io"
-  url "https://github.com/cilium/cilium-cli/archive/refs/tags/v0.16.19.tar.gz"
-  sha256 "e16441d7f6371eb31290111b23e74947c5569501d30b2299009510c3f1ad8a6f"
+  url "https://github.com/cilium/cilium-cli/archive/refs/tags/v0.18.6.tar.gz"
+  sha256 "32db3585fc97362adaa1fa2d9eb841670e087ff8f20bf354fa8766fbf65b070c"
   license "Apache-2.0"
+  head "https://github.com/cilium/cilium-cli.git", branch: "main"
 
   # Upstream uses GitHub releases to indicate that a version is released
   # (there's also sometimes a notable gap between when a version is tagged and
@@ -14,12 +15,13 @@ class CiliumCli < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "bd892b2e392bfdba2e4ecb49c82d49dbbdf0810e9313b86746bca3e8af3a2a84"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "15068eb79020ed2beedc8098f34855c27964e5bc3601415de6382e45a121300e"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "470843c391f180df8e7fb46c965927563d9e452a2994ad0ab61fcd818c6bdd0a"
-    sha256 cellar: :any_skip_relocation, sonoma:        "1729cdd952423d0265764b48b5c9c2afdfd23ddec70f2543343afadd1e23d818"
-    sha256 cellar: :any_skip_relocation, ventura:       "48c231ddfc32ae50de9ab874d4396991540aec5314dab1582c652ae64d23175b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "55bd49c48e81819c5edcf94ebec9bd9440e5ef815a67fa7dff180d83d87f9363"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "2bc59f21472ed50c23b1461e97d2b3bc1e54a2c59b96c67866471bd075a41228"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "23f55b172d226396310ec68f24edee0ace977cdc83ea6a63dedf3f91bdaeccf2"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "18a903b3a4cfe8ce041ebbadc1353e88addc349c0453fe9c0d7eb3008b4909be"
+    sha256 cellar: :any_skip_relocation, sonoma:        "4668c62f76764c0ff8b3632abb8e84482b461449ef3210a95ec91f47305dcdb4"
+    sha256 cellar: :any_skip_relocation, ventura:       "61085e5cf627add2a14a915973e1d3f264ff32c0fbf1f40910e21de95424ea98"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "33150719f02515ad8372c5296396291c1ef5e4afa61efe9445912b7fc99378db"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "18a9715ec0ad68e03f469782f07675175d5c9af15385137399a65e7a543b0866"
   end
 
   depends_on "go" => :build
@@ -35,7 +37,7 @@ class CiliumCli < Formula
     ]
     system "go", "build", *std_go_args(ldflags:, output: bin/"cilium"), "./cmd/cilium"
 
-    generate_completions_from_executable(bin/"cilium", "completion", base_name: "cilium")
+    generate_completions_from_executable(bin/"cilium", "completion")
   end
 
   test do

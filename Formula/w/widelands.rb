@@ -1,9 +1,10 @@
 class Widelands < Formula
   desc "Free real-time strategy game like Settlers II"
   homepage "https://www.widelands.org/"
-  url "https://github.com/widelands/widelands/archive/refs/tags/v1.2.tar.gz"
-  sha256 "c6bed3717c541276fbed8a33adce230a2637297588c719268fcb963e076210e2"
+  url "https://github.com/widelands/widelands/archive/refs/tags/v1.2.1.tar.gz"
+  sha256 "799bfd32048ef20118c48e21f3fc843ae0451c42bb8bf2eabcb9b26bf6fe54b4"
   license "GPL-2.0-or-later"
+  revision 1
   version_scheme 1
 
   livecheck do
@@ -12,24 +13,23 @@ class Widelands < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "6311aa32f42afd08e32f69f76b584fef409179adefe81166b8dff6463e7f62c4"
-    sha256 arm64_sonoma:   "49df0bbc341c148bb09064dfdf41be0216f9c026e4cf78c803d5d58b15031028"
-    sha256 arm64_ventura:  "5286091b56fb4c2bbd15841ac7074e07933bc75d4e1699d959e7da2eeabf5b45"
-    sha256 arm64_monterey: "8b6883a14cd5732b4d71e423573a48da53f05329552f581775ac06ddb3f6bea5"
-    sha256 sonoma:         "07ea532a734d18fbb7d1cb08ad4fad5c5c2c742ab25b28ba597c10af765d821c"
-    sha256 ventura:        "8be55a2c96d0782a1195c0beae0221f52d52938af570835268fccc6339ffe205"
-    sha256 monterey:       "18ad1a1c68b547c4a7079cd546b7d9f07f0a9a75a04eeb9d1f1a85dbf9eeb402"
-    sha256 x86_64_linux:   "9cb4ef5b7a47e801e43e43c3b848fceaf2cdc510e94d9cbc00afc27bdcc4e518"
+    sha256 arm64_sequoia: "4579bc3c41f00266fe1e3a50b4f23febf356ffe7e658becd1340a9c9fb9c2b9f"
+    sha256 arm64_sonoma:  "d795ec6cfe18efe730a1ee729d28ce329f03905c5e476fa56d01545bbc324d86"
+    sha256 arm64_ventura: "cc89f8628d9dbc446a7a5d4f65269eb2e720c4b0f69a922fc05f62532f8a2e04"
+    sha256 sonoma:        "f6572c7feb4e4713414d27692883553a637aadf95ed03958f27a10bf5d0625fd"
+    sha256 ventura:       "181a93b0acd13093356cf0d919a013dbe4ffc00019f8f3e6ae1772d5c5a24749"
+    sha256 arm64_linux:   "6dc0a351fdca77d0ad76a78519f0582a2d452dabef0d20569daa98a420101585"
+    sha256 x86_64_linux:  "f2d1782fc0592643d470a43c5f269bc3172e5faa05f9f83bf97e609cb6ef8e57"
   end
 
   depends_on "asio" => :build
   depends_on "cmake" => :build
   depends_on "doxygen" => :build
   depends_on "gettext" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "glew"
-  depends_on "icu4c"
+  depends_on "icu4c@77"
   depends_on "libpng"
   depends_on "lua"
   depends_on "minizip"

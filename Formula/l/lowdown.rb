@@ -1,18 +1,23 @@
 class Lowdown < Formula
   desc "Simple markdown translator"
   homepage "https://kristaps.bsd.lv/lowdown"
-  url "https://github.com/kristapsdz/lowdown/archive/refs/tags/VERSION_1_1_1.tar.gz"
-  sha256 "8224d936507664a57845c5eb6d8a97a32cb8f85ad60fb987bebf5f1fb1bb50bd"
+  url "https://github.com/kristapsdz/lowdown/archive/refs/tags/VERSION_2_0_2.tar.gz"
+  sha256 "9718c0f6c99a2cef923357feced0e0f86d8047260238c5c37fd2b51ca620e373"
   license "ISC"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "083854b211698bbcbf48a181e1211864f2566da9cd1d605ca0c9d5e9f4216908"
-    sha256 cellar: :any,                 arm64_sonoma:  "8140f9b8ac3fc9b2ea32b54b42f91ebb2a1b31ab0e8052681b435c3108edd824"
-    sha256 cellar: :any,                 arm64_ventura: "35c2bff94a719995f126b0774bc4e4183528aaced985d24a891b0ffc71619403"
-    sha256 cellar: :any,                 sonoma:        "d354342fe3746ce10846e44a41cb09981a7411a20b18f8877a2b810e67440514"
-    sha256 cellar: :any,                 ventura:       "1c6b63152daa27af6e83446564eb7202c9739471555a006794afefb71363c87f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "37d3e51550508e399228149486d2faac21a3d2771b923628b526af9a853e14d1"
+    sha256 cellar: :any,                 arm64_sequoia: "72539b273d1f011b41a404ec609e5e5f90d95ecfed55de488ca96a599e7aa671"
+    sha256 cellar: :any,                 arm64_sonoma:  "db56e9a27e486ab120cfb60b6c0c35906bebedbde3542c0228413bd2c7327659"
+    sha256 cellar: :any,                 arm64_ventura: "682e3e2c5bb4100111aa12a3295758a33c9ef0fb688026730ba72c38d0e4a618"
+    sha256 cellar: :any,                 sonoma:        "39ca5b7e92d47aedfd37487c61560c0bf81952682a2f210c75e430532ee0f3fb"
+    sha256 cellar: :any,                 ventura:       "939b0d8f64b94d96ba9e865a89872d4f031b2c538fb20ba215f9be95ca3ab5d5"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "a643fc2ad9a4c717c3a5c507cd05cd48e31a521e8d5912c753e68745f89df2ff"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a8ccef0a88b45b09cebd38dd16dff22a85e83475e036a539cbff5c7d948dcb08"
   end
+
+  depends_on "bmake" => :build
 
   def install
     configure_args = %W[MANDIR=#{man} PREFIX=#{prefix}]
@@ -24,12 +29,12 @@ class Lowdown < Formula
     end
 
     system "./configure", *configure_args
-    system "make"
-    system "make", "install", "install_libs"
+    system "bmake"
+    system "bmake", "install", "install_libs"
   end
 
   test do
-    expected_html = <<~EOS
+    expected_html = <<~HTML
       <!DOCTYPE html>
       <html>
       <head>
@@ -42,12 +47,12 @@ class Lowdown < Formula
       <p>Hello, World</p>
       </body>
       </html>
-    EOS
-    markdown = <<~EOS
+    HTML
+    markdown = <<~MARKDOWN
       # Title
 
       Hello, World
-    EOS
+    MARKDOWN
     html = pipe_output("#{bin}/lowdown -s", markdown)
     assert_equal expected_html, html
   end

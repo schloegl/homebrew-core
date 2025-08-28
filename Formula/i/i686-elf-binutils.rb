@@ -1,9 +1,9 @@
 class I686ElfBinutils < Formula
   desc "GNU Binutils for i686-elf cross development"
   homepage "https://www.gnu.org/software/binutils/"
-  url "https://ftp.gnu.org/gnu/binutils/binutils-2.43.1.tar.bz2"
-  mirror "https://ftpmirror.gnu.org/binutils/binutils-2.43.1.tar.bz2"
-  sha256 "becaac5d295e037587b63a42fad57fe3d9d7b83f478eb24b67f9eec5d0f1872f"
+  url "https://ftpmirror.gnu.org/gnu/binutils/binutils-2.45.tar.bz2"
+  mirror "https://ftp.gnu.org/gnu/binutils/binutils-2.45.tar.bz2"
+  sha256 "1393f90db70c2ebd785fb434d6127f8888c559d5eeb9c006c354b203bab3473e"
   license "GPL-3.0-or-later"
 
   livecheck do
@@ -11,17 +11,16 @@ class I686ElfBinutils < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "a982ec150ffe8a236c134e11da09031fb988b635b3dcde8dab900be7e2307327"
-    sha256 arm64_sonoma:   "c666e0fa7eb192bd26a49bcb5e0f400b497e6a4afa6c972d90a53c1b7817407c"
-    sha256 arm64_ventura:  "dbbe5217dbadd954e0bc166586e2b02a5da58369e53b7e7d0fe8d151e72457e2"
-    sha256 arm64_monterey: "5c0a59163674c73d8ec51d7483d088b0d82b0226f7cdb50ae3f412c93430c25f"
-    sha256 sonoma:         "411bc87f8ccab10165f7e1001471f0241b07d67610267cb707be8974aa1af508"
-    sha256 ventura:        "3652d2d27a8efe6525e7b74b52c4c4c01bcf24e7f4a1d1d65f5bf77ae0bac8fc"
-    sha256 monterey:       "ebc991155f41f233df8eaab15da8ff2755f9cc0e8ff00a4fb39412613711a957"
-    sha256 x86_64_linux:   "261dda7591614a6c0ff80dff4f7b85b1b746c97dc5510a695fae6f894559e6f9"
+    sha256 arm64_sequoia: "8684b6b23cf9d5d3f0ad0fa652a649c1e65ad15e78082066f2a8e9c9968ed50d"
+    sha256 arm64_sonoma:  "6adca43d6b69591fee0f163524a01fe3ca81b3dc2f947e07f7785cb8fea448ba"
+    sha256 arm64_ventura: "2a0e78e859bcc772f2dfd17d583994ee200181983e22121416764aeab6c1dbad"
+    sha256 sonoma:        "98f0a4a7768da2533d10226168b26e75546c0b643454894071d844879178e018"
+    sha256 ventura:       "0f10371161ab0f953fd320f6f91fe7367c5b0a05130310c21fb34e7976fdd1f1"
+    sha256 arm64_linux:   "55fc5cdb820fb1b6980be16378426fdbd47a8ce196899b65bc595cc36694d8fe"
+    sha256 x86_64_linux:  "4567da79445e4c0a309fda411578bc286e218d3cee3d9453e966d75f38a0f97d"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "zstd"
 
   uses_from_macos "zlib"
@@ -44,7 +43,7 @@ class I686ElfBinutils < Formula
   end
 
   test do
-    (testpath/"test-s.s").write <<~EOS
+    (testpath/"test-s.s").write <<~ASM
       .section .data
       .section .text
       .globl _start
@@ -52,7 +51,7 @@ class I686ElfBinutils < Formula
           movl $1, %eax
           movl $4, %ebx
           int $0x80
-    EOS
+    ASM
 
     system bin/"i686-elf-as", "--32", "-o", "test-s.o", "test-s.s"
     assert_match "file format elf32-i386",

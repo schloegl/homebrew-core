@@ -1,18 +1,19 @@
 class ProtobufC < Formula
   desc "Protocol buffers library"
   homepage "https://github.com/protobuf-c/protobuf-c"
-  url "https://github.com/protobuf-c/protobuf-c/releases/download/v1.5.0/protobuf-c-1.5.0.tar.gz"
-  sha256 "7b404c63361ed35b3667aec75cc37b54298d56dd2bcf369de3373212cc06fd98"
+  url "https://github.com/protobuf-c/protobuf-c/releases/download/v1.5.2/protobuf-c-1.5.2.tar.gz"
+  sha256 "e2c86271873a79c92b58fef7ebf8de1aa0df4738347a8bd5d4e65a80a16d0d24"
   license "BSD-2-Clause"
-  revision 11
+  revision 4
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "904d4a38259359584125cd475f570d2e8af6b0f9b18e4ea462dc78fc1c407a8d"
-    sha256 cellar: :any,                 arm64_sonoma:  "18e1db05a6041d908ba135a63d35b84773a652fa60dcfaa4b059b08660ea6067"
-    sha256 cellar: :any,                 arm64_ventura: "0e5cd82d7399ac39694c18ee938ebf842aae03ceca1a8b0988f10ead5426bb3b"
-    sha256 cellar: :any,                 sonoma:        "675017f43f47c1d80bebdc4e1cc70c380ee79446584f17ff9b942ae7ebaa4389"
-    sha256 cellar: :any,                 ventura:       "7d88260630f2b33fd996c1118244222d5cb49217ac6fb283f852eb0358369b92"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8c9008f778cd4eac99c84d861c184be9f7a2b62ab5bcc382f7d9f49045e000bf"
+    sha256 cellar: :any, arm64_sequoia: "303ee993c457be5869dd354400aaee47e5b33df56b6308786815af89a1a11e46"
+    sha256 cellar: :any, arm64_sonoma:  "cd8d11fd77149fa0ad2dee76d173068217cdc66984b52eca6acc89d078c29cbf"
+    sha256 cellar: :any, arm64_ventura: "80ce2c04ff312778c1907f57cb2355610077e200942f518422f5f37f995269b1"
+    sha256 cellar: :any, sonoma:        "af8afbcb36efeccaa1c429a7bc3377311104aabf51bc835625f5ca885b27f3a1"
+    sha256 cellar: :any, ventura:       "ed414a18245a717d734ea18af5f40f87ffd1172c7da3b920e228f9a9ff4664eb"
+    sha256               arm64_linux:   "4a70845f2b14d68ebb31b94c3da49caca98a3a43ea538c006162ad5b27f92508"
+    sha256               x86_64_linux:  "c874fc39572906280a570482c28f49b518389bff749068e8f58af2527d0e9d8e"
   end
 
   head do
@@ -24,20 +25,9 @@ class ProtobufC < Formula
     depends_on "libtool" => :build
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "abseil"
   depends_on "protobuf"
-
-  # Apply commits from open PR to support Protobuf 26.
-  # PR ref: https://github.com/protobuf-c/protobuf-c/pull/711
-  patch do
-    url "https://github.com/protobuf-c/protobuf-c/commit/e3acc96ca2a00ef715fa2caa659f677cad8a9fa0.patch?full_index=1"
-    sha256 "3b564a971023d127bb7b666e5669f792c94766836ccaed5acfae3e23b8152d43"
-  end
-  patch do
-    url "https://github.com/protobuf-c/protobuf-c/commit/1b4b205d87b1bc6f575db1fd1cbbb334a694abe8.patch?full_index=1"
-    sha256 "6d02812445a229963add1b41c07bebddc3437fecb2a03844708512326fd70914"
-  end
 
   def install
     system "autoreconf", "--force", "--install", "--verbose" if build.head?
@@ -46,7 +36,7 @@ class ProtobufC < Formula
   end
 
   test do
-    testdata = <<~EOS
+    testdata = <<~PROTO
       syntax = "proto3";
       package test;
       message TestCase {
@@ -55,7 +45,7 @@ class ProtobufC < Formula
       message Test {
         repeated TestCase case = 1;
       }
-    EOS
+    PROTO
     (testpath/"test.proto").write testdata
     system Formula["protobuf"].opt_bin/"protoc", "test.proto", "--c_out=."
 

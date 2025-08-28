@@ -1,20 +1,18 @@
 class Profanity < Formula
   desc "Console based XMPP client"
   homepage "https://profanity-im.github.io"
-  url "https://profanity-im.github.io/tarballs/profanity-0.14.0.tar.gz"
-  sha256 "fd23ffd38a31907974a680a3900c959e14d44e16f1fb7df2bdb7f6c67bd7cf7f"
+  url "https://profanity-im.github.io/tarballs/profanity-0.15.1.tar.gz"
+  sha256 "c1e28a849aa178fd1ec5f384b0f8bdd244bce453dc4ef7bb76d0830382fec304"
   license "GPL-3.0-or-later"
-  revision 2
 
   bottle do
-    sha256 arm64_sequoia:  "9ee78fe1e4f7ae13fa28a0edb7f2c4548c0f7e47acf6ccb7a1d9a758396af95d"
-    sha256 arm64_sonoma:   "796e4f6d0df72b4fba98c6767294a0c34126e507178f62c059305e1447b1d57c"
-    sha256 arm64_ventura:  "f3af3a72068af54c2a5dfed25f8b4974d484e2a1c6c04782e452999f03b04a7c"
-    sha256 arm64_monterey: "026ec8f456effae8170417422b863ffcc7defd02f660f03878522e8aa73fe467"
-    sha256 sonoma:         "9daaa88e4367a56347e0fe2697f8a838452ca069ac92d37aaa4161db13b59c5c"
-    sha256 ventura:        "18296f861b95ef07102130df116f8da3a442fe038524f3a235cd95a423891368"
-    sha256 monterey:       "fb5dc8733a2fe8c043c3a77a665af9c9a30acde98d1e74d2d195b8a2699fdaa4"
-    sha256 x86_64_linux:   "b5a3eda754ad116b984759d462ec0a691a74005e262c234d7bd5b812c66c2bb5"
+    sha256 arm64_sequoia: "df081e8fe94ff007d6b4bd3a1f8843de1756c62be4173da534dbc6420ae89f38"
+    sha256 arm64_sonoma:  "801eb3f994c2fd9b9ec8345e2f34cb22ae10b8a0a9634e5a05425610d26a41ab"
+    sha256 arm64_ventura: "e777d8e4d9eaa49db36f165b31fb4472e06bb3bd820f505ddce25e0549ed2488"
+    sha256 sonoma:        "9754d8ff9eaf93428ce7b5ee3324c1e724859c152c8fb810ce059167601d3468"
+    sha256 ventura:       "3a370dc3e765d5b4aae9994472ebf502fc1409356388a16e803352ae997c92cd"
+    sha256 arm64_linux:   "ad5ed73c5aea238ec66eea66552c4bbd14b2381c9a6d21f54880f469ebd993bf"
+    sha256 x86_64_linux:  "96bbdc1bd7b27e3e6b42e8e2e964b799ff20b5d2d7c520ef7f6d48aa97832bef"
   end
 
   head do
@@ -27,7 +25,7 @@ class Profanity < Formula
   end
 
   depends_on "libomemo-c" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "curl"
   depends_on "glib"
@@ -36,7 +34,7 @@ class Profanity < Formula
   depends_on "libgcrypt"
   depends_on "libotr"
   depends_on "libstrophe"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "readline"
   depends_on "sqlite"
 
@@ -50,7 +48,7 @@ class Profanity < Formula
   end
 
   def install
-    ENV.prepend_path "PATH", Formula["python@3.12"].opt_libexec/"bin"
+    ENV.prepend_path "PATH", Formula["python@3.13"].opt_libexec/"bin"
 
     system "./bootstrap.sh" if build.head?
 
@@ -60,7 +58,7 @@ class Profanity < Formula
     system "./configure", "--disable-silent-rules",
                           "--enable-python-plugins",
                           "BREW=#{HOMEBREW_BREW_FILE}",
-                          *std_configure_args.reject { |s| s["--disable-debug"] }
+                          *std_configure_args
     system "make", "install"
   end
 

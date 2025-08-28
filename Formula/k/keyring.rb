@@ -3,20 +3,21 @@ class Keyring < Formula
 
   desc "Easy way to access the system keyring service from python"
   homepage "https://github.com/jaraco/keyring"
-  url "https://files.pythonhosted.org/packages/a5/1c/2bdbcfd5d59dc6274ffb175bc29aa07ecbfab196830e0cfbde7bd861a2ea/keyring-25.4.1.tar.gz"
-  sha256 "b07ebc55f3e8ed86ac81dd31ef14e81ace9dd9c3d4b5d77a6e9a2016d0d71a1b"
+  url "https://files.pythonhosted.org/packages/70/09/d904a6e96f76ff214be59e7aa6ef7190008f52a0ab6689760a98de0bf37d/keyring-25.6.0.tar.gz"
+  sha256 "0b39998aa941431eb3d9b0d4b2460bc773b9df6fed7621c2dfb291a7e0187a66"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "f6cccce628c975ed202c82d32483363a7e708cd829a7a1a23eafab9ba3fafd2d"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "f6cccce628c975ed202c82d32483363a7e708cd829a7a1a23eafab9ba3fafd2d"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "f6cccce628c975ed202c82d32483363a7e708cd829a7a1a23eafab9ba3fafd2d"
-    sha256 cellar: :any_skip_relocation, sonoma:        "c162ac10b450bd6cf13e8c1716043db7542b131a5e8561235465dd6bc6567b3c"
-    sha256 cellar: :any_skip_relocation, ventura:       "c162ac10b450bd6cf13e8c1716043db7542b131a5e8561235465dd6bc6567b3c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fed9ef60eb416351eb9162ade5be974db8b9e7836e539e5dcb17a1f6da9fbab5"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "b6751512859d21a591e9a129a2ae7280e4d7eebec85895469fac19bb600b8bf6"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "b6751512859d21a591e9a129a2ae7280e4d7eebec85895469fac19bb600b8bf6"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "b6751512859d21a591e9a129a2ae7280e4d7eebec85895469fac19bb600b8bf6"
+    sha256 cellar: :any_skip_relocation, sonoma:        "72d5f42d57266df2bf90fdb718f3f4c2198a37afe1dd27d7331ddfd8e6d7eef2"
+    sha256 cellar: :any_skip_relocation, ventura:       "72d5f42d57266df2bf90fdb718f3f4c2198a37afe1dd27d7331ddfd8e6d7eef2"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "a823152b79eed15240ea7ac5456139abcb62dd5c5c9a2b875b2fdfd965a9e6f6"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8a0f4e4498be2d9179f945f490d44fda8e5621171f578c7610e71d9e2ad70d45"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   on_linux do
     depends_on "cryptography"
@@ -33,8 +34,8 @@ class Keyring < Formula
   end
 
   resource "jaraco-functools" do
-    url "https://files.pythonhosted.org/packages/03/b1/6ca3c2052e584e9908a2c146f00378939b3c51b839304ab8ef4de067f042/jaraco_functools-4.0.2.tar.gz"
-    sha256 "3460c74cd0d32bf82b9576bbb3527c4364d5b27a21f5158a62aed6c4b42e23f5"
+    url "https://files.pythonhosted.org/packages/ab/23/9894b3df5d0a6eb44611c36aec777823fc2e07740dabbd0b810e19594013/jaraco_functools-4.1.0.tar.gz"
+    sha256 "70f7e0e2ae076498e212562325e805204fc092d7b4c17e0e86c959e249701a9d"
   end
 
   resource "jeepney" do

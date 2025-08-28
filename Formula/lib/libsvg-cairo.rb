@@ -11,6 +11,8 @@ class LibsvgCairo < Formula
     regex(/href=.*?libsvg-cairo[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     sha256 cellar: :any,                 arm64_sequoia:  "fb922d8f987fcfbf1a37e34cb527ce24345328d188e2fc453a5c70de848dbd41"
     sha256 cellar: :any,                 arm64_sonoma:   "2c255fb61d16b9fd5aee60ed29a000d3eb27028b7e7641d7dd4d1cc11928de1a"
@@ -28,7 +30,7 @@ class LibsvgCairo < Formula
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "cairo"
   depends_on "jpeg-turbo"
@@ -52,7 +54,7 @@ class LibsvgCairo < Formula
       <svg xmlns:svg="http://www.w3.org/2000/svg" height="72pt" width="144pt" viewBox="0 -20 144 72"><text font-size="12" text-anchor="left" y="0" x="0" font-family="Times New Roman" fill="green">sample text here</text></svg>
     EOS
 
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <stdio.h>
       #include "svg-cairo.h"
 
@@ -113,7 +115,7 @@ class LibsvgCairo < Formula
           printf("SUCCESS\\n");
           return 0;
       }
-    EOS
+    C
 
     cairo = Formula["cairo"]
     system ENV.cc, "test.c", "-I#{include}", "-I#{cairo.opt_include}/cairo", "-L#{lib}", "-lsvg-cairo", "-o", "test"

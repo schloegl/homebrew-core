@@ -3,25 +3,23 @@ class West < Formula
 
   desc "Zephyr meta-tool"
   homepage "https://github.com/zephyrproject-rtos/west"
-  url "https://files.pythonhosted.org/packages/ee/7a/4c69c6a1054b319421d5acf028564bb1303ea9da42032a2000021d6495ee/west-1.2.0.tar.gz"
-  sha256 "b41e51ac90393944f9c01f7be27000d4b329615b7ed074fb0ef693b464681297"
+  url "https://files.pythonhosted.org/packages/ac/d0/4fc4d6ded3cca8736a982a33a39d2fad7a6170624323e8f7afdabd27e329/west-1.4.0.tar.gz"
+  sha256 "908a07ae7cc334a88cb2f069b430484dfdfdda0c3422d14b9e23a43030cf9cc6"
   license "Apache-2.0"
-  revision 3
   head "https://github.com/zephyrproject-rtos/west.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "0ee9cb30a99d6400d595767032d2bab05268cd74e10e0b0a20177f9a3249fe1a"
-    sha256 cellar: :any,                 arm64_sonoma:   "2e4ff86ef37011283a87f21226a8da341348607d0771d91c46e1450837dc9a7c"
-    sha256 cellar: :any,                 arm64_ventura:  "6f29b5b06c9469e0fd98d303478ab9dff32d1e3692ad8c3b174f3c89c0fb6431"
-    sha256 cellar: :any,                 arm64_monterey: "3832e5f1e7fcf9415603ad62a3bf811baca14a68cb41563c519f3abfeea2d568"
-    sha256 cellar: :any,                 sonoma:         "10d1bf47c45d85e0d7081a4173b0bb04ebfe969da320de32f5972654d6b3a962"
-    sha256 cellar: :any,                 ventura:        "256901cc06869eab475a73b85b396a72142e67a62b7896c30640da7422979c80"
-    sha256 cellar: :any,                 monterey:       "e6657b24e2ee81805fe75db501c914c06d799368923db2bd6093ba1c8641755a"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "b72a89fa9810937008b3a9d5ec116920b5842c2619eaa4a52716ddf7ff7e4c1d"
+    sha256 cellar: :any,                 arm64_sequoia: "4eca7a6dd5aba30489c779ce193b625af5589963aefac6ae2f70eb5d68b14f5d"
+    sha256 cellar: :any,                 arm64_sonoma:  "78f9966dae45009e25a768dd6ccc50d3b13b7d73e5a020d2bc089b45951d00b0"
+    sha256 cellar: :any,                 arm64_ventura: "52319ab39f339b853cafe20dcb2c113cc43eb7db9fe2c037ae155da63df2cb85"
+    sha256 cellar: :any,                 sonoma:        "bde26447dfd9f5b7eab37c1ff049ff0308b3c7660e5a833801a1567d626f751a"
+    sha256 cellar: :any,                 ventura:       "a9528485221186f80f5b426dfdfc8d08d59cc2919aa06513d23b7fe25ca9e217"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "621834b79cdbde505e5ae0297a3b81e6e8e26b00ac7a9654767906973e56105e"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a2c6b0472c35c5245c3b91814008fa38c545b6b7ce20ebce1bc0ce57b4128c11"
   end
 
   depends_on "libyaml"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "colorama" do
     url "https://files.pythonhosted.org/packages/d8/53/6f443c9a4a8358a93a6792e2acffb9d9d5cb0a5cfd8802644b7b1c9a02e4/colorama-0.4.6.tar.gz"
@@ -34,8 +32,8 @@ class West < Formula
   end
 
   resource "packaging" do
-    url "https://files.pythonhosted.org/packages/51/65/50db4dda066951078f0a96cf12f4b9ada6e4b811516bf0262c0f4f7064d4/packaging-24.1.tar.gz"
-    sha256 "026ed72c8ed3fcce5bf8950572258698927fd1dbda10a5e981cdf0ac37f4f002"
+    url "https://files.pythonhosted.org/packages/a1/d4/1fc4078c65507b51b96ca8f8c3ba19e6a61c8253c72794544580a7b6c24d/packaging-25.0.tar.gz"
+    sha256 "d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f"
   end
 
   resource "pykwalify" do
@@ -49,48 +47,34 @@ class West < Formula
   end
 
   resource "pyyaml" do
-    url "https://files.pythonhosted.org/packages/cd/e5/af35f7ea75cf72f2cd079c95ee16797de7cd71f29ea7c68ae5ce7be1eda0/PyYAML-6.0.1.tar.gz"
-    sha256 "bfdf460b1736c775f2ba9f6a92bca30bc2095067b8a9d77876d1fad6cc3b4a43"
+    url "https://files.pythonhosted.org/packages/54/ed/79a089b6be93607fa5cdaedf301d7dfb23af5f25c398d5ead2525b063e17/pyyaml-6.0.2.tar.gz"
+    sha256 "d584d9ec91ad65861cc08d42e834324ef890a082e591037abe114850ff7bbc3e"
   end
 
   resource "ruamel-yaml" do
-    url "https://files.pythonhosted.org/packages/29/81/4dfc17eb6ebb1aac314a3eb863c1325b907863a1b8b1382cdffcb6ac0ed9/ruamel.yaml-0.18.6.tar.gz"
-    sha256 "8b27e6a217e786c6fbe5634d8f3f11bc63e0f80f6a5890f28863d9c45aac311b"
-  end
-
-  resource "ruamel-yaml-clib" do
-    url "https://files.pythonhosted.org/packages/46/ab/bab9eb1566cd16f060b54055dd39cf6a34bfa0240c53a7218c43e974295b/ruamel.yaml.clib-0.2.8.tar.gz"
-    sha256 "beb2e0404003de9a4cab9753a8805a8fe9320ee6673136ed7f04255fe60bb512"
-  end
-
-  resource "setuptools" do
-    url "https://files.pythonhosted.org/packages/65/d8/10a70e86f6c28ae59f101a9de6d77bf70f147180fbf40c3af0f64080adc3/setuptools-70.3.0.tar.gz"
-    sha256 "f171bab1dfbc86b132997f26a119f6056a57950d058587841a0082e8830f9dc5"
+    url "https://files.pythonhosted.org/packages/ea/46/f44d8be06b85bc7c4d8c95d658be2b68f27711f279bf9dd0612a5e4794f5/ruamel.yaml-0.18.10.tar.gz"
+    sha256 "20c86ab29ac2153f80a428e1254a8adf686d3383df04490514ca3b79a362db58"
   end
 
   resource "six" do
-    url "https://files.pythonhosted.org/packages/71/39/171f1c67cd00715f190ba0b100d606d440a28c93c7714febeca8b79af85e/six-1.16.0.tar.gz"
-    sha256 "1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"
+    url "https://files.pythonhosted.org/packages/94/e7/b2c673351809dca68a0e064b6af791aa332cf192da575fd474ed7d6f16a2/six-1.17.0.tar.gz"
+    sha256 "ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81"
   end
 
   def install
-    # Work around ruamel.yaml.clib not building on Xcode 15.3, remove after a new release
-    # has resolved: https://sourceforge.net/p/ruamel-yaml-clib/tickets/32/
-    ENV.append_to_cflags "-Wno-incompatible-function-pointer-types" if DevelopmentTools.clang_build_version >= 1500
-
     virtualenv_install_with_resources
   end
 
   test do
     mkdir testpath/"west" do
       mkdir "test-project"
-      (testpath/"west/test-project/west.yml").write <<~EOS
+      (testpath/"west/test-project/west.yml").write <<~YAML
         manifest:
           self:
             path: test-project
-      EOS
+      YAML
       system bin/"west", "init", "-l", testpath/"west/test-project"
-      assert_predicate testpath/"west/.west", :exist?
+      assert_path_exists testpath/"west/.west"
     end
   end
 end

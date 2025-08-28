@@ -2,30 +2,29 @@ class Ponyc < Formula
   desc "Object-oriented, actor-model, capabilities-secure programming language"
   homepage "https://www.ponylang.io/"
   url "https://github.com/ponylang/ponyc.git",
-      tag:      "0.58.5",
-      revision: "0d607b5f1fc7badb8c83a3ebf61b76c70b128894"
+      tag:      "0.59.0",
+      revision: "9a5a2d65b422c2ff104877ad4a0b7048eedba68c"
   license "BSD-2-Clause"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "7d856824ad5ebd02852922ee5700c6b93d8f745c8974db5522b707772db60d73"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "67f3dd596e2c63c86b6fd65d0c83b6e999ddaab62bb62cdc0da0527f3723d3cc"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "4b877bcf39456ae61aa2c8c9f39c725ea3c0ceb15ea1545bb303f0ba17105581"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "f5a75887dac274c00d0461c8a86dce6442f49a1e3599a88ab9c895bc0830e7d4"
-    sha256 cellar: :any_skip_relocation, sonoma:         "0e78012c7147a61f1f9e8787842d22ed098332b64893aa519fe00e1812082fbb"
-    sha256 cellar: :any_skip_relocation, ventura:        "3a80604532c91626de497391ebd515b618428a3bd54e5aaf18cb307579696599"
-    sha256 cellar: :any_skip_relocation, monterey:       "d505f85d42bf600630ddcad5f435f6a5165e68b47b08b450e1f0e33229b16850"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "2bd122a559c551a123c20b05d58fc219be181d07079534f2ac800913f9de7d9d"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "728c3386ec7bd017a34babadc96370b47a0eb4a9756a950cf0c2acc810bab034"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "c8bfee9875312e88092509e7f45326312f341f99da29d6568e36e96145f1ad39"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "95f1d38db12a9d94c316bd91cf96d36dfc29b1090dee086dcf56444b1c56326c"
+    sha256 cellar: :any_skip_relocation, sonoma:        "92d259585ce0d1fe70c20526a227d73532a7a9547127d5b2ca86cf041a263b3b"
+    sha256 cellar: :any_skip_relocation, ventura:       "8df48e6967ddd333b5fbd49498cd412cdbc7026e04fde18e5e740e165641f1b7"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "8606e19315e4e90e562865e6f3c9c2e9420c855a5250d1a47b227780fae0c8cb"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0759f7698a899a653162f55a54b7f3d416b3d13f35c28362d9c95d40d50ea512"
   end
 
   depends_on "cmake" => :build
-  depends_on "python@3.12" => :build
 
   uses_from_macos "llvm" => [:build, :test]
+  uses_from_macos "python" => :build
   uses_from_macos "zlib"
 
   # We use LLVM to work around an error while building bundled `google-benchmark` with GCC
   fails_with :gcc do
-    cause <<-EOS
+    cause <<~EOS
       .../src/gbenchmark/src/thread_manager.h:50:31: error: expected ')' before '(' token
          50 |   GUARDED_BY(GetBenchmarkMutex()) Result results;
             |                               ^
@@ -50,11 +49,11 @@ class Ponyc < Formula
 
     system bin/"ponyc", "-rexpr", "#{prefix}/packages/stdlib"
 
-    (testpath/"test/main.pony").write <<~EOS
+    (testpath/"test/main.pony").write <<~PONY
       actor Main
         new create(env: Env) =>
           env.out.print("Hello World!")
-    EOS
+    PONY
     system bin/"ponyc", "test"
     assert_equal "Hello World!", shell_output("./test1").strip
   end

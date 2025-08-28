@@ -1,10 +1,11 @@
 class Dnscontrol < Formula
   desc "Synchronize your DNS to multiple providers from a simple DSL"
   homepage "https://dnscontrol.org/"
-  url "https://github.com/StackExchange/dnscontrol/archive/refs/tags/v4.13.0.tar.gz"
-  sha256 "5bce728448666a05175c8c5ecb7d33f13ab1a4d38d8ea251165d78e0133ce0ec"
+  url "https://github.com/StackExchange/dnscontrol/archive/refs/tags/v4.23.0.tar.gz"
+  sha256 "f21b54499ad4e1b15008a385467b10681f406cef3c8bfac6c980f26ce199b899"
   license "MIT"
   version_scheme 1
+  head "https://github.com/StackExchange/dnscontrol.git", branch: "main"
 
   # Upstream appears to use GitHub releases to indicate that a version is
   # released and they sometimes re-tag versions before that point, so it's
@@ -15,20 +16,22 @@ class Dnscontrol < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "87dac3ced43d131d8b2aa6e1edc6ca74c46dbae1bebbd1ccfc6490f89e42051c"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "541405680d7c2d82245756c5cdb277bf0adcf406dcc126474cd16dd82931fb38"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "541405680d7c2d82245756c5cdb277bf0adcf406dcc126474cd16dd82931fb38"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "541405680d7c2d82245756c5cdb277bf0adcf406dcc126474cd16dd82931fb38"
-    sha256 cellar: :any_skip_relocation, sonoma:         "cd26db7181c11946153f4928ae579489e04c2d838b0e9395123bd770d79ec5f9"
-    sha256 cellar: :any_skip_relocation, ventura:        "cd26db7181c11946153f4928ae579489e04c2d838b0e9395123bd770d79ec5f9"
-    sha256 cellar: :any_skip_relocation, monterey:       "cd26db7181c11946153f4928ae579489e04c2d838b0e9395123bd770d79ec5f9"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "2fd903ed1a05ef2e91e9960a5a121a16ca8b3b96eff287b226dcc37170a7b3e0"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "711c727955516669b871a6754d1a2171cf96435e4c3ca0eb9afffe32bffa2054"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "711c727955516669b871a6754d1a2171cf96435e4c3ca0eb9afffe32bffa2054"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "711c727955516669b871a6754d1a2171cf96435e4c3ca0eb9afffe32bffa2054"
+    sha256 cellar: :any_skip_relocation, sonoma:        "fc3357190fdb8e8c45e66ad3e246099a3865e8c421178ef670aaca8649260d52"
+    sha256 cellar: :any_skip_relocation, ventura:       "fc3357190fdb8e8c45e66ad3e246099a3865e8c421178ef670aaca8649260d52"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a637b2d061bd47348f46cc3c776115b779c79117b257d75d8ddbabf06ea9b715"
   end
 
   depends_on "go" => :build
 
   def install
-    system "go", "build", *std_go_args(ldflags: "-s -w -X main.version=#{version}")
+    ldflags = %W[
+      -s -w
+      -X github.com/StackExchange/dnscontrol/v4/pkg/version.version=#{version}
+    ]
+    system "go", "build", *std_go_args(ldflags: ldflags)
 
     generate_completions_from_executable(bin/"dnscontrol", "shell-completion", shells: [:bash, :zsh])
   end
@@ -41,7 +44,7 @@ class Dnscontrol < Formula
     version_output = shell_output("#{bin}/dnscontrol version")
     assert_match version.to_s, version_output
 
-    (testpath/"dnsconfig.js").write <<~EOS
+    (testpath/"dnsconfig.js").write <<~JS
       var namecom = NewRegistrar("name.com", "NAMEDOTCOM");
       var r53 = NewDnsProvider("r53", "ROUTE53")
 
@@ -51,7 +54,7 @@ class Dnscontrol < Formula
         MX("@",5,"mail.myserver.com."),
         A("test", "5.6.7.8")
       )
-    EOS
+    JS
 
     output = shell_output("#{bin}/dnscontrol check #{testpath}/dnsconfig.js 2>&1").strip
     assert_equal "No errors.", output

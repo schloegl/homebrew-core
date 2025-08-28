@@ -1,14 +1,17 @@
 class WhisperkitCli < Formula
   desc "Swift native on-device speech recognition with Whisper for Apple Silicon"
   homepage "https://github.com/argmaxinc/WhisperKit"
-  url "https://github.com/argmaxinc/WhisperKit/archive/refs/tags/v0.8.0.tar.gz"
-  sha256 "055fccb2cab1389f042ad5d78e6fc4eb42e552ca24e1de5a173b3fada3094427"
+  url "https://github.com/argmaxinc/WhisperKit/archive/refs/tags/v0.13.1.tar.gz"
+  sha256 "186600da0038054635ff858aef0d72538a66ad4f1811ae389fffcba8759ea6b6"
   license "MIT"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "a69ae22e2fc69dfa1d66e320b4dcbe378d785cd200a93c3ab2b6f453bb6ebdd6"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "23bc8f711859a9d8d5cab52bf66e1da146740e1ecf8df1726d5be613d371de17"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "17836c7fcd2e3ef3fd5069c51f1ce245d85b6b9a33f0efad33eb764ae712bdbc"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "8ab170b6fd0d99af4435934c4ed06e07b9bd1950035f5888600908f96590b5b8"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "b3985647397b24c65464d0922e0b191c521bb3bcb76b45b1c508c913d886520f"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "5746ea1fe95734344e996862ff6bffcbf17d3e8da862e294ac6a69d8b6e80491"
   end
 
   depends_on xcode: ["15.0", :build]
@@ -21,6 +24,7 @@ class WhisperkitCli < Formula
   def install
     system "swift", "build", "-c", "release", "--product", "whisperkit-cli", "--disable-sandbox"
     bin.install ".build/release/whisperkit-cli"
+    generate_completions_from_executable(bin/"whisperkit-cli", "--generate-completion-script")
   end
 
   test do

@@ -6,6 +6,8 @@ class Servus < Formula
       revision: "170bd93dbdd6c0dd80cf4dfc5926590cc5cef5ab"
   license "LGPL-3.0-only"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     sha256 cellar: :any,                 arm64_sequoia:  "e4e1dc29b490f71552d5037b7eec4b049884e7ab5942f543fc65392f856f6ce0"
     sha256 cellar: :any,                 arm64_sonoma:   "1ca10abd68ab48408bc5d5db44e2512345ceab9ba48765c61f6ac2079268dcb5"
@@ -20,6 +22,7 @@ class Servus < Formula
     sha256 cellar: :any,                 mojave:         "65921c797c3a2bf7953cf692dee5852de3fd6c2b2466268221a9dfcb7eab960e"
     sha256 cellar: :any,                 high_sierra:    "763042d70e605154698d686554d26f6bab46f30200df8a8c3af9c40faeffca64"
     sha256 cellar: :any,                 sierra:         "bcfa24ee0545c044c32391ac72d54a5151de64170c777409163c0688cd9bf671"
+    sha256 cellar: :any_skip_relocation, arm64_linux:    "eeb97d385641030178dc69f111e80af9c20ed5900aa48083006426755c1fed67"
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "f36a572c2f9e4f6bb483e11b286ce99c37c4e45a3028a196478d6e9ccaedcb99"
   end
 
@@ -40,7 +43,7 @@ class Servus < Formula
 
   test do
     # Embed "serializeable" test from the servus 1.5.0 source
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #define BOOST_TEST_MODULE servus_serializable
       #include <boost/test/unit_test.hpp>
 
@@ -129,7 +132,7 @@ class Servus < Formula
           // default toJson (unimplemented)
           BOOST_CHECK_THROW( obj.toJSON(), std::runtime_error );
       }
-    EOS
+    CPP
     system ENV.cxx, "test.cpp", "-L#{lib}", "-lServus", "-DBOOST_TEST_DYN_LINK",
                     "-L#{Formula["boost"].opt_lib}", "-lboost_unit_test_framework",
                     "-std=gnu++11", "-o", "test"

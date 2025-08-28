@@ -1,8 +1,8 @@
 class PostgresqlAT16 < Formula
   desc "Object-relational database system"
   homepage "https://www.postgresql.org/"
-  url "https://ftp.postgresql.org/pub/source/v16.4/postgresql-16.4.tar.bz2"
-  sha256 "971766d645aa73e93b9ef4e3be44201b4f45b5477095b049125403f9f3386d6f"
+  url "https://ftp.postgresql.org/pub/source/v16.10/postgresql-16.10.tar.bz2"
+  sha256 "de8485f4ce9c32e3ddfeef0b7c261eed1cecb54c9bcd170e437ff454cb292b42"
   license "PostgreSQL"
 
   livecheck do
@@ -11,13 +11,13 @@ class PostgresqlAT16 < Formula
   end
 
   bottle do
-    rebuild 1
-    sha256 arm64_sequoia: "d85c76e860dc3e9692dc0f4d9395991a58e39dd7288c4064fce6c391c5cd84a5"
-    sha256 arm64_sonoma:  "cf05a74d7addb6799bac986316effcf6010433e208ac2cd39284e8a528bced69"
-    sha256 arm64_ventura: "f31b799a17b53445862ef0f784e28a66135ded3e8aaa21655971d7f27e35a148"
-    sha256 sonoma:        "e1372362de99bb0d1b84c9e6cd24828627cd3ef772b5d9fa622d854882298f19"
-    sha256 ventura:       "9781582ab63ffd87dca2577fa853facf2e8d395f0dac9613ee99bb71238f6d55"
-    sha256 x86_64_linux:  "8a6c3da64cc15bf954737497075db8631843323e4addbe9ecae2455bb154f3a7"
+    sha256 arm64_sequoia: "b6e8f2ffba3864fa850098012c06985070fa072dd064556fced474f75c4675b7"
+    sha256 arm64_sonoma:  "9c51fc08440834e4b03ef316bdc34426ffe0aeca236f988d57a24ff66839abaf"
+    sha256 arm64_ventura: "f88f749d44840fd98f2d88887f548838acece0b91c891f663d59eeb8c549c053"
+    sha256 sonoma:        "a1cc1df73310d916c89ed9afbfde368b956aa478c92d8e8d56d5229607ce3b24"
+    sha256 ventura:       "066c486cc8b5152bbaca2d4fa77dee0403027034f13ba85b286940c9be24ae00"
+    sha256 arm64_linux:   "7420ab73a9df69821c2db9c89b948f29b7dad91d980af4c31f3a6a980a04c3f8"
+    sha256 x86_64_linux:  "9084b252efa4f2f605c8188de44078b340a8d4bed1624503ae69847eb3f7d3f1"
   end
 
   keg_only :versioned_formula
@@ -26,8 +26,8 @@ class PostgresqlAT16 < Formula
   deprecate! date: "2028-11-09", because: :unsupported
 
   depends_on "gettext" => :build
-  depends_on "pkg-config" => :build
-  depends_on "icu4c"
+  depends_on "pkgconf" => :build
+  depends_on "icu4c@77"
 
   # GSSAPI provided by Kerberos.framework crashes when forked.
   # See https://github.com/Homebrew/homebrew-core/issues/47494.
@@ -54,19 +54,20 @@ class PostgresqlAT16 < Formula
   end
 
   def install
+    ENV.runtime_cpu_detection
     ENV.delete "PKG_CONFIG_LIBDIR"
     ENV.prepend "LDFLAGS", "-L#{Formula["openssl@3"].opt_lib} -L#{Formula["readline"].opt_lib}"
     ENV.prepend "CPPFLAGS", "-I#{Formula["openssl@3"].opt_include} -I#{Formula["readline"].opt_include}"
 
     # Fix 'libintl.h' file not found for extensions
+    # Update config to fix `error: could not find function 'gss_store_cred_into' required for GSSAPI`
     if OS.mac?
-      ENV.prepend "LDFLAGS", "-L#{Formula["gettext"].opt_lib}"
-      ENV.prepend "CPPFLAGS", "-I#{Formula["gettext"].opt_include}"
+      ENV.prepend "LDFLAGS", "-L#{Formula["gettext"].opt_lib} -L#{Formula["krb5"].opt_lib}"
+      ENV.prepend "CPPFLAGS", "-I#{Formula["gettext"].opt_include} -I#{Formula["krb5"].opt_include}"
     end
 
-    args = std_configure_args + %W[
+    args = %W[
       --datadir=#{opt_pkgshare}
-      --libdir=#{opt_lib}
       --includedir=#{opt_include}
       --sysconfdir=#{etc}
       --docdir=#{doc}
@@ -83,15 +84,15 @@ class PostgresqlAT16 < Formula
       --with-pam
       --with-perl
       --with-uuid=e2fs
-      --with-extra-version=\ (#{tap.user})
     ]
+    args << "--with-extra-version= (#{tap.user})" if tap
     args += %w[--with-bonjour --with-tcl] if OS.mac?
 
     # PostgreSQL by default uses xcodebuild internally to determine this,
     # which does not work on CLT-only installs.
     args << "PG_SYSROOT=#{MacOS.sdk_path}" if OS.mac? && MacOS.sdk_root_needed?
 
-    system "./configure", *args
+    system "./configure", *args, *std_configure_args(libdir: opt_lib)
 
     # Work around busted path magic in Makefile.global.in. This can't be specified
     # in ./configure, but needs to be set here otherwise install prefixes containing

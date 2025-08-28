@@ -1,8 +1,8 @@
 class NatsServer < Formula
   desc "Lightweight cloud messaging system"
   homepage "https://nats.io"
-  url "https://github.com/nats-io/nats-server/archive/refs/tags/v2.10.21.tar.gz"
-  sha256 "660d5ed95e920377ea26bd23795921ce881816a0ad8a70238de230d44f11f330"
+  url "https://github.com/nats-io/nats-server/archive/refs/tags/v2.11.8.tar.gz"
+  sha256 "957ec915c35f232ecb497e9f744a8c0948a187a049d4ad1ecf00ae2bfa763650"
   license "Apache-2.0"
   head "https://github.com/nats-io/nats-server.git", branch: "main"
 
@@ -12,12 +12,12 @@ class NatsServer < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "89b46431ed0df1f68b75bbc0e1d1cf98aa98fb14d7871dd38abc7bb9348472a0"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "89b46431ed0df1f68b75bbc0e1d1cf98aa98fb14d7871dd38abc7bb9348472a0"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "89b46431ed0df1f68b75bbc0e1d1cf98aa98fb14d7871dd38abc7bb9348472a0"
-    sha256 cellar: :any_skip_relocation, sonoma:        "7dbf27e32359dc71bd240a6eff48145b80fb035a07872962cf7b4debf95d7c8e"
-    sha256 cellar: :any_skip_relocation, ventura:       "7dbf27e32359dc71bd240a6eff48145b80fb035a07872962cf7b4debf95d7c8e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b0bb3330c98fe780a9bbece94c45c342557a5639995f70199f3fa339a44b9aa5"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "559341196f642d954edf78259bdbf970ff9ab01e030ff9dba2415715e38a4e48"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "559341196f642d954edf78259bdbf970ff9ab01e030ff9dba2415715e38a4e48"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "559341196f642d954edf78259bdbf970ff9ab01e030ff9dba2415715e38a4e48"
+    sha256 cellar: :any_skip_relocation, sonoma:        "94b90a1dbf397109099261b25ec2c6f134ce2c8e042515a29645a1be7499c336"
+    sha256 cellar: :any_skip_relocation, ventura:       "94b90a1dbf397109099261b25ec2c6f134ce2c8e042515a29645a1be7499c336"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "991e4c44576280b91f95dbaf85a5bf6cf467892fe7cd16a19f1fe10a1471d141"
   end
 
   depends_on "go" => :build
@@ -43,6 +43,6 @@ class NatsServer < Formula
     sleep 3
 
     assert_match version.to_s, shell_output("curl localhost:#{http_port}/varz")
-    assert_predicate testpath/"log", :exist?
+    assert_path_exists testpath/"log"
   end
 end

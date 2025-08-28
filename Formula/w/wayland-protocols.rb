@@ -1,8 +1,8 @@
 class WaylandProtocols < Formula
   desc "Additional Wayland protocols"
   homepage "https://wayland.freedesktop.org"
-  url "https://gitlab.freedesktop.org/wayland/wayland-protocols/-/releases/1.37/downloads/wayland-protocols-1.37.tar.xz"
-  sha256 "a70e9be924f2e8688e6824dceaf6188faacd5ae218dfac8d0a3d0976211ef326"
+  url "https://gitlab.freedesktop.org/wayland/wayland-protocols/-/releases/1.45/downloads/wayland-protocols-1.45.tar.xz"
+  sha256 "4d2b2a9e3e099d017dc8107bf1c334d27bb87d9e4aff19a0c8d856d17cd41ef0"
   license "MIT"
 
   livecheck do
@@ -11,13 +11,14 @@ class WaylandProtocols < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "54a22a7c7074b2100eb63e4949db7720214b523360b3de656153fc8af84810ee"
+    sha256 cellar: :any_skip_relocation, all: "afe1730248430bc5c6c687baac7a08ad0c093d7e03aa4252d9aab7190f24a0a4"
   end
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :test
+  depends_on "pkgconf" => [:build, :test]
   depends_on :linux
+  depends_on "wayland"
 
   def install
     system "meson", "setup", "build", "-Dtests=false", *std_meson_args

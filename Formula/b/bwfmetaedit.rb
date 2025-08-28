@@ -1,8 +1,8 @@
 class Bwfmetaedit < Formula
   desc "Tool for embedding, validating, and exporting BWF file metadata"
   homepage "https://mediaarea.net/BWFMetaEdit"
-  url "https://mediaarea.net/download/binary/bwfmetaedit/24.05/BWFMetaEdit_CLI_24.05_GNU_FromSource.tar.bz2"
-  sha256 "49b5859e5d86c226e2b0bef5d3f9ef0067112ab676fa8a819be1b2fff89cffac"
+  url "https://mediaarea.net/download/binary/bwfmetaedit/25.04.1/BWFMetaEdit_CLI_25.04.1_GNU_FromSource.tar.xz"
+  sha256 "9a8830c32e561b2bac0467413de5d75d3853b7afdbbc8b830cbe6b4eb075c1b5"
   license "0BSD"
 
   livecheck do
@@ -11,14 +11,13 @@ class Bwfmetaedit < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "0ec66bc1c55cc155e8d48c5a73f09d4c3e597ee9845bbd698ed1df626d7a370a"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "8923efd65e8d09b5d297648b94665b530fdee5d0091948f40214d792cb45c14c"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "35a846103984bc8d126e54a61690d01d224df191a33d4f2e602b627ab121e023"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "d3bbf06b72fe36ee260fa864b59215056da9302671ceb33f0f9c0e10f0d66f2a"
-    sha256 cellar: :any_skip_relocation, sonoma:         "26a56475834d162048d1e8cc1560df52c2a8c5b1488c64fa6c47322784d3287a"
-    sha256 cellar: :any_skip_relocation, ventura:        "041c8f958fc607d9c480a93914337f66a3cac938279af2db7a6f439916e2c184"
-    sha256 cellar: :any_skip_relocation, monterey:       "11086679000fdea51d861409c3fc44939284ddbf06d8f7e9db76449ed6293896"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "fe3e85bb878b941e59a20d830bc09489f586eda0b7e9b09f719fd8984ab57f60"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "d85b31fff2a4763c289f8152dcceb7e37ed12a9049c9c373e569dab3ccf787cf"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "71765c38e82677ee12feadb978f5ef2cbeebdb02804341066ddc22dd06ca7238"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "b18ba9f78bd452fb382de7852b066c28bc34049aa5a7158478dadfa6fae469f1"
+    sha256 cellar: :any_skip_relocation, sonoma:        "c0093ca11665ba05239cd1f85a9d6e1a1cf41ea0e0bc8c685de456c53d713939"
+    sha256 cellar: :any_skip_relocation, ventura:       "efe96dc3b69b7704fd8cd1f0722913c27fac7c6a92c2fecd4c5c8c9a3d243006"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "738627e85ae70d8e6fdd20fe07959c2406270b19bab59c2cec493830245941ed"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1ab0427146edc6638cd7bdc09f485ca1108e3fd89230407db72c1d27005bacf8"
   end
 
   def install
@@ -32,7 +31,7 @@ class Bwfmetaedit < Formula
     test_wav = test_fixtures("test.wav")
     ret_status = OS.mac? ? 1 : 0
     output = shell_output("#{bin}/bwfmetaedit --out-tech #{test_wav} 2>&1", ret_status)
-    assert_match "FileName,FileSize,Format,CodecID,Channels,SampleRate,BitRate", output
+    assert_match "FileName,FileSize,DateCreated,DateModified,Format,CodecID,Channels,SampleRate,BitRate", output
     assert_match "#{test_wav}: Is read only", output if OS.mac?
   end
 end

@@ -1,8 +1,8 @@
 class Autogen < Formula
   desc "Automated text file generator"
   homepage "https://autogen.sourceforge.net/"
-  url "https://ftp.gnu.org/gnu/autogen/rel5.18.16/autogen-5.18.16.tar.xz"
-  mirror "https://ftpmirror.gnu.org/autogen/rel5.18.16/autogen-5.18.16.tar.xz"
+  url "https://ftpmirror.gnu.org/gnu/autogen/rel5.18.16/autogen-5.18.16.tar.xz"
+  mirror "https://ftp.gnu.org/gnu/autogen/rel5.18.16/autogen-5.18.16.tar.xz"
   sha256 "f8a13466b48faa3ba99fe17a069e71c9ab006d9b1cfabe699f8c60a47d5bb49a"
   license "GPL-3.0-or-later"
   revision 2
@@ -11,6 +11,8 @@ class Autogen < Formula
     url :stable
     regex(%r{href=.*?rel(\d+(?:\.\d+)+)/?["' >]}i)
   end
+
+  no_autobump! because: :requires_manual_review
 
   bottle do
     sha256 arm64_sequoia:  "6e840d15bd4394ae8d7896f12bc04d5531f182dd9b21c855b2d5752cf1f3fce7"
@@ -23,11 +25,12 @@ class Autogen < Formula
     sha256 monterey:       "ed4a28138185633424aa705f44e1449e5706c40f055b0e86fc58008f7400f0d7"
     sha256 big_sur:        "a26ab2c3665e3fabb1a3b3ca20f52b0e1ee0c4a0ccd12beea3af97b73d347690"
     sha256 catalina:       "45b3f716163b29ab1aab05aa9fbcf9e53bcee5c815b505165c52e80d9fa9234c"
+    sha256 arm64_linux:    "1aa11356e7c39b6c92fac2a616a062030c3d729b7a333eadd37cad14922c1e59"
     sha256 x86_64_linux:   "1f564be58133732a4c9a380c85da6cc27dfe1b465c0a29c136c1a7ccb470a105"
   end
 
   depends_on "coreutils" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "guile"
 

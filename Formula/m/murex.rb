@@ -1,18 +1,23 @@
 class Murex < Formula
   desc "Bash-like shell designed for greater command-line productivity and safer scripts"
   homepage "https://murex.rocks"
-  url "https://github.com/lmorg/murex/archive/refs/tags/v6.3.4225.tar.gz"
-  sha256 "2b727bd89c63a50531294d06e1c59e5b120b312bd1877b8803083e301ac8980f"
+  url "https://github.com/lmorg/murex/archive/refs/tags/v7.0.2107.tar.gz"
+  sha256 "b1abdd6e28be3e4c62f0690c50658e6a823788dcf704707e0e652ba1d80cd4a7"
   license "GPL-2.0-only"
   head "https://github.com/lmorg/murex.git", branch: "master"
 
+  livecheck do
+    url :stable
+    strategy :github_latest
+  end
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "a4c4ef7ed09b6c0efb8d14fec040dfcc7359af32ff5939ee1baefd64f297d74e"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "a4c4ef7ed09b6c0efb8d14fec040dfcc7359af32ff5939ee1baefd64f297d74e"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "a4c4ef7ed09b6c0efb8d14fec040dfcc7359af32ff5939ee1baefd64f297d74e"
-    sha256 cellar: :any_skip_relocation, sonoma:        "23b4099bee3d31f8a05f43cf232e12db66248203f428da46cd152ec0928e89df"
-    sha256 cellar: :any_skip_relocation, ventura:       "23b4099bee3d31f8a05f43cf232e12db66248203f428da46cd152ec0928e89df"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7ae9bcc3d28134407e5f9d51ac0677f7b78e496d08efb8facf1fd741feffab2f"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "6fb444e047917a8161518848784d9f5ae58462c6b2ddf8774d842c25b92670f2"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "6fb444e047917a8161518848784d9f5ae58462c6b2ddf8774d842c25b92670f2"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "6fb444e047917a8161518848784d9f5ae58462c6b2ddf8774d842c25b92670f2"
+    sha256 cellar: :any_skip_relocation, sonoma:        "589457c8c7503101910ae5b0ec181ed09d58e4e6d076d4dd66838d06ccdbee8e"
+    sha256 cellar: :any_skip_relocation, ventura:       "589457c8c7503101910ae5b0ec181ed09d58e4e6d076d4dd66838d06ccdbee8e"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a4b0ae3c7eea4d5da28c711a84cce0fe4401a368f0cd64157bb62211e5acf002"
   end
 
   depends_on "go" => :build

@@ -2,9 +2,9 @@ class PhpAT81 < Formula
   desc "General-purpose scripting language"
   homepage "https://www.php.net/"
   # Should only be updated if the new version is announced on the homepage, https://www.php.net/
-  url "https://www.php.net/distributions/php-8.1.29.tar.xz"
-  mirror "https://fossies.org/linux/www/php-8.1.29.tar.xz"
-  sha256 "288884af60581d4284baba2ace9ca6d646f72facbd3e3c2dd2acc7fe6f903536"
+  url "https://www.php.net/distributions/php-8.1.33.tar.xz"
+  mirror "https://fossies.org/linux/www/php-8.1.33.tar.xz"
+  sha256 "9db83bf4590375562bc1a10b353cccbcf9fcfc56c58b7c8fb814e6865bb928d1"
   license "PHP-3.01"
 
   livecheck do
@@ -13,14 +13,14 @@ class PhpAT81 < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "417d09206aea63569ff7e4c5e7c670f29fce5afbe48aef61f8200721b1c5fe32"
-    sha256 arm64_sonoma:   "9d16413bf0a809e34c40ee2bdf0245748a1980859ffaee4a9336b1f142854df5"
-    sha256 arm64_ventura:  "2aff1f476a667ab5149d733c12c9edbfbe7efea269d4f9692770604cf373583f"
-    sha256 arm64_monterey: "9d75391a871dc0f69fd0a8fb67d5c5c3985ca32a8f74f28d368d3a9ba007d647"
-    sha256 sonoma:         "55125769200c1fa1092e2066d9aafd71d9ccdf6081a5f77d3cf1d1ec9f2dc3fa"
-    sha256 ventura:        "2354d1821e8a948f4299a52626665799578032ed2da79417f5d2967b6236f8aa"
-    sha256 monterey:       "7fd6db41d052fac0dd11a60a297d03adb0d86d9b555b5a8a11048e6ab4581dd8"
-    sha256 x86_64_linux:   "f9b8c400b17157ad739167f0a79fafd5fdae79fad6971a13c3fac2b25cf5e945"
+    rebuild 1
+    sha256 arm64_sequoia: "6f6ae35e142a4b11928a612d7ca9be6ab21cbb723b0b24103c6a97ac04cec63a"
+    sha256 arm64_sonoma:  "c93f40c5f4251bfcc25acf44c5daded51b377c532becd392cc04175b9347c4a1"
+    sha256 arm64_ventura: "a9ac9cf22d5790294b9f43f77efcfabaa38ec606c014f3ac7e0a898afc54656f"
+    sha256 sonoma:        "25d08116e45de0c890d2b90fa1db8cdab2f538195210ef0003a27cfac654c231"
+    sha256 ventura:       "f33c39baedaa58170154efb36412d1de296e1c1e495151fded3b43ea2e909e4a"
+    sha256 arm64_linux:   "2ef104da5efe7cc6243d7ee81deef7d303c77025779ce26e9de734dfd8692cbd"
+    sha256 x86_64_linux:  "5a0b62e7c363091df2d0ac72360003531dbdc2ca4ddd0ded9b5250150ed4fbed"
   end
 
   keg_only :versioned_formula
@@ -30,7 +30,7 @@ class PhpAT81 < Formula
   deprecate! date: "2025-12-31", because: :unsupported
 
   depends_on "httpd" => [:build, :test]
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "apr"
   depends_on "apr-util"
   depends_on "argon2"
@@ -41,7 +41,7 @@ class PhpAT81 < Formula
   depends_on "gd"
   depends_on "gettext"
   depends_on "gmp"
-  depends_on "icu4c"
+  depends_on "icu4c@77"
   depends_on "krb5"
   depends_on "libpq"
   depends_on "libsodium"
@@ -69,6 +69,16 @@ class PhpAT81 < Formula
   end
 
   def install
+    # Backport fix for libxml2 >= 2.13
+    # Ref: https://github.com/php/php-src/commit/67259e451d5d58b4842776c5696a66d74e157609
+    inreplace "ext/xml/compat.c",
+              "!= XML_PARSER_ENTITY_VALUE && parser->parser->instate != XML_PARSER_ATTRIBUTE_VALUE)",
+              "== XML_PARSER_CONTENT)"
+
+    # Work around to support `icu4c` 75, which needs C++17.
+    # Can remove if upstream backports support into PHP 8.1
+    ENV["ICU_CXXFLAGS"] = "-std=c++17"
+
     # buildconf required due to system library linking bug patch
     system "./buildconf", "--force"
 
@@ -82,7 +92,7 @@ class PhpAT81 < Formula
 
       # apxs will interpolate the @ in the versioned prefix: https://bz.apache.org/bugzilla/show_bug.cgi?id=61944
       s.gsub! "LIBEXECDIR='$APXS_LIBEXECDIR'",
-              "LIBEXECDIR='" + "#{lib}/httpd/modules".gsub("@", "\\@") + "'"
+              "LIBEXECDIR='" + "#{lib}/httpd/modules".gsub("\\", "\\\\").gsub("@", "\\@") + "'"
     end
 
     # Update error message in apache sapi to better explain the requirements
@@ -104,6 +114,9 @@ class PhpAT81 < Formula
 
     # Prevent homebrew from hardcoding path to sed shim in phpize script
     ENV["lt_cv_path_SED"] = "sed"
+
+    # Identify build provider in phpinfo()
+    ENV["PHP_BUILD_PROVIDER"] = tap.user
 
     # system pkg-config missing
     ENV["KERBEROS_CFLAGS"] = " "
@@ -340,7 +353,7 @@ class PhpAT81 < Formula
     assert_includes (bin/"php").dynamically_linked_libraries,
                     (Formula["libpq"].opt_lib/shared_library("libpq", 5)).to_s
 
-    system "#{sbin}/php-fpm", "-t"
+    system sbin/"php-fpm", "-t"
     system bin/"phpdbg", "-V"
     system bin/"php-cgi", "-m"
     # Prevent SNMP extension to be added
@@ -351,11 +364,11 @@ class PhpAT81 < Formula
       port_fpm = free_port
 
       expected_output = /^Hello world!$/
-      (testpath/"index.php").write <<~EOS
+      (testpath/"index.php").write <<~PHP
         <?php
         echo 'Hello world!' . PHP_EOL;
         var_dump(ldap_connect());
-      EOS
+      PHP
       main_config = <<~EOS
         Listen #{port}
         ServerName localhost:#{port}
@@ -403,7 +416,7 @@ class PhpAT81 < Formula
       pid = fork do
         exec Formula["httpd"].opt_bin/"httpd", "-X", "-f", "#{testpath}/httpd.conf"
       end
-      sleep 3
+      sleep 10
 
       assert_match expected_output, shell_output("curl -s 127.0.0.1:#{port}")
 
@@ -416,7 +429,7 @@ class PhpAT81 < Formula
       pid = fork do
         exec Formula["httpd"].opt_bin/"httpd", "-X", "-f", "#{testpath}/httpd-fpm.conf"
       end
-      sleep 3
+      sleep 10
 
       assert_match expected_output, shell_output("curl -s 127.0.0.1:#{port}")
     ensure

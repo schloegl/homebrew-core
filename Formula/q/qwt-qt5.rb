@@ -9,6 +9,8 @@ class QwtQt5 < Formula
     formula "qwt"
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     sha256 cellar: :any,                 arm64_sequoia:  "92b1dc9c4e182b760312b9b520cc45ae9a236566ec0183bc6eea6e92ab874651"
     sha256 cellar: :any,                 arm64_sonoma:   "894d743586ad9e9dcbbb45f9448c6f2fc945aae526f50b2d17e2162b82527402"
@@ -22,9 +24,9 @@ class QwtQt5 < Formula
 
   keg_only "it conflicts with qwt"
 
-  depends_on "qt@5"
+  deprecate! date: "2026-05-19", because: "is for end-of-life Qt 5"
 
-  fails_with gcc: "5"
+  depends_on "qt@5"
 
   # Update designer plugin linking back to qwt framework/lib after install
   # See: https://sourceforge.net/p/qwt/patches/45/
@@ -56,13 +58,13 @@ class QwtQt5 < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <qwt_plot_curve.h>
       int main() {
         QwtPlotCurve *curve1 = new QwtPlotCurve("Curve 1");
         return (curve1 == NULL);
       }
-    EOS
+    CPP
     if OS.mac?
       system ENV.cxx, "test.cpp", "-o", "out",
         "-std=c++11",

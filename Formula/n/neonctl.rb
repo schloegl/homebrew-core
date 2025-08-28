@@ -1,17 +1,12 @@
 class Neonctl < Formula
   desc "Neon CLI tool"
   homepage "https://neon.tech/docs/reference/neon-cli"
-  url "https://registry.npmjs.org/neonctl/-/neonctl-1.37.0.tgz"
-  sha256 "f48ecc08b7b38332e25640856c6f6bbfea0558f70f01b997fce281dd167618be"
+  url "https://registry.npmjs.org/neonctl/-/neonctl-2.15.0.tgz"
+  sha256 "4e250428a1ecc0e56c32c88f8554b6f881325c4d884e87c2f835b61569a36e25"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "71c936c37b8f735354572e251b7373188d90e82b2e1df2301d4022216a36a232"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "71c936c37b8f735354572e251b7373188d90e82b2e1df2301d4022216a36a232"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "71c936c37b8f735354572e251b7373188d90e82b2e1df2301d4022216a36a232"
-    sha256 cellar: :any_skip_relocation, sonoma:        "5f540a384eea8b42489fe99b2be3c0d9e04155d0e6827b88e7d9ad2e0cce3c6f"
-    sha256 cellar: :any_skip_relocation, ventura:       "5f540a384eea8b42489fe99b2be3c0d9e04155d0e6827b88e7d9ad2e0cce3c6f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "71c936c37b8f735354572e251b7373188d90e82b2e1df2301d4022216a36a232"
+    sha256 cellar: :any_skip_relocation, all: "2f47ca954956a4d07e4af53aa4e283630f30c116b2a853323365fec15497828a"
   end
 
   depends_on "node"
@@ -21,7 +16,7 @@ class Neonctl < Formula
     bin.install_symlink Dir["#{libexec}/bin/*"]
 
     %w[neonctl neon].each do |cmd|
-      generate_completions_from_executable(bin/cmd, "completion", base_name: cmd, shells: [:bash, :zsh])
+      generate_completions_from_executable(bin/cmd, "completion", shells: [:bash, :zsh])
     end
   end
 

@@ -3,43 +3,42 @@ class CloudflareCli4 < Formula
 
   desc "CLI for Cloudflare API v4"
   homepage "https://github.com/cloudflare/python-cloudflare-cli4"
-  url "https://github.com/cloudflare/python-cloudflare-cli4/archive/refs/tags/2.19.4.tar.gz"
-  sha256 "7a3e9b71cad0a995d59b0c3e285e1cf16bd08d9998509f44d7c321abe803d22b"
+  url "https://files.pythonhosted.org/packages/77/fd/87b3e026dcee2a6b891f2b6c98b8f0bc98a175c4b731c046b528298c07c5/cloudflare_cli4-2.19.4.post3.tar.gz"
+  sha256 "36efe09d188678e8c99e654b79162758594107342d11f88192423aa47fd6c0b8"
   license "MIT"
-  revision 2
+  head "https://github.com/cloudflare/python-cloudflare-cli4.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "235fb1ef9534ad8431339509380f26f47f47389b42031db319e49e5011d46b3a"
-    sha256 cellar: :any,                 arm64_sonoma:   "66de81a8dd306d4dc04bb5dee08879db9c8ad1351eb0b768bb97c994b47152fe"
-    sha256 cellar: :any,                 arm64_ventura:  "6520d624bbbb28eb2df42f0f139c3852187c632d816ce26b8c08da8bd23cd31f"
-    sha256 cellar: :any,                 arm64_monterey: "47d70d8f2f118ce6dc9d075dbd5b7c99aaddb85f4dbf3ba9f4e366a1dc4ba4c9"
-    sha256 cellar: :any,                 sonoma:         "9785034a135f6e1b2f58ed3ccd4dd5e57927bf9ab81ed4f767b4f19345974783"
-    sha256 cellar: :any,                 ventura:        "0836c14d10d04e0bfe45f64e37fc446a1a46f067245258f055f9378f36781157"
-    sha256 cellar: :any,                 monterey:       "17ffd70ff252dcfb6710d66fe5f437803b87f3f84168e45c55b43af6d78e642c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "74fde110d3e7113590c2c952b024eff93c5f56a154a1234d1a4c455f01d21b88"
+    sha256 cellar: :any,                 arm64_sequoia: "a4ea671519a015aa1461a55902277b9ffe90fb3cb135ec0f5b0c85d454319edb"
+    sha256 cellar: :any,                 arm64_sonoma:  "07a144a0eff0274b0b0d22c7df614c3118b0b7ae6b84fd2ee96837d70d446538"
+    sha256 cellar: :any,                 arm64_ventura: "448ecdbfa0f9c227df6645aaf4b857003fe96cf8e46d0fb57818704a4d99d631"
+    sha256 cellar: :any,                 sonoma:        "cc7bb5f7a61c6a33140bd91c71513b6e6e4eee349d251764566ccf360a23b83e"
+    sha256 cellar: :any,                 ventura:       "1a800d011cdc5aae6e81335e91cb870ba094169c0a4350fae600ac0a0c1a9853"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "fcb86705fe2897ed6d925c8e7e804c5fc927834d8cbb248fb7c20e20c693cd6c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "17868324b74f3fe0e33ad3dbdf455694ff3a93927b25b1cf75dd7bd138ba74eb"
   end
 
   depends_on "libyaml"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "attrs" do
-    url "https://files.pythonhosted.org/packages/e3/fc/f800d51204003fa8ae392c4e8278f256206e7a919b708eef054f5f4b650d/attrs-23.2.0.tar.gz"
-    sha256 "935dc3b529c262f6cf76e50877d35a4bd3c1de194fd41f47a2b7ae8f19971f30"
+    url "https://files.pythonhosted.org/packages/5a/b0/1367933a8532ee6ff8d63537de4f1177af4bff9f3e829baf7331f595bb24/attrs-25.3.0.tar.gz"
+    sha256 "75d7cefc7fb576747b2c81b4442d4d4a1ce0900973527c011d1030fd3bf4af1b"
   end
 
   resource "certifi" do
-    url "https://files.pythonhosted.org/packages/c2/02/a95f2b11e207f68bc64d7aae9666fed2e2b3f307748d5123dffb72a1bbea/certifi-2024.7.4.tar.gz"
-    sha256 "5a1e7645bc0ec61a09e26c36f6106dd4cf40c6db3a1fb6352b0244e7fb057c7b"
+    url "https://files.pythonhosted.org/packages/73/f7/f14b46d4bcd21092d7d3ccef689615220d8a08fb25e564b65d20738e672e/certifi-2025.6.15.tar.gz"
+    sha256 "d747aa5a8b9bbbb1bb8c22bb13e22bd1f18e9796defa16bab421f7f7a317323b"
   end
 
   resource "charset-normalizer" do
-    url "https://files.pythonhosted.org/packages/63/09/c1bc53dab74b1816a00d8d030de5bf98f724c52c1635e07681d312f20be8/charset-normalizer-3.3.2.tar.gz"
-    sha256 "f30c3cb33b24454a82faecaf01b19c18562b1e89558fb6c56de4d9118a032fd5"
+    url "https://files.pythonhosted.org/packages/e4/33/89c2ced2b67d1c2a61c19c6751aa8902d46ce3dacb23600a283619f5a12d/charset_normalizer-3.4.2.tar.gz"
+    sha256 "5baececa9ecba31eff645232d59845c07aa030f0c81ee70184a90d35099a0e63"
   end
 
   resource "idna" do
-    url "https://files.pythonhosted.org/packages/21/ed/f86a79a07470cb07819390452f178b3bef1d375f2ec021ecfc709fc7cf07/idna-3.7.tar.gz"
-    sha256 "028ff3aadf0609c1fd278d8ea3089299412a7a8b9bd005dd08b9f8285bcb5cfc"
+    url "https://files.pythonhosted.org/packages/f1/70/7703c29685631f5a7590aa73f1f1d3fa9a380e654b86af429e0934a32f7d/idna-3.10.tar.gz"
+    sha256 "12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9"
   end
 
   resource "jsonlines" do
@@ -48,18 +47,18 @@ class CloudflareCli4 < Formula
   end
 
   resource "pyyaml" do
-    url "https://files.pythonhosted.org/packages/cd/e5/af35f7ea75cf72f2cd079c95ee16797de7cd71f29ea7c68ae5ce7be1eda0/PyYAML-6.0.1.tar.gz"
-    sha256 "bfdf460b1736c775f2ba9f6a92bca30bc2095067b8a9d77876d1fad6cc3b4a43"
+    url "https://files.pythonhosted.org/packages/54/ed/79a089b6be93607fa5cdaedf301d7dfb23af5f25c398d5ead2525b063e17/pyyaml-6.0.2.tar.gz"
+    sha256 "d584d9ec91ad65861cc08d42e834324ef890a082e591037abe114850ff7bbc3e"
   end
 
   resource "requests" do
-    url "https://files.pythonhosted.org/packages/63/70/2bf7780ad2d390a8d301ad0b550f1581eadbd9a20f896afe06353c2a2913/requests-2.32.3.tar.gz"
-    sha256 "55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760"
+    url "https://files.pythonhosted.org/packages/e1/0a/929373653770d8a0d7ea76c37de6e41f11eb07559b103b1c02cafb3f7cf8/requests-2.32.4.tar.gz"
+    sha256 "27d0316682c8a29834d3264820024b62a36942083d52caf2f14c0591336d3422"
   end
 
   resource "urllib3" do
-    url "https://files.pythonhosted.org/packages/43/6d/fa469ae21497ddc8bc93e5877702dca7cb8f911e337aca7452b5724f1bb6/urllib3-2.2.2.tar.gz"
-    sha256 "dd505485549a7a552833da5e6063639d0d177c04f23bc3864e41e5dc5f612168"
+    url "https://files.pythonhosted.org/packages/15/22/9ee70a2574a4f4599c47dd506532914ce044817c7752a79b6a51286319bc/urllib3-2.5.0.tar.gz"
+    sha256 "3fc47733c7e419d4bc3f6b3dc2b4f890bb743906a30d56ba4a5bfa4bbff92760"
   end
 
   def install
@@ -77,6 +76,6 @@ class CloudflareCli4 < Formula
 
     output = shell_output("#{bin}/cli4 --profile Work /zones 2>&1", 1)
     assert_match "cli4: /zones - 6111 Invalid format for Authorization header", output
-    assert_match version.to_s, shell_output("#{bin}/cli4 --version 2>&1", 1)
+    assert_match version.major_minor_patch.to_s, shell_output("#{bin}/cli4 --version 2>&1", 1)
   end
 end

@@ -1,8 +1,8 @@
 class Botan < Formula
   desc "Cryptographic algorithms and formats library in C++"
   homepage "https://botan.randombit.net/"
-  url "https://botan.randombit.net/releases/Botan-3.5.0.tar.xz"
-  sha256 "67e8dae1ca2468d90de4e601c87d5f31ff492b38e8ab8bcbd02ddf7104ed8a9f"
+  url "https://botan.randombit.net/releases/Botan-3.9.0.tar.xz"
+  sha256 "8c3f284b58ddd42e8e43e9fa86a7129d87ea7c3f776a80d3da63ec20722b0883"
   license "BSD-2-Clause"
   head "https://github.com/randombit/botan.git", branch: "master"
 
@@ -12,19 +12,18 @@ class Botan < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "dc8310abe0f96336059827bcd80899a4587f7d497b20b55162fd087b07d3b05a"
-    sha256 arm64_sonoma:   "aa11c6a304090b87202a5dc2ab82b9b82ac761d505cddfa168d741bfea2ce728"
-    sha256 arm64_ventura:  "1c0262d4204807550d0d254d50239579e092c2fe2a3c605f0b18ca9460b199ab"
-    sha256 arm64_monterey: "eddaaff629f4803ad72d0a9b1c4337123f1f7855c442b43d1827448a8d86bbb5"
-    sha256 sonoma:         "5261549cf532913036283820da77d452cae2f549c3a61d924b7d988c64b7ad4b"
-    sha256 ventura:        "cdfa44fa31c62afcd083b4b77e7bd032fd53bd7ec40dfa4d9ee5a266e65ace01"
-    sha256 monterey:       "ae348e462be182f48e69f4182c59f883b55695c3052d4a21e4b9c73bdcb90f11"
-    sha256 x86_64_linux:   "eaa76f947d74ac3cd9501dc86d600214f5876388ebfb3ef675254e167d4f062f"
+    sha256 arm64_sequoia: "80a213f3f7a367421f573b1c800d301462c315262f4911e79ac4922020b5160d"
+    sha256 arm64_sonoma:  "d2a165badfa80afc40f78c91d43f1369e3c4f3028aa38f9673b9aba073ce6229"
+    sha256 arm64_ventura: "5dcd97b9a5a1e247895b073f8abed7347399e255b84485984eaf0a56a2fd60d8"
+    sha256 sonoma:        "ba9df5e7e02343af91895fb0c67babf29f66029945fd0947b5d6fed41576b421"
+    sha256 ventura:       "5771510c3bcd4d3516f917ca9769d804298c366f3381176aca32637cbfdf7def"
+    sha256 arm64_linux:   "b040893534e674ecc74de83979dd98e45a3ef5416bb74d03fab8779e5270d3d6"
+    sha256 x86_64_linux:  "c3c83864388e87c59ca19b6f411765b7d264bac735594a06963673456a498d03"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "ca-certificates"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "sqlite"
 
   uses_from_macos "bzip2"
@@ -39,10 +38,8 @@ class Botan < Formula
     cause "Requires C++20"
   end
 
-  fails_with gcc: "5"
-
   def python3
-    which("python3.12")
+    which("python3.13")
   end
 
   def install
@@ -61,7 +58,7 @@ class Botan < Formula
     if OS.mac? && DevelopmentTools.clang_build_version <= 1400
       ENV.llvm_clang
 
-      ldflags = %W[-L#{Formula["llvm"].opt_lib}/c++ -L#{Formula["llvm"].opt_lib} -lunwind]
+      ldflags = %W[-L#{Formula["llvm"].opt_lib}/c++ -L#{Formula["llvm"].opt_lib}/unwind -lunwind]
       args << "--ldflags=#{ldflags.join(" ")}"
     end
 
@@ -70,8 +67,9 @@ class Botan < Formula
   end
 
   test do
-    (testpath/"test.txt").write "Homebrew"
-    (testpath/"testout.txt").write shell_output("#{bin}/botan base64_enc test.txt")
-    assert_match "Homebrew", shell_output("#{bin}/botan base64_dec testout.txt")
+    text = "Homebrew"
+    base64_enc = pipe_output("#{bin}/botan base64_enc -", text)
+    refute_empty base64_enc
+    assert_equal text, pipe_output("#{bin}/botan base64_dec -", base64_enc).chomp
   end
 end

@@ -1,21 +1,22 @@
 class Eza < Formula
   desc "Modern, maintained replacement for ls"
   homepage "https://github.com/eza-community/eza"
-  url "https://github.com/eza-community/eza/archive/refs/tags/v0.20.0.tar.gz"
-  sha256 "e6c058b13aecbed9f037c0607f0df19bc0a3532fea14dacd0090878ed4bbfadc"
+  url "https://github.com/eza-community/eza/archive/refs/tags/v0.23.0.tar.gz"
+  sha256 "119973d58aef7490f6c553f818cfde142998f5e93205f53f94981a9631b50310"
   license "EUPL-1.2"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "788df3ac2e6a0db487ac7743cbc64f662a00be90a570848f351683b82ebde558"
-    sha256 cellar: :any,                 arm64_sonoma:  "0dfeea942dbc792bee505af642d39673bde9713b09ad0c537d524be3acd59ae1"
-    sha256 cellar: :any,                 arm64_ventura: "1b1c785be787ba5bc1b4836ed6e909d5e883461248af8269148f0452f45f9897"
-    sha256 cellar: :any,                 sonoma:        "5b2c564108b95b375e3f4bdf33e4c1248772b4cbe1736d370b00ca33157023c5"
-    sha256 cellar: :any,                 ventura:       "02a9bee00b362386e012e9d97cfba00c47ddb1bfed088ee270b58dda89b3854b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "6c1f776eff84d198d6225fad1326bc6faea25c3e616d58a8e6ff0075166cb065"
+    sha256 cellar: :any,                 arm64_sequoia: "40da5e7185a1e4569cc7b437fdfa98620fd916ac428b1c731c091612487d48a8"
+    sha256 cellar: :any,                 arm64_sonoma:  "ea4574483948c94cdb1a9448f2769ecc0675b73216b307528413284f37440902"
+    sha256 cellar: :any,                 arm64_ventura: "2384f655b0557ad14ab2ef716b3f1d73cbd2458a6bce7dc6850965b898c40f64"
+    sha256 cellar: :any,                 sonoma:        "e20d791b21015430d1a19fa26442886f4bbf42235e7f62ba7068c8fa05d73915"
+    sha256 cellar: :any,                 ventura:       "9b4dd504c1cbc14ee97ee1fafdfaca62b1b7d652f1c564db1d08428be181407b"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "4adcfafaeb000dfcfa8d40eb95642b76ecfc2e4b2492a3ffd2f5372a4ca7362f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "86d46c5aacd16ff102024477fb380d858c2b136cf834383e976cbeb2dfb644e6"
   end
 
   depends_on "pandoc" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
   depends_on "libgit2"
 
@@ -44,11 +45,13 @@ class Eza < Formula
   test do
     testfile = "test.txt"
     touch testfile
-    assert_match testfile, shell_output(bin/"eza")
+    # `eza` is broken when not passed a file or directory name.
+    # https://github.com/eza-community/eza/issues/1568
+    assert_match testfile, shell_output("#{bin}/eza #{testpath}")
 
     # Test git integration
     flags = "--long --git --no-permissions --no-filesize --no-user --no-time --color=never"
-    eza_output = proc { shell_output("#{bin}/eza #{flags}").lines.grep(/#{testfile}/).first.split.first }
+    eza_output = proc { shell_output("#{bin}/eza #{flags} #{testpath}").lines.grep(/#{testfile}/).first.split.first }
     system "git", "init"
     assert_equal "-N", eza_output.call
     system "git", "add", testfile

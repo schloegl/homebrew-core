@@ -1,8 +1,8 @@
 class Astyle < Formula
   desc "Source code beautifier for C, C++, C#, and Java"
   homepage "https://astyle.sourceforge.net/"
-  url "https://downloads.sourceforge.net/project/astyle/astyle/astyle%203.6/astyle-3.6.3.tar.bz2"
-  sha256 "10ed7c8f974ecce35c1778f1616f04ca93c3d3bfc1a017aa251396041b670efc"
+  url "https://downloads.sourceforge.net/project/astyle/astyle/astyle%203.6/astyle-3.6.12.tar.bz2"
+  sha256 "19deb06a1ab6e5010b96c281bae350560d9789cbc896e303f3610179832fd2be"
   license "MIT"
   head "https://svn.code.sf.net/p/astyle/code/trunk/AStyle"
 
@@ -12,12 +12,13 @@ class Astyle < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "ad536ea81692c30f9673464842af1bacd552c9f35c89182b115db0fbea8c8497"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "87f8e2164c3f59912f55821a8df67aced5825af66d0961ec30cccfc6a5e17961"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "2ec1e3d132175fd17977408f62eb9166ea074e15fb1f0fbbc265c5b27ccecc72"
-    sha256 cellar: :any_skip_relocation, sonoma:        "a6459362cf3206806ee923f68864b4fce93492be13df696a560cecaf4d2b423d"
-    sha256 cellar: :any_skip_relocation, ventura:       "e801e9bdac7a84fb385976f53cc80eab7cdfecebdadd6717141362c5b0f9901d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a57336148e71215a695ab72252b452300c3a55919094710fb35e40000189d6df"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "9ba21466e2b74f0caeacb8323c9e26a2da0b491427f2ec4cfc04e0998dcd4f5a"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "51ebe593acbfd976403e387505f7542ffd5679e2d243e21aba03ba6c8f13ab1e"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "0c5fc2fdd27d3b659ac886fbc371d0c3d78a0281b5f1de21c5da8d50417dbf77"
+    sha256 cellar: :any_skip_relocation, sonoma:        "f3026d6e7c8615c30b8b948fe15751833bf67cab757387d7329e4a952f82cfb6"
+    sha256 cellar: :any_skip_relocation, ventura:       "8214c647b65e4872bf7403797637a6773bdbd3e3b25e1e10671c9a5433f44e93"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "2080fb0d16c0b19eafcaa57c6c772bfe7bcd124ec68d7b8dc5e0103f9d2435c1"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "35bf4356d746dd9ca226830e14220749caf91305873abd3faaa07a35307a2f13"
   end
 
   depends_on "cmake" => :build
@@ -33,11 +34,11 @@ class Astyle < Formula
     (testpath/"test.c").write("int main(){return 0;}\n")
     system bin/"astyle", "--style=gnu", "--indent=spaces=4",
            "--lineend=linux", "#{testpath}/test.c"
-    assert_equal File.read("test.c"), <<~EOS
+    assert_equal File.read("test.c"), <<~C
       int main()
       {
           return 0;
       }
-    EOS
+    C
   end
 end

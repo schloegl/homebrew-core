@@ -1,24 +1,26 @@
 class Openexr < Formula
   desc "High dynamic-range image file format"
   homepage "https://www.openexr.com/"
-  url "https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/v3.2.4.tar.gz"
-  sha256 "81e6518f2c4656fdeaf18a018f135e96a96e7f66dbe1c1f05860dd94772176cc"
+  url "https://github.com/AcademySoftwareFoundation/openexr/archive/refs/tags/v3.3.5.tar.gz"
+  sha256 "cb0c88710c906c9bfc59027eb147e780d508c7be1a90b43af3ec9e3c2987b70d"
   license "BSD-3-Clause"
+  revision 1
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "c728f040633260155ac1d368eb7eea0a773f7b4c0ec1335e10c4a3e542724a62"
-    sha256 cellar: :any,                 arm64_sonoma:   "49b4acf727abd6a736d9d7cf8b38fe96ef3f89979523186ce4eb947d5478b772"
-    sha256 cellar: :any,                 arm64_ventura:  "690f103efb1ab0a421cc8c7aa4c0eb0c1715f3e35e26b05f54820bc7896c16ef"
-    sha256 cellar: :any,                 arm64_monterey: "eafdc1854757f9215568e38005d69884c3da63b23d62cc6496e95430d2713796"
-    sha256 cellar: :any,                 sonoma:         "e2d68cb84ae057f4323e7f52214ddb1c3db955a02db865acddcc8d41828ef445"
-    sha256 cellar: :any,                 ventura:        "893b120aee538446c12c39d819f2a56a54d4493558d6c6e339ef3f0f2a382607"
-    sha256 cellar: :any,                 monterey:       "bc8c4411b513c76de4c416642341c8f72b29a4fff10f0bcfc2c13c17ef899261"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "d7c839fd2991b3cc8a66a5e5fa6aa4d86e3d9621280d56b24219900c81ed7d1e"
+    sha256 cellar: :any,                 arm64_sequoia: "c59a119799ced17fd5981d534348afb90dd0110e7934e2a2d79b3c948c59fea2"
+    sha256 cellar: :any,                 arm64_sonoma:  "de0baf730922331986532b750a7226eeea2009c5dadabadba6520b8cd360438e"
+    sha256 cellar: :any,                 arm64_ventura: "b6c8fdf23bb94f2f92cc48ac59a23b14d9610dbe6b3d78c509f96922088dbb4c"
+    sha256 cellar: :any,                 sonoma:        "f9016ad319091e4e03c7321e6ab59653f0283a32ae838640f8c533f7261ea271"
+    sha256 cellar: :any,                 ventura:       "4ecf0e6f600189b94b42a804d9611215e0b748c3a0a6661d1b77e1c6be20674b"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "4a8af6ae4253bdf3859be5b2f9deae510d8ffe3448d3b6e92f47a56b4a7dd262"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d70159d15c712559ef5443867492f907626e2f8d44b3637cb7ddc2133e60b284"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
+
   depends_on "imath"
+  depends_on "libdeflate"
 
   uses_from_macos "zlib"
 

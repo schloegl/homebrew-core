@@ -1,32 +1,40 @@
 class Zk < Formula
   desc "Plain text note-taking assistant"
-  homepage "https://github.com/zk-org/zk"
-  url "https://github.com/zk-org/zk/archive/refs/tags/v0.14.1.tar.gz"
-  sha256 "563331e1f5a03b4dd3a4ff642cc205cc7b6c3c350c98f627a3273067e7ec234c"
+  homepage "https://zk-org.github.io/zk/"
+  url "https://github.com/zk-org/zk/archive/refs/tags/v0.15.1.tar.gz"
+  sha256 "1f30aae497476342203b3cecb63edd92faf4d837860a894fdee4b372184e9ec4"
   license "GPL-3.0-only"
   head "https://github.com/zk-org/zk.git", branch: "main"
 
+  livecheck do
+    url :stable
+    strategy :github_latest
+  end
+
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "2405c8988dcceb909725aa8fd369d6c8808b8edbef93d60329d8211debc0eb80"
-    sha256 cellar: :any,                 arm64_sonoma:   "f8f181e8d732eb66c3500a232cd4fb25f771b785389d97cf12f5095854529d10"
-    sha256 cellar: :any,                 arm64_ventura:  "f550a1c9d623334fc54b9fa6974b6c833cfc18f57dd0c7ddd0b7a6cb5d79530e"
-    sha256 cellar: :any,                 arm64_monterey: "f2d48a5156b155b59870c9251181083fbe13e0f3627ca0fab13ab51c26d1087e"
-    sha256 cellar: :any,                 sonoma:         "2b1a82574370f79a3eac0837da3356b69c5517a23bb0040360b10ff3c135c695"
-    sha256 cellar: :any,                 ventura:        "91ca091fdca2ae5ae2ada0b295abdd9620dd86ce1c8849287047debc5e91c305"
-    sha256 cellar: :any,                 monterey:       "d8509d21636464ed8a75267d2854a23fbdc48da7e9bb6d18083a3a52d45006c3"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "77fe3cd970ab00d1736d0eff5302d8b8a2e225fe6a16c1a977ed0745a7659358"
+    sha256 cellar: :any,                 arm64_sequoia: "e650bbd888c32d8bb28e2c2d2ae09499c4709f96001a3951df0b9e91437a659a"
+    sha256 cellar: :any,                 arm64_sonoma:  "239224f8f97ad8577bbb05c2960e5dbbca09ee785e77113a86ddb0cc07ca02e1"
+    sha256 cellar: :any,                 arm64_ventura: "d2fa155687a35473b7194340e0f2af26fdd2e65d08b34f9e047ca826d8cacbd4"
+    sha256 cellar: :any,                 sonoma:        "0370023af2526cce4d2b2a6a34be2fbcef84ca0c268cd16424e9bc60e04bf723"
+    sha256 cellar: :any,                 ventura:       "9bb03c28b2e2e21f33c12a9be43b6f00725d996fe4a6bafce68efebc1dc4a94b"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "fae5f1442ce7541f33cdfe8d629f630317819e05718d0a981c40aff92ef2c28e"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f37a821a7e156bc2c688a7fb144772eb0373476fee7e489a65d1eb80f009ab7a"
   end
 
   depends_on "go" => :build
 
-  depends_on "icu4c"
+  depends_on "icu4c@77"
   uses_from_macos "sqlite"
 
   def install
-    system "go", "build", *std_go_args(ldflags: "-X=main.Version=#{version} -X=main.Build=#{tap.user}"), "-tags", "fts5,icu"
+    ldflags = "-s -w -X main.Version=#{version} -X main.Build=#{tap.user}"
+    tags = %w[fts5 icu]
+    system "go", "build", *std_go_args(ldflags:, tags:)
   end
 
   test do
+    assert_match version.to_s, shell_output("#{bin}/zk --version")
+
     system bin/"zk", "init", "--no-input"
     system bin/"zk", "index", "--no-input"
     (testpath/"testnote.md").write "note content"

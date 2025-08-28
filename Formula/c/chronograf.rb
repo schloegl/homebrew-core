@@ -1,19 +1,18 @@
 class Chronograf < Formula
   desc "Open source monitoring and visualization UI for the TICK stack"
   homepage "https://docs.influxdata.com/chronograf/latest/"
-  url "https://github.com/influxdata/chronograf/archive/refs/tags/1.10.5.tar.gz"
-  sha256 "bd887b98d6fb5f7ce22a443a7a56f6705ad5ba4ad7eb969c9a6d89e115b07541"
+  url "https://github.com/influxdata/chronograf/archive/refs/tags/1.10.8.tar.gz"
+  sha256 "6bf4e5176d4b0f039c078c5c71a80a460813f6f40028c76828d35392cb4c2d02"
   license "AGPL-3.0-or-later"
   head "https://github.com/influxdata/chronograf.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "479ff3daf9e0210d42afe5715221e08ef27fbc115061a7a76679a9e0d8032ea3"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "e7c68f9bd678c75268354f29fca7dd9bdb99eafb1fa30d5aabcf0124d57c6cc4"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "f879489d6e407bacb32ad21833e69d9a1ba3d9c3e91486a87f0bb4a4d5f238f9"
-    sha256 cellar: :any_skip_relocation, sonoma:         "face2320a40e63960ec6961ad37b94e578a78c8eb1666958c7229537a7ad7dd0"
-    sha256 cellar: :any_skip_relocation, ventura:        "595d2b0e4c40cd4e1551c5b59a4c49e63b7b812a5e31720a548960ac88392ff1"
-    sha256 cellar: :any_skip_relocation, monterey:       "b511bbf276eeec195dd8004819008ef122e517b38818c6eb230d0f55d88b2cd2"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "29fb84d4eb87f377d640e5de2e57ffde59f03e20bc0b0b250371a79f45261f28"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "2aa264c77b7a1580f44f13fe423a5057a8cca42ed6c1681e65dd99ac673365f4"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "338e3d49164c033aff7aaacb29efa9f7c138f169c13bd7e7cc9c6ced32e8f986"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "ba7d5a5e977bc21bd5b38c992c9e662971edef12bfffdb564fe0aae14f85a325"
+    sha256 cellar: :any_skip_relocation, sonoma:        "2f4bc398a63f400a368e0ac15b5c76695fa4931d1a12cfeebdefeb8f2099ab41"
+    sha256 cellar: :any_skip_relocation, ventura:       "bf4bceda8fe5e269e3fb1e431afa340871ea7fbb6508fbef4e633b7cbf191231"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "dbb34f30e0bfcd31f6a12a844471439e68c0fa470f8d14eb70f01b0172e19944"
   end
 
   depends_on "go" => :build

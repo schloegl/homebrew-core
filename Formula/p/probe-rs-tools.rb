@@ -1,27 +1,33 @@
 class ProbeRsTools < Formula
   desc "Collection of on chip debugging tools to communicate with microchips"
   homepage "https://probe.rs"
-  url "https://github.com/probe-rs/probe-rs/archive/refs/tags/v0.24.0.tar.gz"
-  sha256 "8a7477a4b04b923ef2f46a91d5491d94e50a57259efef78d4c0800a4a46e4aee"
+  url "https://github.com/probe-rs/probe-rs/archive/refs/tags/v0.29.1.tar.gz"
+  sha256 "d0c7e8fe4d8b5795ba9cd3e7f09f91ae1373a3226f106ab09776ec6dc646b8ab"
   license "Apache-2.0"
   head "https://github.com/probe-rs/probe-rs.git", branch: "master"
 
+  livecheck do
+    url :stable
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
+  end
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "d84e0446b2ce2ff46054933885c58fecc607907233de2a8914e01ad91676a9d2"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "099d23a256deba345a765ef686d69f2a7c82f3ea6f733c3e00d788922dde1aaa"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "af610c338d9565acc2ab9f0784593574b336f90e7da589ab8d0c64f1d7c1a3e0"
-    sha256 cellar: :any_skip_relocation, sonoma:        "8ad63c7bf0a25744817ea1ab7275348736ef0add2725099192323845d3a798dc"
-    sha256 cellar: :any_skip_relocation, ventura:       "fb5c33cc19d727874515db05d72210f06f3f539dc6c13c9b1ceae7a716c426bb"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b0e4be3bbda804d9e0260fcc235cf8aa43fecc59f8f733332630f926360a8cd4"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "3fde0f0bed4c13c857911063d98b6b9c8212d0fe280fc9753530da3b6451c38f"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "454052b0ea56ce7ecfd8b6d6af56b976712e101ac36d479b6ae4c74cb99acaed"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "3e97cd23aa96e6f55f40d2d263c224ce18e7459fe9088e60849b227e8203cd67"
+    sha256 cellar: :any_skip_relocation, sonoma:        "1be8558aee7092643c05fd1e49a00b627ebb0769274e41fec1d98f970349e8ae"
+    sha256 cellar: :any_skip_relocation, ventura:       "1c55118312a569246707664ad50ef3b9e458aef9c5f274efe0e9dbe44c82cff9"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "67b571691b4c83c721e4052f1c492ea1c5a3459556cd407ab4ffeb01184ca6e5"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2fce905ac6d073af446579dd6ed094806b282ca56c6081222f20e949468867c7"
   end
 
   depends_on "cmake" => :build
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
 
   uses_from_macos "bzip2"
 
   on_linux do
-    depends_on "pkg-config" => :build
     depends_on "systemd" # for libudev
   end
 
@@ -30,8 +36,10 @@ class ProbeRsTools < Formula
   end
 
   test do
+    assert_match version.to_s, shell_output("#{bin}/probe-rs --version")
+
     output = shell_output("#{bin}/probe-rs chip list")
     assert_match "nRF52833_xxAA", output # micro:bit v2
-    assert_match "STM32F303VCTx", output # STM32F3DISCOVERY
+    assert_match "STM32F3 Series", output
   end
 end

@@ -1,8 +1,8 @@
 class RubyAT32 < Formula
   desc "Powerful, clean, object-oriented scripting language"
   homepage "https://www.ruby-lang.org/"
-  url "https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.5.tar.gz"
-  sha256 "ef0610b498f60fb5cfd77b51adb3c10f4ca8ed9a17cb87c61e5bea314ac34a16"
+  url "https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.9.tar.gz"
+  sha256 "abbad98db9aeb152773b0d35868e50003b8c467f3d06152577c4dfed9d88ed2a"
   license "Ruby"
 
   livecheck do
@@ -11,21 +11,20 @@ class RubyAT32 < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "8725d47da8481b4cd16901184393a291c18c13bc77621824a0b36497f534bba1"
-    sha256 arm64_sonoma:   "b25fb429b76a4347021ae40690e73ee2da0d6def67805e77519a937ce1550ea1"
-    sha256 arm64_ventura:  "f026982cdaed591b8dac9b3b3988059f409bdcdaec03f9b62a13dc5560e2440a"
-    sha256 arm64_monterey: "c5d41d65015960ff5292b99b8492dc8b1a33a3281d4505a3dc9ef701e9743282"
-    sha256 sonoma:         "cabfa17a3f0e6737b1b330fb5bd5f01a5ec8c65be63ae573bf1087b46f41ceba"
-    sha256 ventura:        "cf949eb6881c9442d9719c66f340e1211b0392b194562ee5ae9f580463cc7cf8"
-    sha256 monterey:       "85f1212a1480cb9f74ce48fecd02c39d75b3997649edbecc73b25d8446b0787e"
-    sha256 x86_64_linux:   "f6fb0fafda4497496a34a0ceab074877d7a872f4649c12f13be1e9155f8dab9f"
+    sha256 arm64_sequoia: "2ba0832be148dcba748e2924482d706e61b7014fab94d17ea8e94ddd7650f2c4"
+    sha256 arm64_sonoma:  "faec59c6dfd9ec32e267ab4900d42593570ea2a93fdb1f897c91bb16647d0d96"
+    sha256 arm64_ventura: "dde52dafcf5376f7f5ef3ecb03f2598fdf452deb7216c92f6400bc8c57fe2bae"
+    sha256 sonoma:        "d58d6af1626b545e9d3ee1d95a87659e7a6a721491876c38426dd8e77485f674"
+    sha256 ventura:       "7ec28bcf260d61ea06c4841ecb84baa6e49676661c0326cb81c5e56d8cb4f35b"
+    sha256 arm64_linux:   "5bf8aaa250d84048dc87b056c42a6c549b3bdc64dad7d23afafb069133fc05a0"
+    sha256 x86_64_linux:  "1c7fdcf2206154b9dcdc199a6c5f00b690f7e7c9b8d1dbc66efc80a0685009b0"
   end
 
   keg_only :versioned_formula
 
   depends_on "autoconf" => :build
   depends_on "bison" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
   depends_on "libyaml"
   depends_on "openssl@3"
@@ -41,8 +40,8 @@ class RubyAT32 < Formula
   # The exception is Rubygem security fixes, which mandate updating this
   # formula & the versioned equivalents and bumping the revisions.
   resource "rubygems" do
-    url "https://rubygems.org/rubygems/rubygems-3.5.16.tgz"
-    sha256 "7fd10de9e5e933321b62b8f1194256ae64703ba2541cab91ec31244a018d9012"
+    url "https://rubygems.org/rubygems/rubygems-3.7.1.tgz"
+    sha256 "750c8c771180d41ed2358344e5461edee83158c0a81b779969a1339961bc1163"
 
     livecheck do
       url "https://rubygems.org/pages/download"
@@ -103,6 +102,19 @@ class RubyAT32 < Formula
     # A newer version of ruby-mode.el is shipped with Emacs
     elisp.install Dir["misc/*.el"].reject { |f| f == "misc/ruby-mode.el" }
 
+    if OS.linux?
+      arch = Utils.safe_popen_read(
+        bin/"ruby", "-rrbconfig", "-e", 'print RbConfig::CONFIG["arch"]'
+      ).chomp
+      # Don't restrict to a specific GCC compiler binary we used (e.g. gcc-5).
+      inreplace lib/"ruby/#{api_version}/#{arch}/rbconfig.rb" do |s|
+        s.gsub! ENV.cxx, "c++"
+        s.gsub! ENV.cc, "cc"
+        # Change e.g. `CONFIG["AR"] = "gcc-ar-11"` to `CONFIG["AR"] = "ar"`
+        s.gsub!(/(CONFIG\[".+"\] = )"(?:gcc|g\+\+)-(.*)-\d+"/, '\\1"\\2"')
+      end
+    end
+
     # This is easier than trying to keep both current & versioned Ruby
     # formulae repeatedly updated with Rubygem patches.
     resource("rubygems").stage do
@@ -126,9 +138,14 @@ class RubyAT32 < Formula
       (rg_gems_in/"gems").install Dir[buildpath/"vendor_gem/gems/*"]
       (rg_gems_in/"specifications/default").install Dir[buildpath/"vendor_gem/specifications/default/*"]
       bin.install buildpath/"vendor_gem/bin/gem" => "gem"
-      (libexec/"gembin").install buildpath/"vendor_gem/bin/bundle" => "bundle"
-      (libexec/"gembin").install_symlink "bundle" => "bundler"
+      bin.install buildpath/"vendor_gem/bin/bundle" => "bundle"
+      bin.install buildpath/"vendor_gem/bin/bundler" => "bundler"
     end
+
+    # Customize rubygems to look/install in the global gem directory
+    # instead of in the Cellar, making gems last across reinstalls
+    config_file = lib/"ruby/#{api_version}/rubygems/defaults/operating_system.rb"
+    config_file.write rubygems_config
   end
 
   def post_install
@@ -140,22 +157,10 @@ class RubyAT32 < Formula
       #{rubygems_bindir}/bundler
     ].select { |file| File.exist?(file) })
     rm_r(Dir[HOMEBREW_PREFIX/"lib/ruby/gems/#{api_version}/gems/bundler-*"])
-    rubygems_bindir.install_symlink Dir[libexec/"gembin/*"]
-
-    # Customize rubygems to look/install in the global gem directory
-    # instead of in the Cellar, making gems last across reinstalls
-    config_file = lib/"ruby/#{api_version}/rubygems/defaults/operating_system.rb"
-    config_file.unlink if config_file.exist?
-    config_file.write rubygems_config(api_version)
-
-    # Create the sitedir and vendordir that were skipped during install
-    %w[sitearchdir vendorarchdir].each do |dir|
-      mkdir_p `#{bin}/ruby -rrbconfig -e 'print RbConfig::CONFIG["#{dir}"]'`
-    end
   end
 
-  def rubygems_config(api_version)
-    <<~EOS
+  def rubygems_config
+    <<~RUBY
       module Gem
         class << self
           alias :old_default_dir :default_dir
@@ -171,7 +176,7 @@ class RubyAT32 < Formula
             "lib",
             "ruby",
             "gems",
-            "#{api_version}"
+            RbConfig::CONFIG['ruby_version']
           ]
 
           @homebrew_path ||= File.join(*path)
@@ -224,7 +229,7 @@ class RubyAT32 < Formula
           File.join(Gem.old_default_dir, "specifications", "default")
         end
       end
-    EOS
+    RUBY
   end
 
   def caveats
@@ -251,6 +256,6 @@ class RubyAT32 < Formula
     EOS
     system bin/"bundle", "exec", "ls" # https://github.com/Homebrew/homebrew-core/issues/53247
     system bin/"bundle", "install", "--binstubs=#{testpath}/bin"
-    assert_predicate testpath/"bin/github-markup", :exist?, "github-markup is not installed in #{testpath}/bin"
+    assert_path_exists testpath/"bin/github-markup", "github-markup is not installed in #{testpath}/bin"
   end
 end

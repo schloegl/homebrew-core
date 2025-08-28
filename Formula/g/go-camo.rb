@@ -1,19 +1,19 @@
 class GoCamo < Formula
   desc "Secure image proxy server"
   homepage "https://github.com/cactus/go-camo"
-  url "https://github.com/cactus/go-camo/archive/refs/tags/v2.6.0.tar.gz"
-  sha256 "c6491a9364e621da6a2f204b2bc77aac14eb7d0eba895bd5c60240853d572f4d"
+  url "https://github.com/cactus/go-camo/archive/refs/tags/v2.6.5.tar.gz"
+  sha256 "1370b8f91613c49c3fdc105a3da11fc0e227451b5254361930db7985ce164688"
   license "MIT"
+  head "https://github.com/cactus/go-camo.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "fe93419ffa43e642d2079e69daf962440bb629c57cddc2b84c2301ae8af3807a"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "2e88abfca2c294c8966ab21d0fece9b7a0117461a81508cee2cf39f4de790978"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "2e88abfca2c294c8966ab21d0fece9b7a0117461a81508cee2cf39f4de790978"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "2e88abfca2c294c8966ab21d0fece9b7a0117461a81508cee2cf39f4de790978"
-    sha256 cellar: :any_skip_relocation, sonoma:         "68c115ff6731fff9e5f84b0d4894bd22f52afaae67b2fcdf4c9e40b23f43016e"
-    sha256 cellar: :any_skip_relocation, ventura:        "68c115ff6731fff9e5f84b0d4894bd22f52afaae67b2fcdf4c9e40b23f43016e"
-    sha256 cellar: :any_skip_relocation, monterey:       "68c115ff6731fff9e5f84b0d4894bd22f52afaae67b2fcdf4c9e40b23f43016e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "2eebd364b64215bf9b2a06f64edc58078c21ac9ca6d039985b3b6e1c8edb90ae"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "0e8bc1a2645bdc9af35be144effc47901a3d047eb0be45048e58073947860e2c"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "0e8bc1a2645bdc9af35be144effc47901a3d047eb0be45048e58073947860e2c"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "0e8bc1a2645bdc9af35be144effc47901a3d047eb0be45048e58073947860e2c"
+    sha256 cellar: :any_skip_relocation, sonoma:        "47005fff64af2bdf2beab3ea2e2bf467482bd2875588147cb605245e28e930ae"
+    sha256 cellar: :any_skip_relocation, ventura:       "47005fff64af2bdf2beab3ea2e2bf467482bd2875588147cb605245e28e930ae"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "f37b0e3d13c68dcd29b7e1d7f8d86cd700ffa4b280dd7beb2d1b2991074565ad"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "dab171130aa6ba1bbb43531db83a7911b9b679fe782f442e7f5e4afb40f68ea5"
   end
 
   depends_on "go" => :build

@@ -1,14 +1,14 @@
 class Libfuse < Formula
   desc "Reference implementation of the Linux FUSE interface"
   homepage "https://github.com/libfuse/libfuse"
-  url "https://github.com/libfuse/libfuse/releases/download/fuse-3.16.2/fuse-3.16.2.tar.gz"
-  sha256 "f797055d9296b275e981f5f62d4e32e089614fc253d1ef2985851025b8a0ce87"
+  url "https://github.com/libfuse/libfuse/releases/download/fuse-3.17.4/fuse-3.17.4.tar.gz"
+  sha256 "df9e40ae927b73dc702d0bce7925c0c618af47ad0b13204fbf2be66e54d8528b"
   license any_of: ["LGPL-2.1-only", "GPL-2.0-only"]
   head "https://github.com/libfuse/libfuse.git", branch: "master"
 
   bottle do
-    rebuild 1
-    sha256 x86_64_linux: "585b1ea16d170add0e1a1a7159e266a4851fe684365491acc61319b1039a29a4"
+    sha256 arm64_linux:  "d4595d7cde217098aa6454f3eac5622b34aca41b5ffae34b9cf1a8c0561388c3"
+    sha256 x86_64_linux: "64bb30561c35913632896083af22beb2d3d2b7f8574d33c2c93b1086b21b8f8b"
   end
 
   depends_on "meson" => :build
@@ -29,7 +29,7 @@ class Libfuse < Formula
   end
 
   test do
-    (testpath/"fuse-test.c").write <<~EOS
+    (testpath/"fuse-test.c").write <<~C
       #define FUSE_USE_VERSION 31
       #include <fuse3/fuse.h>
       #include <stdio.h>
@@ -38,7 +38,7 @@ class Libfuse < Formula
         printf("%d\\n", fuse_version());
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "fuse-test.c", "-L#{lib}", "-I#{include}", "-D_FILE_OFFSET_BITS=64", "-lfuse3", "-o", "fuse-test"
     system "./fuse-test"
   end

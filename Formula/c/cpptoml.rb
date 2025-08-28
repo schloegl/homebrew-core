@@ -7,6 +7,8 @@ class Cpptoml < Formula
   revision 1
   head "https://github.com/skystrife/cpptoml.git", branch: "master"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     rebuild 1
     sha256 cellar: :any_skip_relocation, all: "c7277d9959d90daba22c6e5e464e5d9877c6dce18d25932a5a7d53feac061139"
@@ -33,7 +35,7 @@ class Cpptoml < Formula
   end
 
   test do
-    (testpath/"test.cc").write <<~EOS
+    (testpath/"test.cc").write <<~CPP
       #include "cpptoml.h"
       #include <iostream>
 
@@ -48,11 +50,11 @@ class Cpptoml < Formula
 
         return 1;
       }
-    EOS
+    CPP
 
-    (testpath/"brew.toml").write <<~EOS
+    (testpath/"brew.toml").write <<~TOML
       str = "Hello, Homebrew."
-    EOS
+    TOML
 
     system ENV.cxx, "-std=c++11", "-I#{include}", "test.cc", "-o", "test"
     assert_equal "Hello, Homebrew.", shell_output("./test").strip

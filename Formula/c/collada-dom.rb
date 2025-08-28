@@ -4,29 +4,30 @@ class ColladaDom < Formula
   url "https://github.com/rdiankov/collada-dom/archive/refs/tags/v2.5.0.tar.gz"
   sha256 "3be672407a7aef60b64ce4b39704b32816b0b28f61ebffd4fbd02c8012901e0d"
   license "MIT"
-  revision 10
+  revision 13
   head "https://github.com/rdiankov/collada-dom.git", branch: "master"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "93ee168d5e413ac9709071615535b1e41a69104a256874a88c455b93a69473cd"
-    sha256 cellar: :any,                 arm64_sonoma:   "a23c3731eff60bcd2dc079fa88da110bdfa807137fe18cdd7893677cd522fd3c"
-    sha256 cellar: :any,                 arm64_ventura:  "5f851bdfae69110c8648205d9f44267c722bbd424a2727649a0442c82c625e30"
-    sha256 cellar: :any,                 arm64_monterey: "46407af6b516e2a49f330278953d8d2fa6d0de217cfde68cfe53990f1dc5e33a"
-    sha256 cellar: :any,                 sonoma:         "4483eedf90d10b9c7306280fafc002e5c1f7c85f2925e1b13466c7c87c3683fb"
-    sha256 cellar: :any,                 ventura:        "90845ce55f8153dd85582570f9955e91b39a56c14a7543ac5412dee3577797cf"
-    sha256 cellar: :any,                 monterey:       "59f34d806302668ae9cbde4ac0cdec8f024f16b4d75b84ceadf04edf1334682f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "95b9bf434a46b41bf05bc4a847f8c560ef500e7ba4b6891ea2d49a8c6d271918"
+    sha256 cellar: :any,                 arm64_sequoia: "121ac6caf851ce8419fdcd32022e39581347816399d24dcb831c042d0a4e1ff9"
+    sha256 cellar: :any,                 arm64_sonoma:  "4369bf4e5c16cf901edbbdaec4b1e374fa42dee2a527c6cfc6c55bdc5e7dd4c2"
+    sha256 cellar: :any,                 arm64_ventura: "c3386425b2597b815b79002e2bfa629e4c8c92b50119def90c2e63153f86eacb"
+    sha256 cellar: :any,                 sonoma:        "d649bd1ff5c6c3db62909c949f9ce6f6713b46fed91255ef93be32742ca58b7b"
+    sha256 cellar: :any,                 ventura:       "3c00de7fa89c1d6e750d77308ccc56f46e0698e4192e42c33d420e0534ab9535"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "62ec1ee257626dd9e7f5c1c874695a99a388401a0597d8f4bf9c9fc22caef0a0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "405679197a0c02d886159df43321ac8d3553bb91089aa61da54a83c3643ee18f"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "boost"
   depends_on "minizip"
   depends_on "uriparser"
 
   uses_from_macos "libxml2"
 
-  # Fix build failure with `boost` 1.85.0.
+  # Fix build failure with `boost` 1.85.0 and 1.89.0.
   # Issue ref: https://github.com/rdiankov/collada-dom/issues/42
   patch :DATA
 
@@ -34,13 +35,16 @@ class ColladaDom < Formula
     # Remove bundled libraries to avoid fallback
     rm_r(buildpath/"dom/external-libs")
 
-    system "cmake", "-S", ".", "-B", "build", "-DCMAKE_CXX_STANDARD=11", *std_cmake_args
+    system "cmake", "-S", ".", "-B", "build",
+                    "-DCMAKE_CXX_STANDARD=11",
+                    "-DCMAKE_POLICY_VERSION_MINIMUM=3.5",
+                    *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <iostream>
       #include <dae.h>
       #include <dae/daeDom.h>
@@ -52,7 +56,7 @@ class ColladaDom < Formula
         cout << GetCOLLADA_VERSION() << endl;
         return 0;
       }
-    EOS
+    CPP
     system ENV.cxx, "test.cpp", "-std=c++11", "-I#{include}/collada-dom2.5",
                     "-L#{lib}", "-lcollada-dom2.5-dp", "-o", "test"
 
@@ -101,3 +105,16 @@ index da2a344..2550000 100644
 
      const std::string& randomSegment = cdom::getRandomFileName();
      std::string tmpDir = dir + cdom::getFileSeparator() + randomSegment + cdom::getFileSeparator();
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 20635b2..adcc250 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -159,7 +159,7 @@ endif()
+ if( NOT $ENV{BOOST_LIBRARYDIR} STREQUAL "" )
+   set(Boost_LIBRARY_DIRS $ENV{BOOST_LIBRARYDIR})
+ endif()
+-find_package(Boost COMPONENTS filesystem system REQUIRED)
++find_package(Boost COMPONENTS filesystem REQUIRED)
+ 
+ message(STATUS "found boost version: ${Boost_VERSION}")
+ 

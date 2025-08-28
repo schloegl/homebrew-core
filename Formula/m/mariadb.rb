@@ -1,9 +1,8 @@
 class Mariadb < Formula
   desc "Drop-in replacement for MySQL"
   homepage "https://mariadb.org/"
-  # TODO: Build with `-DWITH_LIBFMT=system` when fmt >= 11
-  url "https://archive.mariadb.org/mariadb-11.5.2/source/mariadb-11.5.2.tar.gz"
-  sha256 "e25fac00aeb34610faf62182836a14e3310c0ca5d882e9109f63bd8dfdc3542d"
+  url "https://archive.mariadb.org/mariadb-12.0.2/source/mariadb-12.0.2.tar.gz"
+  sha256 "2640eaa80b6d90bedb98d1b77efd0972cb20177c72f1b01dda11b0617c427743"
   license "GPL-2.0-only"
 
   livecheck do
@@ -18,20 +17,19 @@ class Mariadb < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "ed3cc36a98cceadab407cdd32e975cb61c7767e2b66287326da138088d9c4626"
-    sha256 arm64_sonoma:   "cda6f1a3253d69bc36dadff3cd9ed8e3c91795eb392c9f7b1a4ea0b63c19a8e3"
-    sha256 arm64_ventura:  "6b01259939dee3c888cb040265de4bdfe727d2dcfc154acfb0edfb44eef622b9"
-    sha256 arm64_monterey: "068f3c8199c47fe7b1ff2f15584884d5d61108378a4ec13289f850ff6a80b906"
-    sha256 sonoma:         "3d8d1e1dfcd957335e72f3f34ec2fd4e8fd22b918ed919bf8904e304f8e3c6bc"
-    sha256 ventura:        "9f525784840240948014eabcc7942a3753f7ad990e537a6109adc541c78c51eb"
-    sha256 monterey:       "9c1a9410159d97546186ac23f8d17d07186987200d923a2866eb884f3a61a657"
-    sha256 x86_64_linux:   "e25bd50056c5c14b3f851c20df8a809d5453d71fac929fddd590b26fa1f876b3"
+    sha256 arm64_sequoia: "e5e92332e6b12bd2e95b0ed4a31bba7410b5cfe41ee2aee7492df361cc07c1fd"
+    sha256 arm64_sonoma:  "16e2b4e35fcfa9dbdbedf16f177bd1dc6f5c67edc4650bf44be609cafe2ddd89"
+    sha256 arm64_ventura: "ccd5bf7fa727cb7fab1e133fcd20e9102d1939b0a8099b115e0943d8bc5aa99f"
+    sha256 sonoma:        "c8e723f105aa5f8c150fbff92c2c4975eb8f0f2a83669cdcfbad78c5af084dbd"
+    sha256 ventura:       "1dea9cef316370d57a541a4278ca5e787e46b95ea53c36d3fc9fe938010a7e65"
+    sha256 arm64_linux:   "c3bd4e8f37c6e1ca5114deff02b3ea2aa9843863801a11b777641e2ceed5bf28"
+    sha256 x86_64_linux:  "e1a395b1f0f7a2f3d4971deb0bd35585445d4c880b2f4db8d1ce8d3c70ed2742"
   end
 
   depends_on "bison" => :build
   depends_on "cmake" => :build
   depends_on "fmt" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "groonga"
   depends_on "lz4"
   depends_on "lzo"
@@ -56,15 +54,11 @@ class Mariadb < Formula
     depends_on "linux-pam"
   end
 
-  conflicts_with "mysql", "percona-server",
-    because: "mariadb, mysql, and percona install the same binaries"
-
-  conflicts_with "mytop", because: "both install `mytop` binaries"
-  conflicts_with "mariadb-connector-c", because: "both install `mariadb_config`"
-
-  fails_with gcc: "5"
+  conflicts_with "mysql", "percona-server", because: "mariadb, mysql, and percona install the same binaries"
 
   def install
+    ENV.runtime_cpu_detection
+
     # Set basedir and ldata so that mysql_install_db can find the server
     # without needing an explicit path to be set. This can still
     # be overridden by calling --basedir= when calling.
@@ -86,6 +80,7 @@ class Mariadb < Formula
       -DINSTALL_DOCDIR=share/doc/#{name}
       -DINSTALL_INFODIR=share/info
       -DINSTALL_MYSQLSHAREDIR=share/mysql
+      -DWITH_LIBFMT=system
       -DWITH_PCRE=system
       -DWITH_SSL=system
       -DWITH_ZLIB=system
@@ -126,6 +121,9 @@ class Mariadb < Formula
     inreplace "#{prefix}/support-files/mysql.server", /^(PATH=".*)(")/, "\\1:#{HOMEBREW_PREFIX}/bin\\2"
 
     bin.install_symlink prefix/"support-files/mysql.server"
+
+    # Fix user variable used by su_kill - Credit: https://stackoverflow.com/questions/59936589
+    inreplace "#{prefix}/support-files/mysql.server", /^user='mysql'/, "user=$(whoami)"
 
     # Move sourced non-executable out of bin into libexec
     libexec.install "#{bin}/wsrep_sst_common"

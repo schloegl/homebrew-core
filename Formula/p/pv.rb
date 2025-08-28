@@ -1,8 +1,8 @@
 class Pv < Formula
   desc "Monitor data's progress through a pipe"
   homepage "https://www.ivarch.com/programs/pv.shtml"
-  url "https://www.ivarch.com/programs/sources/pv-1.8.14.tar.gz"
-  sha256 "0cc18811a4809a587d4b11d47691bbc0ad83a5d95d2c2606af74ea7b4a674756"
+  url "https://www.ivarch.com/programs/sources/pv-1.9.34.tar.gz"
+  sha256 "c0626bed6cbef5006b53d3281e8e3ae4b2838729462b21eccf28140eefef6bb1"
   license "Artistic-2.0"
 
   livecheck do
@@ -11,21 +11,26 @@ class Pv < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "ac34bbb8c78a13fbca713ee5031bb805f9552f73b10b5668e264f8ea8716f89b"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "843ff02fb9d0a82329ac69bfff73292550c49597627391b8eb03586bb106a60a"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "8a2b3d0d5934b8cc71c10fbdd8329db79fb4dc7f376c46a6516c3211ba5ba04e"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "2cb740dc49bca09d096f0e9b6687ddb6cefcb91757483771a6b9076f39cbdc2f"
-    sha256 cellar: :any_skip_relocation, sonoma:         "8555f370ca741ce3976cf0a02f52a6e337c029b777d7345217c52f15bee6e6fd"
-    sha256 cellar: :any_skip_relocation, ventura:        "ef9e38140617294b5a9d9df2dbef389d7a012ec81466bb6163a4c6e1461a5f6e"
-    sha256 cellar: :any_skip_relocation, monterey:       "1bddb846e27f961bbb282043ed09896681a7f0e0a23b372c27d3cbbe3539ef1d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "e874b9ba6c1ae8f7844349e8d3b4e6d0681a665fbdf5b4d83d520747e63220e6"
+    sha256 arm64_sequoia: "5178545d9bf9cb5595521fe23f3d81cef9dc1616abeb34a4a470cee04c3d3115"
+    sha256 arm64_sonoma:  "da8655acc575c9267e41b941d62649dc5a8ca061da6ba14734e511dd7647a0f0"
+    sha256 arm64_ventura: "7cfa691067062a8bbdde607ba85a62dcecaeba9adf3e1f502d9d206230a26dad"
+    sha256 sonoma:        "fef7b902b0c0689a3810432952dada632811f73924bf3ab13c528897fa2a0d5b"
+    sha256 ventura:       "e8f5c06b8b8764622cea6bfb54a4982630bb5a5ae2e11d3422493b157e9dccbd"
+    sha256 arm64_linux:   "42da7fceb87479d86d6bef999b19991467db067a6452d3c77a508f1abbf0d81d"
+    sha256 x86_64_linux:  "8d3a627b9799aaf24376fed7d93f9b9a93b5ae23bcfedcb57404389507842572"
+  end
+
+  uses_from_macos "ncurses"
+
+  on_macos do
+    depends_on "gettext"
   end
 
   def install
     # Fix compile with newer Clang
     ENV.append_to_cflags "-Wno-implicit-function-declaration" if DevelopmentTools.clang_build_version >= 1403
 
-    system "./configure", "--prefix=#{prefix}", "--mandir=#{man}", "--disable-nls"
+    system "./configure", "--mandir=#{man}", *std_configure_args
     system "make", "install"
   end
 

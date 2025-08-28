@@ -1,8 +1,8 @@
 class NotmuchMutt < Formula
   desc "Notmuch integration for Mutt"
   homepage "https://notmuchmail.org/"
-  url "https://notmuchmail.org/releases/notmuch-0.38.3.tar.xz"
-  sha256 "9af46cc80da58b4301ca2baefcc25a40d112d0315507e632c0f3f0f08328d054"
+  url "https://notmuchmail.org/releases/notmuch-0.39.tar.xz"
+  sha256 "b88bb02a76c46bad8d313fd2bb4f8e39298b51f66fcbeb304d9f80c3eef704e3"
   license "GPL-3.0-or-later"
   head "https://git.notmuchmail.org/git/notmuch", using: :git, branch: "master"
 
@@ -10,15 +10,16 @@ class NotmuchMutt < Formula
     formula "notmuch"
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "32096e64265140be4430d5c5bed09c2f23c7758a07b347556ab76bc42717debf"
-    sha256 cellar: :any,                 arm64_sonoma:   "a97fab20e7c81079f03221d342cf9ffb337d707cf1fc2aecf62701f4c8fd4728"
-    sha256 cellar: :any,                 arm64_ventura:  "c12fcbb4288c848b59e8ac48617ee928afbd665cc3248d4d2ac2e6f09b593690"
-    sha256 cellar: :any,                 arm64_monterey: "e5786019af8789331d40ff9fb9a4c46dda6f87b7abdfe5db90a71e9040ca6d81"
-    sha256 cellar: :any,                 sonoma:         "657f1ad5b9745b42ec3a2032649be0cb4efe672ce769e0b3fb1a79e83b884a06"
-    sha256 cellar: :any,                 ventura:        "8c78f44d4e17370507862ed51fd8bb5d9d21179936f8d4b19cbac4545a9d65ef"
-    sha256 cellar: :any,                 monterey:       "2347f01ea978ab5b3a02b29fd22477b92e1ec01d638645ab1b10b566e19299bb"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "ac3f56a93fa7667eabf2b95a59ed431ea30d81cbe9fde8bc673eeda2feb76eda"
+    sha256 cellar: :any,                 arm64_sequoia: "7172f1fdbe9794f01c80d042b9052d45fd7d7892cd1f9f4982b6a02b5bfa3680"
+    sha256 cellar: :any,                 arm64_sonoma:  "5ee7a940df309ec27388421162a63c718cfff6f3b16354cf19c61cae3ba61a54"
+    sha256 cellar: :any,                 arm64_ventura: "e45332fb4bdd1c4fd017c43fe8ec0781cbfd0f941a3ceda8c68e6ec5b7d1324d"
+    sha256 cellar: :any,                 sonoma:        "04c812d8705d2fa575c954ca2a5bd01d85183414633f3d69631441e191b16929"
+    sha256 cellar: :any,                 ventura:       "e445cab33c47569706ec82e94db95982c96f5685da6b099ce963ea77f5ad963a"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "2f60737a15a2f386ba14e641f8c7a1820863d2eaf369c1c11228057a44e766b8"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "6dafb17ac7a19666854de6837b3810f8bb5d4804395c07bf7e7af94c60b91eaf"
   end
 
   depends_on "notmuch"

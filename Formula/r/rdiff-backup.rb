@@ -9,23 +9,28 @@ class RdiffBackup < Formula
   revision 2
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "4ee59d42ae6f536f84e81e276f3ad680e805a4487d1a3b252c772ab339844cc7"
-    sha256 cellar: :any,                 arm64_sonoma:   "62fd587d8c28af3c9d77efb118598de7c403bbb2c009b09460e8b9bddd79a70d"
-    sha256 cellar: :any,                 arm64_ventura:  "be41d5549775c6739fed4c65fcc7fa752e73b3fe63dfbebf3efbfff85ba04146"
-    sha256 cellar: :any,                 arm64_monterey: "d2dacadf8f82a72150eae57c64d25524fa955621c625a558d93355545a4bbfd1"
-    sha256 cellar: :any,                 sonoma:         "bb40dc033e4d8992cfa59505076e02abd3d402f23f7208a9bb5570e030ef13bd"
-    sha256 cellar: :any,                 ventura:        "0770ec28406a904435d3b1b6a930dd166825e2525463a2eaa4a5007ba6adbaa3"
-    sha256 cellar: :any,                 monterey:       "c84f174a0733cb509939b690c7e53330ac9964c745c7462dd78d9a66dfbf455f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3dc6afbc870dc89ba65d8384947391fbff6781ee4bd9a174f2987463dd2ddf12"
+    rebuild 2
+    sha256 cellar: :any,                 arm64_sequoia: "b8a183aadfc497b89651c586a63267398a9ffa1b5fc7181bbb3dba635ed50aa8"
+    sha256 cellar: :any,                 arm64_sonoma:  "e23be48d91740ad07bc9a1f6d17a421353fe1c9456c21d14038a7335a516fbdc"
+    sha256 cellar: :any,                 arm64_ventura: "eec850cd941f91e122231dbe65f85451f3255baf5237cce8cb6ca6449c0278af"
+    sha256 cellar: :any,                 sonoma:        "af6653ad557d8ed7d4a7efefe138381cbd6b470af020456f6aeb0e741ce9c463"
+    sha256 cellar: :any,                 ventura:       "3c6b2a8ec13479805311c25991032e477935367a99b87f8f5454ea4c35f6a2e3"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "cc2694d7d63017b164590148e2fd7e2daf87944f017422215dc369d310bf16bb"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a240b34dd02ee832c2eada0cb754574d303b051e2702b0798bad0ac533db9dd4"
   end
 
   depends_on "librsync"
   depends_on "libyaml"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
+
+  resource "pyxattr" do
+    url "https://files.pythonhosted.org/packages/97/d1/7b85f2712168dfa26df6471082403013f3f815f3239aee3def17b6fd69ee/pyxattr-0.8.1.tar.gz"
+    sha256 "48c578ecf8ea0bd4351b1752470e301a90a3761c7c21f00f953dcf6d6fa6ee5a"
+  end
 
   resource "pyyaml" do
-    url "https://files.pythonhosted.org/packages/cd/e5/af35f7ea75cf72f2cd079c95ee16797de7cd71f29ea7c68ae5ce7be1eda0/PyYAML-6.0.1.tar.gz"
-    sha256 "bfdf460b1736c775f2ba9f6a92bca30bc2095067b8a9d77876d1fad6cc3b4a43"
+    url "https://files.pythonhosted.org/packages/54/ed/79a089b6be93607fa5cdaedf301d7dfb23af5f25c398d5ead2525b063e17/pyyaml-6.0.2.tar.gz"
+    sha256 "d584d9ec91ad65861cc08d42e834324ef890a082e591037abe114850ff7bbc3e"
   end
 
   def install

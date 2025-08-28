@@ -1,19 +1,18 @@
 class Ko < Formula
   desc "Build and deploy Go applications on Kubernetes"
   homepage "https://ko.build"
-  url "https://github.com/ko-build/ko/archive/refs/tags/v0.16.0.tar.gz"
-  sha256 "85b909fa600309e71d990a522321a32b4eeb0e67111ddb6eb8b34057f064500a"
+  url "https://github.com/ko-build/ko/archive/refs/tags/v0.18.0.tar.gz"
+  sha256 "4499c8a65f9474443bcf9c194cd0406b03887a7c36557a94f22f040a33a95608"
   license "Apache-2.0"
+  head "https://github.com/ko-build/ko.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "8631b1743c1ff883a6a89b70d38d804e294423d2e9d50b69483086b2811d596a"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "0a81d1898cb12ae86c15a5a7181dda0572c90338f423caebfee80e28566c1111"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "39741725bb79ca8ae6e740876944a1acfd9e04087eaa6c7e569a5e38c4028e49"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "8e77ba1346f207e1333308b8b9076c06a8f6bd0caaa8a2c45235cdbd75f0fc96"
-    sha256 cellar: :any_skip_relocation, sonoma:         "48422b2b256c0f2e5251d4e95629198ea04cb2ef5b173a020bba7aebe62713b5"
-    sha256 cellar: :any_skip_relocation, ventura:        "074558ee1a12145f58f2a444c31fd90106b211aab4b640e33f8a69986bba1476"
-    sha256 cellar: :any_skip_relocation, monterey:       "f51323cd395c4489aa11d8749bbb7b4c518c9e8b77d53c0391f5e7a400f4ec2b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "251a9e971ef90ac724c6a0307360e303f6a8d1df4e808b137043fa41084cebca"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "51ebbf1f9c0117c708c6837f964c9cd66192d0d40b6bf70be489b232c2b97e90"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "51ebbf1f9c0117c708c6837f964c9cd66192d0d40b6bf70be489b232c2b97e90"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "51ebbf1f9c0117c708c6837f964c9cd66192d0d40b6bf70be489b232c2b97e90"
+    sha256 cellar: :any_skip_relocation, sonoma:        "ede5eb93a54e739e5d2a957ae57c26aa5ca6e58bcf4dcae69985f968ea2e8a06"
+    sha256 cellar: :any_skip_relocation, ventura:       "72711771259318dce21574c99cee46c9ffcaeec187f307875e0d45327359601e"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4ab0a89bed6ceefe2fd0d40f46e086e105c43e76ea50c94f7bca1ae217a188a8"
   end
 
   depends_on "go" => :build

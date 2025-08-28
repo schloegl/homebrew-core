@@ -1,18 +1,18 @@
 class PgCron < Formula
   desc "Run periodic jobs in PostgreSQL"
   homepage "https://github.com/citusdata/pg_cron"
-  url "https://github.com/citusdata/pg_cron/archive/refs/tags/v1.6.4.tar.gz"
-  sha256 "52d1850ee7beb85a4cb7185731ef4e5a90d1de216709d8988324b0d02e76af61"
+  url "https://github.com/citusdata/pg_cron/archive/refs/tags/v1.6.5.tar.gz"
+  sha256 "0118080f995fec67e25e58d44c66953e7b2bf5a47bb0602fd2ad147ea646d808"
   license "PostgreSQL"
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any,                 arm64_sequoia: "761f569a42613c25ad934f27d9a33700bee8fae46611cf65afeb44c2e94e7490"
-    sha256 cellar: :any,                 arm64_sonoma:  "37b2a1792f507b0c9056330b9692b020c051990c267796206d9a49e323e434cd"
-    sha256 cellar: :any,                 arm64_ventura: "7cbf1d31f5e7b621db839a14a0769870dbb9f438b3b435bb5346976909f41974"
-    sha256 cellar: :any,                 sonoma:        "0ee4c33e3afc5c2938a29a01f7e1c1796d004799c85e916a02e68caa9f75631d"
-    sha256 cellar: :any,                 ventura:       "b661444235d90028484e30f5c2c5482f2ffb37c411589e2b47cc2d29f5f57361"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "716af477c814e3dc4fda5bbaf25b11a278b0ae93fdda8d5ebd37e1c0c12e5bb8"
+    sha256 cellar: :any,                 arm64_sequoia: "e652baea4a5497dccbe7a785953c08f43e820712efee0c47b7ea4299645888dd"
+    sha256 cellar: :any,                 arm64_sonoma:  "5d5ef653d695a0e1029f119532988583d01b18b1bcd0996d7c79f344912bf870"
+    sha256 cellar: :any,                 arm64_ventura: "8617379afc5a21586ac1558c3320d82aaddb8078382fe51e7eb034c2d1772cfa"
+    sha256 cellar: :any,                 sonoma:        "5160bb9284524342df8e0c8140d5715b420c26cf3ff874a9d6462530313c6adf"
+    sha256 cellar: :any,                 ventura:       "44132449e3e3733f9d7342a5e12c23d571402bea3bb7074a23b197b605fca091"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "8babbb9f6137aded2381013aadc7f8a238163910e7c8a6b32d12cd689ef36d82"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "45b413c1332572e44d2e73a04f0d90a932bb34ad1ac7aee78541f9176ecf7b65"
   end
 
   depends_on "postgresql@14" => [:build, :test]

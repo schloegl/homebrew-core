@@ -1,38 +1,32 @@
 class Spr < Formula
   desc "Submit pull requests for individual, amendable, rebaseable commits to GitHub"
-  homepage "https://github.com/spacedentist/spr"
-  url "https://github.com/spacedentist/spr/archive/refs/tags/v1.3.5.tar.gz"
-  sha256 "d1f53f4222fd9916c9edc0457bfe04bac66d9ff60a7c0e7a0c4519317c3f3fb8"
+  homepage "https://spacedentist.github.io/spr/"
+  url "https://github.com/spacedentist/spr/archive/refs/tags/v1.3.7.tar.gz"
+  sha256 "6b48524abfecea16e0e7a131f0c44027375a80577cde43355f54928c4921ed6c"
   license "MIT"
   head "https://github.com/spacedentist/spr.git", branch: "master"
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "0eac58b3ff05872197f7abac423d42d87e439ccaab7f6579edec222f2de2710b"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "b69a549a251230cd5561cb9df78d7dec8393f923ffbe1379e42312f79ba7afac"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "c5991317f779e5cc3ac6287f08414a51566d08ad837d87fc0fee579c7bf2eed0"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "2cf35baf53290180b7f1b0a7b453e060eefd982008c8750d1cde5f5e4a07fb04"
-    sha256 cellar: :any_skip_relocation, sonoma:         "817a28b41cdab633e17b0ab7ba58be93f1866c15b47a64dc7bd9bff36d1c33b7"
-    sha256 cellar: :any_skip_relocation, ventura:        "a68d4e83af3fa0a54f23a27edf699d27b7b2514e6a4b2a631b772728fe8fb4c1"
-    sha256 cellar: :any_skip_relocation, monterey:       "6f56e9ebcef926ce71fe573640660366d923d1ff407c26c52dab11891786dd40"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "86d1aa332e5b30c08f8d1eaa2aa49a5371ead75d9e5061c6fd822d5a0c70f972"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "8679f71d4efb65c1784f2b20c2339ca5032ada6a676e9a082f3720d51b9973ed"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "93212861ef027cc18853c3e18c81f1b68640deb9af7955912fc84549d91e93ae"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "0622a60bd0c8162d2e28d2c85cf6ece553f2e9851913bfcbc64ec3f3376dc429"
+    sha256 cellar: :any_skip_relocation, sonoma:        "5e8a7f79f2e9518b1516c8ec695067a3abe5e579428964719f941390176da2f8"
+    sha256 cellar: :any_skip_relocation, ventura:       "30a12a3e0c4d6db8deb8c30aab2d12380cd9cf1fe867cb59620a98355d008312"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "1004ec8ee05fae9e9b5f59ce37a11006c0433f4738fbeffc192b158d1dbe498f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "93414490bf24e6c0a341225a106c4051182c553f5eb7419ea2ebd5cd959198fe"
   end
 
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
+
   uses_from_macos "zlib"
 
   on_linux do
-    depends_on "pkg-config" => :build
-  end
-
-  # rust 1.80 build patch, upstream pr ref, https://github.com/spacedentist/spr/pull/202
-  patch do
-    url "https://github.com/spacedentist/spr/commit/ed450a3ec9c2b79e585ff162f0f3bd2fb2be4b00.patch?full_index=1"
-    sha256 "e1b7dab848c828a704ceeff2e46511e17a16198f26b184f75afd8bf0f695d22e"
+    depends_on "openssl@3"
   end
 
   def install
-    system "cargo", "install", *std_cargo_args(path: "spr")
+    system "cargo", "install", *std_cargo_args
   end
 
   test do

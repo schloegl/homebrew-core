@@ -1,9 +1,8 @@
 class Ledit < Formula
   desc "Line editor for interactive commands"
   homepage "https://pauillac.inria.fr/~ddr/ledit/"
-  url "https://github.com/chetmurthy/ledit/archive/refs/tags/ledit-2-06.tar.gz"
-  version "2.06"
-  sha256 "9fb4fe256ca9e878a0b47dfd43b4c64c6a3f089c9e76193b2db347f0d90855be"
+  url "https://github.com/chetmurthy/ledit/archive/refs/tags/ledit-2-07.tar.gz"
+  sha256 "0252dc8d3eb40ba20b6792f9d23b3a736b1b982b674a90efb913795f02225877"
   license "BSD-3-Clause"
   revision 1
 
@@ -16,26 +15,19 @@ class Ledit < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "61f6cf0c9da96da6a98fc8898d48afb33c27c001359be6ad1fe30a3aef9f164a"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "5cd73d8f31cd78874d997a6d4fd9f641e48feca0f7fe8563bb76bc1cb3e54fbd"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "e3a9793e08a678bf56e0d52ec6d1882a7e9f315b3aa3408444ed140f15bf2b32"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "e8fa06836756c84e6f20a13214680bbb0b360025ef193211d7e3ac0b88856202"
-    sha256 cellar: :any_skip_relocation, sonoma:         "ba5e850a2325c803b48366814ccd65ccf4acf57112f9cb16b4bc5ef43add3a8a"
-    sha256 cellar: :any_skip_relocation, ventura:        "61b71950ed308177659d6d98f88e83d9f26b2ce8c9f41cffab9e92eef9988144"
-    sha256 cellar: :any_skip_relocation, monterey:       "482dd44cabb6afec89846ad02430f0b48e2aee3e32885c58eedd38619fdc4886"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "280c140f1337f33186cc2d9a1946cd27732435292e98fff8c1a431d408ebb237"
+    sha256                               arm64_sequoia: "653f7b3a2c1e9e43277cd71a1372411055cffdb00c117338b7bad7a25f46105d"
+    sha256                               arm64_sonoma:  "561049e6938a5ea683f00cdfba159504b442c45f2d81ff2daf0dea68ac9ce92b"
+    sha256                               arm64_ventura: "00a97eb38296ecdd8477456b8e8d584c6c6798bab6075fe3188058d95636d1a1"
+    sha256 cellar: :any_skip_relocation, sonoma:        "f6de3036421e83e22dd080005616d42109671979947a7408428871a7a51e6239"
+    sha256 cellar: :any_skip_relocation, ventura:       "be5d93d43d670cf829f83b8540811d701a7eba2310a0c49b75b0349ff160ddbe"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "aa138a11a2f7d147c880e4075da50d042f01f53587356384430e6610f2473eb0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "aa138a11a2f7d147c880e4075da50d042f01f53587356384430e6610f2473eb0"
   end
 
   depends_on "ocaml-findlib" => :build
   depends_on "camlp-streams"
   depends_on "camlp5"
   depends_on "ocaml"
-
-  # Backport Makefile fixes. Remove in the next release.
-  patch do
-    url "https://github.com/chetmurthy/ledit/commit/3dbd668d9c69aab5ccd61f6b906c14122ae3271d.patch?full_index=1"
-    sha256 "f5aafe054a5daa97d311155931bc997f1065b20acfdf23211fbcbf1172fd7e97"
-  end
 
   def install
     # Work around for https://github.com/Homebrew/homebrew-test-bot/issues/805
@@ -54,7 +46,7 @@ class Ledit < Formula
   test do
     history = testpath/"history"
     pipe_output("#{bin}/ledit -x -h #{history} bash", "exit\n", 0)
-    assert_predicate history, :exist?
+    assert_path_exists history
     assert_equal "exit\n", history.read
   end
 end

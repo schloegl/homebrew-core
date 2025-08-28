@@ -1,14 +1,14 @@
 class Passt < Formula
   desc "User-mode networking daemons for virtual machines and namespaces"
   homepage "https://passt.top/passt/about/"
-  url "https://passt.top/passt/snapshot/passt-2024_09_06.6b38f07.tar.xz"
-  version "2024_09_06.6b38f07"
-  sha256 "5e0d33c6cc45a482d1be2375c5b4918fa799bde381321a48c11ef48e34466ccc"
+  url "https://passt.top/passt/snapshot/passt-2025_08_05.309eefd.tar.xz"
+  sha256 "fbde08f23b7e4fe45123c316810f3c08bd3eb97321150428db5fb750662ddc3f"
   license all_of: ["GPL-2.0-or-later", "BSD-3-Clause"]
   head "git://passt.top/passt", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "de300ced6ff7d736b7f9717357b063e56654af22095dd874e3ee5e259a76be6b"
+    sha256 cellar: :any_skip_relocation, arm64_linux:  "fa02702ec9ca5b1fbf65e8c0e898011fab45d90c4ca061cd636afb5c604cd28c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "ccb8844fdc8a91f1de0d3b130932321a19c23a54d117104c86f2f81149d35759"
   end
 
   depends_on :linux
@@ -20,7 +20,12 @@ class Passt < Formula
   end
 
   test do
-    assert_match "passt #{version}", shell_output("#{bin}/passt --version")
+    require "pty"
+    PTY.spawn("#{bin}/passt --version") do |r, _w, _pid|
+      sleep 1
+      assert_match "passt #{version}", r.read_nonblock(1024)
+    end
+
     pidfile = testpath/"pasta.pid"
     begin
       # Just check failure as unable to use pasta or passt on unprivileged Docker

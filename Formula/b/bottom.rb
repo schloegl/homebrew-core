@@ -1,8 +1,8 @@
 class Bottom < Formula
   desc "Yet another cross-platform graphical process/system monitor"
   homepage "https://clementtsang.github.io/bottom/"
-  url "https://github.com/ClementTsang/bottom/archive/refs/tags/0.10.2.tar.gz"
-  sha256 "1db45fe9bc1fabb62d67bf8a1ea50c96e78ff4d2a5e25bf8ae8880e3ad5af80a"
+  url "https://github.com/ClementTsang/bottom/archive/refs/tags/0.11.1.tar.gz"
+  sha256 "0095ea9edb386ad7c49d845176314097713661d22ec42314e3be46426bc769ee"
   license "MIT"
   head "https://github.com/ClementTsang/bottom.git", branch: "main"
 
@@ -15,14 +15,13 @@ class Bottom < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "b9bb56477f24536e5ae48b06159e337d9fd0c3ab67710950f59af2aca2be62f5"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "b4c0dac75255ca0efe25e8d675f66a7509d24e03057aa9806bd2f5874d613056"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "b78a76d3659944b74e7ca4b0f3c061b1a472da89363f63d06efda99c695fb5ca"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "92b42d2bf6ef560605216e9616d8c01f365a126810f3c4083e804c95b45b0ecc"
-    sha256 cellar: :any_skip_relocation, sonoma:         "5e9f22ad7b0098ca07750d864c62c37d6c939a2fe2e21b7e8a145c99200ea2df"
-    sha256 cellar: :any_skip_relocation, ventura:        "d3db0527a8a8ac6d9e1efabd7a7824795bd149a425bd2b815049d836c65bb2cb"
-    sha256 cellar: :any_skip_relocation, monterey:       "6cc6b1021908df82dd39bdf2c5541999c6d9a30e9a23f22c52687f00a3eebb51"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "bbb486c2507d3b31db2c4ea932bf1b5da0d41fe9a50c0c683ec2e008d12acb0f"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "dc63eb85ed39399defbb86c7019ba0cd02f8d6124dd616dcbe20e797249c3eab"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "d593da907073b7b7d2faf03984475d1d5dd5dc8dc2eb05bc8c511e13ca474d22"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "56ba2aed8740f7a7294dbea9564ead057d4ee532a86a0c8fcaa590d02456d50e"
+    sha256 cellar: :any_skip_relocation, sonoma:        "566e6a599d6c74f5ecd90e1b6cd33db2398794f6e372ab552af79bd03592d166"
+    sha256 cellar: :any_skip_relocation, ventura:       "1741b0c277cc36a1716b929eed10503de1b810bcc353ca78b532ef5f7ef58b79"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "a181e21051afbac3f332a127d21d656692b3818f2f2d10983239c839a06708a6"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a66af1991ec590bf5669acf41a040cf303c89df26ffa6cfee579846bcd0a9940"
   end
 
   depends_on "rust" => :build
@@ -36,14 +35,14 @@ class Bottom < Formula
     # Completion scripts are generated in the crate's build
     # directory, which includes a fingerprint hash. Try to locate it first
     out_dir = "target/tmp/bottom"
-    bash_completion.install "#{out_dir}/completion/btm.bash"
+    bash_completion.install "#{out_dir}/completion/btm.bash" => "btm"
     fish_completion.install "#{out_dir}/completion/btm.fish"
     zsh_completion.install "#{out_dir}/completion/_btm"
     man1.install "#{out_dir}/manpage/btm.1"
   end
 
   test do
-    assert_equal "bottom #{version}", shell_output(bin/"btm --version").chomp
-    assert_match "error: unexpected argument '--invalid' found", shell_output(bin/"btm --invalid 2>&1", 2)
+    assert_equal "bottom #{version}", shell_output("#{bin}/btm --version").chomp
+    assert_match "error: unexpected argument '--invalid' found", shell_output("#{bin}/btm --invalid 2>&1", 2)
   end
 end

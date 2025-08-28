@@ -6,6 +6,8 @@ class Wzprof < Formula
   license "Apache-2.0"
   head "https://github.com/dispatchrun/wzprof.git", branch: "main"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_sequoia:  "09412fe4df2eeb2fa3e05a8da39a192f7bb5e38b98ef5c6924f93dd50b8c6abe"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "75f3a9f0120d54457ee0a116bcfb52147831bb466ef1b7cba2db1bdda93401ab"
@@ -39,8 +41,8 @@ class Wzprof < Formula
       func31 malloc(30): 0x11530
       end
     EOS
-    assert_equal expected, shell_output(bin/"wzprof -sample 1 #{testpath}/simple.wasm 2>&1")
+    assert_equal expected, shell_output("#{bin}/wzprof -sample 1 #{testpath}/simple.wasm 2>&1")
 
-    assert_match "wzprof version #{version}", shell_output(bin/"wzprof -version")
+    assert_match "wzprof version #{version}", shell_output("#{bin}/wzprof -version")
   end
 end

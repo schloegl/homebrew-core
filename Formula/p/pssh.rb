@@ -9,18 +9,11 @@ class Pssh < Formula
   revision 6
 
   bottle do
-    rebuild 4
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "4a64d2ac438449e8ee20c03ecc6cc96d008f0c6b85d428a4409e3b92f0f9a4bf"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "bcc233d04e87e24eee8c465ae40c58a8d8419b866edf1c15f16572c724cfeba1"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "b6274719af586dace88f196051bfff386f34588f3acb2c9fb82544c35e57bd0d"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "c4f36681d38878026b147f5f9fe29a41b42d3405a38e1badd02352d342c45e33"
-    sha256 cellar: :any_skip_relocation, sonoma:         "dab0ac8a7eb258204455639a4c3bbe864fd6d7e53a9462205685e58d33e33a64"
-    sha256 cellar: :any_skip_relocation, ventura:        "5261fd518381182846b4d6aabf594594a7fd5c55622efd9a216e4c766ef18dd1"
-    sha256 cellar: :any_skip_relocation, monterey:       "bf27ef315b921cb4f333f2f5d8a74292ac2508be06929f1c1fe0404331d3474d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "a77628efd39dc21de382b5ffb27b3d0e600d95d54dd99debdddc77524567be89"
+    rebuild 6
+    sha256 cellar: :any_skip_relocation, all: "518c2915f02b92510bef30b6a5826e8165fb9cdd3405e2355292e872fae6cc40"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   conflicts_with "putty", because: "both install `pscp` binaries"
 

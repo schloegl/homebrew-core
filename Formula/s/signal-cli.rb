@@ -1,19 +1,17 @@
 class SignalCli < Formula
   desc "CLI and dbus interface for WhisperSystems/libsignal-service-java"
   homepage "https://github.com/AsamK/signal-cli"
-  url "https://github.com/AsamK/signal-cli/archive/refs/tags/v0.13.5.tar.gz"
-  sha256 "c1fdc8ccff324278a9357aed04fa7de88ecba1fc270f5555b5cea77d415d1342"
+  url "https://github.com/AsamK/signal-cli/archive/refs/tags/v0.13.18.tar.gz"
+  sha256 "5040545c43069958bbf914331e39492ae7dde3497dbc2c89e0e4f3ff75fb83ea"
   license "GPL-3.0-or-later"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "b38b57e9e494a55ebc159fab7a4a3ef9c1d2925570b1ed077e8fd8246a957291"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "5df7b4a1b402f0bad8a39e3bbcf3c6bbe2d065f846827919ed580db76b7179e7"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "cd97c3784b9732002ac2459f02bc98ce271176c5fe69fbf38b3e7d46d400bd4f"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "71d800c2749004ca1ed6214b87b6acbb4a5f8e6cf775a0aede637a82b6e83ffa"
-    sha256 cellar: :any_skip_relocation, sonoma:         "42724c8265d152666e72151c1ffa3d753c597ac05b93481fc33fadf822cd7bb2"
-    sha256 cellar: :any_skip_relocation, ventura:        "7392fcf9650f2efa1c80113272339dbeb82f8a369f232d345f97a18326036d42"
-    sha256 cellar: :any_skip_relocation, monterey:       "58b01a46c5702ebdea14296964595b0a7c0f43656bce265ec3a7c7ca9449870a"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "d98bafe277e4c3dc429fd4907b809e598445cb1fbfb08088e4f705f1e0cdc7a5"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "4db78cba14472255c27052af30978e033bcac1c0bd95eebe36672b38fce5b43b"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "661bd3d4173079a2058d24387a93f99630963bc936cba948c798c485034b5def"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "319bacce3b191b377b306b3de7b9b4f9f3cd85d28ecb6759ffe1c731c1cb24e6"
+    sha256 cellar: :any_skip_relocation, sonoma:        "3b859f7773e62a548069b6bab41370a5785eeac0a00b026a7cf94d0f4e4fc04c"
+    sha256 cellar: :any_skip_relocation, ventura:       "c7d196e733ed2dc069a0e2b544d180a30ee3d6229d62171b2c2b7198998ad7e9"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f516675663977674d1a8b298221de16725637b981958b6e41a7614ddf6f80f99"
   end
 
   depends_on "cmake" => :build # For `boring-sys` crate in `libsignal-client`
@@ -26,13 +24,17 @@ class SignalCli < Formula
   uses_from_macos "llvm" => :build # For `libclang`, used by `boring-sys` crate
   uses_from_macos "zip" => :build
 
+  on_linux do
+    depends_on arch: :x86_64 # `:libsignal-cli:test` failure, https://github.com/AsamK/signal-cli/issues/1787
+  end
+
   # https://github.com/AsamK/signal-cli/wiki/Provide-native-lib-for-libsignal#determine-the-required-libsignal-client-version
   # To check the version of `libsignal-client`, run:
   # url=https://github.com/AsamK/signal-cli/releases/download/v$version/signal-cli-$version.tar.gz
   # curl -fsSL $url | tar -tz | grep libsignal-client
   resource "libsignal-client" do
-    url "https://github.com/signalapp/libsignal/archive/refs/tags/v0.52.2.tar.gz"
-    sha256 "40ddc51bc5bf1013c583c07717ed00cedfafda55f9f9a43aad72f9a55986b199"
+    url "https://github.com/signalapp/libsignal/archive/refs/tags/v0.76.3.tar.gz"
+    sha256 "7e474269dfa98929088aaa367e963cd6cab71b60d84cef4da28f97573c24984f"
   end
 
   def install
@@ -51,26 +53,23 @@ class SignalCli < Formula
       res = r.resource
       odie "#{res.name} needs to be updated to #{embedded_jar_version}!" if embedded_jar_version != res.version
 
-      # rm originally-embedded libsignal_jni lib
-      system "zip", "-d", libsignal_client_jar, "libsignal_jni.so", "libsignal_jni.dylib", "signal_jni.dll"
+      system "zip", "-d", libsignal_client_jar, "libsignal_jni_*.so", "libsignal_jni_*.dylib", "signal_jni_*.dll"
 
-      # build & embed library for current platform
       cd "java" do
         inreplace "settings.gradle", "include ':android'", ""
         system "./build_jni.sh", "desktop"
-        cd "shared/resources" do
-          system "zip", "-u", libsignal_client_jar, shared_library("libsignal_jni")
+        cd "client/src/main/resources" do
+          arch = Hardware::CPU.intel? ? "amd64" : "aarch64"
+          system "zip", "-u", libsignal_client_jar, shared_library("libsignal_jni_#{arch}")
         end
       end
     end
   end
 
   test do
-    # test 1: checks class loading is working and version is correct
     output = shell_output("#{bin}/signal-cli --version")
     assert_match "signal-cli #{version}", output
 
-    # test 2: ensure crypto is working
     begin
       io = IO.popen("#{bin}/signal-cli link", err: [:child, :out])
       sleep 24

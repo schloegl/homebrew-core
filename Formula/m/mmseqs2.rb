@@ -1,21 +1,20 @@
 class Mmseqs2 < Formula
   desc "Software suite for very fast sequence search and clustering"
   homepage "https://mmseqs.com/"
-  url "https://github.com/soedinglab/MMseqs2/archive/refs/tags/15-6f452.tar.gz"
-  version "15-6f452"
-  sha256 "7115ac5a7e2a49229466806aaa760d00204bb08c870e3c231b00e525c77531dc"
-  license "GPL-3.0-or-later"
+  url "https://github.com/soedinglab/MMseqs2/archive/refs/tags/18-8cc5c.tar.gz"
+  version "18-8cc5c"
+  sha256 "3541b67322aee357fd9ca529750d36cb1426aa9bcd1efb2dc916e35219e1a41c"
+  license "MIT"
   head "https://github.com/soedinglab/MMseqs2.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "aba00dd8dbc099db31639822589c2a289436f78f47415c9bbb52da46c333f53f"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "c88e8b511aedbf0abab55d03e24ce5a0d55c0430030cd31e0c147c98bfa535bd"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "512741ad23baa4dce0feb17bae9d4b191ae0ddade26612dba3c1efdf3c72dcb1"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "f88414971f7399d1993419af08bbd06d4ab82abc001e9f78ccde868b844f6a65"
-    sha256 cellar: :any_skip_relocation, sonoma:         "a3e04a294a1db787b11ec79f3f6b7a7b4369c696760d87e7c398b3eee668fb4d"
-    sha256 cellar: :any_skip_relocation, ventura:        "4b5c561f19f57c6daa8dac8a9f00d44c7ea38fb85c55831461fbe8ead7700e89"
-    sha256 cellar: :any_skip_relocation, monterey:       "9c1d25760313d5aa0f70ced3d98118124c6e5512cb612dc37e56cb169bc611c3"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "204d92d9cfc945c5e4d4cdf665afca20f0236b4a33942f242b759f0238827d03"
+    sha256 cellar: :any,                 arm64_sequoia: "2559af59e1218ea74307ceec6566773a99644344cf79f2694feb3087b47d7c52"
+    sha256 cellar: :any,                 arm64_sonoma:  "51c387d84616d349170b24f6d19a8013da1a38b26ce1470e288858ddfaaffee9"
+    sha256 cellar: :any,                 arm64_ventura: "3588b255d84d1990d827384f1d1f0580e289a07df361f2ebb3cbfc8f11ee00ae"
+    sha256 cellar: :any,                 sonoma:        "34bd808b80f87b6aefb521847f10507a27367686616a4de7f121249a9f087044"
+    sha256 cellar: :any,                 ventura:       "e077f4ccbbfd477edd045872df1e891a1038f7f2e2a52d3c72c390367ae8208c"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "3be48f38aa44ce99a5a96d6b67b6c54645c9e25a091aa32b8e289bc0037c3659"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "cd3f8a5bfe07ba3c31860971f628f04a5bec4c49606f732641b27aabccac3f4a"
   end
 
   depends_on "cmake" => [:build, :test]
@@ -32,42 +31,32 @@ class Mmseqs2 < Formula
     depends_on "gawk"
   end
 
-  # check revision with https://github.com/soedinglab/MMseqs2/wiki/Home/_history
+  # `git ls-remote https://github.com/soedinglab/MMseqs2.wiki.git HEAD`
   resource "documentation" do
     url "https://github.com/soedinglab/MMseqs2.wiki.git",
-        revision: "1ea9a93cb31d6c8cc25ef963311bcdddb95ff58d"
+        revision: "67ba9c6637b4b5121a73e5de034dd0c3414d2b81"
   end
 
   def install
-    args = *std_cmake_args << "-DHAVE_TESTS=0" << "-DHAVE_MPI=0"
-    args << "-DVERSION_OVERRIDE=#{version}"
+    args = %W[
+      -DHAVE_TESTS=0
+      -DHAVE_MPI=0
+      -DVERSION_OVERRIDE=#{version}
+    ]
+
     args << if Hardware::CPU.arm?
       "-DHAVE_ARM8=1"
     else
       "-DHAVE_SSE4_1=1"
     end
 
-    if OS.mac?
-      libomp = Formula["libomp"]
-      args << "-DOpenMP_C_FLAGS=-Xpreprocessor -fopenmp -I#{libomp.opt_include}"
-      args << "-DOpenMP_C_LIB_NAMES=omp"
-      args << "-DOpenMP_CXX_FLAGS=-Xpreprocessor -fopenmp -I#{libomp.opt_include}"
-      args << "-DOpenMP_CXX_LIB_NAMES=omp"
-      args << "-DOpenMP_omp_LIBRARY=#{libomp.opt_lib}/libomp.a"
-    end
-
-    system "cmake", ".", *args
-    system "make", "install"
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
 
     resource("documentation").stage { doc.install Dir["*"] }
     pkgshare.install "examples"
     bash_completion.install "util/bash-completion.sh" => "mmseqs.sh"
-  end
-
-  def caveats
-    on_intel do
-      "MMseqs2 requires at least SSE4.1 CPU instruction support." unless Hardware::CPU.sse4?
-    end
   end
 
   test do
@@ -77,6 +66,7 @@ class Mmseqs2 < Formula
     end
 
     resource("homebrew-testdata").stage do
+      ENV["CMAKE_POLICY_VERSION_MINIMUM"] = "3.5"
       system "./run_regression.sh", "#{bin}/mmseqs", "scratch"
     end
   end

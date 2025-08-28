@@ -23,15 +23,9 @@ class Terraform < Formula
 
   # https://www.hashicorp.com/blog/hashicorp-adopts-business-source-license
   deprecate! date: "2024-04-04", because: "changed its license to BUSL on the next release"
+  disable! date: "2025-04-12", because: "changed its license to BUSL on the next release"
 
   depends_on "go" => :build
-
-  conflicts_with "tenv", because: "both install terraform binary"
-  conflicts_with "tfenv", because: "tfenv symlinks terraform binaries"
-
-  # Needs libraries at runtime:
-  # /usr/lib/x86_64-linux-gnu/libstdc++.so.6: version `GLIBCXX_3.4.29' not found (required by node)
-  fails_with gcc: "5"
 
   def install
     system "go", "build", *std_go_args(ldflags: "-s -w")
@@ -49,7 +43,7 @@ class Terraform < Formula
 
   test do
     minimal = testpath/"minimal.tf"
-    minimal.write <<~EOS
+    minimal.write <<~HCL
       variable "aws_region" {
         default = "us-west-2"
       }
@@ -75,7 +69,7 @@ class Terraform < Formula
         ami           = var.aws_amis[var.aws_region]
         count         = 4
       }
-    EOS
+    HCL
     system bin/"terraform", "init"
     system bin/"terraform", "graph"
   end

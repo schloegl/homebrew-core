@@ -1,14 +1,13 @@
 class Tmuxinator < Formula
   desc "Manage complex tmux sessions easily"
   homepage "https://github.com/tmuxinator/tmuxinator"
-  url "https://github.com/tmuxinator/tmuxinator/archive/refs/tags/v3.3.1.tar.gz"
-  sha256 "8b41f7c56b42ea13e37c99f4cd818a571859f473ae5acbed12f343a75e3fa1be"
+  url "https://github.com/tmuxinator/tmuxinator/archive/refs/tags/v3.3.5.tar.gz"
+  sha256 "56dc5ca39d11bad38f7fb602ce412a0f564dc0757765ad105a2cccbe84fcd2ca"
   license "MIT"
   head "https://github.com/tmuxinator/tmuxinator.git", branch: "master"
 
   bottle do
-    rebuild 2
-    sha256 cellar: :any_skip_relocation, all: "f212df9e9c4a67b19bdd885170998c3dea7d35383230451cbcf173f912058744"
+    sha256 cellar: :any_skip_relocation, all: "6b6e4ff4d810440e7512b14545f3f2ae267114342ef1133b537c181e0de8a636"
   end
 
   depends_on "ruby"
@@ -21,13 +20,13 @@ class Tmuxinator < Formula
   end
 
   resource "thor" do
-    url "https://rubygems.org/downloads/thor-1.3.2.gem"
-    sha256 "eef0293b9e24158ccad7ab383ae83534b7ad4ed99c09f96f1a6b036550abbeda"
+    url "https://rubygems.org/downloads/thor-1.4.0.gem"
+    sha256 "8763e822ccb0f1d7bee88cde131b19a65606657b847cc7b7b4b82e772bcd8a3d"
   end
 
   resource "erubi" do
-    url "https://rubygems.org/downloads/erubi-1.12.0.gem"
-    sha256 "27bedb74dfb1e04ff60674975e182d8ca787f2224f2e8143268c7696f42e4723"
+    url "https://rubygems.org/downloads/erubi-1.13.1.gem"
+    sha256 "a082103b0885dbc5ecf1172fede897f9ebdb745a4b97a5e8dc63953db1ee4ad9"
   end
 
   def install
@@ -54,9 +53,9 @@ class Tmuxinator < Formula
 
     commands = shell_output("#{bin}/tmuxinator commands")
     commands_list = %w[
-      commands completions new edit open start
-      stop local debug copy delete implode
-      version doctor list
+      commands completions copy debug delete doctor
+      edit implode local list new open start stop
+      stop_all version
     ]
 
     expected_commands = commands_list.join("\n")

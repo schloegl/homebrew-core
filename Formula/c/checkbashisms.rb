@@ -1,8 +1,8 @@
 class Checkbashisms < Formula
   desc "Checks for bashisms in shell scripts"
   homepage "https://launchpad.net/ubuntu/+source/devscripts/"
-  url "https://deb.debian.org/debian/pool/main/d/devscripts/devscripts_2.24.1.tar.xz"
-  sha256 "205122cc0bd28cf3521f80fce87a6efdced83e4ff86c647f4ce018444a2ec52a"
+  url "https://deb.debian.org/debian/pool/main/d/devscripts/devscripts_2.25.19.tar.xz"
+  sha256 "c0806c245c1acd9f60651a63338470128f997b4bd81ccffbe8e3c89fa66be0db"
   license "GPL-2.0-or-later"
 
   livecheck do
@@ -11,7 +11,7 @@ class Checkbashisms < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "3a7411e50d3b5f4b50cf9c4a7041f6eb94a215cf81777ca02b0e9b4385ffd61e"
+    sha256 cellar: :any_skip_relocation, all: "e4fa97686f56bcd3f7c0e28bae6c347ca1eb57a6e0dfe96ff29003f9f4860711"
   end
 
   def install
@@ -25,13 +25,13 @@ class Checkbashisms < Formula
   end
 
   test do
-    (testpath/"test.sh").write <<~EOS
+    (testpath/"test.sh").write <<~SHELL
       #!/bin/sh
 
       if [[ "home == brew" ]]; then
         echo "dog"
       fi
-    EOS
+    SHELL
     expected = <<~EOS
       (alternative test command ([[ foo ]] should be [ foo ])):
     EOS

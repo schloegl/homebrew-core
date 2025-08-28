@@ -1,10 +1,9 @@
 class Netdata < Formula
   desc "Diagnose infrastructure problems with metrics, visualizations & alarms"
-  homepage "https://netdata.cloud/"
-  url "https://github.com/netdata/netdata/releases/download/v1.44.3/netdata-v1.44.3.tar.gz"
-  sha256 "50df30a9aaf60d550eb8e607230d982827e04194f7df3eba0e83ff7919270ad2"
+  homepage "https://www.netdata.cloud/"
+  url "https://github.com/netdata/netdata/releases/download/v2.6.3/netdata-v2.6.3.tar.gz"
+  sha256 "ae99834889c04b5d49b1b03cf1db8812a9b3c6498dd097414bee01a3844c9001"
   license "GPL-3.0-or-later"
-  revision 10
 
   livecheck do
     url :stable
@@ -13,19 +12,19 @@ class Netdata < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia: "72920206fd23865eded406346ccdf3082ad888cfe6689187be9ab40097e77aab"
-    sha256 arm64_sonoma:  "26b3af387a9409b2752bc02611b3f162128219d67f3b9955e2810aca6c9da114"
-    sha256 arm64_ventura: "03664dbedfbd95e8171e0a2741a441a43de33644302e71f231ca7221842ac7d2"
-    sha256 sonoma:        "5e77858d62a0031bfb69f028420c2bfb9975cf97dd2987ffeadfc2b88747be1a"
-    sha256 ventura:       "6849a34dbcda8954680192b762c865438e70838126c04f2b21e0f7cf1da00a92"
-    sha256 x86_64_linux:  "3e0937e5cad6f632490356ca195f6e33519ea664fa9e02e94c13d27c7dd89b25"
+    sha256 arm64_sequoia: "581176b022ecae6c52683c111a67067b7d3b7475257d90f62cc0cc784768c9b4"
+    sha256 arm64_sonoma:  "00856eec11eeefe55025ff8fa98d794a20f7876d7b9ee559ae32ad8d99d4e022"
+    sha256 arm64_ventura: "022c12729c28c7c65817c18294009667b323c6e2d9d824ee59a3abe8ceec655b"
+    sha256 sonoma:        "8334892fdabfc2aab32bd1b5502d8f02f2a6613ed07ed3deddcd9bf070ada22d"
+    sha256 ventura:       "56ceb5c9a292721b1e38bfe0e4607ac37f5825945a3a5132749d0630af4eb9ca"
+    sha256 x86_64_linux:  "2fd763d3bb0e18e835fb448cc2a2b66fb4f0185ffcaf986ef04efff9dcb0c763"
   end
 
-  depends_on "autoconf" => :build
-  depends_on "automake" => :build
-  depends_on "m4" => :build
-  depends_on "pkg-config" => :build
+  depends_on "cmake" => :build
+  depends_on "go" => :build
+  depends_on "pkgconf" => :build
   depends_on "abseil"
+  depends_on "dlib"
   depends_on "json-c"
   depends_on "libuv"
   depends_on "libyaml"
@@ -33,75 +32,45 @@ class Netdata < Formula
   depends_on "openssl@3"
   depends_on "pcre2"
   depends_on "protobuf"
-  depends_on "protobuf-c"
+  depends_on "snappy"
+  depends_on "zstd"
 
+  uses_from_macos "curl"
   uses_from_macos "zlib"
 
   on_linux do
+    depends_on "bison" => :build
+    depends_on "flex" => :build
+    depends_on "brotli"
+    depends_on "elfutils"
+    depends_on "freeipmi"
+    depends_on "libcap"
+    depends_on "libmnl"
+    depends_on "systemd"
     depends_on "util-linux"
-  end
-
-  resource "judy" do
-    url "https://downloads.sourceforge.net/project/judy/judy/Judy-1.0.5/Judy-1.0.5.tar.gz"
-    sha256 "d2704089f85fdb6f2cd7e77be21170ced4b4375c03ef1ad4cf1075bd414a63eb"
+    depends_on "zstd"
   end
 
   def install
-    # daemon/buildinfo.c saves the configure args and certain environment
-    # variables used to build netdata. Remove the environment variable that may
-    # reference `HOMEBREW_LIBRARY`, which can make bottling fail.
-    ENV.delete "PKG_CONFIG_LIBDIR"
-
-    # https://github.com/protocolbuffers/protobuf/issues/9947
-    ENV.append_to_cflags "-DNDEBUG"
-
-    # We build judy as static library, so we don't need to install it
-    # into the real prefix
-    judyprefix = "#{buildpath}/resources/judy"
-
-    resource("judy").stage do
-      system "./configure", "--disable-debug", "--disable-dependency-tracking",
-          "--disable-shared", "--prefix=#{judyprefix}"
-
-      # Parallel build is broken
-      ENV.deparallelize do
-        system "make", "install"
-      end
+    # Install files using Homebrew's directory layout rather than relative to root.
+    inreplace "packaging/cmake/Modules/NetdataEBPFLegacy.cmake", "DESTINATION usr/", "DESTINATION "
+    inreplace "CMakeLists.txt" do |s|
+      s.gsub! %r{(\s"?(?:\$\{NETDATA_RUNTIME_PREFIX\}/)?)usr/}, "\\1"
+      s.gsub! %r{(\s"?)(?:\$\{NETDATA_RUNTIME_PREFIX\}/)?etc/}, "\\1#{etc}/"
+      s.gsub! %r{(\s"?)(?:\$\{NETDATA_RUNTIME_PREFIX\}/)?var/}, "\\1#{var}/"
+      # Fix not to use `fetchContent` for `dlib` library
+      # Issue ref: https://github.com/netdata/netdata/issues/20147
+      s.gsub! "netdata_bundle_dlib()", "find_package(dlib REQUIRED)"
+      s.gsub! "netdata_add_dlib_to_target(netdata)", ""
     end
 
-    ENV["PREFIX"] = prefix
-    ENV.append "CFLAGS", "-I#{judyprefix}/include"
-    ENV.append "LDFLAGS", "-L#{judyprefix}/lib"
-
-    # We need C++17 for protobuf.
-    inreplace "configure.ac", "# AX_CXX_COMPILE_STDCXX(17, noext, optional)",
-                              "AX_CXX_COMPILE_STDCXX(17, noext, mandatory)"
-
-    system "autoreconf", "--force", "--install", "--verbose"
-    args = %W[
-      --disable-dependency-tracking
-      --disable-silent-rules
-      --prefix=#{prefix}
-      --sysconfdir=#{etc}
-      --localstatedir=#{var}
-      --libexecdir=#{libexec}
-      --with-math
-      --with-zlib
-      --enable-dbengine
-      --with-user=netdata
-    ]
-    if OS.mac?
-      args << "UUID_LIBS=-lc"
-      args << "UUID_CFLAGS=-I/usr/include"
-    else
-      args << "UUID_LIBS=-luuid"
-      args << "UUID_CFLAGS=-I#{Formula["util-linux"].opt_include}"
-    end
-    system "./configure", *args
-    system "make", "clean"
-    system "make", "install"
-
-    (etc/"netdata").install "system/netdata.conf"
+    system "cmake", "-S", ".", "-B", "build",
+                    "-DBUILD_FOR_PACKAGING=ON",
+                    "-DENABLE_PLUGIN_NFACCT=OFF",
+                    "-DENABLE_PLUGIN_XENSTAT=OFF",
+                    *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   def post_install
@@ -118,9 +87,12 @@ class Netdata < Formula
   end
 
   test do
-    system "#{sbin}/netdata", "-W", "set", "registry", "netdata unique id file",
-                              "#{testpath}/netdata.unittest.unique.id",
-                              "-W", "set", "registry", "netdata management api key file",
-                              "#{testpath}/netdata.api.key"
+    directories = prefix.children(false).map(&:to_s)
+    %w[usr var etc].each { |dir| refute_includes directories, dir }
+
+    system sbin/"netdata", "-W", "set", "registry", "netdata unique id file",
+                           "#{testpath}/netdata.unittest.unique.id",
+                           "-W", "set", "registry", "netdata management api key file",
+                           "#{testpath}/netdata.api.key"
   end
 end

@@ -23,15 +23,16 @@ class Gollum < Formula
 
   # no commits since july 1 2021, and cannot rebuild, https://github.com/trivago/gollum/issues/265
   deprecate! date: "2024-07-27", because: :unmaintained
+  disable! date: "2025-07-27", because: :unmaintained
 
   depends_on "go" => :build
 
   def install
     # Work around https://github.com/trivago/gollum/issues/265
     mod = "github.com/CrowdStrike/go-metrics-prometheus"
-    (buildpath/"vendor/#{mod}/go.mod").write <<~EOS
+    (buildpath/"vendor/#{mod}/go.mod").write <<~GOMOD
       module #{mod}
-    EOS
+    GOMOD
     (buildpath/"go.work").write <<~EOS
       use .
       replace #{mod} => ./vendor/#{mod}

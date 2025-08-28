@@ -1,34 +1,31 @@
 class Numpy < Formula
   desc "Package for scientific computing with Python"
   homepage "https://www.numpy.org/"
-  url "https://files.pythonhosted.org/packages/59/5f/9003bb3e632f2b58f5e3a3378902dcc73c5518070736c6740fe52454e8e1/numpy-2.1.1.tar.gz"
-  sha256 "d0cf7d55b1051387807405b3898efafa862997b4cba8aa5dbe657be794afeafd"
+  url "https://files.pythonhosted.org/packages/37/7d/3fec4199c5ffb892bed55cff901e4f39a58c81df9c44c280499e92cad264/numpy-2.3.2.tar.gz"
+  sha256 "e0486a11ec30cdecb53f184d496d1c6a20786c81e55e41640270130056f8ee48"
   license "BSD-3-Clause"
   head "https://github.com/numpy/numpy.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "836b7ea9a3d9f2846c912544adcda0ef6bab7fdaa72ef4061dd8f52dda7e5c5e"
-    sha256 cellar: :any,                 arm64_sonoma:   "924c40ddf282d5c12b4376f33271b7850a51422cb275d5e4d6a088efaba20d33"
-    sha256 cellar: :any,                 arm64_ventura:  "a59680ff0599eaaedffc08d39e43886b7f30bfd4329834a80037938f52a14cce"
-    sha256 cellar: :any,                 arm64_monterey: "4c66cadb1690ea8f562ab3e6cdfe7850a7d87d434edbad84134313bda4e61e03"
-    sha256 cellar: :any,                 sonoma:         "fa860a99fcc55b4a2da17e44d0de97097f9084d04f926273a4f20c517280c318"
-    sha256 cellar: :any,                 ventura:        "462ace65c75c44be7c79a05c5a9a4bb041b1e6f811cf706c8622b27555c6a2c6"
-    sha256 cellar: :any,                 monterey:       "cc238b3c89f76848d5e2a1c995b28367fa880b841a02d9ee8f04f7670afc87a3"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "24ef8697b15867bc22a393c6b7ead92bea61964c4b63fb5020021329ee499f96"
+    sha256 cellar: :any,                 arm64_sequoia: "94e1574d0dd23e0a2abd5c926020998dfdd913ef0cdfd714e04e69e81ec17699"
+    sha256 cellar: :any,                 arm64_sonoma:  "846d2df4274515dc5b30db7b1272a7b699e3ccd0077a7d7e3a3b6ad536a5ed3c"
+    sha256 cellar: :any,                 arm64_ventura: "035357f8b394f7921e0aef7698b31071a47d36cf9ea3a1d17b9df450c8f1c5c8"
+    sha256 cellar: :any,                 sonoma:        "7bd78f32c65e4997a5471de972911a671746d0f62192412b3e2d474313f05985"
+    sha256 cellar: :any,                 ventura:       "a87557e21a6ade4c92000156ad1d9268b5404a79635b9110eadfc7f2348d54e2"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "fff34d2d8ebe65428c939b8cdf9429c8b52b45b64f862ccee963e5119f571d56"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "807fe716734a45b22bbbcf05be80dad0c42976fd8674f7887fb04bbd32cd07bd"
   end
 
   depends_on "gcc" => :build # for gfortran
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "python@3.11" => [:build, :test]
   depends_on "python@3.12" => [:build, :test]
+  depends_on "python@3.13" => [:build, :test]
   depends_on "openblas"
 
   on_linux do
     depends_on "patchelf" => :build
   end
-
-  fails_with gcc: "5"
 
   def pythons
     deps.map(&:to_formula)
@@ -54,12 +51,12 @@ class Numpy < Formula
   test do
     pythons.each do |python|
       python3 = python.opt_libexec/"bin/python"
-      system python3, "-c", <<~EOS
+      system python3, "-c", <<~PYTHON
         import numpy as np
         t = np.ones((3,3), int)
         assert t.sum() == 9
         assert np.dot(t, t).sum() == 27
-      EOS
+      PYTHON
     end
   end
 end

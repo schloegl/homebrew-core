@@ -1,17 +1,19 @@
 class KeepSorted < Formula
   desc "Language-agnostic formatter that sorts selected lines"
   homepage "https://github.com/google/keep-sorted"
-  url "https://github.com/google/keep-sorted/archive/refs/tags/v0.5.0.tar.gz"
-  sha256 "8eee061af908fd971911118975e4a2870afff385b3aea9948cc9b221849a9436"
+  url "https://github.com/google/keep-sorted.git",
+      tag:      "v0.7.1",
+      revision: "c71803fd297b5736f3bfab1cfd84424ca52e961a"
   license "Apache-2.0"
+  head "https://github.com/google/keep-sorted.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "a7f3c6c8da17ff074bfeb1b8d269cfd57d2ae74136c9c87816b142947f78a615"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "a7f3c6c8da17ff074bfeb1b8d269cfd57d2ae74136c9c87816b142947f78a615"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "a7f3c6c8da17ff074bfeb1b8d269cfd57d2ae74136c9c87816b142947f78a615"
-    sha256 cellar: :any_skip_relocation, sonoma:        "3799f06dc1744cf5cfa11131ad06a9dd5a316f661a30bf2432ca1cc191862b6c"
-    sha256 cellar: :any_skip_relocation, ventura:       "3799f06dc1744cf5cfa11131ad06a9dd5a316f661a30bf2432ca1cc191862b6c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b9a7e7b8e8e4c649347212f5d29bec81ea41f1ddd6c3cc4bc68b0538b51cdf8b"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "6ef6b1fa86aa500fb3c582e3b233ff8db11c930f14ecc688100278717f8fe93b"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "6ef6b1fa86aa500fb3c582e3b233ff8db11c930f14ecc688100278717f8fe93b"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "6ef6b1fa86aa500fb3c582e3b233ff8db11c930f14ecc688100278717f8fe93b"
+    sha256 cellar: :any_skip_relocation, sonoma:        "3bc8e596dc3996b5876eb66a9f238f63d7fcbac4b957f6e31ef68ef4863264a6"
+    sha256 cellar: :any_skip_relocation, ventura:       "3bc8e596dc3996b5876eb66a9f238f63d7fcbac4b957f6e31ef68ef4863264a6"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3e89740e08e8b84defbdc44674ae60df767fb0dc1cc3ba9e63037caa2c40e018"
   end
 
   depends_on "go" => :build
@@ -21,6 +23,7 @@ class KeepSorted < Formula
   end
 
   test do
+    assert_match version.to_s, shell_output("#{bin}/keep-sorted --version")
     test_file = testpath + "test_input"
     test_file.write <<~EOS
       line will not be touched.

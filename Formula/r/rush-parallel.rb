@@ -1,19 +1,17 @@
 class RushParallel < Formula
   desc "Cross-platform command-line tool for executing jobs in parallel"
   homepage "https://github.com/shenwei356/rush"
-  url "https://github.com/shenwei356/rush/archive/refs/tags/v0.5.6.tar.gz"
-  sha256 "57450967bd222964f4865d7884b358d391e30d6eee8951b149f34f8642a32958"
+  url "https://github.com/shenwei356/rush/archive/refs/tags/v0.7.0.tar.gz"
+  sha256 "82d8496874631b1b27618e3a5c1d95d3f5610ab5a415341a2115688b12bca4dc"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "dec8fcf099e7d8f5a089ea85cc14ce075a941dda2977a2922ba93db6fa313663"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "dc134bdeb1f45da45415da9afd754faedda3216c381a40e4ad276fdf0a4f0d5d"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "84527df6822a3c96fbe1f3bd5f64842dacd941ad635353a8492be7544d75ce99"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "9a7ccbfe97e582202faab7204fafef37033cd0ee5d7c9b32ee352e9435f140d7"
-    sha256 cellar: :any_skip_relocation, sonoma:         "f72c193f784b9daa4842fd6142587e35ae4d0af1910a9c024e7a03db339d837e"
-    sha256 cellar: :any_skip_relocation, ventura:        "c1b6bcab40fb133dcbb72d87cb9adc6b1e1dbcfaabd1165585fef689533150c8"
-    sha256 cellar: :any_skip_relocation, monterey:       "9fc430bf28d8d0575cbc824582cb143027ea0995eaeb430a64bf4e342783fd74"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "b750c49b1316b191f32c638041be3bf67dfbbd33991ecf67a14a96cff91bd9b3"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "f50a578f2c64137137d1a004e8535c6ea74cdc43b971bade54b01142f289e6d7"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "3894ff541972e4f7294f7d8fc5ab23061437f2004541419165a99d6d4c709959"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "4eeac0ea0161b5da75e833e99988060a35e6230d1956cc885022deecbe069714"
+    sha256 cellar: :any_skip_relocation, sonoma:        "35f05c81215d36bd242affb3cd4e2f07654b2e5b7b114470acf99adcd147e062"
+    sha256 cellar: :any_skip_relocation, ventura:       "e696d0e4b1418f63075cd93842c973361960097fa153594191e67374e4208a96"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a0a8e3441f54cfe73b04d086413644cca6081a6a7b06273a292d4c3116682b36"
   end
 
   depends_on "go" => :build
@@ -21,7 +19,7 @@ class RushParallel < Formula
   conflicts_with "rush", because: "both install `rush` binaries"
 
   def install
-    system "go", "build", *std_go_args(output: bin/"rush")
+    system "go", "build", *std_go_args(ldflags: "-s -w", output: bin/"rush")
   end
 
   test do

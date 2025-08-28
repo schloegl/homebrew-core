@@ -1,15 +1,29 @@
 class Bluez < Formula
   desc "Bluetooth protocol stack for Linux"
-  homepage "https://github.com/bluez/bluez"
-  url "https://mirrors.edge.kernel.org/pub/linux/bluetooth/bluez-5.78.tar.xz"
-  sha256 "830fed1915c5d375b8de0f5e6f45fcdea0dcc5ff5ffb3d31db6ed0f00d73c5e3"
+  homepage "https://www.bluez.org"
+  url "https://mirrors.edge.kernel.org/pub/linux/bluetooth/bluez-5.83.tar.xz"
+  sha256 "108522d909d220581399bfec93daab62035539ceef3dda3e79970785c63bd24c"
   license "GPL-2.0-or-later"
 
-  bottle do
-    sha256 x86_64_linux: "0276e6308da5fdf6609c062ed84f3af6e6155fece84d9c36e40ecb810968a591"
+  livecheck do
+    url "https://mirrors.edge.kernel.org/pub/linux/bluetooth/"
+    regex(/href=.*?bluez[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
-  depends_on "pkg-config" => :build
+  bottle do
+    sha256 arm64_linux:  "b766a64745b975276470e679aa0f1a1d8c0442eeea9ceebcdca3533d6889c571"
+    sha256 x86_64_linux: "1de1e7cc1092d5ebdc0bfe89438a42959e0acb49ea2a7f0f16d607b7f7a2eb59"
+  end
+
+  head do
+    url "https://git.kernel.org/pub/scm/bluetooth/bluez.git", branch: "master"
+
+    depends_on "autoconf" => :build
+    depends_on "automake" => :build
+    depends_on "libtool" => :build
+  end
+
+  depends_on "pkgconf" => :build
   depends_on "dbus"
   depends_on "glib"
   depends_on "libical"
@@ -18,13 +32,14 @@ class Bluez < Formula
   depends_on "systemd" # for libudev
 
   def install
+    system "autoreconf", "--force", "--install", "--verbose" if build.head?
     system "./configure", "--disable-testing", "--disable-manpages", "--enable-library", *std_configure_args
     system "make"
     system "make", "install"
   end
 
   test do
-    assert_match version.to_s, shell_output("#{bin}/bluetoothctl --version")
+    assert_match version.to_s, shell_output("#{bin}/bluetoothctl --version") unless head?
 
     assert_match "Failed to open HCI user channel", shell_output("#{bin}/bluemoon 2>&1", 1)
 

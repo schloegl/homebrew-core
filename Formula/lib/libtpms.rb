@@ -1,37 +1,34 @@
 class Libtpms < Formula
   desc "Library for software emulation of a Trusted Platform Module"
   homepage "https://github.com/stefanberger/libtpms"
-  url "https://github.com/stefanberger/libtpms/archive/refs/tags/v0.9.6.tar.gz"
-  sha256 "2807466f1563ebe45fdd12dd26e501e8a0c4fbb99c7c428fbb508789efd221c0"
+  url "https://github.com/stefanberger/libtpms/archive/refs/tags/v0.10.1.tar.gz"
+  sha256 "ebc24f3191d90f6cf0b4d4200cd876db4bd224b3c565708bbea0a82ee275e0fb"
   license "BSD-2-Clause"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "5104a654402cf8fc6dabc96331fb9b3f1ed8f9f5fcd6af3eedb6659b940d18b5"
-    sha256 cellar: :any,                 arm64_sonoma:   "85caf7a852afb64a0655e50c047f0698e1d5818ca380a8e195420e3c2f566507"
-    sha256 cellar: :any,                 arm64_ventura:  "e2f02f188732ed0e4087d9b42884d105431643c3cb8159f393775ca7e5758123"
-    sha256 cellar: :any,                 arm64_monterey: "36a2c1eaec30621078ca68543253eb22e26c82d0268044a290ffb7dd1df12b31"
-    sha256 cellar: :any,                 arm64_big_sur:  "31f91991e4be84723105b06070cba57ec75acf9868f239a8d8c4a1ba4056d288"
-    sha256 cellar: :any,                 sonoma:         "382972979dc16de1d2f5d986bc9b5ecca804cc6d5cc386f646da9069f7c1dcfc"
-    sha256 cellar: :any,                 ventura:        "b9d7bb7a259a45a826d4c8ddbb13563598a789d9b1124dc3ac9dd6d58f7fca86"
-    sha256 cellar: :any,                 monterey:       "739007871c7bfd3697c0640a0d9bea612dccfc2a4310877f203d64d40fd3a80f"
-    sha256 cellar: :any,                 big_sur:        "1e12100af9f666d5830c0b3753024af7359b5aef600408813ff3f43de7f7126f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "cd0feb0b0c82a34761e619248ba87e2b994552b0cc60e06dea00ea6dfccc735a"
+    sha256 cellar: :any,                 arm64_sequoia: "15359aca8b873a6965f40e824368108637c9f8cf48b28fba6323f9752071023c"
+    sha256 cellar: :any,                 arm64_sonoma:  "42a7c3f06554cb88deeff3b7b79ab082ed8eff5180ce06a0612a6f2b1191de95"
+    sha256 cellar: :any,                 arm64_ventura: "19e27301de4d0e3be8f6e64d365fcea16829ddf004c4c2634fc8464e3a29ad11"
+    sha256 cellar: :any,                 sonoma:        "8d898dc691972d2dc4a536f2f90608723593b2cccec3878c81a29f7524dac0e1"
+    sha256 cellar: :any,                 ventura:       "74c6e183ed2cbbb2d453c422560cd77ea56a92f0f3fd82650ebb3e56633341fa"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "06262b5d69c7ee3a6f2083b6d36afd63e9b4c051f53a8f842d9f5c377fb3b180"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ea4a8d8b452a7bb8f7a8fb9d50db91e964e3d9c656ba14475ed94a480bd2a12f"
   end
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "openssl@3"
 
   def install
-    system "./autogen.sh", *std_configure_args, "--with-openssl", "--with-tpm2"
+    system "./autogen.sh", "--with-openssl", "--with-tpm2", *std_configure_args
     system "make"
     system "make", "install"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <libtpms/tpm_library.h>
 
       int main()
@@ -43,7 +40,7 @@ class Libtpms < Formula
           }
           return 0;
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-I#{include}", "-L#{lib}", "-ltpms", "-o", "test"
     system "./test"
   end

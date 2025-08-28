@@ -1,8 +1,8 @@
 class Juliaup < Formula
   desc "Julia installer and version multiplexer"
   homepage "https://github.com/JuliaLang/juliaup"
-  url "https://github.com/JuliaLang/juliaup/archive/refs/tags/v1.17.4.tar.gz"
-  sha256 "94326828c6f2a2138e2c6ff2e573c4a146f8d08a7fc3aeaa5982d0fea67c7102"
+  url "https://github.com/JuliaLang/juliaup/archive/refs/tags/v1.17.19.tar.gz"
+  sha256 "5bcc9d9145e0d60d47aace5104805f6a21cab75ba19d8cfda88e1b7573291c7e"
   license "MIT"
   head "https://github.com/JuliaLang/juliaup.git", branch: "master"
 
@@ -11,15 +11,16 @@ class Juliaup < Formula
     strategy :github_latest
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "5307850716ebb82bb2b559836c527a8b6d246c61ff08785b9b92d4bfad661124"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "8f70c9999b0a9bb156e5771982a390a48eebdd6ef72da823095b270d0d8dbe6b"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "106c635aacb53411073354596f41a0267902ff24225a7642dd3758289b39bac8"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "74d94a7b29587650e3796f970bbec75968997a1f31e452aa101280ba2ec3ffd4"
-    sha256 cellar: :any_skip_relocation, sonoma:         "f49d986fd3f888c5ffeae03dff56a9306746f2b21e9db1650c4ec9cf60709ca9"
-    sha256 cellar: :any_skip_relocation, ventura:        "0ba5b81a1297da025cc17d54540aacc747c660e040a41be84d9c069ca7e9e1e3"
-    sha256 cellar: :any_skip_relocation, monterey:       "902c808c45f12b51ec4b3e99e4c02f2df75a9f679cec3ddf7d9b87203c70fe87"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "325903681c87861c0f9d5603aa8bf6c0daa043bd130dc2420e11058aea3c59d5"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "124719225451633c8388a76501cc32a5d401f06d1b21ac804d04c1daab9231b9"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "5dad7c0608bb8e22d61de78a207ce79f74b41790dfd9291dd702dc239e825ab1"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "87736debfa797f45c848d407d861b2dc7121654e81a9cf03250bce6b1c288e98"
+    sha256 cellar: :any_skip_relocation, sonoma:        "0a2b4b9859f51aebafcfa5d2301e609e820d38713826814b18be7040d158638e"
+    sha256 cellar: :any_skip_relocation, ventura:       "102798492a832de134d646511331b043f51fe3c32fc31bb3c0dbf98e0d1b58b3"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "50726ad6aa8c3a2b97ac85eb1e116a4c8a9870d8ac6fde7e9321684beb8b92f4"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "729ff8e288917edca87e6a4c0b9b7077be3ede3cba8d2028185c4897bd5d96ad"
   end
 
   depends_on "rust" => :build
@@ -31,6 +32,8 @@ class Juliaup < Formula
     system "cargo", "install", "--bin", "julialauncher", "--features", "binjulialauncher", *std_cargo_args
 
     bin.install_symlink "julialauncher" => "julia"
+
+    generate_completions_from_executable(bin/"juliaup", "completions")
   end
 
   test do

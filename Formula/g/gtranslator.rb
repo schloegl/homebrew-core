@@ -1,26 +1,25 @@
 class Gtranslator < Formula
   desc "GNOME gettext PO file editor"
   homepage "https://wiki.gnome.org/Design/Apps/Translator"
-  url "https://download.gnome.org/sources/gtranslator/46/gtranslator-46.1.tar.xz"
-  sha256 "b4af3184891491fd89c1a0465652310156c07d156b6a24e1c07f3a4cf7579568"
+  url "https://download.gnome.org/sources/gtranslator/48/gtranslator-48.0.tar.xz"
+  sha256 "e78ebc2006a251d8796ed1e72b9c2e53647973707e65b74d9f94521b03929e9f"
   license "GPL-3.0-or-later"
 
   bottle do
-    sha256 arm64_sequoia:  "484e8fd20d4dac7aecc25b2eee41ad73b2d05d36607391a3c9de16efdb6683ea"
-    sha256 arm64_sonoma:   "fbb4c4aaa2d292c41f7b9026a336581b861fd665f98955c14576a3638bd63aa1"
-    sha256 arm64_ventura:  "98b7deff1b67b1ef789a461669cc008629e27f2338f1629539e9d29a6ecf1841"
-    sha256 arm64_monterey: "013ac98c2e2d0b73d8505e8037dbd46c7046df35e320ab66580fbf757f65930d"
-    sha256 sonoma:         "cc38acbdb52fdad5d9adeee5ffeb9abcdb517967856c0f8bec26a165ed90f3d2"
-    sha256 ventura:        "1947fb586d1218db9977a77869c130742db4db07a4992f119ba84ac0dbcc06bb"
-    sha256 monterey:       "809b20c039c167429a5af8ed8ba73c32a59808e14d434e03ee029feefda9afa1"
-    sha256 x86_64_linux:   "c41a8150fa0f64e40c47a0c00f121a8005656d9b678671faac04c6389018234e"
+    sha256 arm64_sequoia: "fbcbdf1b0c13c0333ab1f149aabab989a49a674026ad6b1dfbb080dbbe262de6"
+    sha256 arm64_sonoma:  "580ba20e94c0065f9de1136ed40ff1ee2c9099ec8953f9ce6cd054f18d5db6a8"
+    sha256 arm64_ventura: "25e6488bef8333cdcf5cdd7bdaebcaa9b4aed313b7d622c63471cb0dd283cb15"
+    sha256 sonoma:        "726b1853ffff31972de87fe405054ba68275e37795ae9008d4e32b261b87822f"
+    sha256 ventura:       "b0a7410ae57d2dfe88fb9b1b24280c17be9f0328391ce5d8c4daeb988ea7cd61"
+    sha256 arm64_linux:   "3ed87f53f600bfa97ff051503934004292f80fcf87bdfe3ccfd4df0dee35c092"
+    sha256 x86_64_linux:  "f90143186e87fb3d3216ea137e1976b4d60fb3e77fcbd0ea8b2444de389358a2"
   end
 
   depends_on "desktop-file-utils" => :build # for update-desktop-database
   depends_on "itstool" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "adwaita-icon-theme"
   depends_on "cairo"

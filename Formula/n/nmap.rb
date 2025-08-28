@@ -1,33 +1,35 @@
 class Nmap < Formula
   desc "Port scanning utility for large networks"
   homepage "https://nmap.org/"
-  url "https://nmap.org/dist/nmap-7.95.tar.bz2"
-  sha256 "e14ab530e47b5afd88f1c8a2bac7f89cd8fe6b478e22d255c5b9bddb7a1c5778"
+  url "https://nmap.org/dist/nmap-7.98.tar.bz2"
+  sha256 "ce847313eaae9e5c9f21708e42d2ab7b56c7e0eb8803729a3092f58886d897e6"
   license :cannot_represent
   head "https://svn.nmap.org/nmap/"
 
   livecheck do
-    url "https://nmap.org/dist/"
+    url "https://nmap.org/download"
     regex(/href=.*?nmap[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
   bottle do
-    sha256 arm64_sequoia:  "79e86674984301bb84449e67ca155af2009dba475e4609c6671dc73e7112961c"
-    sha256 arm64_sonoma:   "cdafb01815d04428742bca04ecd329522933c578bcac7c7210fc92bd7e36cedf"
-    sha256 arm64_ventura:  "948c11d0d852890c2d331674ceee73615fd645daee551b40351045eef48b4411"
-    sha256 arm64_monterey: "2b5079654dc3ab7d015d4eb8aa17a127acbf96a24fca651c7bcaeeb7e0f68d9e"
-    sha256 sonoma:         "773bf1c00d07c15f837efeffe68b2c0606fa0dae27aaa23e830d340b4cc09706"
-    sha256 ventura:        "3273343599a31092f05c677a803be118332eb39fa2c2f0defc4a68883d19be5e"
-    sha256 monterey:       "9ed369a7f81ba3c7c0396e0645ac77173dfb31ddba16cbcfa8faece61a29e2af"
-    sha256 x86_64_linux:   "6dd2f9435f92feb161180cca78a46c323c78e252f4107a709c5355e275516422"
+    rebuild 1
+    sha256 arm64_sequoia: "a03b34a68f4a64e05ea7d13bedfcaf95df08024f8535d0ee421adbb4d5c4779f"
+    sha256 arm64_sonoma:  "95c388f63d4e8c2c5684420bab57f68a856e04815ec524336377cd4abd50808f"
+    sha256 arm64_ventura: "e58642363109486b81fcd6d9ad43bc55e89f6f278484ea3c7b7394839cb0677f"
+    sha256 sonoma:        "34b141f30a9dadc00a0290a043fea4ea7096a5a055a455d2fc49388e49d87c52"
+    sha256 ventura:       "9c7c34cbd9b4053df2709c903c9488e0e8c7c64bf1be3e7fa1b4206c8a1ea0f0"
+    sha256 arm64_linux:   "efc2e738c069175b74452d9ad521e2b3c5e0da2e0b64c0f5a661dbb699e51c50"
+    sha256 x86_64_linux:  "c9532f3302a83a7c74ecc12308b980cf162e002187dad961bdf9eb10bca0126b"
   end
 
+  depends_on "python-setuptools" => :build
   depends_on "liblinear"
   depends_on "libssh2"
   # Check supported Lua version at https://github.com/nmap/nmap/tree/master/liblua.
   depends_on "lua"
   depends_on "openssl@3"
   depends_on "pcre2"
+  depends_on "python@3.13" # for ndiff
 
   uses_from_macos "bison" => :build
   uses_from_macos "flex" => :build
@@ -35,8 +37,14 @@ class Nmap < Formula
   uses_from_macos "zlib"
 
   conflicts_with "cern-ndiff", "ndiff", because: "both install `ndiff` binaries"
+  conflicts_with "nping", because: "both install `nping` binaries"
+  conflicts_with cask: "zenmap", because: "both install `nmap` binaries"
 
   def install
+    # Fix to missing VERSION file
+    # https://github.com/nmap/nmap/pull/3111
+    mv "libpcap/VERSION.txt", "libpcap/VERSION"
+
     ENV.deparallelize
 
     libpcap_path = if OS.mac?
@@ -53,31 +61,21 @@ class Nmap < Formula
       --without-nmap-update
       --disable-universal
       --without-zenmap
+      --without-ndiff
     ]
 
     system "./configure", *args, *std_configure_args
     system "make" # separate steps required otherwise the build fails
     system "make", "install"
 
+    # Install `ndiff` separately so that we can use `pip` and `setuptools`.
+    system "python3", "-m", "pip", "install", *std_pip_args, "./ndiff"
     bin.glob("uninstall_*").map(&:unlink) # Users should use brew uninstall.
-    return unless (bin/"ndiff").exist? # Needs Python
-
-    # We can't use `rewrite_shebang` here because `detected_python_shebang` only works
-    # for shebangs that start with `/usr/bin`, but the shebang we want to replace
-    # might start with `/Applications` (for the `python3` inside Xcode.app).
-    inreplace bin/"ndiff", %r{\A#!.*/python(\d+(\.\d+)?)?$}, "#!/usr/bin/env python3"
-  end
-
-  def caveats
-    on_macos do
-      <<~EOS
-        If using `ndiff` returns an error about not being able to import the ndiff module, try:
-          chmod go-w #{HOMEBREW_CELLAR}
-      EOS
-    end
   end
 
   test do
-    system bin/"nmap", "-p80,443", "google.com"
+    system bin/"nmap", "-p80,443", "-oX", "scan1.xml", "google.com"
+    cp "scan1.xml", "scan2.xml"
+    system bin/"ndiff", "scan1.xml", "scan2.xml"
   end
 end

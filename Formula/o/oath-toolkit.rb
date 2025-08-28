@@ -1,9 +1,9 @@
 class OathToolkit < Formula
   desc "Tools for one-time password authentication systems"
   homepage "https://www.nongnu.org/oath-toolkit/"
-  url "https://download-mirror.savannah.gnu.org/releases/oath-toolkit/oath-toolkit-2.6.11.tar.gz"
-  mirror "https://fossies.org/linux/privat/oath-toolkit-2.6.11.tar.gz"
-  sha256 "fc512a4a5b46f4c43ab0586c3189fece4d54f7e649397d6fa1e23428431e2cb4"
+  url "https://download-mirror.savannah.gnu.org/releases/oath-toolkit/oath-toolkit-2.6.13.tar.gz"
+  mirror "https://fossies.org/linux/privat/oath-toolkit-2.6.13.tar.gz"
+  sha256 "5b5d82e9a4455206d24fcbd7ee58bf4c79398a2e67997d80bd45ae927586b18b"
   license all_of: ["GPL-3.0-or-later", "LGPL-2.1-or-later"]
 
   livecheck do
@@ -12,14 +12,13 @@ class OathToolkit < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_sequoia:  "5f4195a168670d93b9e06e606eab902feef8dd8e582b19dadd7f079bfe2beb00"
-    sha256 cellar: :any, arm64_sonoma:   "5e6c673c9e2448fc86f6c8ae7830f403e4fc3195ad4d0296b8e9f66b13043ada"
-    sha256 cellar: :any, arm64_ventura:  "995299804b377b1cdf080c9b21a5cbf99f3f5f5dfaf37e0f11129a9f51da1b38"
-    sha256 cellar: :any, arm64_monterey: "95c1c32120d3958f4a257f20899fd6e0872efac1d822be4f537bd13f78773aa9"
-    sha256               sonoma:         "52ced249f4426c8ecbf58f0509f17ed3e597491de1b7c299789056965d16d44c"
-    sha256               ventura:        "c7560f0206fbac58cbda4e2e1ab324c1e5de227f71825a6527270185c41d58b3"
-    sha256               monterey:       "a71c5889889ac62f287d31a929921c82e7af9c0d2bed738d76a481dad42c4b50"
-    sha256               x86_64_linux:   "4e9227d49df3791de714e4e107034ba47b5207e7ec202d089e43c423231bfb64"
+    sha256 cellar: :any, arm64_sequoia: "a194b2db6ed6b3566e16a7ae5fbe0493f6e6450676468f774910fe30d83fa199"
+    sha256 cellar: :any, arm64_sonoma:  "cf4057a1672ecedade4214940e6fe786b08d403798135dde3c78926c0b1758d2"
+    sha256 cellar: :any, arm64_ventura: "7a8fc9a02a185f4adff751b49551c555b104cd1733754b21ee13255b7df1e1f8"
+    sha256               sonoma:        "8fa9c96c1fd5491d8316653a396476ebe4a3a03f2f654ae3d9de9e84c2f03d8e"
+    sha256               ventura:       "45d3b881643fe9aae507ff2b79135bd8fced496f75c8184a4c8a2b515c3278cb"
+    sha256               arm64_linux:   "976d358c400c6ca225db031e9c1d4934d9bf8d84b42dc23caec116dcab283bf1"
+    sha256               x86_64_linux:  "64d5b405189368bb048ad03474b44fac7fd76853996906629ffb00fc5b4f11ac"
   end
 
   head do
@@ -31,7 +30,7 @@ class OathToolkit < Formula
     depends_on "libtool"  => :build
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "libxml2"
   depends_on "libxmlsec1"

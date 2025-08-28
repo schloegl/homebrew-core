@@ -1,8 +1,8 @@
 class FluentBit < Formula
   desc "Fast and Lightweight Logs and Metrics processor"
   homepage "https://github.com/fluent/fluent-bit"
-  url "https://github.com/fluent/fluent-bit/archive/refs/tags/v3.1.9.tar.gz"
-  sha256 "ac3a3e235e7f8a92d35f10c99f400f0b0571417a92e3c4caa467073733d42547"
+  url "https://github.com/fluent/fluent-bit/archive/refs/tags/v4.0.8.tar.gz"
+  sha256 "ed7037bf9352f962adba1c5c9be148bd955c72d93b40b6010704b0067461b0d0"
   license "Apache-2.0"
   head "https://github.com/fluent/fluent-bit.git", branch: "master"
 
@@ -12,18 +12,19 @@ class FluentBit < Formula
   end
 
   bottle do
-    sha256                               arm64_sequoia: "dd1fb712a1217386865d21519c16c660599d62549051577f2fb57e2dfffdfbe6"
-    sha256                               arm64_sonoma:  "0e1cccd1a14f65de292d512e3e31d44475a54703f93a57afd3ea049672c18e33"
-    sha256                               arm64_ventura: "154253ff91d8bd14aa179b6b29f74d1f77037b0c5bb5fb4c368ac81897580b2b"
-    sha256                               sonoma:        "c455f97f48c565c46f9c85377c2ddeb12015e585f6d52a22a73461c0565d8107"
-    sha256                               ventura:       "a806afd738b83a74f007aca70d39995cb4e7260dd5692187610160df12714930"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "87237dfaaa0011fefe24188ed671b538ee31e199ccea96e740dfb42fd0879f62"
+    sha256 cellar: :any,                 arm64_sequoia: "b9a71a4c313aaf9c9a8ace76266c664d6278252530bb5dc288ee13b51ba30c41"
+    sha256 cellar: :any,                 arm64_sonoma:  "dca7ca3fcb71dd9ffe916513455dd867e8cb1884c7ab211f183d25a3b8008983"
+    sha256 cellar: :any,                 arm64_ventura: "bef5248e792c77fbcd669843967a8ef3612d54cd2c0e74059f1493e4a21ecf40"
+    sha256 cellar: :any,                 sonoma:        "18283955811b93152fdd946edb4ba0a5cd5ec00872b338ebfbb020841c6e4688"
+    sha256 cellar: :any,                 ventura:       "e407c26a5ba097fc5dfd7a4a57880ec91f8045ea64b8336c53227aa97df3236b"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "e302e4c299a0f477dac6a98a628ef2b29b21e87f9e659228df25644a814df2e4"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "38d1a51427fb60d21737924d9dad77e7e32b2917e204aae8d7f414a18059719f"
   end
 
   depends_on "bison" => :build
   depends_on "cmake" => :build
   depends_on "flex" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "libyaml"
   depends_on "luajit"
@@ -36,11 +37,12 @@ class FluentBit < Formula
     inreplace "src/CMakeLists.txt", "if(NOT SYSTEMD_UNITDIR AND IS_DIRECTORY /lib/systemd/system)", "if(False)"
     inreplace "src/CMakeLists.txt", "elseif(IS_DIRECTORY /usr/share/upstart)", "elif(False)"
 
-    args = std_cmake_args + %w[
+    args = %w[
       -DFLB_PREFER_SYSTEM_LIB_LUAJIT=ON
+      -DCMAKE_POLICY_VERSION_MINIMUM=3.5
     ]
 
-    system "cmake", "-S", ".", "-B", "build", *args
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
   end

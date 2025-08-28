@@ -1,8 +1,8 @@
 class Flix < Formula
   desc "Statically typed functional, imperative, and logic programming language"
   homepage "https://flix.dev/"
-  url "https://github.com/flix/flix/archive/refs/tags/v0.51.0.tar.gz"
-  sha256 "adb35cb4711cd09df331b67f82388f713bfd1623e3d31ad5868deb53ae416fa6"
+  url "https://github.com/flix/flix/archive/refs/tags/v0.61.0.tar.gz"
+  sha256 "82680b978cf7744d282c7a6c4d38dcd8d14b9017938e4c9f8bd9ead30f4bac08"
   license "Apache-2.0"
   head "https://github.com/flix/flix.git", branch: "master"
 
@@ -12,12 +12,7 @@ class Flix < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "e1b8b574d4a491b63c2bc9aaf2230ef60576c15835d63ca0860ed1a4d5cd3426"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "e6cc23ee429fed12449085a478c573d3fae5c39892eafbd2fd5825acfae35e2e"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "92c4da02ca510aa96c83ba6cdc6c64307fd5f35a85d3ed5d0d1d6c686dc2e1d2"
-    sha256 cellar: :any_skip_relocation, sonoma:        "b70843cbb433fcdb042a737ab151ac0137b362dddbfbe72511b5e485de400e31"
-    sha256 cellar: :any_skip_relocation, ventura:       "51b22c129d00c602d26e29492d3615a65f5fbede64a9a8b4ce7dda7fa2b89c46"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0bbde6dbb4dde4f89144fc500efca6a690c6fac77c4d6fd552e19f54c3bdd35b"
+    sha256 cellar: :any_skip_relocation, all: "7e4dff2623b68a74660e2db62fa13e57d52e9f842457e56eab181107fbdc778f"
   end
 
   depends_on "gradle" => :build
@@ -26,7 +21,7 @@ class Flix < Formula
 
   def install
     ENV["JAVA_HOME"] = Language::Java.java_home("21")
-    system Formula["gradle"].bin/"gradle", "--no-daemon", "build", "jar"
+    system "gradle", "--no-daemon", "build", "jar", "-x", "test"
     prefix.install "build/libs/flix-#{version}.jar"
     bin.write_jar_script prefix/"flix-#{version}.jar", "flix", java_version: "21"
   end

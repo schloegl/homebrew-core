@@ -1,24 +1,24 @@
 class Neomutt < Formula
   desc "E-mail reader with support for Notmuch, NNTP and much more"
   homepage "https://neomutt.org/"
-  url "https://github.com/neomutt/neomutt/archive/refs/tags/20240425.tar.gz"
-  sha256 "a5aed0a0f506260997821c23cb148bc5ca4938fd613e0e8b89556f397ffc17f7"
+  url "https://github.com/neomutt/neomutt/archive/refs/tags/20250510.tar.gz"
+  sha256 "12d225e270d8e16cda41d855880b9d938750a4f1d647f55c6353337d32ffd653"
   license "GPL-2.0-or-later"
+  revision 1
   head "https://github.com/neomutt/neomutt.git", branch: "main"
 
   bottle do
-    sha256 arm64_sequoia:  "46a5a8874556f8c7a472c0962b7f7731ac829f95749c9a608fc47b3a11da31f9"
-    sha256 arm64_sonoma:   "bc7fdea677bc8393abc760dcc3ee3be1628c41e17a227dd686e0433c7273bfed"
-    sha256 arm64_ventura:  "ac38b9aeecd87df8ab6e5a4fe24785c2b8801a2d10bcda667b85a63d5aad42cd"
-    sha256 arm64_monterey: "9327bfac4994e34c6199182aa61ba081bbbf871bc429acf7210f73e15edebd07"
-    sha256 sonoma:         "c9c3b1aa6564f0a440b2f419fd38a2f5d14a1fef5110024a546f9da0ee9f9ec6"
-    sha256 ventura:        "e79de801c9ce1aec01b0e9077a5be4fa96287fc86dc32bdd9b5193cdbf60c862"
-    sha256 monterey:       "465a0f3a2ffb435334fc71f15115b092a568cbf25995083a20ab0957f2831fd1"
-    sha256 x86_64_linux:   "e7647714a64ec9e65bcc014557938039aea02bcb435b24344bf30577840412b6"
+    sha256 arm64_sequoia: "4760321fe8e61cdbc564c3d383ee48e7c63109e9e9fa7fdbe3672631123db0b9"
+    sha256 arm64_sonoma:  "525364112b08a77bdf4b3a8b1cb7778c96ee1769be95d337c24bce7c5b703ebb"
+    sha256 arm64_ventura: "434c5655c1f147070de38a082d91b72b629cc230451b05d41774aed04f1265d2"
+    sha256 sonoma:        "ce4502877c4867eee8b2bf0a0e1c9daf44c9b266fa2997ec883a26baef19eaec"
+    sha256 ventura:       "aea560a194d7d540c6ed953af77437dca80963ca7cfb3fec212f1ecd31db75c8"
+    sha256 arm64_linux:   "b9a2df0e6f3dee00944d02949a312c91f26b990c34a9cc04154391a2943d84e6"
+    sha256 x86_64_linux:  "ce77dcf1bafb0d760900c799ef73636df2c2ef3dd622f63d4a1b1de53527d40f"
   end
 
   depends_on "docbook-xsl" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   # The build breaks when it tries to use system `tclsh`.
   depends_on "tcl-tk" => :build
   depends_on "gettext"
@@ -76,7 +76,7 @@ class Neomutt < Formula
   end
 
   test do
-    output = shell_output("#{bin}/neomutt -F /dev/null -Q debug_level")
+    output = shell_output("#{bin}/neomutt -F /dev/null -Q debug_level", 1)
     assert_equal "set debug_level = 0", output.chomp
   end
 end

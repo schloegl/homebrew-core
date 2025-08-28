@@ -1,31 +1,46 @@
 class Supertux < Formula
   desc "Classic 2D jump'n run sidescroller game"
   homepage "https://www.supertux.org/"
-  url "https://github.com/SuperTux/supertux/releases/download/v0.6.3/SuperTux-v0.6.3-Source.tar.gz"
-  sha256 "f7940e6009c40226eb34ebab8ffb0e3a894892d891a07b35d0e5762dd41c79f6"
   license "GPL-3.0-or-later"
-  revision 9
-  head "https://github.com/SuperTux/supertux.git", branch: "master"
+  revision 12
+
+  stable do
+    url "https://github.com/SuperTux/supertux/releases/download/v0.6.3/SuperTux-v0.6.3-Source.tar.gz"
+    sha256 "f7940e6009c40226eb34ebab8ffb0e3a894892d891a07b35d0e5762dd41c79f6"
+
+    depends_on "boost"
+
+    # Workaround to build with Boost 1.89.0 until new release that drops Boost dependency
+    # https://github.com/SuperTux/supertux/commit/5333cebf629eb20621b284fc96b494257f3314bb
+    patch :DATA
+  end
 
   livecheck do
     url :stable
     strategy :github_latest
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "01535f3ec74e4f3e9956da66f52bb6d0e37696171d6d0169e498311589f2f1b6"
-    sha256 cellar: :any,                 arm64_sonoma:   "0e94fb77138b727f154c9dbb8ad6bafa6b0f5d0558f99b4ab0381b5241c9300c"
-    sha256 cellar: :any,                 arm64_ventura:  "5dde9e8355c08783ce8e120e29386139dcb625dac4eea60c293f74d94a0c9c0d"
-    sha256 cellar: :any,                 arm64_monterey: "3ee3e444f0ae273969dcffb6d4b2854cbcad4d3a13ecbe5485ed493c2df9b718"
-    sha256 cellar: :any,                 sonoma:         "e8b8f690bda931e2a87a285c296cc6e445ec689ae7f9c6c154949642ba12b37a"
-    sha256 cellar: :any,                 ventura:        "e6105c9ff04aedf7a60b21b42e5ec772aa8a3702422123eea5edd8887823d785"
-    sha256 cellar: :any,                 monterey:       "6c022c0e53b1cb0454412dd1f2e9a5d34cf08c23f4967ce3e6ac16533d981f7b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "91a815ea74c91611c4ba47b4201bc38b42e13d1ee4e7039724dd2c7a75d9224c"
+    sha256 cellar: :any,                 arm64_sequoia: "9babc91234fa8859afc033a96ef11d755f4b889b7d70ca36c5e915d905b2bb97"
+    sha256 cellar: :any,                 arm64_sonoma:  "c79a88e221ba8b3c4adedcb9d4b1e2122049794c86b4c7810d416c768b1722ee"
+    sha256 cellar: :any,                 arm64_ventura: "ef691781ca584343e444017931593b6088600bb907f573410273be0fcc0ae897"
+    sha256 cellar: :any,                 sonoma:        "3329f1bbbe360dc57de237ad59332fca8b9ed90fb3f58ea92b56d605b6a928f7"
+    sha256 cellar: :any,                 ventura:       "90f03927a7a7060b24dade4c6e78f5e44851338637d605e7f2eb57218c02ea6a"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "cb8c3e3818fde3d9770c19b648959aaba3883ce22bc7178a863db8e7de43da51"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "23828dd1619319db46d09505c8a368100f4614ff397c666e45b74b623498375d"
+  end
+
+  head do
+    url "https://github.com/SuperTux/supertux.git", branch: "master"
+
+    depends_on "fmt"
+    depends_on "openal-soft"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
-  depends_on "boost"
+  depends_on "pkgconf" => :build
   depends_on "freetype"
   depends_on "glew"
   depends_on "glm"
@@ -45,14 +60,18 @@ class Supertux < Formula
   end
 
   def install
-    ENV.cxx11
+    # Support cmake 4 build, upstream pr ref, https://github.com/SuperTux/supertux/pull/3290
+    ENV["CMAKE_POLICY_VERSION_MINIMUM"] = "3.5"
 
-    args = std_cmake_args
-    args << "-DINSTALL_SUBDIR_BIN=bin"
-    args << "-DINSTALL_SUBDIR_SHARE=share/supertux"
-    # Without the following option, Cmake intend to use the library of MONO framework.
-    args << "-DPNG_PNG_INCLUDE_DIR=#{Formula["libpng"].opt_include}"
-    system "cmake", "-S", ".", "-B", "build", *args
+    args = [
+      "-DINSTALL_SUBDIR_BIN=bin",
+      "-DINSTALL_SUBDIR_SHARE=share/supertux",
+      # Without the following option, Cmake intend to use the library of MONO framework.
+      "-DPNG_PNG_INCLUDE_DIR=#{Formula["libpng"].opt_include}",
+    ]
+    args << "-DCMAKE_INSTALL_RPATH=#{rpath}" if build.head?
+
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
 
@@ -67,3 +86,18 @@ class Supertux < Formula
     assert_equal "supertux2 v#{version}", shell_output("#{bin}/supertux2 --userdir #{testpath} --version").chomp
   end
 end
+
+__END__
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b77029c0a..1842b4943 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -171,7 +171,7 @@ if(ENABLE_BOOST_STATIC_LIBS)
+ else(ENABLE_BOOST_STATIC_LIBS)
+   set(Boost_USE_STATIC_LIBS FALSE)
+ endif(ENABLE_BOOST_STATIC_LIBS)
+-find_package(Boost REQUIRED COMPONENTS filesystem system date_time locale)
++find_package(Boost REQUIRED COMPONENTS filesystem date_time locale)
+ include_directories(SYSTEM ${Boost_INCLUDE_DIR})
+ link_directories(${Boost_LIBRARY_DIRS})
+ 

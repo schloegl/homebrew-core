@@ -21,13 +21,15 @@ class Simh < Formula
   end
 
   # https://github.com/simh/simh/issues/1163
-  deprecate! date: "2023-12-07", because: "changed to a non-free license in master branch"
+  # Use open-simh instead
+  disable! date: "2024-10-11", because: "changed to a non-free license in master branch",
+           replacement_formula: "open-simh"
 
   depends_on "libpng"
   uses_from_macos "zlib"
 
   def install
-    ENV.deparallelize unless build.head?
+    ENV.deparallelize if build.stable?
     ENV.append_to_cflags "-Os -fcommon"
     inreplace "makefile" do |s|
       s.gsub! "+= /usr/lib/", "+= /usr/lib/ #{HOMEBREW_PREFIX}/lib/" if OS.linux?

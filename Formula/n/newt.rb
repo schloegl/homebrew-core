@@ -1,10 +1,9 @@
 class Newt < Formula
   desc "Library for color text mode, widget based user interfaces"
   homepage "https://pagure.io/newt"
-  url "https://releases.pagure.org/newt/newt-0.52.24.tar.gz"
-  sha256 "5ded7e221f85f642521c49b1826c8de19845aa372baf5d630a51774b544fbdbb"
+  url "https://releases.pagure.org/newt/newt-0.52.25.tar.gz"
+  sha256 "ef0ca9ee27850d1a5c863bb7ff9aa08096c9ed312ece9087b30f3a426828de82"
   license "LGPL-2.0-or-later"
-  revision 1
 
   livecheck do
     url "https://releases.pagure.org/newt/"
@@ -12,18 +11,18 @@ class Newt < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "2916a4e3433d2a6c2379341b8cc3f25b2c3795b3d70a6164e77f22d5346ba4e7"
-    sha256 cellar: :any,                 arm64_sonoma:   "e4b261340f37dfb5285bfd8b5dd284f95758caca8d20a469f878a6c73b0331d2"
-    sha256 cellar: :any,                 arm64_ventura:  "1a383b56fbc5cae2adcc100e7ab815f2e8eea47bd906d80eea99303072db6a75"
-    sha256 cellar: :any,                 arm64_monterey: "ba3f2a5687488c1cdc66397b22b3ca34002436e8373cad2d23587897da557711"
-    sha256 cellar: :any,                 sonoma:         "2a57a589ee51e2591dca29db4243a7b53641c40efa3b0d44ed305144ef239f3e"
-    sha256 cellar: :any,                 ventura:        "1e490884ea9bf5da5cdf0ab79fa20b1e4e02c2d36853cc533dbaa8855a92baea"
-    sha256 cellar: :any,                 monterey:       "e0ce53aa703b820069823b945713e1fdaac547d06b77ff678b88bbb84fa0228a"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3125c4ae280adf26b807d5d368b92d01db7942d1dfbae2e550f1e84212f7d026"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia: "ea9696a197929f238a1b30a02fefcf818e3b858d8203822c941c9a687609c1fc"
+    sha256 cellar: :any,                 arm64_sonoma:  "5ca2f04f2776a526ef75eb1021bc62b913014533e6ba23aa7698f55ab04c2a6d"
+    sha256 cellar: :any,                 arm64_ventura: "effe0810ddce425071a2977345c49b817169da634debc65495804edf6f8aa479"
+    sha256 cellar: :any,                 sonoma:        "66fa052a1ffa07040d784b9673cd691378e3511567899b0912156023cf1540d4"
+    sha256 cellar: :any,                 ventura:       "4e2d05a8b49ac5145b7d2cc12912ee1cb4d95af69455556f3cb2c890c6b1f8ea"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "686377c6653387d4c4099330479420648f484a0846d817bf8be4f81b1261919f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7dd7eb05b5dce0dad968eceac5f75d67354cb1cf8f1421dafa2e6dbb1e81b2bb"
   end
 
   depends_on "popt"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "s-lang"
 
   on_macos do
@@ -31,12 +30,12 @@ class Newt < Formula
   end
 
   def python3
-    "python3.12"
+    "python3.13"
   end
 
   def install
-    if OS.mac?
-      inreplace "Makefile.in" do |s|
+    inreplace "Makefile.in" do |s|
+      if OS.mac?
         # name libraries correctly
         # https://bugzilla.redhat.com/show_bug.cgi?id=1192285
         s.gsub! "libnewt.$(SOEXT).$(SONAME)", "libnewt.$(SONAME).dylib"
@@ -45,9 +44,12 @@ class Newt < Formula
         # don't link to libpython.dylib
         # causes https://github.com/Homebrew/homebrew/issues/30252
         # https://bugzilla.redhat.com/show_bug.cgi?id=1192286
-        s.gsub! "`$$pyconfig --ldflags`", '"-undefined dynamic_lookup"'
-        s.gsub! "`$$pyconfig --libs`", '""'
+        s.gsub! "`$$pyconfig --ldflags --embed || $$pyconfig --ldflags`", '"-undefined dynamic_lookup"'
       end
+
+      # install python modules in Cellar rather than global site-packages
+      s.gsub! "`$$ver -c \"import sysconfig; print(sysconfig.get_path('platlib'))\"`",
+              "#{lib}/python3.13/site-packages"
     end
 
     system "./configure", "--prefix=#{prefix}", "--without-tcl", "--with-python=#{python3}"
@@ -58,13 +60,13 @@ class Newt < Formula
     ENV["TERM"] = "xterm"
     system python3, "-c", "import snack"
 
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #import <newt.h>
       int main() {
         newtInit();
         newtFinished();
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-o", "test", "-L#{lib}", "-lnewt"
     system "./test"
   end

@@ -1,9 +1,10 @@
 class Kumactl < Formula
   desc "Kuma control plane command-line utility"
   homepage "https://kuma.io/"
-  url "https://github.com/kumahq/kuma/archive/refs/tags/2.8.3.tar.gz"
-  sha256 "4327a2b3017dfe0648b01387b05fedcc49a2141d35b91bcc588c09cc1cbc3b11"
+  url "https://github.com/kumahq/kuma/archive/refs/tags/2.11.5.tar.gz"
+  sha256 "1ba7982c036526cc7cf3e42fd65282d86af95b2c2cacd5b913ec81dcff4ec924"
   license "Apache-2.0"
+  head "https://github.com/kumahq/kuma.git", branch: "master"
 
   livecheck do
     url :stable
@@ -11,14 +12,12 @@ class Kumactl < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "fda86515680067986014c9e62f4275bda8727f9ea272f7d125f5755ad967c239"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "1a6ca3721e882c706bbd974d6ab21b8c5287f72164d8fb3381d4f577d5bbe4b7"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "1a6ca3721e882c706bbd974d6ab21b8c5287f72164d8fb3381d4f577d5bbe4b7"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "1a6ca3721e882c706bbd974d6ab21b8c5287f72164d8fb3381d4f577d5bbe4b7"
-    sha256 cellar: :any_skip_relocation, sonoma:         "2b544c04428257db9cf591771ad7ed63f142153eeddcff864f47ad13a10bdc0f"
-    sha256 cellar: :any_skip_relocation, ventura:        "2b544c04428257db9cf591771ad7ed63f142153eeddcff864f47ad13a10bdc0f"
-    sha256 cellar: :any_skip_relocation, monterey:       "2b544c04428257db9cf591771ad7ed63f142153eeddcff864f47ad13a10bdc0f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "03384283c7913ab17ca80b44745b37c01e25a54bdf67403b6e4289d3edf0abbd"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "380c67b50f9a56043d3d39a78fbbb6feef0522240991f4818d32c8ad7d9e3125"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "46bf83a8c05210bf5fd5ea55b6561e3c5aaa56079bb7a64fe97fd7964277d345"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "51f3199c78072adea3741cb5b2600a60745ca203c7916979269f955b00246542"
+    sha256 cellar: :any_skip_relocation, sonoma:        "143df9fcbf43c607ce7907f7d7a01e509097c850bdff536d4b309c97a5e2f15f"
+    sha256 cellar: :any_skip_relocation, ventura:       "a9208b7d4bf27afe69d7f0d6f3abf35c337ae3bdb92e40d68faf2a3717dd8de3"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0760ea16ef64a44d17afef4da232011ff698de527aba579d2cf58fc3e5abbb6d"
   end
 
   depends_on "go" => :build

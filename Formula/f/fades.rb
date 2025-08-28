@@ -4,29 +4,28 @@ class Fades < Formula
   url "https://files.pythonhosted.org/packages/8b/e8/87a44f1c33c41d1ad6ee6c0b87e957bf47150eb12e9f62cc90fdb6bf8669/fades-9.0.2.tar.gz"
   sha256 "4a2212f48c4c377bbe4da376c4459fe2d79aea2e813f0cb60d9b9fdf43d205cc"
   license "GPL-3.0-only"
-  revision 1
+  revision 2
   head "https://github.com/PyAr/fades.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "3725f9091d90daf2c25fd19b5efa73f0f804570e01de32ab8191b9d10dba5ca9"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "db9dbe6128a69d214f0b51088e23b59320ec16cb733b2f73eb0771673bd589b1"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "db9dbe6128a69d214f0b51088e23b59320ec16cb733b2f73eb0771673bd589b1"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "db9dbe6128a69d214f0b51088e23b59320ec16cb733b2f73eb0771673bd589b1"
-    sha256 cellar: :any_skip_relocation, sonoma:         "1d2cfef386995131cb62ce7041d1f08789ad8d3bcd40ba7f4442a18a783f8d0b"
-    sha256 cellar: :any_skip_relocation, ventura:        "1d2cfef386995131cb62ce7041d1f08789ad8d3bcd40ba7f4442a18a783f8d0b"
-    sha256 cellar: :any_skip_relocation, monterey:       "1d2cfef386995131cb62ce7041d1f08789ad8d3bcd40ba7f4442a18a783f8d0b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "d0a445b37ede5f80fdec463b2c8a4d28eb1bf03452ed816f2ab6e9f8a34dbaf9"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "8ae23ce3e986aa461efc9dfbb017e62daf3d47bab6650455c64efa609c9a6561"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "8ae23ce3e986aa461efc9dfbb017e62daf3d47bab6650455c64efa609c9a6561"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "8ae23ce3e986aa461efc9dfbb017e62daf3d47bab6650455c64efa609c9a6561"
+    sha256 cellar: :any_skip_relocation, sonoma:        "21e8405e8b50121bf4d6d0a464265411208e394d764d3982e50a74caddb32176"
+    sha256 cellar: :any_skip_relocation, ventura:       "21e8405e8b50121bf4d6d0a464265411208e394d764d3982e50a74caddb32176"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "7c86e1370b14aac85b9df22c4d8ec002ebb01c24ee432d9a38efe625c6ae0c96"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7c86e1370b14aac85b9df22c4d8ec002ebb01c24ee432d9a38efe625c6ae0c96"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   def python3
-    which("python3.12")
+    which("python3.13")
   end
 
   resource "setuptools" do
-    url "https://files.pythonhosted.org/packages/65/d8/10a70e86f6c28ae59f101a9de6d77bf70f147180fbf40c3af0f64080adc3/setuptools-70.3.0.tar.gz"
-    sha256 "f171bab1dfbc86b132997f26a119f6056a57950d058587841a0082e8830f9dc5"
+    url "https://files.pythonhosted.org/packages/9e/8b/dc1773e8e5d07fd27c1632c45c1de856ac3dbf09c0147f782ca6d990cf15/setuptools-80.7.1.tar.gz"
+    sha256 "f6ffc5f0142b1bd8d0ca94ee91b30c0ca862ffd50826da1ea85258a06fd94552"
   end
 
   def install

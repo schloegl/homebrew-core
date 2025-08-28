@@ -1,18 +1,19 @@
 class Nvc < Formula
   desc "VHDL compiler and simulator"
-  homepage "https://github.com/nickg/nvc"
-  url "https://github.com/nickg/nvc/releases/download/r1.14.0/nvc-1.14.0.tar.gz"
-  sha256 "a0a05124ce3463de37d1d2dec213737e2edecf817673223c7ed5d336b2372ec5"
+  homepage "https://www.nickg.me.uk/nvc/"
+  url "https://github.com/nickg/nvc/releases/download/r1.17.2/nvc-1.17.2.tar.gz"
+  sha256 "f330dc736d579df7ab494ff0853fe8929243c4234f7cc4d1e9df55d2ea41fbfb"
   license "GPL-3.0-or-later"
   revision 1
 
   bottle do
-    sha256 arm64_sequoia: "e53571c8193e63e0ab8dfe87a44df159eeed5227066176127b798307cd965ded"
-    sha256 arm64_sonoma:  "4e865697309fd7f3de796a59ac38375b0e129d110b5ea78748bf9b13e92a0469"
-    sha256 arm64_ventura: "e93ee7d60c8390eeeb8cd55d0ae10017db7d08872323cbba53f9ba86438b5649"
-    sha256 sonoma:        "fa0e647c2b3a59efd933777eac29f20e65a323cf04c6f65e37cff7ccd6ce1f85"
-    sha256 ventura:       "8bc764d27d440bea9f9bd2fd43746e46aa01544f8f2dc51751e9005cff0068c7"
-    sha256 x86_64_linux:  "5c426a4331a13bae97a3c5c2c70dca668ea584722879c19cf1b21825b83b36d0"
+    sha256 arm64_sequoia: "ffe3f481135377562a65d45bd8af4be3af0dbfe220c8c0c7518fe7e718bef354"
+    sha256 arm64_sonoma:  "cb88c9a86f2e423c2f60a1aba5b9f2b88bf7af8afe97b12974bbd161c17b5cc1"
+    sha256 arm64_ventura: "4e2beabf529215fe2ba4b1f79e2d7027dd6134bc939ad6fbbba5232fec668c34"
+    sha256 sonoma:        "e17893e769cf188f3aef6e6a7c2fcd192847d66bca4df926629ccbf1dde6ded1"
+    sha256 ventura:       "50ad0caa4afe6db5591ac5c32d6d25718030f62efe188c0c121ba65d5024d51d"
+    sha256 arm64_linux:   "914f93ec23d9840f826d36c3e160ef66a503ead38b91aafb28c467ea5b9de6e4"
+    sha256 x86_64_linux:  "3f363a64f8ea7290cbcf5cda0aa271dff2979cb018e5743a29786bcbd6dfdd6d"
   end
 
   head do
@@ -23,7 +24,7 @@ class Nvc < Formula
   end
 
   depends_on "check" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "llvm"
   depends_on "zstd"
 
@@ -34,8 +35,6 @@ class Nvc < Formula
   on_linux do
     depends_on "elfutils"
   end
-
-  fails_with gcc: "5" # LLVM is built with GCC
 
   def install
     system "./autogen.sh" if build.head?
@@ -49,8 +48,6 @@ class Nvc < Formula
                              "--prefix=#{prefix}",
                              "--with-system-cc=#{ENV.cc}",
                              "--disable-silent-rules"
-      inreplace ["Makefile", "config.h"], Superenv.shims_path/ENV.cc, ENV.cc
-      ENV.deparallelize
       system "make", "V=1"
       system "make", "V=1", "install"
     end

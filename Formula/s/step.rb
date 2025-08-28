@@ -1,25 +1,25 @@
 class Step < Formula
   desc "Crypto and x509 Swiss-Army-Knife"
   homepage "https://smallstep.com"
-  url "https://github.com/smallstep/cli/releases/download/v0.27.4/step_0.27.4.tar.gz"
-  sha256 "3231287493a952fb8c959508f1bf04c1e6a5bc4bbd12743a85716715bec8639d"
+  url "https://github.com/smallstep/cli/releases/download/v0.28.7/step_0.28.7.tar.gz"
+  sha256 "64996b54975707ef0f3a9d0b8e8c32db8e3c954b7ad0d2f4ca82b050a37eaa8f"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "2fe3d3f989eaece1b3d42f98125fe17ca96901d112b8e80b70a67c940703d3c0"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "6456457dd3e96a994d6c170f8db96b767a63f400fc008a1fa9043649f69d4a68"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "1f9f92929d321c543bfb7a1682fa81acb6c5c52e94c42f0997482d243f899f03"
-    sha256 cellar: :any_skip_relocation, sonoma:        "6becebe7505e262fe5c20b77164f8713b4ebb5184cba50d58ce63142c57c7ae9"
-    sha256 cellar: :any_skip_relocation, ventura:       "3d3caf254b5ef8aaa3d672682c7edff80974a5fea29a86c7a2c2c63c6a8ee1d4"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "84de6167662215f7809159e1c3440882050344620155aa8c9634ab4ebe63a062"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "a77c13dd1082b59f25a69f5809c678ceef54472ca25873d3356dceea6c0c7cd8"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "89b19beedb94544d19a8f33af15063befe6860613edec4f2fde1c88ae21a59af"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "57b8ec705af6c68e25acd09f8a4720a0e628a64de20d74a37468a9ec7e0a0730"
+    sha256 cellar: :any_skip_relocation, sonoma:        "bdc7a9abb89069d0ccaeca7874bce8cf4ca08af087f4706f45e453f8436ecb70"
+    sha256 cellar: :any_skip_relocation, ventura:       "070bede6372d8e470f06eb40258b4d99b1191baf46b81ac18a905c8cfeb24507"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d92b064d4aca479bc4241a00247c416e1e02faa4f8a0dd4b6c8d2523ab7f4170"
   end
 
   depends_on "go" => :build
 
   # certificates is not always in sync with step, see discussions in https://github.com/smallstep/certificates/issues/1925
   resource "certificates" do
-    url "https://github.com/smallstep/certificates/releases/download/v0.27.4/step-ca_0.27.4.tar.gz"
-    sha256 "6ac5ba0c183c87c6039c052de1d79082ac5df474d90ce026121607302f06ce6d"
+    url "https://github.com/smallstep/certificates/releases/download/v0.28.2/step-ca_0.28.2.tar.gz"
+    sha256 "9627f89ac96da1254d3f260c857a4544921ab59c52affc62034391f496a23876"
   end
 
   def install
@@ -40,14 +40,14 @@ class Step < Formula
   test do
     # Generate a public / private key pair. Creates foo.pub and foo.priv.
     system bin/"step", "crypto", "keypair", "foo.pub", "foo.priv", "--no-password", "--insecure"
-    assert_predicate testpath/"foo.pub", :exist?
-    assert_predicate testpath/"foo.priv", :exist?
+    assert_path_exists testpath/"foo.pub"
+    assert_path_exists testpath/"foo.priv"
 
     # Generate a root certificate and private key with subject baz written to baz.crt and baz.key.
     system bin/"step", "certificate", "create", "--profile", "root-ca",
         "--no-password", "--insecure", "baz", "baz.crt", "baz.key"
-    assert_predicate testpath/"baz.crt", :exist?
-    assert_predicate testpath/"baz.key", :exist?
+    assert_path_exists testpath/"baz.crt"
+    assert_path_exists testpath/"baz.key"
     baz_crt = File.read(testpath/"baz.crt")
     assert_match(/^-----BEGIN CERTIFICATE-----.*/, baz_crt)
     assert_match(/.*-----END CERTIFICATE-----$/, baz_crt)
@@ -63,8 +63,8 @@ class Step < Formula
     system bin/"step", "certificate", "create", "--profile", "intermediate-ca",
         "--no-password", "--insecure", "--ca", "baz.crt", "--ca-key", "baz.key",
         "zap", "zap.crt", "zap.key"
-    assert_predicate testpath/"zap.crt", :exist?
-    assert_predicate testpath/"zap.key", :exist?
+    assert_path_exists testpath/"zap.crt"
+    assert_path_exists testpath/"zap.key"
     zap_crt = File.read(testpath/"zap.crt")
     assert_match(/^-----BEGIN CERTIFICATE-----.*/, zap_crt)
     assert_match(/.*-----END CERTIFICATE-----$/, zap_crt)
@@ -93,7 +93,7 @@ class Step < Formula
           "#{steppath}/config/ca.json"
       end
 
-      sleep 2
+      sleep 6
       shell_output("#{bin}/step ca health > health_response.txt")
       assert_match(/^ok$/, File.read(testpath/"health_response.txt"))
 
@@ -103,8 +103,8 @@ class Step < Formula
       system bin/"step", "ca", "certificate", "--token", token,
           "homebrew-smallstep-leaf", "brew.crt", "brew.key"
 
-      assert_predicate testpath/"brew.crt", :exist?
-      assert_predicate testpath/"brew.key", :exist?
+      assert_path_exists testpath/"brew.crt"
+      assert_path_exists testpath/"brew.key"
       brew_crt = File.read(testpath/"brew.crt")
       assert_match(/^-----BEGIN CERTIFICATE-----.*/, brew_crt)
       assert_match(/.*-----END CERTIFICATE-----$/, brew_crt)

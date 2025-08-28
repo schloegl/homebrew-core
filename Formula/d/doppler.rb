@@ -1,20 +1,18 @@
 class Doppler < Formula
   desc "CLI for interacting with Doppler secrets and configuration"
   homepage "https://docs.doppler.com/docs"
-  url "https://github.com/DopplerHQ/cli/archive/refs/tags/3.69.1.tar.gz"
-  sha256 "f74713011f868d4069ed730a8b9c87572ddafe4b590d62aa13b8cc2903463cde"
+  url "https://github.com/DopplerHQ/cli/archive/refs/tags/3.75.1.tar.gz"
+  sha256 "1487ff5cbc24a398f746a0fa07261abaaee89acffbf3861801f8c3cc58fde122"
   license "Apache-2.0"
   head "https://github.com/DopplerHQ/cli.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "2c21a8e2e3283b8b6e2381526103f01aed6cd972efdd24cabd28eedc59a09c27"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "2c21a8e2e3283b8b6e2381526103f01aed6cd972efdd24cabd28eedc59a09c27"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "2c21a8e2e3283b8b6e2381526103f01aed6cd972efdd24cabd28eedc59a09c27"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "2c21a8e2e3283b8b6e2381526103f01aed6cd972efdd24cabd28eedc59a09c27"
-    sha256 cellar: :any_skip_relocation, sonoma:         "4baf71f38517a9b695511cf1a7a819430505017b901e7cd9a033913dd017e60a"
-    sha256 cellar: :any_skip_relocation, ventura:        "4baf71f38517a9b695511cf1a7a819430505017b901e7cd9a033913dd017e60a"
-    sha256 cellar: :any_skip_relocation, monterey:       "4baf71f38517a9b695511cf1a7a819430505017b901e7cd9a033913dd017e60a"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "2739d1c7e4b46737121725dcabc8c0a0e9983df079797afe790c7103437032bf"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "9c6c9327df7c0c4b1e8c497fdd3acc7d8fb13c34fa8d38d6733e1203428b31b4"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "9c6c9327df7c0c4b1e8c497fdd3acc7d8fb13c34fa8d38d6733e1203428b31b4"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "9c6c9327df7c0c4b1e8c497fdd3acc7d8fb13c34fa8d38d6733e1203428b31b4"
+    sha256 cellar: :any_skip_relocation, sonoma:        "bff18de552956fa3893a9f8eb2da726de251d7c20429798224eb3cec82e8dfe3"
+    sha256 cellar: :any_skip_relocation, ventura:       "bff18de552956fa3893a9f8eb2da726de251d7c20429798224eb3cec82e8dfe3"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "08ce028ea8d6d035e69508e1a66294e84cc2fc6a14f9e6f29ea1e4c836ebb6bc"
   end
 
   depends_on "go" => :build

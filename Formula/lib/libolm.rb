@@ -13,21 +13,24 @@ class Libolm < Formula
     sha256 cellar: :any,                 sonoma:         "ed06e4f79c3f1651dd77425482b55bb9876ead8c80adaacc7aaccd6def7f4f76"
     sha256 cellar: :any,                 ventura:        "dfcc8778b58afac8e598e6f83fbefd6a18d2c34a2c23b23e332c4618847f4476"
     sha256 cellar: :any,                 monterey:       "71019cfeedbd48f15b86c6249bcd4db630fc6aae5754ee2e6f0162615bf55fae"
+    sha256 cellar: :any_skip_relocation, arm64_linux:    "7ddb8f63f2928d77bf29529f78977f4a1c7a4666d94d049264af99a3ec9b8ea1"
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "f116c980f972a0fe05051d0bedae1cd42392051566d51c9f25989639d6b05a37"
   end
 
   # Upstream project marked as deprecated https://gitlab.matrix.org/matrix-org/olm/-/commit/6d4b5b07887821a95b144091c8497d09d377f985
   deprecate! date: "2024-08-01", because: :deprecated_upstream
+  disable! date: "2025-08-03", because: :deprecated_upstream
 
   depends_on "cmake" => :build
 
   def install
-    system "cmake", ".", "-Bbuild", "-DCMAKE_INSTALL_PREFIX=#{prefix}"
-    system "cmake", "--build", "build", "--target", "install"
+    system "cmake", "-S", ".", "-B", "build", *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <iostream>
       #include <vector>
       #include <stdlib.h>
@@ -46,7 +49,7 @@ class Libolm < Formula
         cout << output;
         return 0;
       }
-    EOS
+    CPP
 
     system ENV.cc, "test.cpp", "-L#{lib}", "-lolm", "-lstdc++", "-o", "test"
     assert_equal "A2daxT/5zRU1zMffzfosRYxSGDcfQY3BNvLRmsH76KU", shell_output("./test").strip

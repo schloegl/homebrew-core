@@ -1,20 +1,19 @@
 class Cpr < Formula
   desc "C++ Requests, a spiritual port of Python Requests"
   homepage "https://docs.libcpr.org/"
-  url "https://github.com/libcpr/cpr/archive/refs/tags/1.10.5.tar.gz"
-  sha256 "c8590568996cea918d7cf7ec6845d954b9b95ab2c4980b365f582a665dea08d8"
+  url "https://github.com/libcpr/cpr/archive/refs/tags/1.12.0.tar.gz"
+  sha256 "f64b501de66e163d6a278fbb6a95f395ee873b7a66c905dd785eae107266a709"
   license "MIT"
   head "https://github.com/libcpr/cpr.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "aca7b80b5b4ac7b88c1ed8a16b4db7513fe3b7a7f53a40001fae51ff5ed70a8c"
-    sha256 cellar: :any,                 arm64_sonoma:   "bfef5a915c30a90886b9ad075ed61c8c84654c5f04011363d7ad72663877c529"
-    sha256 cellar: :any,                 arm64_ventura:  "08e9fc350ee4025479697f3f147277ff44c5383c1417df9e4119f5ed2993ef4f"
-    sha256 cellar: :any,                 arm64_monterey: "7e81fa0e233c1ca7436de8a2986546855da6e82644b251236dd08a706eaf3a44"
-    sha256 cellar: :any,                 sonoma:         "32cb1fbdbd64c5e9594b8ace3cb7919f20a0474dfd9e83bcf67f52eed7e43fec"
-    sha256 cellar: :any,                 ventura:        "b646edcb9ee136607aaf911521a28aa4916b0b9eb8e5ea8f3bc2faa655c64406"
-    sha256 cellar: :any,                 monterey:       "99b0acc646c669aceb3d53729da033a3ab4263e69d65e267e778a825e5f8600d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "c5238ed4fc1a27b5b501e68ba01255e01fadd98398e67c709ee0c72e58c144aa"
+    sha256 cellar: :any,                 arm64_sequoia: "09b831bfeb3f9574473d0389d56c54a98d6114401fc2461a459b81fae35441b7"
+    sha256 cellar: :any,                 arm64_sonoma:  "62774379c35c472b5ce32cd7a1044201f746fde63b6caa1fa0ca1aa6f063ceba"
+    sha256 cellar: :any,                 arm64_ventura: "1daf2a4ac0df3bde82610f88f16d84dbb470e5bcd5466376500d43b43fc14997"
+    sha256 cellar: :any,                 sonoma:        "6c4d6d71ee53bbe0ba524f3c91c00c33dd3256ac7f36ce5f66735d07203b8fc9"
+    sha256 cellar: :any,                 ventura:       "444ed2abda55e8ddbed0ae3f2baf2dd1c90828a158e96f8dbcd7b40288a68fc7"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "ce24deaf7cfd5c547c270bd903be2d12afb258dcd140938c1b27a98474bce2ad"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4986278145e9f1ba77fc0caff4fe08c91437e40cd7b18114cf4d44ba6dbe06e7"
   end
 
   depends_on "cmake" => :build
@@ -23,8 +22,6 @@ class Cpr < Formula
   on_linux do
     depends_on "openssl@3"
   end
-
-  fails_with gcc: "5" # C++17
 
   def install
     args = %W[
@@ -44,7 +41,7 @@ class Cpr < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <iostream>
       #include <curl/curl.h>
       #include <cpr/cpr.h>
@@ -55,7 +52,7 @@ class Cpr < Formula
 
           return 0;
       }
-    EOS
+    CPP
 
     args = %W[
       -I#{include}

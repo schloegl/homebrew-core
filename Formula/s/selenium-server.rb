@@ -1,8 +1,8 @@
 class SeleniumServer < Formula
   desc "Browser automation for testing purposes"
   homepage "https://www.selenium.dev/"
-  url "https://github.com/SeleniumHQ/selenium/releases/download/selenium-4.25.0/selenium-server-4.25.0.jar"
-  sha256 "bde3bda5017170711e799631df978510de9176dafafb5fd2ea59b2923f654c91"
+  url "https://github.com/SeleniumHQ/selenium/releases/download/selenium-4.35.0/selenium-server-4.35.0.jar"
+  sha256 "1137875ae8fd45003fd02342ded5208401b72b526ec439956789d2f17dd4e011"
   license "Apache-2.0"
 
   livecheck do
@@ -11,10 +11,14 @@ class SeleniumServer < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "9a6565981914159b14ec07da7f199656bd76300dfe2c9d3f7b9c005a71c78013"
+    sha256 cellar: :any_skip_relocation, all: "19fcd1be490f92e925c8740e1205826033fffbcb1a03de0b1aae101e35b36cf2"
   end
 
   depends_on "openjdk"
+
+  on_linux do
+    depends_on arch: :x86_64 # org.openqa.selenium.grid.config.ConfigException: No drivers for arm64 Linux
+  end
 
   def install
     libexec.install "selenium-server-#{version}.jar"
@@ -30,7 +34,7 @@ class SeleniumServer < Formula
 
   test do
     port = free_port
-    fork { exec "#{bin}/selenium-server standalone --selenium-manager true --port #{port}" }
+    spawn "#{bin}/selenium-server standalone --selenium-manager true --port #{port}"
 
     parsed_output = nil
 
@@ -50,7 +54,7 @@ class SeleniumServer < Formula
       break if parsed_output["value"]["ready"]
     end
 
-    assert !parsed_output.nil?
+    refute_nil parsed_output
     assert parsed_output["value"]["ready"]
     assert_match version.to_s, parsed_output["value"]["nodes"].first["version"]
   end

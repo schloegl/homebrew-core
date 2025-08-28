@@ -1,20 +1,27 @@
 class StripeCli < Formula
   desc "Command-line tool for Stripe"
-  homepage "https://stripe.com/docs/stripe-cli"
-  url "https://github.com/stripe/stripe-cli/archive/refs/tags/v1.21.8.tar.gz"
-  sha256 "7b19bf53df2668c86ffbe18e2d72c9f80a51f88d63eaf419a37e1a7f7fd5071e"
+  homepage "https://docs.stripe.com/stripe-cli"
+  url "https://github.com/stripe/stripe-cli/archive/refs/tags/v1.29.0.tar.gz"
+  sha256 "69ef37df57f0c1731ccb275c157fef100b5ca94efba8650161ce3dfc1f4b6c54"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "50a38089d2d41108fafd3fb6144a51dd86c267d557401e163159040aa6b88008"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "429f610d8b5c4a3ca16d86c3b1d2c423870d35683a0cd866ed20ff8cba865efa"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "6b5de1c8d8f03b77edcc1e96b735f4692dba0f5ffe27e3063b691c8fe4a84e6f"
-    sha256 cellar: :any_skip_relocation, sonoma:        "93da5df351efa2a8780decbba76c36a9be1e2aa0acd7d306f86975f7057e406b"
-    sha256 cellar: :any_skip_relocation, ventura:       "956e35d85e412e85073e22b7e7468d40651feac8d91195ee707311ddbdaf3868"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "abe393a28aa3869fbe2bec18e92546c037824fdaeabbded211d009ceb43319b2"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "34d4b3b5905e0a3a450f59e070053aaddf509e1fae4aa34261223e0a51780b7e"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "2b20784ff428c484bf7c4664b5b1b65c0304c9cf31ca8acc37c2095ee4fdb97c"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "5c1dcefe23e1b609e0012da813440d8b4acd00d9983c42e4e5de20ed96788026"
+    sha256 cellar: :any_skip_relocation, sonoma:        "d344ad583b543289a156310d351f47a407310b8437cbc927a871ff2f2a1750a9"
+    sha256 cellar: :any_skip_relocation, ventura:       "5234bd88601d251c661ef2f24ca8ad6f4fc5543e8d9466a02ab331cdf066575b"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "43cf2bee8050f615fff2b91ec35931c74832597466e0f15588b80d638dd960c9"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7def9df29a37bb75ee0382f1bd8997003a14986a02a5a45227f523cf757c2d78"
   end
 
   depends_on "go" => :build
+
+  # fish completion support patch, upstream pr ref, https://github.com/stripe/stripe-cli/pull/1282
+  patch do
+    url "https://github.com/stripe/stripe-cli/commit/de62a98881671ce83973e1b696d3a7ea820b8d0e.patch?full_index=1"
+    sha256 "2b30ee04680e16b5648495e2fe93db3362931cf7151b1daa1f7e95023b690db8"
+  end
 
   def install
     # See configuration in `.goreleaser` directory
@@ -22,17 +29,14 @@ class StripeCli < Formula
     ldflags = %W[-s -w -X github.com/stripe/stripe-cli/pkg/version.Version=#{version}]
     system "go", "build", *std_go_args(ldflags:, output: bin/"stripe"), "cmd/stripe/main.go"
 
-    # Doesn't work with `generate_completions_from_executable`
-    # Taken from `.goreleaser` directory
-    system bin/"stripe", "completion", "--shell", "bash"
-    system bin/"stripe", "completion", "--shell", "zsh"
-    bash_completion.install "stripe-completion.bash"
-    zsh_completion.install "stripe-completion.zsh" => "_stripe"
+    generate_completions_from_executable(bin/"stripe", "completion", "--write-to-stdout", "--shell")
   end
 
   test do
     assert_match version.to_s, shell_output("#{bin}/stripe version")
     assert_match "secret or restricted key",
                  shell_output("#{bin}/stripe --api-key=not_real_key get ch_1EGYgUByst5pquEtjb0EkYha", 1)
+    assert_match "-F __start_stripe",
+                 shell_output("bash -c 'source #{bash_completion}/stripe && complete -p stripe'")
   end
 end

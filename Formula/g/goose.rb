@@ -1,20 +1,23 @@
 class Goose < Formula
   desc "Go Language's command-line interface for database migrations"
   homepage "https://pressly.github.io/goose/"
-  url "https://github.com/pressly/goose/archive/refs/tags/v3.22.1.tar.gz"
-  sha256 "fc62967a9e4c1d94ce7cf706b727f5af622d004ebb6a6fd73e94b489fb2efe28"
+  url "https://github.com/pressly/goose/archive/refs/tags/v3.25.0.tar.gz"
+  sha256 "46002cec9b0ee3f3f87739da329c40007009e1fbf1f71e02028eb5e3614a67d4"
   license "MIT"
+  head "https://github.com/pressly/goose.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "8d59a515c55392ca7b40b94018ad95ae61332c63e97b2db567243db90b3038d0"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "a0cc4d2f156e35028cc86af4d973dd17eb16a9becccfa4c9c4d8c03edd8c180f"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "d447fa19b49d72b9bea260d6d2c1b685c54910194359bbcd18baadd2d7a51e9b"
-    sha256 cellar: :any_skip_relocation, sonoma:        "fea0894276eba28727508487c0dde32d4997320d0072733e072bc4e72d4a0144"
-    sha256 cellar: :any_skip_relocation, ventura:       "95bc713edd46cc6a19f51f65a93bad6a7b9502f94349f53030e117c8c8a78856"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "caa3e726cec91e14d50c2a87a7653c042468ec6b7dc6923851bb56fd90f71bc6"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "22ec9bc1bdda1eb1b0bc7a6388a62cf1f5e46b598befe003ccade58c5f971b10"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "2a122f9ec4b99aaa817c86a7c1b8fab47b91966d4ddf7c0a437077bba07e4185"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "db546815613867cbca01d7e5454bc5ebc1e6edc5ee78a65b7381eb0e4fe145c9"
+    sha256 cellar: :any_skip_relocation, sonoma:        "11ba39b923ea6e65f7b218561120435de1d6037f166e9a796d5d0e2e2bef5796"
+    sha256 cellar: :any_skip_relocation, ventura:       "4414da7f544c6b960f9333718f2354445c2275fd2c49e72cfdc7ef30cd0a8026"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2d3dc7c104c9624e815e9d9c2c17ac740e8c6829a473720740da07b95e148fbb"
   end
 
   depends_on "go" => :build
+
+  conflicts_with "block-goose-cli", because: "both install `goose` binaries"
 
   def install
     ldflags = %W[-s -w -X main.version=v#{version}]

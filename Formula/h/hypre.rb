@@ -1,9 +1,10 @@
 class Hypre < Formula
   desc "Library featuring parallel multigrid methods for grid problems"
   homepage "https://computing.llnl.gov/projects/hypre-scalable-linear-solvers-multigrid-methods"
-  url "https://github.com/hypre-space/hypre/archive/refs/tags/v2.31.0.tar.gz"
-  sha256 "9a7916e2ac6615399de5010eb39c604417bb3ea3109ac90e199c5c63b0cb4334"
+  url "https://github.com/hypre-space/hypre/archive/refs/tags/v2.33.0.tar.gz"
+  sha256 "0f9103c34bce7a5dcbdb79a502720fc8aab4db9fd0146e0791cde7ec878f27da"
   license any_of: ["MIT", "Apache-2.0"]
+  revision 1
   head "https://github.com/hypre-space/hypre.git", branch: "master"
 
   livecheck do
@@ -12,35 +13,38 @@ class Hypre < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "4a5246223afd0e8da3ea00996f52da8faa1749843a1d212aa9c54d338cc6eaf7"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "c2ca7caa0247193fd7e8db5a532f8bc0b7a95ddcffd919608e82010ecb341c12"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "07762e61c472e7cd090987ba54b7c7a7c51ebcf0e3b73fb25f4e8baf8b90af1c"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "cb347369bb6d4f5b98db7f4b8aa670a219cbdea86984f24f2794dee9018b101a"
-    sha256 cellar: :any_skip_relocation, sonoma:         "970c7d80bbf3b1266e3109c279775c8e7c6377f88a69236adf01e9bb3f941a8a"
-    sha256 cellar: :any_skip_relocation, ventura:        "4fc865a9da72f13f6972418cb005960c9dd284acf624d3414854a81af10376ce"
-    sha256 cellar: :any_skip_relocation, monterey:       "468fc9bf92081aa162b282c1b98b0c9481419f9318b9867248617eb2cb1524c9"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "c253769438511500e428dc15f9f3b264a3dd743864c4771085a8f1c3b58b361a"
+    sha256 cellar: :any,                 arm64_sequoia: "beb3d2c609d542c1a74709ac01faffc25148b0e052a617342bca693b18241823"
+    sha256 cellar: :any,                 arm64_sonoma:  "03aaacdf60bc773d746538b5e6bc5815481af39d8dbe2b554e75d6f5f32424a2"
+    sha256 cellar: :any,                 arm64_ventura: "324360d183876464b8ccf254e668820d0287b29cfaabcfabc2b228402d9fdbd0"
+    sha256 cellar: :any,                 sonoma:        "dc6ed08e556be37a1f34b5b557e949228826b857a6c29de98fdd4176a5599262"
+    sha256 cellar: :any,                 ventura:       "e7931d4b3a96f1020dd44551449dbc89fa27476cface7366385a1f17e4b4783f"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "1c37c9517a610c9051d5fc5ea268945c2214b06fbf81aa2b51167dd909052bc6"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7381b210318269b8894f650e2b682fe9bf8751628022553104e3f25d5d3502cb"
   end
 
-  depends_on "gcc" # for gfortran
+  depends_on "cmake" => :build
   depends_on "open-mpi"
+  depends_on "openblas"
 
   def install
-    cd "src" do
-      system "./configure", "--prefix=#{prefix}",
-                            "--with-MPI",
-                            "--enable-bigint"
-      system "make", "install"
-    end
+    system "cmake", "-S", "src", "-B", "build",
+                    "-DBUILD_SHARED_LIBS=ON",
+                    "-DHYPRE_ENABLE_BIGINT=ON",
+                    "-DHYPRE_ENABLE_HYPRE_BLAS=OFF",
+                    "-DHYPRE_ENABLE_HYPRE_LAPACK=OFF",
+                    "-DHYPRE_ENABLE_MPI=ON",
+                    *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include "HYPRE_struct_ls.h"
       int main(int argc, char* argv[]) {
         HYPRE_StructGrid grid;
       }
-    EOS
+    CPP
 
     system ENV.cxx, "test.cpp", "-o", "test"
     system "./test"

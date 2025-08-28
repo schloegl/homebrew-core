@@ -1,8 +1,8 @@
 class Chamber < Formula
   desc "CLI for managing secrets through AWS SSM Parameter Store"
   homepage "https://github.com/segmentio/chamber"
-  url "https://github.com/segmentio/chamber/archive/refs/tags/v3.1.0.tar.gz"
-  sha256 "759fab49724d7473b11e076fda932dd173558eb6c3287e8673b6a092f2103b66"
+  url "https://github.com/segmentio/chamber/archive/refs/tags/v3.1.3.tar.gz"
+  sha256 "2509cb2a1e3c0959ee21a6724513f327d1c7127352fab4e316469a2ee9cad56b"
   license "MIT"
   head "https://github.com/segmentio/chamber.git", branch: "master"
 
@@ -13,14 +13,12 @@ class Chamber < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "d1f224ffa23a73da67579e3cb36bdc07919929fc5ba778ef9868c15226d01386"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "b6090b9641a18431dcaf26570f65e328b1db78dec52a4655a0998b868823bd18"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "b6090b9641a18431dcaf26570f65e328b1db78dec52a4655a0998b868823bd18"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "b6090b9641a18431dcaf26570f65e328b1db78dec52a4655a0998b868823bd18"
-    sha256 cellar: :any_skip_relocation, sonoma:         "710122515447f11124bdb6fac8249404dfe041aee981f66d8afa447513769fc8"
-    sha256 cellar: :any_skip_relocation, ventura:        "710122515447f11124bdb6fac8249404dfe041aee981f66d8afa447513769fc8"
-    sha256 cellar: :any_skip_relocation, monterey:       "710122515447f11124bdb6fac8249404dfe041aee981f66d8afa447513769fc8"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "24c55deddb79df26d782bae15ded05b6b91943083a3122586b61c65d2104897f"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "697dd0e5e98d6ab28cd992438dcda8e4dfa9e7a30cbc8084eaa4f20dbc76e68b"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "697dd0e5e98d6ab28cd992438dcda8e4dfa9e7a30cbc8084eaa4f20dbc76e68b"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "697dd0e5e98d6ab28cd992438dcda8e4dfa9e7a30cbc8084eaa4f20dbc76e68b"
+    sha256 cellar: :any_skip_relocation, sonoma:        "32e4902a1ff7ca48ca609d7f33c479f026032d2b25caf7c7a04766e9d02ec236"
+    sha256 cellar: :any_skip_relocation, ventura:       "32e4902a1ff7ca48ca609d7f33c479f026032d2b25caf7c7a04766e9d02ec236"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4b21ad171679fdce9e7fb937c1ab5c067b8155388178391cf79b3905b91300fa"
   end
 
   depends_on "go" => :build

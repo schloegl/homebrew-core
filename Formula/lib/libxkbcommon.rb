@@ -1,34 +1,28 @@
 class Libxkbcommon < Formula
   desc "Keyboard handling library"
   homepage "https://xkbcommon.org/"
-  url "https://xkbcommon.org/download/libxkbcommon-1.7.0.tar.xz"
-  sha256 "65782f0a10a4b455af9c6baab7040e2f537520caa2ec2092805cdfd36863b247"
+  url "https://github.com/xkbcommon/libxkbcommon/archive/refs/tags/xkbcommon-1.11.0.tar.gz"
+  sha256 "78a6b14f16e9a55025978c252e53ce9e16a02bfdb929550b9a0db5af87db7e02"
   license "MIT"
   head "https://github.com/xkbcommon/libxkbcommon.git", branch: "master"
 
-  livecheck do
-    url :homepage
-    regex(/href=.*?libxkbcommon[._-]v?(\d+(?:\.\d+)+)\.t/i)
-  end
-
   bottle do
-    sha256 arm64_sequoia:  "2d1173708252e2588f86db7f8668590d37e7abf293938dd569c009ffc7b6dab0"
-    sha256 arm64_sonoma:   "d4dc5666abb07f964a4ea2dcf8bed13d2a1a4ef8035c7001c3f176359d774fae"
-    sha256 arm64_ventura:  "99e8ee1df3f8a3247bc3904f5f5fe1184067b2cb3a826fabcbaef70cf3249219"
-    sha256 arm64_monterey: "bb99be852933c86dfd745e44ac46081140b1f21b9c02ad9fc31f663426384ebd"
-    sha256 sonoma:         "72b44058453e2b5d75b576a9403647f0dc0d76dfd2b0a6cddd31f2e2fac779c9"
-    sha256 ventura:        "83381d671ce4b07cf9232d06ec45e6e051d2090f8525a73f528544f3fa5b8e19"
-    sha256 monterey:       "6958c8a61b2a62205cb3eae70ef088e3d3d2675a74e57bf7c35f23e6b2ee378f"
-    sha256 x86_64_linux:   "3327f58e3610858e97b5675451c67ec2c7cadf16f34419292b4240186b5fa650"
+    sha256 arm64_sequoia: "168d01c1766767fb40d0a6e002fc69e257b222acd314b94516d87274f05e5392"
+    sha256 arm64_sonoma:  "a91f72579a536b89c7ca1535af9b77ce7441b95f0323e957a05df4ec17af6712"
+    sha256 arm64_ventura: "e6cddacec36cad7930ddbc1893354b1f572f906b62f7320a1dc0012ac4cb5684"
+    sha256 sonoma:        "88553315f7fe6bf3ad49abd0395a9bd61492f6e54dd3ba26e1a158cb1453090a"
+    sha256 ventura:       "bd999fe74568dc59bb165d1991fd9eb69902221a1d42663ecc716a02f6c90109"
+    sha256 arm64_linux:   "477d530047eca4f96cdd58d3fb5664a4794af48a7df638bb049666cf1ccdcb88"
+    sha256 x86_64_linux:  "d82ee02d787b5775e685fa520fba687918207197150ce4c36b2a057225ded951"
   end
 
   depends_on "bison" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "libxcb"
-  depends_on "xkeyboardconfig"
+  depends_on "xkeyboard-config"
   depends_on "xorg-server"
 
   uses_from_macos "libxml2"
@@ -48,7 +42,7 @@ class Libxkbcommon < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <stdlib.h>
       #include <xkbcommon/xkbcommon.h>
       int main() {
@@ -56,7 +50,7 @@ class Libxkbcommon < Formula
           ? EXIT_FAILURE
           : EXIT_SUCCESS;
       }
-    EOS
+    C
 
     system ENV.cc, "test.c", "-I#{include}", "-L#{lib}", "-lxkbcommon",
                    "-o", "test"

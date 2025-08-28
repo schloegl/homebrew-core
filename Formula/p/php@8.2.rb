@@ -2,9 +2,9 @@ class PhpAT82 < Formula
   desc "General-purpose scripting language"
   homepage "https://www.php.net/"
   # Should only be updated if the new version is announced on the homepage, https://www.php.net/
-  url "https://www.php.net/distributions/php-8.2.24.tar.xz"
-  mirror "https://fossies.org/linux/www/php-8.2.24.tar.xz"
-  sha256 "80a5225746a9eb484475b312d4c626c63a88a037d8e56d214f30205e1ba1411a"
+  url "https://www.php.net/distributions/php-8.2.29.tar.xz"
+  mirror "https://fossies.org/linux/www/php-8.2.29.tar.xz"
+  sha256 "475f991afd2d5b901fb410be407d929bc00c46285d3f439a02c59e8b6fe3589c"
   license "PHP-3.01"
 
   livecheck do
@@ -13,12 +13,14 @@ class PhpAT82 < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia: "f069e47c20bd9add60eaf5b7900ec1ea80ceddc3547261011b0648d79368d43e"
-    sha256 arm64_sonoma:  "5da3d50380fb414607f2fab95228d84b8aa6b58ae3cd329416202b9c48b84077"
-    sha256 arm64_ventura: "674ed070c9e3358f4179c683eae93dc639b567a37a52f4aca58b96128834828d"
-    sha256 sonoma:        "f9f412aed8713eb7c73ad34eaca25ae023bfcbf5b40bf311b002df75de8effaa"
-    sha256 ventura:       "afd7347743fcb543f2f8ec1f68cf69d506edec3f40fe58aad7458f2629fe293a"
-    sha256 x86_64_linux:  "195ed79a4e372a98d4e5ecccf0ee4394be3c45c151f1a9f1fa11730e06813722"
+    rebuild 1
+    sha256 arm64_sequoia: "7576aec65c4ac7ab192e487e3942ce2e769db1b52da0d9a620f22f0cbe70af6d"
+    sha256 arm64_sonoma:  "e12c26df9115adb17c624e6284cc95a83cdd0306d3e9facf5ef54aa8162ee91b"
+    sha256 arm64_ventura: "302ac8f571039ceac4bbd0c6785067d27a2974dd785c9ea0c62cad52af9b00c5"
+    sha256 sonoma:        "bd8d3246d0af397358434dfbe6c7befec15a21626c20b1b468ad15d9d3695996"
+    sha256 ventura:       "0322eb8c8d9e10ef6e118a9bc0cd71b83b5264edfe95fb754422e6ae6dbca30a"
+    sha256 arm64_linux:   "210b1f02cddfce250b0f4566a36b2b7221a2f82dbd666ca3135330797bee777e"
+    sha256 x86_64_linux:  "eab0f89ecce0f230609c0ea10c0164a227170e375735aaec8607cdc2fab9b68c"
   end
 
   keg_only :versioned_formula
@@ -28,7 +30,7 @@ class PhpAT82 < Formula
   deprecate! date: "2026-12-31", because: :unsupported
 
   depends_on "httpd" => [:build, :test]
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "apr"
   depends_on "apr-util"
   depends_on "argon2"
@@ -39,7 +41,7 @@ class PhpAT82 < Formula
   depends_on "gd"
   depends_on "gettext"
   depends_on "gmp"
-  depends_on "icu4c"
+  depends_on "icu4c@77"
   depends_on "krb5"
   depends_on "libpq"
   depends_on "libsodium"
@@ -80,7 +82,7 @@ class PhpAT82 < Formula
 
       # apxs will interpolate the @ in the versioned prefix: https://bz.apache.org/bugzilla/show_bug.cgi?id=61944
       s.gsub! "LIBEXECDIR='$APXS_LIBEXECDIR'",
-              "LIBEXECDIR='" + "#{lib}/httpd/modules".gsub("@", "\\@") + "'"
+              "LIBEXECDIR='" + "#{lib}/httpd/modules".gsub("\\", "\\\\").gsub("@", "\\@") + "'"
     end
 
     # Update error message in apache sapi to better explain the requirements
@@ -102,6 +104,9 @@ class PhpAT82 < Formula
 
     # Prevent homebrew from hardcoding path to sed shim in phpize script
     ENV["lt_cv_path_SED"] = "sed"
+
+    # Identify build provider in phpinfo()
+    ENV["PHP_BUILD_PROVIDER"] = tap.user
 
     # system pkg-config missing
     ENV["KERBEROS_CFLAGS"] = " "
@@ -349,11 +354,11 @@ class PhpAT82 < Formula
       port_fpm = free_port
 
       expected_output = /^Hello world!$/
-      (testpath/"index.php").write <<~EOS
+      (testpath/"index.php").write <<~PHP
         <?php
         echo 'Hello world!' . PHP_EOL;
         var_dump(ldap_connect());
-      EOS
+      PHP
       main_config = <<~EOS
         Listen #{port}
         ServerName localhost:#{port}
@@ -401,7 +406,7 @@ class PhpAT82 < Formula
       pid = fork do
         exec Formula["httpd"].opt_bin/"httpd", "-X", "-f", "#{testpath}/httpd.conf"
       end
-      sleep 3
+      sleep 10
 
       assert_match expected_output, shell_output("curl -s 127.0.0.1:#{port}")
 
@@ -414,7 +419,7 @@ class PhpAT82 < Formula
       pid = fork do
         exec Formula["httpd"].opt_bin/"httpd", "-X", "-f", "#{testpath}/httpd-fpm.conf"
       end
-      sleep 3
+      sleep 10
 
       assert_match expected_output, shell_output("curl -s 127.0.0.1:#{port}")
     ensure

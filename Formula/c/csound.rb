@@ -2,8 +2,8 @@ class Csound < Formula
   desc "Sound and music computing system"
   homepage "https://csound.com"
   license "LGPL-2.1-or-later"
-  revision 10
-  head "https://github.com/csound/csound.git", branch: "master"
+  revision 12
+  head "https://github.com/csound/csound.git", branch: "develop"
 
   # Remove `stable` block when patches are no longer needed
   stable do
@@ -21,6 +21,12 @@ class Csound < Formula
       url "https://github.com/csound/csound/commit/2a071ae8ca89bc21b5c80037f8c95a01bb670ac9.patch?full_index=1"
       sha256 "c7026330b5c89ab399e74aff17019067705011b7e35b9c75f9ed1a5878f53b4b"
     end
+
+    # Fix build failure due to incorrect member name on macOS 15+
+    patch do
+      url "https://github.com/csound/csound/commit/bb9bafcfa17a87d3733eda1e25a812fd0be08ac6.patch?full_index=1"
+      sha256 "b1492e344a7cc067989ef600a08319d388bebb344fee616d83dce969f3afe8cb"
+    end
   end
 
   livecheck do
@@ -28,12 +34,16 @@ class Csound < Formula
     strategy :github_latest
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 arm64_sequoia: "a05d1bd227660cc14892c69e3c39b118a13f07489d95f523a829414002983b3e"
-    sha256 arm64_sonoma:  "7f34328910d03145c44651cb1adff7d7e8c69d18583d16479ac034dc59af98bf"
-    sha256 arm64_ventura: "2cc3d217bf0460beb295df5a74ea9174de44ac555e33600dde92889e70f775d4"
-    sha256 sonoma:        "c8a42e87b28da8e8805cd4ab3d4cfcc95fc9d4bb08a0355afc82390f9f4cec94"
-    sha256 ventura:       "3b495d0ecf546e4d645b5f6aff257dc4b3f183cad5a58be7a524b1a15eb93d79"
+    sha256 arm64_sequoia: "8d4643c7facbb44a86760a6e4aed9c9d8d64693ed974cbab8df35ae34299b7c6"
+    sha256 arm64_sonoma:  "59e91a6e3ceb3e5ce1a2a846643b6e695ba7d45ee1683a4d90922cb0295b2d4d"
+    sha256 arm64_ventura: "924021067daaa589b49dc7d87697c0dcc0354c55ddbf849b5d99f7f8c6d2ff89"
+    sha256 sonoma:        "5bc33817212bf9e58d2110d263038ba087753d934cf1b229892aef0b48a0a903"
+    sha256 ventura:       "9a087479d355399ef4515d10406c0e2852059cb4bb21a6b3a7523cc93a480560"
+    sha256 arm64_linux:   "b8258413994957c8095201a023403318a253eb56bf01ca95afcdd19db88c8e55"
+    sha256 x86_64_linux:  "58d3320da2d409e1f462bf7544c585cd4b4ee3b922fc9b6fbdf8f3b6a8813b2b"
   end
 
   depends_on "asio" => :build
@@ -57,7 +67,7 @@ class Csound < Formula
   depends_on "openssl@3"
   depends_on "portaudio"
   depends_on "portmidi"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "stk"
   depends_on "wiiuse"
 
@@ -73,11 +83,9 @@ class Csound < Formula
 
   conflicts_with "libextractor", because: "both install `extract` binaries"
 
-  fails_with gcc: "5"
-
   resource "ableton-link" do
-    url "https://github.com/Ableton/link/archive/refs/tags/Link-3.1.2.tar.gz"
-    sha256 "2673dfad75b1484e8388deb8393673c3304b3ab5662dd5828e08e029ca8797aa"
+    url "https://github.com/Ableton/link/archive/refs/tags/Link-3.1.3.tar.gz"
+    sha256 "b0eba86d40a46b01ab821cdfb53041bfc693f0266538ea8163f1cea7ac42f476"
   end
 
   resource "csound-plugins" do
@@ -97,7 +105,7 @@ class Csound < Formula
   end
 
   def python3
-    which("python3.12")
+    which("python3.13")
   end
 
   def install
@@ -130,7 +138,10 @@ class Csound < Formula
       resource("ableton-link").stage buildpath/"ableton-link"
       resource("getfem").stage { cp_r "src/gmm", buildpath }
 
+      # Can remove minimum policy in a release with
+      # https://github.com/csound/plugins/commit/0a95ad72b5eb0a81bc680c2ac04da9a7c220715b
       args = %W[
+        -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         -DABLETON_LINK_HOME=#{buildpath}/ableton-link
         -DBUILD_ABLETON_LINK_OPCODES=ON
         -DBUILD_CHUA_OPCODES=ON
@@ -201,10 +212,9 @@ class Csound < Formula
   end
 
   test do
-    (testpath/"test.orc").write <<~EOS
+    (testpath/"test.orc").write <<~ORC
       0dbfs = 1
       gi_peer link_create
-      gi_programHandle faustcompile "process = _;", "--vectorize --loop-variant 1"
       FLrun
       gi_fluidEngineNumber fluidEngine
       gi_realVector la_i_vr_create 1
@@ -217,12 +227,12 @@ class Csound < Formula
           mp3out a_signal, a_signal, "test.mp3"
           out a_signal
       endin
-    EOS
+    ORC
 
-    (testpath/"test.sco").write <<~EOS
+    (testpath/"test.sco").write <<~SCO
       i 1 0 1
       e
-    EOS
+    SCO
 
     if OS.mac?
       ENV["OPCODE6DIR64"] = frameworks/"CsoundLib64.framework/Resources/Opcodes64"
@@ -235,38 +245,39 @@ class Csound < Formula
 
     system bin/"csound", "test.orc", "test.sco"
 
-    assert_predicate testpath/"test.#{OS.mac? ? "aif" : "wav"}", :exist?
-    assert_predicate testpath/"test.h5", :exist?
-    assert_predicate testpath/"test.mp3", :exist?
+    assert_path_exists testpath/"test.#{OS.mac? ? "aif" : "wav"}"
+    assert_path_exists testpath/"test.h5"
+    assert_path_exists testpath/"test.mp3"
 
-    (testpath/"opcode-existence.orc").write <<~EOS
+    (testpath/"opcode-existence.orc").write <<~ORC
+      gi_programHandle faustcompile "process = _;", "--vectorize --loop-variant 1"
       JackoInfo
       instr 1
           i_ websocket 8888, 0
           i_ wiiconnect 1, 1
       endin
-    EOS
+    ORC
     system bin/"csound", "--orc", "--syntax-check-only", "opcode-existence.orc"
 
     if OS.mac?
-      (testpath/"mac-opcode-existence.orc").write <<~EOS
+      (testpath/"mac-opcode-existence.orc").write <<~ORC
         instr 1
             p5gconnect
         endin
-      EOS
+      ORC
       system bin/"csound", "--orc", "--syntax-check-only", "mac-opcode-existence.orc"
     end
 
     system python3, "-c", "import ctcsound"
 
-    (testpath/"test.java").write <<~EOS
+    (testpath/"test.java").write <<~JAVA
       import csnd6.*;
       public class test {
           public static void main(String args[]) {
               csnd6.csoundInitialize(csnd6.CSOUNDINIT_NO_ATEXIT | csnd6.CSOUNDINIT_NO_SIGNAL_HANDLER);
           }
       }
-    EOS
+    JAVA
     system Formula["openjdk"].bin/"javac", "-classpath", "#{libexec}/csnd6.jar", "test.java"
     system Formula["openjdk"].bin/"java", "-classpath", "#{libexec}/csnd6.jar:.",
                                           "-Djava.library.path=#{libexec}", "test"

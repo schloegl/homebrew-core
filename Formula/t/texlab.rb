@@ -1,20 +1,19 @@
 class Texlab < Formula
   desc "Implementation of the Language Server Protocol for LaTeX"
   homepage "https://github.com/latex-lsp/texlab/"
-  url "https://github.com/latex-lsp/texlab/archive/refs/tags/v5.19.0.tar.gz"
-  sha256 "ad72171dd267fd73ecc6a05f9ff3cc068e77a3b82f986305ab455aeade841294"
+  url "https://github.com/latex-lsp/texlab/archive/refs/tags/v5.23.1.tar.gz"
+  sha256 "32620d4a186222cef1140250c9c43b83ed873a4710d05a0075c7d8f6d1d4e1ec"
   license "GPL-3.0-only"
   head "https://github.com/latex-lsp/texlab.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "b8ca12adaa70b198657090c40e17485e5d2bbce430da13a1ea711fdb0541b934"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "eff4f0c2dfd3c0e01ac0fd22d6107ac26a1ab84ab25923c84b49a96c7908e41e"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "ebc7da5747cec2b16d2c98999feb03c7280b79e9c1d303b120a882f98eaa6e4f"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "6a2fcd46f4bd0ddf6c3a0ad53794076a60baeabe5d0feec2e37dcf16e3ea8a96"
-    sha256 cellar: :any_skip_relocation, sonoma:         "3172060c6c8a795d8b5adc553bb37373518547ea48c1852f8c41be4e6fe41f7b"
-    sha256 cellar: :any_skip_relocation, ventura:        "4d0e00456b18e7717a5d5205126190436cbbdd935bf49a5069b63466c58fd841"
-    sha256 cellar: :any_skip_relocation, monterey:       "8ea7b55c18c2fd747779b4ed105f7a87ac2138f399e16be6cf37a0e3c8b7ae01"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "0babe89b75be16aecbdf16cdb9b5cf05ca3f864514ce18396a7543634d48ca04"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "1fee556e6a2c725957c32b65a59500bd7adb03cb57319eaa15666158c8b2605b"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "29430f50ee9e097237afbf400c6c91d3951fe935473ab04f04473b6e1ff7cbe4"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "29382baa39d72a6422765c4c2cbfcaa266d386182c647e1f8d0e16bb72ed661d"
+    sha256 cellar: :any_skip_relocation, sonoma:        "ed41c572ab59bebb88e88aa24399844538105ba02741d0d3234968e88f4501fd"
+    sha256 cellar: :any_skip_relocation, ventura:       "fad936dedcc53c4c8ebf1f78c24d08c20cbcc93d91f5478e5174525a273cf87e"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "ccad48a8a8632a97b43968a01b7a2c1823c9c1205971ee96207568ff3152fbce"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3329bd28e85c19c343c61e6b4812c76649e72275a35bc0eaf018fd94a899718f"
   end
 
   depends_on "rust" => :build
@@ -28,42 +27,42 @@ class Texlab < Formula
   end
 
   test do
-    input = rpc <<-EOF
-    {
-      "jsonrpc":"2.0",
-      "id":1,
-      "method":"initialize",
-      "params": {
-        "rootUri": "file:/dev/null",
-        "capabilities": {}
+    input = rpc <<~JSON
+      {
+        "jsonrpc":"2.0",
+        "id":1,
+        "method":"initialize",
+        "params": {
+          "rootUri": "file:/dev/null",
+          "capabilities": {}
+        }
       }
-    }
-    EOF
+    JSON
 
-    input += rpc <<-EOF
-    {
-      "jsonrpc":"2.0",
-      "method":"initialized",
-      "params": {}
-    }
-    EOF
+    input += rpc <<~JSON
+      {
+        "jsonrpc":"2.0",
+        "method":"initialized",
+        "params": {}
+      }
+    JSON
 
-    input += rpc <<-EOF
-    {
-      "jsonrpc":"2.0",
-      "id": 1,
-      "method":"shutdown",
-      "params": null
-    }
-    EOF
+    input += rpc <<~JSON
+      {
+        "jsonrpc":"2.0",
+        "id": 1,
+        "method":"shutdown",
+        "params": null
+      }
+    JSON
 
-    input += rpc <<-EOF
-    {
-      "jsonrpc":"2.0",
-      "method":"exit",
-      "params": {}
-    }
-    EOF
+    input += rpc <<~JSON
+      {
+        "jsonrpc":"2.0",
+        "method":"exit",
+        "params": {}
+      }
+    JSON
 
     output = /Content-Length: \d+\r\n\r\n/
 

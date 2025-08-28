@@ -1,18 +1,19 @@
 class Pspg < Formula
   desc "Unix pager optimized for psql"
   homepage "https://github.com/okbob/pspg"
-  url "https://github.com/okbob/pspg/archive/refs/tags/5.8.7.tar.gz"
-  sha256 "cbbd13898f321aab645569e32808dc3aa4c9529ea008b321f21e7a0d8360fcc9"
+  url "https://github.com/okbob/pspg/archive/refs/tags/5.8.12.tar.gz"
+  sha256 "9f74c236944bea79586a3a12ab9d36735bfa62a92a8d7953e8c1ff5c108277af"
   license "BSD-2-Clause"
   head "https://github.com/okbob/pspg.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "91e591a7e3deabadd0becd5f5522c9b0f15cf6214f282288811bea9d8e06d65a"
-    sha256 cellar: :any,                 arm64_sonoma:  "ad76c3913603e6a17a719184c2b90ea8ee2db75a9fead0e91dc0c8e9d45fee0e"
-    sha256 cellar: :any,                 arm64_ventura: "1e6c8ade2eb3e649932a00d7d8ec6b76d5fa489d9e8217d533591296697c28e6"
-    sha256 cellar: :any,                 sonoma:        "a2239df4da9ef8ac0925e855799272e97e275a083681b6bf3bdc76a581140db3"
-    sha256 cellar: :any,                 ventura:       "62b53d2715ff936544d6d3553c22680b339143ddd7d483b89ec0436d2b3e7843"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3b7ace57d851b23431b34d1680c6210e52cdda49bb2003411dab730321c2870a"
+    sha256 cellar: :any,                 arm64_sequoia: "fbe4f496a3be5e9693ed3fb8f532c4be80249f5a1d027a4596cb99b068260251"
+    sha256 cellar: :any,                 arm64_sonoma:  "4f040dd530d13e63abd48b42ba1fcfce456521b6e614d29b6459affc5dfb3ef2"
+    sha256 cellar: :any,                 arm64_ventura: "74f4d329d3a79d1eff8c630da561f88c38c9b4a9063cded46984e8fb708e8ab0"
+    sha256 cellar: :any,                 sonoma:        "868c9354fdb876a4ae62698a16ccf3a78cc3ac1436e3c696cc97cff2371f564f"
+    sha256 cellar: :any,                 ventura:       "584924c89855547aa825967a064f74069fdf4362ba763751506d2be715745d43"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "74d4498d4936a5f20fc9a3d0633fb5d16c51d7f2f32d3cedbb1f44f6a6784af0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d9119d05dae43df503adc6629c39fe856604f469c7f4b1ecb300b12c6ffe815b"
   end
 
   depends_on "libpq"

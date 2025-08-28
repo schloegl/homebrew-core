@@ -1,8 +1,8 @@
 class Geos < Formula
   desc "Geometry Engine"
   homepage "https://libgeos.org/"
-  url "https://download.osgeo.org/geos/geos-3.13.0.tar.bz2"
-  sha256 "47ec83ff334d672b9e4426695f15da6e6368244214971fabf386ff8ef6df39e4"
+  url "https://download.osgeo.org/geos/geos-3.14.0.tar.bz2"
+  sha256 "fe85286b1977121894794b36a7464d05049361bedabf972e70d8f9bf1e3ce928"
   license "LGPL-2.1-or-later"
 
   livecheck do
@@ -11,14 +11,13 @@ class Geos < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "d07e0287c32e0742bf62253fc48f3384bb385b4384973af995c1c8eef7f11361"
-    sha256 cellar: :any,                 arm64_sonoma:   "7598e3f97042c2dc4442e77feb4e8d3af4cd0fe58922ad99644134be1172b815"
-    sha256 cellar: :any,                 arm64_ventura:  "012ee44940537761cf2da1f0bb120389dac8f7bae8c392b849cc383402ad2d0c"
-    sha256 cellar: :any,                 arm64_monterey: "6ffce2acd56557396bc6013265d9c05f4c74ba9d3ae6f5c17d82540fc9f1ae6e"
-    sha256 cellar: :any,                 sonoma:         "b59f7be995ac70f363ec0141a7be9a42d613f37546706ed42d4c219c06519daf"
-    sha256 cellar: :any,                 ventura:        "150710ce1adbad6392e7a5f454cbd99440314dca20acf5fc916cda1fec428f2d"
-    sha256 cellar: :any,                 monterey:       "e571b0cb00d55a304164afc584d75b1e0bef8f208cf324470bf8acac8e9118d6"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "5c0af95be5136b4a47d1a841e85326cdf7e8ad25f83b074b29d2b6752172541c"
+    sha256 cellar: :any,                 arm64_sequoia: "cd547521b23dcbe44aa776ef0e581da5676755a2d478f1d656730e68a7ce28d7"
+    sha256 cellar: :any,                 arm64_sonoma:  "e55ef72af91aabb8cb9c984921e4f4cb5043aaa51f6dfe6d044497c4fb62a5d9"
+    sha256 cellar: :any,                 arm64_ventura: "c3e1b0bf8588c2e814ed80d5a187007e597a2b7a8a8f92687436e4ff6a016f57"
+    sha256 cellar: :any,                 sonoma:        "b709e3efce2193115d299a1c8fa8f8028b48343270d7e9d15b6d9f38b07df270"
+    sha256 cellar: :any,                 ventura:       "41a5443c009d31472483d53fd4d0a6673355b6ed7342b55a82120ee8f8349291"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "6b1c80b2a4ff62eb2c48e09702f7c71da140c8ca1476011ae3cbb8a4a0c356eb"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f3b5ebc471822878a1a30014a1035a5e17b79cfe2a7c713734fe168b4acfdd31"
   end
 
   depends_on "cmake" => :build
@@ -34,7 +33,7 @@ class Geos < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <stdio.h>
       #include <stdarg.h>
       #include <geos_c.h>
@@ -58,7 +57,7 @@ class Geos < Formula
           printf("Intersection(A, B): %s\\n", wkt_inter);
           return 0;
       }
-    EOS
+    C
 
     cflags = shell_output("#{bin}/geos-config --cflags").split
     libs = shell_output("#{bin}/geos-config --clibs").split

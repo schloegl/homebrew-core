@@ -16,6 +16,7 @@ class Kcgi < Formula
     sha256 cellar: :any,                 arm64_ventura: "0314195b4c86b877610fd9035b7906122316bddd3cfaa2982395797a4bb75912"
     sha256 cellar: :any,                 sonoma:        "4bd93297c59a4102abb6ddb1ef0e1d53de162e7c71aeb53e8da29824d3a1dbbe"
     sha256 cellar: :any,                 ventura:       "ea274424cd3b9f8b69bb7e7a78c89aeda17728716a4b4576b73bdfb8253f5ad1"
+    sha256                               arm64_linux:   "a4c08753b73661aee4fd7422ddc709a14bcdf9268a7e1243a20d70a8dafc2fdc"
     sha256 cellar: :any_skip_relocation, x86_64_linux:  "be1d317a28397ff207c48149f3b9d4241bbf44b88f6f712091dfcb5b1f6963a2"
   end
 
@@ -37,7 +38,7 @@ class Kcgi < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <sys/types.h>
       #include <stdarg.h>
       #include <stddef.h>
@@ -53,7 +54,7 @@ class Kcgi < Formula
         khttp_parse(&r, NULL, 0, &pages, 1, 0);
         return 0;
       }
-    EOS
+    C
     flags = %W[
       -L#{lib}
       -lkcgi

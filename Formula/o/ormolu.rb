@@ -1,24 +1,26 @@
 class Ormolu < Formula
   desc "Formatter for Haskell source code"
   homepage "https://github.com/tweag/ormolu"
-  url "https://github.com/tweag/ormolu/archive/refs/tags/0.7.7.0.tar.gz"
-  sha256 "443739623df64936894a8197a1c4e275afde65870020f27f61cb51a384bdc437"
+  url "https://github.com/tweag/ormolu/archive/refs/tags/0.8.0.1.tar.gz"
+  sha256 "1a1d01fdbe7f1bbe637f8c8b12bee751a2737051bccffbfb1204a76812a64f88"
   license "BSD-3-Clause"
   head "https://github.com/tweag/ormolu.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "baf141487fd9c3c1a5f14e60a8f3e622e8ada4252a60d44b44eb308a031fd3a8"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "28db55d7c30cc5ee549956cdf5971899b7639931544d054239d9bc37eafcd1ce"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "d3c40153dd5605a00b8e133d3ada010feb5d229aeb8dce714727d9e08943a23f"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "17c3e5a3657bf3d615c56b1dc1ca58412f8f44d7474167522796c006b70dccdc"
-    sha256 cellar: :any_skip_relocation, sonoma:         "7dced60b52d4a65ff917164a7cafcd8e468eacdb556a8234c0965d9b857072e9"
-    sha256 cellar: :any_skip_relocation, ventura:        "9d51732d3d11b030f02cc15f3bf41428da4f786bc586b6611970b53219b20617"
-    sha256 cellar: :any_skip_relocation, monterey:       "0915c0e534f5acc2531b016e254a610476d15ccda7924df8e06d965e6aa928cf"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "e76d2339287a46314ce25d8e8a4b35f863acfa4b4e4d18d5063649b90c2bee9e"
+    sha256 cellar: :any,                 arm64_sequoia: "8cd936d0ab0a1cc156baaee887fbcc08d3426dc24285a2ff230b0fccf269d96a"
+    sha256 cellar: :any,                 arm64_sonoma:  "7d67afdc7ba512a0e6b2bfb806a2a6137c9c5c8b29a15bc2b97fb81df0353559"
+    sha256 cellar: :any,                 arm64_ventura: "af904be7e93f1c14f5b79ed5afb8be0a21856fd229b00ba4512e4db67109dfcc"
+    sha256 cellar: :any,                 sonoma:        "5b7ce508442d094bc495e55ed88eb0bf337611cd1c1d90d90bfc0881f83de1eb"
+    sha256 cellar: :any,                 ventura:       "138ff9d11ad64c64d95f99e4ba9e61e09203b7c954c3695de5dbad3d02b83b39"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "43252cb31be9499c388aa01999ae5d567a9cc728143d6aac77f5242b43928894"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "cfa834325a547b22fa5ed240c77c5a3c5f6e3dcc4b3990e80d202c0f7628797e"
   end
 
   depends_on "cabal-install" => :build
   depends_on "ghc" => :build
+  depends_on "gmp"
+
+  uses_from_macos "libffi"
 
   def install
     system "cabal", "v2-update"
@@ -26,7 +28,7 @@ class Ormolu < Formula
   end
 
   test do
-    (testpath/"test.hs").write <<~EOS
+    (testpath/"test.hs").write <<~HASKELL
       foo =
         f1
         p1
@@ -40,8 +42,8 @@ class Ormolu < Formula
       foo'' =
         f3 p1 p2
         p3
-    EOS
-    expected = <<~EOS
+    HASKELL
+    expected = <<~HASKELL
       foo =
         f1
           p1
@@ -59,7 +61,7 @@ class Ormolu < Formula
           p1
           p2
           p3
-    EOS
+    HASKELL
     assert_equal expected, shell_output("#{bin}/ormolu test.hs")
   end
 end

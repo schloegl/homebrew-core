@@ -1,30 +1,32 @@
 class Tarantool < Formula
   desc "In-memory database and Lua application server"
   homepage "https://tarantool.org/"
-  url "https://download.tarantool.org/tarantool/src/tarantool-3.2.0.tar.gz"
-  sha256 "16a6d54a67f5f954cf784175dfcdb2b549c04ed1414e76256743e1fd4a560289"
+  url "https://download.tarantool.org/tarantool/src/tarantool-3.5.0.tar.gz"
+  sha256 "396780491b4f01c75f7098056e9a21562a687234085543bf52a5c5a6905f2dbc"
   license "BSD-2-Clause"
   version_scheme 1
   head "https://github.com/tarantool/tarantool.git", branch: "master"
 
+  # The upstream release page (https://www.tarantool.io/en/doc/latest/release/)
+  # simply links to GitHub releases, so we check the "latest" release directly.
   livecheck do
     url :head
     strategy :github_latest
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "dbb92f228bc943bc3fade520bb991bef523e2d2769c1519e1ce57adcbec95514"
-    sha256 cellar: :any,                 arm64_ventura:  "dcb46fa9a42e6a680793c3d217ab97f131220d056e3779f967d4b08841fe8468"
-    sha256 cellar: :any,                 arm64_monterey: "633a40ebfe5cd20040d5ec54480cc52a28683b916743c96da2c795843cd3f749"
-    sha256 cellar: :any,                 sonoma:         "4604134c83663c1dc7029c97a6e2817bcbc62ef140c485a78e0992e586100869"
-    sha256 cellar: :any,                 ventura:        "c591b9664ae51b148edbd776cb1afdc4c997cfed5d5fed65b8c7e1baec85a5c4"
-    sha256 cellar: :any,                 monterey:       "f7a9da662f8f7a7343fae87b276542ae02735153705281e795f53e036ac513d2"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3293a7fe45aaccfba90e706325138882e2e408ef0fce719d0bc04692422f98be"
+    sha256 cellar: :any,                 arm64_sequoia: "6c5828162564addff9cd3ed7b52022bceb0d0ed3ec5d94fa0615b1ca39577d64"
+    sha256 cellar: :any,                 arm64_sonoma:  "c219179af278c35dc4b4de390e52800546de9a545cf611a1df2b830916349281"
+    sha256 cellar: :any,                 arm64_ventura: "f2e041b8e088e58c76d93f05a8d27d4f9ae4e5845d9de8a41e8cae3c27dd299a"
+    sha256 cellar: :any,                 sonoma:        "314369f182f312fdcb1aebc4b8e91808e23abe386070b9bc6e535e3fce7f9ce1"
+    sha256 cellar: :any,                 ventura:       "e73a676ed760eabd5d4ca31d4aa1bd1007e485044fe02026287d9085cdec903b"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "590263b5e1ecad50b34a3af8b03399cb455ee5095db304eb56de53dc8cfef5ac"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0501b2ce4c00e8631849fd5218e9d6770e32c0c815bbf22cd0943683a417eeab"
   end
 
   depends_on "cmake" => :build
   depends_on "curl" # curl 8.4.0+
-  depends_on "icu4c"
+  depends_on "icu4c@77"
   depends_on "libyaml"
   depends_on "openssl@3"
   depends_on "readline"
@@ -37,44 +39,34 @@ class Tarantool < Formula
   end
 
   def install
-    # Avoid keeping references to Homebrew's clang/clang++ shims
-    inreplace "src/trivia/config.h.cmake",
-              "#define COMPILER_INFO \"@CMAKE_C_COMPILER_ID@-@CMAKE_C_COMPILER_VERSION@\"",
-              "#define COMPILER_INFO \"/usr/bin/clang /usr/bin/clang++\""
+    # Workaround for clang >= 16 until upstream fix is available[^1].
+    # Also, trying to apply LuaJIT commit[^2] worked on Xcode 16 but caused issue on Xcode 15.
+    #
+    # [^1]: https://github.com/tarantool/tarantool/issues/10566
+    # [^2]: https://github.com/LuaJIT/LuaJIT/commit/2240d84464cc3dcb22fd976f1db162b36b5b52d5
+    ENV.append "LDFLAGS", "-Wl,-no_deduplicate" if DevelopmentTools.clang_build_version >= 1600
 
-    args = std_cmake_args
-    args << "-DCMAKE_INSTALL_MANDIR=#{doc}"
-    args << "-DCMAKE_INSTALL_SYSCONFDIR=#{etc}"
-    args << "-DCMAKE_INSTALL_LOCALSTATEDIR=#{var}"
-    args << "-DENABLE_DIST=ON"
-    args << "-DOPENSSL_ROOT_DIR=#{Formula["openssl@3"].opt_prefix}"
-    args << "-DREADLINE_ROOT=#{Formula["readline"].opt_prefix}"
-    args << "-DENABLE_BUNDLED_LIBCURL=OFF"
-    args << "-DENABLE_BUNDLED_LIBYAML=OFF"
-    args << "-DENABLE_BUNDLED_ZSTD=OFF"
+    icu4c = deps.find { |dep| dep.name.match?(/^icu4c(@\d+)?$/) }
+                .to_formula
+    args = %W[
+      -DCMAKE_INSTALL_SYSCONFDIR=#{etc}
+      -DCMAKE_INSTALL_LOCALSTATEDIR=#{var}
+      -DENABLE_DIST=ON
+      -DCURL_ROOT=#{Formula["curl"].opt_prefix}
+      -DCURL_ROOT_DIR=#{Formula["curl"].opt_prefix}
+      -DICU_ROOT=#{icu4c.opt_prefix}
+      -DOPENSSL_ROOT_DIR=#{Formula["openssl@3"].opt_prefix}
+      -DREADLINE_ROOT=#{Formula["readline"].opt_prefix}
+      -DENABLE_BUNDLED_LIBCURL=OFF
+      -DENABLE_BUNDLED_LIBUNWIND=OFF
+      -DENABLE_BUNDLED_LIBYAML=OFF
+      -DENABLE_BUNDLED_ZSTD=OFF
+      -DLUAJIT_NO_UNWIND=ON
+    ]
 
-    if OS.mac?
-      if MacOS.version >= :big_sur
-        sdk = MacOS.sdk_path_if_needed
-        lib_suffix = "tbd"
-      else
-        sdk = ""
-        lib_suffix = "dylib"
-      end
-
-      args << "-DCURL_ROOT=#{Formula["curl"].opt_prefix}"
-      args << "-DCURSES_NEED_NCURSES=ON"
-      args << "-DCURSES_NCURSES_INCLUDE_PATH=#{sdk}/usr/include"
-      args << "-DCURSES_NCURSES_LIBRARY=#{sdk}/usr/lib/libncurses.#{lib_suffix}"
-      args << "-DICONV_INCLUDE_DIR=#{sdk}/usr/include"
-    else
-      args << "-DENABLE_BUNDLED_LIBUNWIND=OFF"
-      args << "-DCURL_ROOT=#{Formula["curl"].opt_prefix}"
-    end
-
-    system "cmake", ".", *args
-    system "make"
-    system "make", "install"
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   def post_install
@@ -84,7 +76,7 @@ class Tarantool < Formula
   end
 
   test do
-    (testpath/"test.lua").write <<~EOS
+    (testpath/"test.lua").write <<~LUA
       box.cfg{}
       local s = box.schema.create_space("test")
       s:create_index("primary")
@@ -95,7 +87,7 @@ class Tarantool < Formula
         os.exit(-1)
       end
       os.exit(0)
-    EOS
+    LUA
     system bin/"tarantool", "#{testpath}/test.lua"
   end
 end

@@ -1,18 +1,20 @@
 class Sbt < Formula
   desc "Build tool for Scala projects"
   homepage "https://www.scala-sbt.org/"
-  url "https://github.com/sbt/sbt/releases/download/v1.10.2/sbt-1.10.2.tgz"
-  mirror "https://sbt-downloads.cdnedge.bluemix.net/releases/v1.10.2/sbt-1.10.2.tgz"
-  sha256 "a716dd018bd68bc7a95a2dd10337663aa76f443ad6c99deabe5eadd1adfc7639"
+  url "https://github.com/sbt/sbt/releases/download/v1.11.5/sbt-1.11.5.tgz"
+  mirror "https://sbt-downloads.cdnedge.bluemix.net/releases/v1.11.5/sbt-1.11.5.tgz"
+  sha256 "949337a9a082d0148f8ab5058932467f69cae3c4c1619f4a19566ec0f1bb6492"
   license "Apache-2.0"
 
+  # Upstream sometimes creates releases that use a stable tag (e.g., `v1.2.3`)
+  # but are labeled as "pre-release" on GitHub.
   livecheck do
     url :stable
-    regex(/^v?(\d+(?:\.\d+)+)$/i)
+    strategy :github_latest
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "8c98d6c0840870862e5b7e77591a41f1a0bb96865a57f8967807e8eb544479f6"
+    sha256 cellar: :any_skip_relocation, all: "4f25e6a10a9236ee028c8946405aad709f943ff91b209260fbf6f0dca5f96edc"
   end
 
   depends_on "openjdk"
@@ -47,6 +49,6 @@ class Sbt < Formula
   test do
     ENV.append "_JAVA_OPTIONS", "-Dsbt.log.noformat=true"
     system bin/"sbt", "--sbt-create", "about"
-    assert_match version.to_s, shell_output("#{bin}/sbt sbtVersion")
+    assert_match version.to_s, shell_output("#{bin}/sbt sbtVersion --allow-empty")
   end
 end

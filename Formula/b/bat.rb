@@ -1,26 +1,34 @@
 class Bat < Formula
   desc "Clone of cat(1) with syntax highlighting and Git integration"
   homepage "https://github.com/sharkdp/bat"
-  url "https://github.com/sharkdp/bat/archive/refs/tags/v0.24.0.tar.gz"
-  sha256 "907554a9eff239f256ee8fe05a922aad84febe4fe10a499def72a4557e9eedfb"
   license any_of: ["Apache-2.0", "MIT"]
   revision 1
   head "https://github.com/sharkdp/bat.git", branch: "master"
 
-  bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "8d57d3134c0940ff5b9b8ae47fb339e51bb7f7c307c538e8bbbc6e1751f9d858"
-    sha256 cellar: :any,                 arm64_sonoma:   "7f10b2232b03e82cd9d27560e9ed7e62e685370a187c1d9ae692b9c088f7b078"
-    sha256 cellar: :any,                 arm64_ventura:  "36c6ccd54c032411a7e552a010e6859936bec66ad7937ee210de8ef2a7b09ffc"
-    sha256 cellar: :any,                 arm64_monterey: "bc2056fc9ac24bd33d1f8739330f25c759afad5255532547a30ecc4ebb792004"
-    sha256 cellar: :any,                 sonoma:         "f6d1933c659a4073863cdad02273a9a6261770cf2bcdb8694ebd65433c49f634"
-    sha256 cellar: :any,                 ventura:        "1beafb2f78e79ea2a905db10306c5944cb02a58b6b0e334d766482f853c9c692"
-    sha256 cellar: :any,                 monterey:       "14e1b6003fd419f35f525667d4997c42fc044f85709563c3f02833ecbb98e3dc"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "36182f578db0917f46fce701b68b7122bba8323524b384f3238ca325a789b97d"
+  stable do
+    url "https://github.com/sharkdp/bat/archive/refs/tags/v0.25.0.tar.gz"
+    sha256 "4433403785ebb61d1e5d4940a8196d020019ce11a6f7d4553ea1d324331d8924"
+
+    # git2 bump to use libgit2 1.9, upstream pr ref, https://github.com/sharkdp/bat/pull/3169
+    patch do
+      url "https://github.com/sharkdp/bat/commit/01680e444ba4273b17d2d6d85a19f7a5e7046820.patch?full_index=1"
+      sha256 "ad450b12f6a4a8332bf1e249a239518c7edfe94ccc6abbbeb705cf22620c5619"
+    end
   end
 
-  depends_on "pkg-config" => :build
+  bottle do
+    sha256 cellar: :any,                 arm64_sequoia: "63e99dea5bc85d0e9c3c76c41c7324933d05b791c86cbdb47bf173bbb4f25afd"
+    sha256 cellar: :any,                 arm64_sonoma:  "53705be5ee2484a8e2254437e0197b763a27b4e3a88e2c9aa7f43c739ecc48c6"
+    sha256 cellar: :any,                 arm64_ventura: "a058d53d4156ae1ea72b9d153533f253b57fcbd273d704e7f9f867c0e6b05562"
+    sha256 cellar: :any,                 sonoma:        "c9dc4cc4d679e32223eec006c4b52c46fcee17e67fdb762dd494f839ba8a199e"
+    sha256 cellar: :any,                 ventura:       "0ed6d0e85d9af4020f4eb0f41efc2e8f1e7ca5d8deb2bfe82cb8d4a24591cdca"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "b0a32aac15c2338597b6faf190ea1ffa7e3f77a85470e9612c3da9cb9b85b7d0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "68f6c503b8895e4390935142c771030aca2d70b7fb3fc72449df664e05af1680"
+  end
+
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
-  depends_on "libgit2@1.7"
+  depends_on "libgit2"
   depends_on "oniguruma"
 
   def install
@@ -28,34 +36,25 @@ class Bat < Formula
     ENV["RUSTONIG_DYNAMIC_LIBONIG"] = "1"
     ENV["RUSTONIG_SYSTEM_LIBONIG"] = "1"
 
-    ENV["SHELL_COMPLETIONS_DIR"] = buildpath
     system "cargo", "install", *std_cargo_args
 
-    assets_dir = Dir["target/release/build/bat-*/out/assets"].first
-    man1.install "#{assets_dir}/manual/bat.1"
-    bash_completion.install "#{assets_dir}/completions/bat.bash" => "bat"
-    fish_completion.install "#{assets_dir}/completions/bat.fish"
-    zsh_completion.install "#{assets_dir}/completions/bat.zsh" => "_bat"
-  end
-
-  def check_binary_linkage(binary, library)
-    binary.dynamically_linked_libraries.any? do |dll|
-      next false unless dll.start_with?(HOMEBREW_PREFIX.to_s)
-
-      File.realpath(dll) == File.realpath(library)
-    end
+    assets = buildpath.glob("target/release/build/bat-*/out/assets").first
+    man1.install assets/"manual/bat.1"
+    generate_completions_from_executable(bin/"bat", "--completion")
   end
 
   test do
+    require "utils/linkage"
+
     pdf = test_fixtures("test.pdf")
     output = shell_output("#{bin}/bat #{pdf} --color=never")
     assert_match "Homebrew test", output
 
     [
-      Formula["libgit2@1.7"].opt_lib/shared_library("libgit2"),
+      Formula["libgit2"].opt_lib/shared_library("libgit2"),
       Formula["oniguruma"].opt_lib/shared_library("libonig"),
     ].each do |library|
-      assert check_binary_linkage(bin/"bat", library),
+      assert Utils.binary_linked_to_library?(bin/"bat", library),
              "No linkage with #{library.basename}! Cargo is likely using a vendored version."
     end
   end

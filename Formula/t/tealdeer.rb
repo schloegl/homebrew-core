@@ -1,23 +1,19 @@
 class Tealdeer < Formula
   desc "Very fast implementation of tldr in Rust"
-  homepage "https://github.com/dbrgn/tealdeer"
-  url "https://github.com/dbrgn/tealdeer/archive/refs/tags/v1.6.1.tar.gz"
-  sha256 "d42db25a56a72faec173c86192656c5381281dc197171f385fccffd518930430"
+  homepage "https://tealdeer-rs.github.io/tealdeer/"
+  url "https://github.com/tealdeer-rs/tealdeer/archive/refs/tags/v1.7.2.tar.gz"
+  sha256 "d0675b9aa48c00e78abafc318b9bfbcb7ea3cce63e58a42c1f9e2395abcfe0e8"
   license any_of: ["Apache-2.0", "MIT"]
-  head "https://github.com/dbrgn/tealdeer.git", branch: "main"
+  head "https://github.com/tealdeer-rs/tealdeer.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "b3e1e121745c44970411ec8411353f548ee4a9ad095a468573a468f19c94f396"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "79ad2cb455a6c9ce993e1e1027d979a6a711b214dc981d725e12796d4941e521"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "03ed6d8a46dfaaad1f0f4198fa9479d6925f6bfd58f6d3c95b2d21f832360c00"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "fedd60d1a623724b3c66b436c8d1336f8978d6b1e0bf5b87c1891b63f72368cd"
-    sha256 cellar: :any_skip_relocation, arm64_big_sur:  "04aaa793695beba680085500b1c45ef336561f50743e6360b560eda2338fcbcd"
-    sha256 cellar: :any_skip_relocation, sonoma:         "c1b3021a87d410194d21c5b27a56805a57710b03fa8113ceef19323cee6919ee"
-    sha256 cellar: :any_skip_relocation, ventura:        "d0ab45756b657907f05358c558e235e850394ec9d3bbdcb17fa288d1c0a22e5f"
-    sha256 cellar: :any_skip_relocation, monterey:       "833df803c5b64bfcbf2689da129632ade502d00fb83582ee322059cef358b3f2"
-    sha256 cellar: :any_skip_relocation, big_sur:        "fb53881e8ff4d1a74d70bcd2a80c05fe2b34b350eb82c2bcca3ea4002826bf4a"
-    sha256 cellar: :any_skip_relocation, catalina:       "1968452b9b39f7b2581864a4547e45c07785aa307e48ee5416cfb7387fd5e3da"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "faacf0de290cdd866297f164e841e4ea31e5c3b930ec08caa13591f336b0d7e0"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "762b6cf9ec14e22cdd155410a249c1d1c06132350e3574c9c372a88860249833"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "2fa102755f201bb1a209fc9006b2106d0a31a09a83648772d78ce30e81060886"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "c60761d865a1475a4b04d2881eaec1737c43caaa5498ce0769098071ddc44cd0"
+    sha256 cellar: :any_skip_relocation, sonoma:        "0af151c2275b86b52ae1c2a38c5705e27524222f7bd23ae79b5092fe348d1100"
+    sha256 cellar: :any_skip_relocation, ventura:       "858b2bb36dee9c444b211d2c74cb1b2c85d36362683c568d4e93591095ffaccc"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "735bbc2c297439c49cd7331a4729cc93803fc62f20007d6365e73cba2e63e296"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c0a019576229e3bf8767b4f8fe4aeb32aa7e6f05f5d2ed303be22263e78481fc"
   end
 
   depends_on "rust" => :build

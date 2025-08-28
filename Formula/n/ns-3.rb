@@ -3,20 +3,18 @@ class Ns3 < Formula
 
   desc "Discrete-event network simulator"
   homepage "https://www.nsnam.org/"
-  url "https://gitlab.com/nsnam/ns-3-dev/-/archive/ns-3.42/ns-3-dev-ns-3.42.tar.gz"
-  sha256 "c31f8e7615ffe55b31f9592f4ea04c6516c3e6855a58480f897fb1169650131b"
+  url "https://gitlab.com/nsnam/ns-3-dev/-/archive/ns-3.45/ns-3-dev-ns-3.45.tar.gz"
+  sha256 "ea736ba7de4baf0b4fc91cfe2ff74ac3bcd94d4e3ad7055141ddbb30f8d0fc48"
   license "GPL-2.0-only"
-  revision 1
 
   bottle do
-    sha256                               arm64_sequoia:  "7cc734d5770d5feca1e13c28fcd783dda4fe81fbcf93ffd2d4e192629a848a24"
-    sha256                               arm64_sonoma:   "95a92f33c798afcab4034cfe9e188876877fc1a03fd9c4c5448be1e5abaa5bde"
-    sha256                               arm64_ventura:  "ecee931f8eb399abd996257b41b2b5da65e0acf6817722acd2e067fe55c2a715"
-    sha256                               arm64_monterey: "ac7e6a0a5ea664e91e65714dfde4d5f2f617095ccad59b56a08882f0bfb583aa"
-    sha256                               sonoma:         "8034226b16d84cf4f8acd18e2a14fe2a766e12691c65d1bc4616cdb036be3050"
-    sha256                               ventura:        "a8fe5cb6a63e8c9566f380be305cacd62ee0d999c5e72a67646db81f6d417d59"
-    sha256                               monterey:       "43fc3b98c8d605e1ec0c1524d05a76059bd99d0207267b4db43da6211f8e8fea"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "2d2bc007cdd4ddcaafe8fe01edb0df1411b8f5e1570091d8e0e79bb229f1b7b4"
+    sha256                               arm64_sequoia: "16a5e5c3ad224f1bfcb9e2820eba18c0b8c173efc439134d6bb0518875623ab6"
+    sha256                               arm64_sonoma:  "62126a9fdd2c9c8add1f3afe4a07711aa54c48200f48f7b675618f0ec1555505"
+    sha256                               arm64_ventura: "57b9753395cea0ab0519dc036783373e5d533fa09957c9f2768a79afabec86e0"
+    sha256                               sonoma:        "2e76d35afec9a8ff072481604cb44fd37a9a1f5d8d97b34927e39c6879482b10"
+    sha256                               ventura:       "adf133d189b26d97496f0c8d44c33438174b4fd521b79eda5a197e3914d87683"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "16990f583b68561b0e280ae2a94601b3eaac8f55f43821f98752c9ac8b003e64"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9789a8feeb782f96928c7b0dab8222333f79f8390859dbf57cae226b35fcc35a"
   end
 
   depends_on "boost" => :build
@@ -27,13 +25,6 @@ class Ns3 < Formula
   uses_from_macos "python" => :build
   uses_from_macos "libxml2"
   uses_from_macos "sqlite"
-
-  # build patch for `error: variable 'index' set but not used`
-  # upstream patch pr, https://gitlab.com/nsnam/ns-3-dev/-/merge_requests/2019
-  patch do
-    url "https://gitlab.com/nsnam/ns-3-dev/-/commit/0f3e29041b2f6e4ea23026e401da54efe1b77e59.diff"
-    sha256 "86ee319a7c49c24a7595a7c19fe7112cf2d64f2d60d79c17327e0a7daae91068"
-  end
 
   def install
     # Fix binding's rpath

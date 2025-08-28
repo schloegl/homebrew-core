@@ -1,24 +1,23 @@
 class MupdfTools < Formula
   desc "Lightweight PDF and XPS viewer"
   homepage "https://mupdf.com/"
-  url "https://mupdf.com/downloads/archive/mupdf-1.24.9-source.tar.gz"
-  sha256 "0b446aa0eecc114e9969dccd70c9789358fccb6589a81d470dc941a0874da98a"
+  url "https://mupdf.com/downloads/archive/mupdf-1.26.7-source.tar.gz"
+  sha256 "52014fcecac48ae3ead947eb90572ff7da9acf9550711675872944e8ef8c4966"
   license "AGPL-3.0-or-later"
-  head "https://git.ghostscript.com/mupdf.git", branch: "master"
+  head "git://git.ghostscript.com/mupdf.git", branch: "master"
 
   livecheck do
     formula "mupdf"
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "e673b47a69c996d24752ea83ae12a58ad9ffb95183541476026848ef191c5da6"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "1c93714b24afacf71614427a33efa8f8b9a479d6e6e9f2a1674432c87e33231d"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "b5e8880266c067ef1f7171de86bca55fc39448d9091156cc4ec5b44d7707e1cc"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "d1a3555dc2412292438a87965031375bd7d64b67b1f4dfd206ca229919c59a91"
-    sha256 cellar: :any_skip_relocation, sonoma:         "d861e37240e8e9c050a931fb9cfc864cc4c688fbdabeff43bae0351104da2d94"
-    sha256 cellar: :any_skip_relocation, ventura:        "932a2df63829b1c1893f8373743b6fa4fe9b7a95789c95cb1c6e86a49e587eed"
-    sha256 cellar: :any_skip_relocation, monterey:       "58354687cee444b0a4897de4d2e4239f66abc69aea126adf6cb25726155922d3"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "f403189a6f6c700ef51442e9b18996983d5788ca82a689688dd09ac7afc00a21"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "16ed11ea6860338650fd105f797c439ce6b4624b8b19a63c19da39428d67475f"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "9da210bcfc3e570126636d77ff6a2afe5cb7c4cd5694add7a48f7cf710246731"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "9346b9647b8069c150a7af0d801d93a7f807991ed7b26f96388619a86e91a4d6"
+    sha256 cellar: :any_skip_relocation, sonoma:        "375261021a361aa5b14ad8063371d98b9d11365e6c2b5bbbd5cd3cd89f127ba4"
+    sha256 cellar: :any_skip_relocation, ventura:       "dcd8863de07d48059c867ed4190ac3e52c8bb9efa70f7fc85a61a10b5ceabddb"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "349ed61d36ce154a03114d4a9c6f7be09e84ddd87cb38d47c4f383da7a30d455"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9d3812e3cfe73a754f94d0ad63a86960d3b16033a1351579865bef70d1630972"
   end
 
   conflicts_with "mupdf", because: "mupdf and mupdf-tools install the same binaries"

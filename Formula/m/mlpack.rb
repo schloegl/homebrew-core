@@ -1,36 +1,37 @@
 class Mlpack < Formula
   desc "Scalable C++ machine learning library"
   homepage "https://www.mlpack.org"
-  url "https://mlpack.org/files/mlpack-4.5.0.tar.gz"
-  sha256 "aab70aee10c134ef3fe568843fe4b3bb5e8901af30ea666f57462ad950682317"
+  url "https://mlpack.org/files/mlpack-4.6.2.tar.gz"
+  sha256 "2fe772da383a935645ced07a07b51942ca178d38129df3bf685890bc3c1752cf"
   license all_of: ["BSD-3-Clause", "MPL-2.0", "BSL-1.0", "MIT"]
+  revision 1
   head "https://github.com/mlpack/mlpack.git", branch: "master"
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any,                 arm64_sequoia: "bec3490448e5bfab166597e1ba21643b11caddc285ddcc09fe72a423d4e2e3fb"
-    sha256 cellar: :any,                 arm64_sonoma:  "18ae29440f9b633ce4e67e63d5b54131587facb18ee38ad222e6dbe6db21f441"
-    sha256 cellar: :any,                 arm64_ventura: "78f145ea6c52f9474b1284d1cd5ae5ef87eb1879e7c38e118b58a1171dcaeec4"
-    sha256 cellar: :any,                 sonoma:        "c940e4b76ff1f06c2a5850cf98f6b81436a9e2114658d3205500470c351d3ad8"
-    sha256 cellar: :any,                 ventura:       "b41d0333a89ff7310e0b2ca93314c20cb49241e4fcf10f6a8f46418f420b8010"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c87e0d6ed36859efb4486844c3fea80f6d6ca4970405e0e864e1e233bfee4e95"
+    sha256 cellar: :any,                 arm64_sequoia: "0f231088b602989d6095850417438746516ef210652387a9f0f61c3e313dbcdb"
+    sha256 cellar: :any,                 arm64_sonoma:  "6e454187ba47af0f60ee2b2078019609334a7150bf1e32cf275806578e0209aa"
+    sha256 cellar: :any,                 arm64_ventura: "fbea7810d131e9dbc46934e12b099668d489245ff4ff0e713ad389fc6e0c7446"
+    sha256 cellar: :any,                 sonoma:        "eec48db4276a78796a6575217149699695f1293eb72a59b102392eeb758539f9"
+    sha256 cellar: :any,                 ventura:       "fb3c6e65de5aa0185b6804b63a7c402c076d14fff7fd80aa4ab3f0dcb97c6861"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "50f3a0812976d56eace19a2c43651aaf3e13c13e65d891ea136b4c2318954c56"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "cbb65951d9d4b3daac979132bc1401290adf03b4c001d4bd5bf0700695db6cde"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "armadillo"
   depends_on "cereal"
   depends_on "ensmallen"
 
   resource "stb_image" do
-    url "https://raw.githubusercontent.com/nothings/stb/0bc88af4de5fb022db643c2d8e549a0927749354/stb_image.h"
-    version "2.29"
-    sha256 "c54b15a689e6a1f32c75e2ec23afa442e3e0e37e894b73c1974d08679b20dd5c"
+    url "https://raw.githubusercontent.com/nothings/stb/013ac3beddff3dbffafd5177e7972067cd2b5083/stb_image.h"
+    version "2.30"
+    sha256 "594c2fe35d49488b4382dbfaec8f98366defca819d916ac95becf3e75f4200b3"
   end
 
   resource "stb_image_write" do
-    url "https://raw.githubusercontent.com/nothings/stb/1ee679c/stb_image_write.h"
+    url "https://raw.githubusercontent.com/nothings/stb/1ee679ca2ef753a528db5ba6801e1067b40481b8/stb_image_write.h"
     version "1.16"
     sha256 "cbd5f0ad7a9cf4468affb36354a1d2338034f2c12473cf1a8e32053cb6914a05"
   end
@@ -50,7 +51,7 @@ class Mlpack < Formula
       -DARMADILLO_INCLUDE_DIR=#{Formula["armadillo"].opt_include}
       -DENSMALLEN_INCLUDE_DIR=#{Formula["ensmallen"].opt_include}
       -DARMADILLO_LIBRARY=#{Formula["armadillo"].opt_lib/shared_library("libarmadillo")}
-      -DSTB_IMAGE_INCLUDE_DIR=#{include/"stb"}
+      -DSTB_IMAGE_INCLUDE_DIR=#{include}/stb
       -DCMAKE_INSTALL_RPATH=#{rpath}
     ]
 
@@ -69,7 +70,7 @@ class Mlpack < Formula
       "-d", "distances.csv",
       "-k", "5", "-v"
 
-    (testpath/"test.cpp").write <<-EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <mlpack/core.hpp>
 
       using namespace mlpack;
@@ -79,7 +80,7 @@ class Mlpack < Formula
         Log::Info << "Some test informational output." << std::endl;
         Log::Warn << "A false alarm!" << std::endl;
       }
-    EOS
+    CPP
     system ENV.cxx, "-std=c++17", "test.cpp", "-I#{include}", "-L#{Formula["armadillo"].opt_lib}",
                     "-larmadillo", "-L#{lib}", "-o", "test"
     system "./test", "--verbose"

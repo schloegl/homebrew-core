@@ -1,13 +1,13 @@
 class DependencyCheck < Formula
   desc "OWASP dependency-check"
   homepage "https://owasp.org/www-project-dependency-check/"
-  url "https://github.com/jeremylong/DependencyCheck/releases/download/v10.0.4/dependency-check-10.0.4-release.zip"
-  sha256 "0ea8345571b90cf418142b3a7c918d244be2d5101c99260794e8da84d5ee7f33"
+  url "https://github.com/dependency-check/DependencyCheck/releases/download/v12.1.3/dependency-check-12.1.3-release.zip"
+  sha256 "c79149ab46ce24b2c69d4734caa1afa4e62f128eec719733bb8f0eb406bdd0d6"
   license "Apache-2.0"
-  head "https://github.com/jeremylong/DependencyCheck.git", branch: "main"
+  head "https://github.com/dependency-check/DependencyCheck.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "9a08bce361b5823407863232e41cc4adbb7628b72dba661de13134d632b41a8a"
+    sha256 cellar: :any_skip_relocation, all: "3c92103e18655e35859aafd09b8ff4c4e9bb5c723f88c1e3ad9e2c7c1efffc1f"
   end
 
   depends_on "openjdk"
@@ -46,8 +46,8 @@ class DependencyCheck < Formula
     EOS
     system bin/"dependency-check", "-P", "temp-props.properties", "-f", "XML",
               "--project", "dc", "-s", libexec, "-d", testpath, "-o", testpath,
-              "--nvdDatafeed", "https://jeremylong.github.io/DependencyCheck/hb_nvd/",
+              "--nvdDatafeed", "https://dependency-check.github.io/DependencyCheck/hb_nvd/",
               "--disableKnownExploited"
-    assert_predicate testpath/"dependency-check-report.xml", :exist?
+    assert_path_exists testpath/"dependency-check-report.xml"
   end
 end

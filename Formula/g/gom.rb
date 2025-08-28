@@ -1,36 +1,41 @@
 class Gom < Formula
   desc "GObject wrapper around SQLite"
   homepage "https://wiki.gnome.org/Projects/Gom"
-  url "https://download.gnome.org/sources/gom/0.4/gom-0.4.tar.xz"
-  sha256 "68d08006aaa3b58169ce7cf1839498f45686fba8115f09acecb89d77e1018a9d"
+  url "https://download.gnome.org/sources/gom/0.5/gom-0.5.3.tar.xz"
+  sha256 "069d0909fbdc6b4d27edf7a879366194e3ab508b03548bf5b89ff63546d20177"
   license "LGPL-2.1-or-later"
-  revision 3
+
+  # We use a common regex because gom doesn't use GNOME's "even-numbered
+  # minor is stable" version scheme.
+  livecheck do
+    url :stable
+    regex(/gom[._-]v?(\d+(?:\.\d+)+)\.t/i)
+  end
+
+  no_autobump! because: :requires_manual_review
 
   bottle do
-    rebuild 2
-    sha256 cellar: :any, arm64_sequoia:  "19928db1764dc5256e4b2a904c1ded8826dfbef5f394cd4cdd0d9cd322a696a4"
-    sha256 cellar: :any, arm64_sonoma:   "7739014948192b14ae5c9de59e4a084fb90c1e77344e98758ff91e4380388d4d"
-    sha256 cellar: :any, arm64_ventura:  "d143d27a4e26d5f294f82821fd44abb9e9c52b6b5ebdee505b53a40dc88e3c09"
-    sha256 cellar: :any, arm64_monterey: "338326e04cdc74b498710c1e70ba56426766f72af7b408437cd619c9418f9c28"
-    sha256 cellar: :any, sonoma:         "a9815d6dfa43929208561f932997fa22cda9494722880f1af03435652731af54"
-    sha256 cellar: :any, ventura:        "1594e2a96cd9e5935dbaf0f211d32ccd92e6eeef7d2722f836269c6ac7a04ed8"
-    sha256 cellar: :any, monterey:       "f32dd6c31b283feabdc6c91025ebf1f4e6a769fd2c70db73854228f871313df2"
-    sha256               x86_64_linux:   "33c91d940b43a24d21cbb493be57d13f2285a74c44cced7aed47fe49f0a51957"
+    sha256 cellar: :any, arm64_sequoia: "653c39bbf08707dc8fc4204ce7b2317ff5304cf9050910df166292b34b68abdc"
+    sha256 cellar: :any, arm64_sonoma:  "5a91a0b28b4eb4621c687882d85be9d61fb9055affb380a9975ea884bbc56956"
+    sha256 cellar: :any, arm64_ventura: "ce76f0563174a6410e3352dab6eaaa91be8a88cce5daf7e6595397631d5da76d"
+    sha256 cellar: :any, sonoma:        "1018395f8e1ec4725a0bc5484871d0648f543bcf1c5c3bfd2587b0c00e9c9bc2"
+    sha256 cellar: :any, ventura:       "d6e41c8ef3f8f84204e1f368e7af8734b1243b75d069c6e7b3266f656d03fc15"
+    sha256               arm64_linux:   "7f79d6810958568ec1e2c7ad7d93b404c148ce0d4a41cf83647c263b1c5750f2"
+    sha256               x86_64_linux:  "0121f2c07b7e91f5b2fc56bc19d034e604540c927efe6e3fa2a28acfc707c66c"
   end
 
   depends_on "gobject-introspection" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
-  depends_on "python@3.12" => :build
+  depends_on "pkgconf" => [:build, :test]
+  depends_on "python@3.13" => :build
   depends_on "gdk-pixbuf"
   depends_on "gettext"
   depends_on "glib"
-
-  uses_from_macos "sqlite"
+  depends_on "sqlite" # indirect dependency via glib
 
   def install
-    site_packages = prefix/Language::Python.site_packages("python3.12")
+    site_packages = prefix/Language::Python.site_packages("python3.13")
 
     system "meson", "setup", "build", "-Dpygobject-override-dir=#{site_packages}", *std_meson_args
     system "meson", "compile", "-C", "build", "--verbose"
@@ -38,29 +43,16 @@ class Gom < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <gom/gom.h>
 
       int main(int argc, char *argv[]) {
         GType type = gom_error_get_type();
         return 0;
       }
-    EOS
-    gettext = Formula["gettext"]
-    glib = Formula["glib"]
-    flags = %W[
-      -I#{gettext.opt_include}
-      -I#{glib.opt_include}/glib-2.0
-      -I#{glib.opt_lib}/glib-2.0/include
-      -I#{include}/gom-1.0
-      -L#{gettext.opt_lib}
-      -L#{glib.opt_lib}
-      -L#{lib}
-      -lglib-2.0
-      -lgobject-2.0
-      -lgom-1.0
-    ]
-    flags << "-lintl" if OS.mac?
+    C
+
+    flags = shell_output("pkgconf --cflags --libs gom-1.0").chomp.split
     system ENV.cc, "test.c", "-o", "test", *flags
     system "./test"
   end

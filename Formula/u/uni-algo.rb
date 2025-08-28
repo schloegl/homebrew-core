@@ -13,6 +13,7 @@ class UniAlgo < Formula
     sha256 cellar: :any,                 sonoma:         "4f671dc3b902289131ad865eccf76b6aede03b6cf9bc3bb46ed50674a6c81efd"
     sha256 cellar: :any,                 ventura:        "8fbf0f7ba2a59794df31d03b58c1e605d321162f54cd2e91a374d4e1414e9f48"
     sha256 cellar: :any,                 monterey:       "760286609376bbe66a454a5d443c40423f7cb4d5cefa55fb4bae09880f1dcdb6"
+    sha256 cellar: :any_skip_relocation, arm64_linux:    "a61b42231ce224c3607e3c8e82b193ccd2eacbcee77a5aa4f5666395c539e8ea"
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "23987577980bb9edbf0d7a5ddbebaecaedec5ddf44fe0453f02877434fc39d61"
   end
 
@@ -25,20 +26,20 @@ class UniAlgo < Formula
   end
 
   test do
-    (testpath/"CMakeLists.txt").write <<~EOS
-      cmake_minimum_required(VERSION 3.0.2)
+    (testpath/"CMakeLists.txt").write <<~CMAKE
+      cmake_minimum_required(VERSION 4.0)
       project(utf8_norm LANGUAGES CXX)
       find_package(uni-algo CONFIG REQUIRED)
       add_executable(utf8_norm utf8_norm.cpp)
       target_link_libraries(utf8_norm PRIVATE uni-algo::uni-algo)
-    EOS
+    CMAKE
 
-    (testpath/"utf8_norm.cpp").write <<~EOS
+    (testpath/"utf8_norm.cpp").write <<~CPP
       #include <uni_algo/norm.h>
       int main() {
         return (una::norm::to_nfc_utf8("W\\u0302") == "Ŵ") ? 0 : 1;
       }
-    EOS
+    CPP
 
     system "cmake", "-S", ".", "-B", "build", "-DCMAKE_PREFIX_PATH:STRING=#{opt_lib}"
     system "cmake", "--build", "build"

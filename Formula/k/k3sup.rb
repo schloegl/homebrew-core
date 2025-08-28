@@ -2,8 +2,8 @@ class K3sup < Formula
   desc "Utility to create k3s clusters on any local or remote VM"
   homepage "https://k3sup.dev"
   url "https://github.com/alexellis/k3sup.git",
-      tag:      "0.13.6",
-      revision: "752c22af38d11b9d57f7a5ae4add3571d0d57b3a"
+      tag:      "0.13.11",
+      revision: "5e5228b9d25c8c3dd1bb82d0f78a3944933529ed"
   license "MIT"
   head "https://github.com/alexellis/k3sup.git", branch: "master"
 
@@ -13,14 +13,12 @@ class K3sup < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "a335293332105e9a9182c8abc14a52462f96c8d12913b8cf54871dd76e731bd8"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "a19a3f026707f71120c5a36b094da132fd51394f1eb2e6967844e1aff130dc0e"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "666f7e1ba2f484cd268d3b51d88efe491a8743cf11a62f9b7bc9b609a7f98719"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "cc52230412bfae0ec53251681bab7bb399c74271264e83a9b4636dd146ede547"
-    sha256 cellar: :any_skip_relocation, sonoma:         "4d0292f1177753e635a702c5ac619ddc034139bcf8a711740bcfbf7803312631"
-    sha256 cellar: :any_skip_relocation, ventura:        "58731470c139141350cc584b5ff795231e291f00a1b72491b7988388a137d054"
-    sha256 cellar: :any_skip_relocation, monterey:       "6f9d1cbf0d634d53b89a8b3b82b5a57c432aaad76cbfa6ad98f163264b195e7f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "c8f9bb3779f6a239d5357bb94554da5a1f0df29b038dddd255143110277799e2"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "b1bcfb7804eb82de0455f8423e2d25449b2cbbddd4830df77835c9fbec8b2a10"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "b1bcfb7804eb82de0455f8423e2d25449b2cbbddd4830df77835c9fbec8b2a10"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "b1bcfb7804eb82de0455f8423e2d25449b2cbbddd4830df77835c9fbec8b2a10"
+    sha256 cellar: :any_skip_relocation, sonoma:        "325439e20d09e3bd86c280f4a72e5c807847c30f9f2be4b9dcc7f2a13c37a522"
+    sha256 cellar: :any_skip_relocation, ventura:       "325439e20d09e3bd86c280f4a72e5c807847c30f9f2be4b9dcc7f2a13c37a522"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b80a466b7a3f7775225d578091d3d1e9c94439c96a4fa17b25dcbc5fb693a07c"
   end
 
   depends_on "go" => :build

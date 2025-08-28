@@ -13,8 +13,8 @@
 class Ocaml < Formula
   desc "General purpose programming language in the ML family"
   homepage "https://ocaml.org/"
-  url "https://caml.inria.fr/pub/distrib/ocaml-5.2/ocaml-5.2.0.tar.xz"
-  sha256 "2f4bf479f51479f9bf8c7f1694a6ea7336bbf774f4ad6da6b59d1ad4939dd8a7"
+  url "https://caml.inria.fr/pub/distrib/ocaml-5.3/ocaml-5.3.0.tar.xz"
+  sha256 "b0229336d9ebe0af905954bcd1ae5b293306bbcb08c01ead03500d9e5bc90164"
   license "LGPL-2.1-only" => { with: "OCaml-LGPL-linking-exception" }
   head "https://github.com/ocaml/ocaml.git", branch: "trunk"
 
@@ -23,15 +23,16 @@ class Ocaml < Formula
     regex(%r{href=.*?/releases/v?(\d+(?:\.\d+)+)/?["']}i)
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any, arm64_sequoia:  "460a511a4f8e2e1665467b86f8bd747eff3aefda4558fe2ee735a856a2a4f3a3"
-    sha256 cellar: :any, arm64_sonoma:   "20ca740622792bad16589a5752f4523252b40fff85caa870efacfb690148cbe0"
-    sha256 cellar: :any, arm64_ventura:  "b96a94c043ab7a2f5fc9fc6796c29c3159882082a926937fa7bd86b0eaea22ae"
-    sha256 cellar: :any, arm64_monterey: "7948db8ae4947a4b98bb1b7c4c3afbd1daa28711100af560a5498d5af1a34995"
-    sha256 cellar: :any, sonoma:         "6158cd2388cda60ca09cd8af1de8668bb1075fa94d442b1d393111e7d80b5665"
-    sha256 cellar: :any, ventura:        "ebc7f049ce591904a11c7e8aa7af06117f53dd2ea0757678489f8b22e6d73515"
-    sha256 cellar: :any, monterey:       "8383843a0d7419a7b4886ec111f37f289e0fdb470346fe4e8eea50213b0f1a2a"
-    sha256               x86_64_linux:   "43cc50f40740c82ff6f0d86be7621c8c84331c0622e4db1978cd5752e4a56de4"
+    sha256               arm64_sequoia: "0979996448821ab111b2d1c618fcc2eac7605952e7731644123c8b9ae8e58da3"
+    sha256               arm64_sonoma:  "ad596105ed2af2dc5f71f9db062427cdec3279c759a9e1f87820f54abbfde1a3"
+    sha256               arm64_ventura: "614155cd3a84d3a21eb07d0ff026af5a3a344415b2a9483a070cf240b4b52ca5"
+    sha256 cellar: :any, sonoma:        "08108b354deba5aac573ac53978a5d87d8a6b4121fd1d4482f67193fb8ad36c4"
+    sha256 cellar: :any, ventura:       "dfa34e54b50981b7e6288dc831760bd0a9f3edd689d83648d932f361f779eb8c"
+    sha256               arm64_linux:   "f1b50cbba8c11afc58a1240356c65025173cb6ade98a750b9a5eec6dbceefa32"
+    sha256               x86_64_linux:  "4f29d7cd761b2ca7d7936c09750d0b9234feecc772d8b0edb3337f3d79b9c9a4"
   end
 
   # The ocaml compilers embed prefix information in weird ways that the default

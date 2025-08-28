@@ -3,24 +3,20 @@ class Pipdeptree < Formula
 
   desc "CLI to display dependency tree of the installed Python packages"
   homepage "https://github.com/tox-dev/pipdeptree"
-  url "https://files.pythonhosted.org/packages/66/b6/389a1148d7b1bc5638d4e9b2d60390f8cfb4c30e34cff68165cbd9a29e75/pipdeptree-2.23.4.tar.gz"
-  sha256 "8a9e7ceee623d1cb2839b6802c26dd40959d31ecaa1468d32616f7082658f135"
+  url "https://files.pythonhosted.org/packages/25/61/0e855474eee22f06d8508aad787c1bb3f9fff28759e758c0da44f8549998/pipdeptree-2.28.0.tar.gz"
+  sha256 "bae533e30249b1aa6d9cb315ef6f1c039e9adaa55d5b25438395cace5716eaa6"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "56ba118acd86e49a612e01f2c63d4287c9393585c7002377e6900aa724ab706a"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "56ba118acd86e49a612e01f2c63d4287c9393585c7002377e6900aa724ab706a"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "56ba118acd86e49a612e01f2c63d4287c9393585c7002377e6900aa724ab706a"
-    sha256 cellar: :any_skip_relocation, sonoma:        "d6df59735707bfd8fbc01fac5303639c4c11f12df31fa3ff90eb2c1269eb687a"
-    sha256 cellar: :any_skip_relocation, ventura:       "d6df59735707bfd8fbc01fac5303639c4c11f12df31fa3ff90eb2c1269eb687a"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "56ba118acd86e49a612e01f2c63d4287c9393585c7002377e6900aa724ab706a"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, all: "c2779b277dcad3b64fbedf915596f2acde43c9782c73493d408a5bb39ca7df66"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "packaging" do
-    url "https://files.pythonhosted.org/packages/51/65/50db4dda066951078f0a96cf12f4b9ada6e4b811516bf0262c0f4f7064d4/packaging-24.1.tar.gz"
-    sha256 "026ed72c8ed3fcce5bf8950572258698927fd1dbda10a5e981cdf0ac37f4f002"
+    url "https://files.pythonhosted.org/packages/a1/d4/1fc4078c65507b51b96ca8f8c3ba19e6a61c8253c72794544580a7b6c24d/packaging-25.0.tar.gz"
+    sha256 "d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f"
   end
 
   def install

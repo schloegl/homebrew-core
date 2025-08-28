@@ -1,20 +1,20 @@
 class Tflint < Formula
   desc "Linter for Terraform files"
   homepage "https://github.com/terraform-linters/tflint"
-  url "https://github.com/terraform-linters/tflint/archive/refs/tags/v0.53.0.tar.gz"
-  sha256 "22dd4644dd249b38b8cbb29bd4ca66aefa65a2d9dc38109a3ca5b428a4ba755b"
+  url "https://github.com/terraform-linters/tflint/archive/refs/tags/v0.58.1.tar.gz"
+  sha256 "2099bef1b47dc995ae531ebcc92a9e272206976740095b1cc897b3185ecd82bf"
   license "MPL-2.0"
   head "https://github.com/terraform-linters/tflint.git", branch: "master"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "73b206e4ee3b99d7cf2c351338127c11e0b4faa67ab52b3f50514488ae0ca561"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "7763ec46d1655646c80304ba4f247fe77e34fc152ad2984d1dd62f3fa92cbff2"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "7763ec46d1655646c80304ba4f247fe77e34fc152ad2984d1dd62f3fa92cbff2"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "7763ec46d1655646c80304ba4f247fe77e34fc152ad2984d1dd62f3fa92cbff2"
-    sha256 cellar: :any_skip_relocation, sonoma:         "032e6c2238a021d44aabea16fc2450566d94846ef97b4a74a73e6ddfa7b18371"
-    sha256 cellar: :any_skip_relocation, ventura:        "032e6c2238a021d44aabea16fc2450566d94846ef97b4a74a73e6ddfa7b18371"
-    sha256 cellar: :any_skip_relocation, monterey:       "032e6c2238a021d44aabea16fc2450566d94846ef97b4a74a73e6ddfa7b18371"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "767ac7a588e298788bc762d3290cffbc6cd8ba364426d7f11a7f383381d1028e"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "24339a7eb6991d6fbe6109fc1e92db9228d2519a2f72c1bb621bc841557cdffd"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "24339a7eb6991d6fbe6109fc1e92db9228d2519a2f72c1bb621bc841557cdffd"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "24339a7eb6991d6fbe6109fc1e92db9228d2519a2f72c1bb621bc841557cdffd"
+    sha256 cellar: :any_skip_relocation, sonoma:        "a48a5b625e1089a2a982ba9fc78f486bb7c6c4868c10deb103f0dfe0c9e8f790"
+    sha256 cellar: :any_skip_relocation, ventura:       "73a38207dc2e8397cc59971e5533a3237cdda184e5ff6c24cb9a7a7747f69f54"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0a71d83a6b89aae23bdee2f4b0b295d0e9eb26a5f319afff8479558300aba75c"
   end
 
   depends_on "go" => :build
@@ -24,7 +24,7 @@ class Tflint < Formula
   end
 
   test do
-    (testpath/"test.tf").write <<~EOS
+    (testpath/"test.tf").write <<~HCL
       terraform {
         required_version = ">= 1.0"
 
@@ -39,7 +39,7 @@ class Tflint < Formula
       provider "aws" {
         region = var.aws_region
       }
-    EOS
+    HCL
 
     # tflint returns exitstatus: 0 (no issues), 2 (errors occurred), 3 (no errors but issues found)
     assert_empty shell_output("#{bin}/tflint --filter=test.tf")

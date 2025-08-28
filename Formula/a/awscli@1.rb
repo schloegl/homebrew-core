@@ -4,8 +4,8 @@ class AwscliAT1 < Formula
   desc "Official Amazon AWS command-line interface"
   homepage "https://aws.amazon.com/cli/"
   # awscli should only be updated every 10 releases on multiples of 10
-  url "https://files.pythonhosted.org/packages/b7/0c/9e5fc076190c1daea113a99d2d6d9c936f5e08d89e6261f10dd61a0c09b7/awscli-1.34.30.tar.gz"
-  sha256 "ed1740a977429d2eddce41901c91dc951d8ab816d26ddf9ea463100db0e56316"
+  url "https://files.pythonhosted.org/packages/1a/43/56fa4f051977da11fffb2a92cbaf97f3f3b8d63936547d1efb575b7cc209/awscli-1.42.10.tar.gz"
+  sha256 "b27a55ddeb41f6d272607bdaa62bfd36d4f144a09af2045aaa8fc98b587bbd1b"
   license "Apache-2.0"
 
   livecheck do
@@ -15,24 +15,25 @@ class AwscliAT1 < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "3406ebed5931b09ba93251bf8c86c803e0f31ddd7c412e67cfd0c624951d7141"
-    sha256 cellar: :any,                 arm64_sonoma:  "a6b8cf5af18e8ce409b8780afb7f03d54fe9c845db03e2a9233bee1977a1ce25"
-    sha256 cellar: :any,                 arm64_ventura: "7cb44be4349c32a560eb71865ca22514c960d570ff16084fe59bbcf57ef09adc"
-    sha256 cellar: :any,                 sonoma:        "040c3b268d0bf4e6c2851484f73c266412a3e282e4bfe759a9460db8494cc472"
-    sha256 cellar: :any,                 ventura:       "f3bdc0eda3ba02935caeb1d64230b840442548cf453992f1b0f5b94065a323ac"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "31d1f48f5e1ea0c3428370606c14e499722febe41e27123a47beb8dc512964ba"
+    sha256 cellar: :any,                 arm64_sequoia: "7f47abf000b443ff07ace2c866f0fba7861c1e57dde253e08d983f60c2ce41e3"
+    sha256 cellar: :any,                 arm64_sonoma:  "8710dcf508bc02c9cad9357e61f88fc63f18529c86625623081f163c98ac34bb"
+    sha256 cellar: :any,                 arm64_ventura: "a47e74472334de83c1bc59fa55ce57abd1a3c994be4105c14a4a1c36b692f355"
+    sha256 cellar: :any,                 sonoma:        "761623620f1c8dbdaa7801ff63ec70d3b58d04bca4dda2bc973844ebeb13a4cb"
+    sha256 cellar: :any,                 ventura:       "895ce5a79dbc1ef2b7b72a1d115e823fc23c24b64a645ad865b25e8985cd2d06"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "83c2c4d632d642f719cb58d740dc80876ff14324def2866778226106aeb2b25f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "32ae43dff98a6f3e34c1e4b1d375ced9c0074abb199b8a77e59a4a34d0432231"
   end
 
   keg_only :versioned_formula
 
   depends_on "libyaml"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   uses_from_macos "mandoc"
 
   resource "botocore" do
-    url "https://files.pythonhosted.org/packages/74/17/1e99db5104ab63cecc7b7047f45cd6dc06877b01ecb5ca5cd73f7f2096e7/botocore-1.35.30.tar.gz"
-    sha256 "ab5350e8a50e48d371fa2d517d65c29a40c43788cb9a15387f93eac5a23df0fd"
+    url "https://files.pythonhosted.org/packages/8e/c6/ea11cf400084a36dff8960a64ebbfec5c28ef740d72cd3465b693fdda58e/botocore-1.40.10.tar.gz"
+    sha256 "db3b14043bc90fe4220edbc2e89e8f5af1d2d4aacc16bab3c30dacd98b0073e3"
   end
 
   resource "colorama" do
@@ -41,8 +42,8 @@ class AwscliAT1 < Formula
   end
 
   resource "docutils" do
-    url "https://files.pythonhosted.org/packages/2f/e0/3d435b34abd2d62e8206171892f174b180cd37b09d57b924ca5c2ef2219d/docutils-0.16.tar.gz"
-    sha256 "c2de3a60e9e7d07be26b7f2b00ca0309c207e06c100f9cc2a94931fc75a478fc"
+    url "https://files.pythonhosted.org/packages/6b/5c/330ea8d383eb2ce973df34d1239b3b21e91cd8c865d21ff82902d952f91f/docutils-0.19.tar.gz"
+    sha256 "33995a6753c30b7f577febfc2c50411fec6aac7f7ffeb7c4cfe5991072dcf9e6"
   end
 
   resource "jmespath" do
@@ -71,35 +72,35 @@ class AwscliAT1 < Formula
   end
 
   resource "s3transfer" do
-    url "https://files.pythonhosted.org/packages/cb/67/94c6730ee4c34505b14d94040e2f31edf144c230b6b49e971b4f25ff8fab/s3transfer-0.10.2.tar.gz"
-    sha256 "0711534e9356d3cc692fdde846b4a1e4b0cb6519971860796e6bc4c7aea00ef6"
+    url "https://files.pythonhosted.org/packages/6d/05/d52bf1e65044b4e5e27d4e63e8d1579dbdec54fce685908ae09bc3720030/s3transfer-0.13.1.tar.gz"
+    sha256 "c3fdba22ba1bd367922f27ec8032d6a1cf5f10c934fb5d68cf60fd5a23d936cf"
   end
 
   resource "six" do
-    url "https://files.pythonhosted.org/packages/71/39/171f1c67cd00715f190ba0b100d606d440a28c93c7714febeca8b79af85e/six-1.16.0.tar.gz"
-    sha256 "1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"
+    url "https://files.pythonhosted.org/packages/94/e7/b2c673351809dca68a0e064b6af791aa332cf192da575fd474ed7d6f16a2/six-1.17.0.tar.gz"
+    sha256 "ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81"
   end
 
   resource "urllib3" do
-    url "https://files.pythonhosted.org/packages/ed/63/22ba4ebfe7430b76388e7cd448d5478814d3032121827c12a2cc287e2260/urllib3-2.2.3.tar.gz"
-    sha256 "e7d814a81dad81e6caf2ec9fdedb284ecc9c73076b62654547cc64ccdcae26e9"
+    url "https://files.pythonhosted.org/packages/15/22/9ee70a2574a4f4599c47dd506532914ce044817c7752a79b6a51286319bc/urllib3-2.5.0.tar.gz"
+    sha256 "3fc47733c7e419d4bc3f6b3dc2b4f890bb743906a30d56ba4a5bfa4bbff92760"
   end
 
   def install
     virtualenv_install_with_resources
     pkgshare.install "awscli/examples"
 
-    rm Dir["#{bin}/{aws.cmd,aws_bash_completer,aws_zsh_completer.sh}"]
+    %w[aws.cmd aws_bash_completer aws_zsh_completer.sh].each { |f| rm(bin/f) }
     bash_completion.install "bin/aws_bash_completer"
     zsh_completion.install "bin/aws_zsh_completer.sh"
-    (zsh_completion/"_aws").write <<~EOS
+    (zsh_completion/"_aws").write <<~ZSH
       #compdef aws
       _aws () {
         local e
         e=$(dirname ${funcsourcetrace[1]%:*})/aws_zsh_completer.sh
         if [[ -f $e ]]; then source $e; fi
       }
-    EOS
+    ZSH
   end
 
   def caveats

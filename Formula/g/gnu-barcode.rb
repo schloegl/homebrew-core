@@ -1,10 +1,12 @@
 class GnuBarcode < Formula
   desc "Convert text strings to printed bars"
   homepage "https://www.gnu.org/software/barcode/"
-  url "https://ftp.gnu.org/gnu/barcode/barcode-0.99.tar.gz"
-  mirror "https://ftpmirror.gnu.org/barcode/barcode-0.99.tar.gz"
+  url "https://ftpmirror.gnu.org/gnu/barcode/barcode-0.99.tar.gz"
+  mirror "https://ftp.gnu.org/gnu/barcode/barcode-0.99.tar.gz"
   sha256 "7c031cf3eb811242f53664379aebbdd9fae0b7b26b5e5d584c31a9f338154b64"
   license "GPL-3.0-or-later"
+
+  no_autobump! because: :requires_manual_review
 
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_sequoia:  "30ba34d1c972ec24c6f5ccd484585cd114456d7a6523f16f31dcf58c81089663"
@@ -21,6 +23,7 @@ class GnuBarcode < Formula
     sha256 cellar: :any_skip_relocation, high_sierra:    "bd55ad14c9e7411d952d9243b6c4c7aa84162afe34ed1e3c3d9e9a368d2d6485"
     sha256 cellar: :any_skip_relocation, sierra:         "7588bb4800b5c348e103ed92e8bcc2f38812b8fbf4e254315e6429b3961e9f05"
     sha256 cellar: :any_skip_relocation, el_capitan:     "1885abad5bc70c2e9952e131307ca7282d851856ebdea58dadc69f0e125a7c22"
+    sha256 cellar: :any_skip_relocation, arm64_linux:    "9a87f687d36fddc89efcd6e0f668d483b6630617dd51179ed27a4e29f26176a0"
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "9cea83cbded5ce1bf557f237984a5085ba5b5534980c64e0b7d97e6756ab01dd"
   end
 

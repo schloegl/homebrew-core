@@ -1,8 +1,8 @@
 class Meilisearch < Formula
   desc "Ultra relevant, instant and typo-tolerant full-text search API"
   homepage "https://docs.meilisearch.com/"
-  url "https://github.com/meilisearch/meilisearch/archive/refs/tags/v1.10.2.tar.gz"
-  sha256 "d209bc617be767bcd8e58d722bc3ca8d662bdcc83823017d33cf0094179bc62d"
+  url "https://github.com/meilisearch/meilisearch/archive/refs/tags/v1.19.1.tar.gz"
+  sha256 "470812c36ff4f90ea0b97c072a3b68d4b3dc2e814293f40e5fbe863d030d97b6"
   license "MIT"
 
   # There can be a notable gap between when a version is tagged and a
@@ -14,20 +14,19 @@ class Meilisearch < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "7264882172be4c732c72d9ea429e45f06907b3e9c5a337ee02ff1dcee8dff704"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "b6c11a5192fe979954f96fe9609915a79ee044c508f32d78aaf0b6a5f65f2efd"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "7f75cb5481e5525556dade4506db9af42c7c19be9df390c7be8be82d94ec7265"
-    sha256 cellar: :any_skip_relocation, sonoma:        "3506f962673497ddadbfeb6440de8399eaf2ceea43cb846d7794301d52f1d5bd"
-    sha256 cellar: :any_skip_relocation, ventura:       "a787367b62bb8708fc5cb2ab86b09b387b0ad4f57735f0c60deff316fed035b2"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "dbcd52ccb92e0abd8f84bf8b329a3622a5fbc7a976046afb19fb7527f14a0ff3"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "220551c0a2a85caf1189bf467e6fab7df161bd64951b075d5b9ef626f43738eb"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "bf511a25d351c12dbcf1f830bbd4eda3e9152eb506244089c465964b5209f72f"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "3afe180594df68e677f9648f984695959fb36f05b651e40f484cb4179ec86a67"
+    sha256 cellar: :any_skip_relocation, sonoma:        "93f0141389439e1425b106b5c9553f6a6757866809fc3e325345ad975cf3bb67"
+    sha256 cellar: :any_skip_relocation, ventura:       "0da746759174f410e6cebfdc251b807751364613e5d1674c1c7c44dec3497f0e"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "eaa98a74a858768d3c2d34ec523a9dc845fbf2c9bc72f74384d66db4b13ba914"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1cfeb0dff3e8d3a4f540d3594b2bebba8f29a988bdc8314fa992a855cacb37ea"
   end
 
   depends_on "rust" => :build
 
   def install
-    cd "meilisearch" do
-      system "cargo", "install", *std_cargo_args
-    end
+    system "cargo", "install", *std_cargo_args(path: "crates/meilisearch")
   end
 
   service do

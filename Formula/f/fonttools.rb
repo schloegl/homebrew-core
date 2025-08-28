@@ -3,30 +3,39 @@ class Fonttools < Formula
 
   desc "Library for manipulating fonts"
   homepage "https://github.com/fonttools/fonttools"
-  url "https://files.pythonhosted.org/packages/11/1d/70b58e342e129f9c0ce030029fb4b2b0670084bbbfe1121d008f6a1e361c/fonttools-4.54.1.tar.gz"
-  sha256 "957f669d4922f92c171ba01bef7f29410668db09f6c02111e22b2bce446f3285"
+  url "https://files.pythonhosted.org/packages/0d/a5/fba25f9fbdab96e26dedcaeeba125e5f05a09043bf888e0305326e55685b/fonttools-4.59.2.tar.gz"
+  sha256 "e72c0749b06113f50bcb80332364c6be83a9582d6e3db3fe0b280f996dc2ef22"
   license "MIT"
   head "https://github.com/fonttools/fonttools.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "547cc7fa352c17eaf56b471cb6d8017e42c374ccf194e34832153384f6f41b8b"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "81ecdfabd98cfd41453c5e4d413e2cc0b531c36f3ede68dcb62291c2b90d32da"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "261ee9640f02c3e0ab908dbc9dc64e7368142f213a51e2529f0e886af5093a43"
-    sha256 cellar: :any_skip_relocation, sonoma:        "542f3fb9fc5d65f6188b1cc4eafb3fe2430b8d1257dd44ac11d24e81102cb2cd"
-    sha256 cellar: :any_skip_relocation, ventura:       "a7a4fcb65cbc9bd024b712ebc11b4ced3bed1eb94b59dd545a6964f05dd6d363"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2d6473b1ce2ae00ef7427679b108fb339ddf90e4795910a75fbaf7e60cd461f1"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "5ef2d329ebe6b954a67e1d7d8c94f1695c139f3889e2c0881b7a053a3a686c7a"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "0beb7bb33e0e16ea366002ae97a733ac0dbeb6e3a4561c8e60d41a3c3354780c"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "3552dd3680945c10807aa4bad4b340bb9a9a5001b762cd868d37a95f6c436942"
+    sha256 cellar: :any_skip_relocation, sonoma:        "105e29f487373e8ba751a56530aa4c8cabcd7a1718c83b57621d5e62b5b00568"
+    sha256 cellar: :any_skip_relocation, ventura:       "2234c8d457afbb9d36e6aff013362ea2f674af704ffc3f56fa6e987cf9197b24"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "ade496b500cb9064faf0888bbc01750a6b67144adf46f733c7c9fbab757a4dbb"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "21bf8c84ebe14d74fe195150be90ceca99b8d486738bab3332eb542f98042db0"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
+
+  uses_from_macos "libxml2"
+  uses_from_macos "libxslt"
 
   resource "brotli" do
     url "https://files.pythonhosted.org/packages/2f/c2/f9e977608bdf958650638c3f1e28f85a1b075f075ebbe77db8555463787b/Brotli-1.1.0.tar.gz"
     sha256 "81de08ac11bcb85841e440c13611c00b67d3bf82698314928d0b676362546724"
   end
 
+  resource "lxml" do
+    url "https://files.pythonhosted.org/packages/8f/bd/f9d01fd4132d81c6f43ab01983caea69ec9614b913c290a26738431a015d/lxml-6.0.1.tar.gz"
+    sha256 "2b3a882ebf27dd026df3801a87cf49ff791336e0f94b0fad195db77e01240690"
+  end
+
   resource "zopfli" do
-    url "https://files.pythonhosted.org/packages/92/d8/71230eb25ede499401a9a39ddf66fab4e4dab149bf75ed2ecea51a662d9e/zopfli-0.2.3.zip"
-    sha256 "dbc9841bedd736041eb5e6982cd92da93bee145745f5422f3795f6f258cdc6ef"
+    url "https://files.pythonhosted.org/packages/5e/7c/a8f6696e694709e2abcbccd27d05ef761e9b6efae217e11d977471555b62/zopfli-0.2.3.post1.tar.gz"
+    sha256 "96484dc0f48be1c5d7ae9f38ed1ce41e3675fd506b27c11a6607f14b49101e99"
   end
 
   def install
@@ -38,9 +47,9 @@ class Fonttools < Formula
       cp "/System/Library/Fonts/ZapfDingbats.ttf", testpath
 
       system bin/"ttx", "ZapfDingbats.ttf"
-      assert_predicate testpath/"ZapfDingbats.ttx", :exist?
+      assert_path_exists testpath/"ZapfDingbats.ttx"
       system bin/"fonttools", "ttLib.woff2", "compress", "ZapfDingbats.ttf"
-      assert_predicate testpath/"ZapfDingbats.woff2", :exist?
+      assert_path_exists testpath/"ZapfDingbats.woff2"
     else
       assert_match "usage", shell_output("#{bin}/ttx -h")
     end

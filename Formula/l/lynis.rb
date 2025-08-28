@@ -1,17 +1,13 @@
 class Lynis < Formula
   desc "Security and system auditing tool to harden systems"
   homepage "https://cisofy.com/lynis/"
-  url "https://github.com/CISOfy/lynis/archive/refs/tags/3.1.2.tar.gz"
-  sha256 "b0ed01d30a4415beb78acc47867f8e0779c9966d4febc5f4a31594ba2a0bd44d"
+  url "https://github.com/CISOfy/lynis/archive/refs/tags/3.1.5.tar.gz"
+  sha256 "02e16e452a926b6dbae5bfc28b0592d42c8af24c572180f444ac865e0e4f4bce"
   license "GPL-3.0-only"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "0b26eba32da66cef4c85819f95cfece20b4472fa05087b8735704764dd2fd1a3"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "0b26eba32da66cef4c85819f95cfece20b4472fa05087b8735704764dd2fd1a3"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "0b26eba32da66cef4c85819f95cfece20b4472fa05087b8735704764dd2fd1a3"
-    sha256 cellar: :any_skip_relocation, sonoma:        "0828d46f43ade64b6b4ebbaa6bac1d3f4b6f01f9648b004bda56f985ef1ed4e1"
-    sha256 cellar: :any_skip_relocation, ventura:       "0828d46f43ade64b6b4ebbaa6bac1d3f4b6f01f9648b004bda56f985ef1ed4e1"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0b26eba32da66cef4c85819f95cfece20b4472fa05087b8735704764dd2fd1a3"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, all: "972613fc1d39ce5f710f2a94d13e1074aceee0426d4c0ff527b9b905e4fc4075"
   end
 
   def install

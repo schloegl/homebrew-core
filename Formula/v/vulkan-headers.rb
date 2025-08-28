@@ -1,8 +1,8 @@
 class VulkanHeaders < Formula
   desc "Vulkan Header files and API registry"
   homepage "https://github.com/KhronosGroup/Vulkan-Headers"
-  url "https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/v1.3.296.tar.gz"
-  sha256 "e204e0b3c19f622d197df945737f5db913d6621830999b8578d34e80a7c90585"
+  url "https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/v1.4.325.tar.gz"
+  sha256 "5743da4e203456ef0a0d17950d448b4f70e93a19abdc547aa33c15482b4fec17"
   license "Apache-2.0"
   head "https://github.com/KhronosGroup/Vulkan-Headers.git", branch: "main"
 
@@ -12,18 +12,23 @@ class VulkanHeaders < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "ba8cc80420ab51ff97a5a78a2b1e9c2fa610bf5f9b757fcd21a018fba7e1bb09"
+    sha256 cellar: :any_skip_relocation, all: "884063314a643b8ce44cc4eb5bf93155ef6c0f41f9bfd04eb5a0f9828a3daa09"
   end
 
   depends_on "cmake" => :build
 
   def install
+    # Ensure bottles are uniform.
+    inreplace "include/vulkan/vulkan.hpp" do |s|
+      s.gsub! "/usr/local", HOMEBREW_PREFIX
+    end
+
     system "cmake", "-S", ".", "-B", "build", *std_cmake_args
     system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <stdio.h>
       #include <vulkan/vulkan_core.h>
 
@@ -31,7 +36,7 @@ class VulkanHeaders < Formula
         printf("vulkan version %d", VK_VERSION_1_0);
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-o", "test"
     system "./test"
   end

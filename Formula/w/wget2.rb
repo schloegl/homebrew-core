@@ -1,9 +1,10 @@
 class Wget2 < Formula
   desc "Successor of GNU Wget, a file and recursive website downloader"
   homepage "https://gitlab.com/gnuwget/wget2"
-  url "https://ftp.gnu.org/gnu/wget/wget2-2.1.0.tar.gz"
-  sha256 "a05dc5191c6bad9313fd6db2777a78f5527ba4774f665d5d69f5a7461b49e2e7"
+  url "https://ftpmirror.gnu.org/gnu/wget/wget2-2.2.0.tar.gz"
+  sha256 "2b3b9c85b7fb26d33ca5f41f1f8daca71838d869a19b406063aa5c655294d357"
   license "GPL-3.0-or-later"
+  revision 1
 
   livecheck do
     url :stable
@@ -11,22 +12,20 @@ class Wget2 < Formula
   end
 
   bottle do
-    rebuild 1
-    sha256 arm64_sequoia:  "6bc61f262e20d15cd1f079e71cd55e2a642fef0b66efbb77334773faef36aabe"
-    sha256 arm64_sonoma:   "99ca029e3321591fa99a9af0e8b64f562dea3da226b823d35c5af55293b7a991"
-    sha256 arm64_ventura:  "067870948de34bc06ebd36a69046d99fae639622d214272da2e3daac92f2f993"
-    sha256 arm64_monterey: "923e704bf22d606bc90046a3b61e1ec65eee7e0ae557eb08ac3d6671849cf3e4"
-    sha256 sonoma:         "41d146a9305abbf4a5e418e4a45f9a2aa6697a2490f528247cc359c8a0c9f9be"
-    sha256 ventura:        "3f42f84bde572aa62f1c866d436f7a00760a3d7fae407a61c102b8087bd42696"
-    sha256 monterey:       "28caefa64e171177a81c69c77d9252a312cc511028bde86702387f4d4d65a666"
-    sha256 x86_64_linux:   "20df0cbf4bba791786a2e8c0be9ed8a448545e4cf68702a967fd76756c85b251"
+    sha256 arm64_sequoia: "b863537174ece79da6195e2ac5707cd31488d58088bdccb573e189aa75153bff"
+    sha256 arm64_sonoma:  "99190ec35480c9addfc7d84e5a026eceb272213914048503ec9c21c5385990cf"
+    sha256 arm64_ventura: "c707efb734c4e2338ec805111837642cf423a7aab4439f4743bdcb9bccfd46e7"
+    sha256 sonoma:        "fb4276bbc11f84ce2d2b98daf426fd4a1b1aa5ffd10973f3f07d868429059ab3"
+    sha256 ventura:       "b0ef99e0d7383df8316c5284d7ff38d02415f6cae006aad83ffe21e078262069"
+    sha256 arm64_linux:   "7c20c1db23e50bdc5fdb67333ea80ed932235f79b2a82c28afe92e621a5667d2"
+    sha256 x86_64_linux:  "a6580c39554f67d8db6d5817945792dc48c0c9e648d39043aa9bb4fc314e171c"
   end
 
   depends_on "doxygen" => :build
   depends_on "graphviz" => :build
   depends_on "lzlib" => :build # static lib
   depends_on "pandoc" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "texinfo" => :build # Build fails with macOS-provided `texinfo`
 
   depends_on "brotli"

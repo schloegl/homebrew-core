@@ -3,18 +3,15 @@ class NicotinePlus < Formula
 
   desc "Graphical client for the Soulseek peer-to-peer network"
   homepage "https://nicotine-plus.org"
-  url "https://files.pythonhosted.org/packages/0e/73/ba597ab69a24106e0ba44eef0346116f37842b8273d357a46ad2d05cc729/nicotine_plus-3.3.5.tar.gz"
-  sha256 "e0c9d650606a9f9eab8e5c2b7fd560ddb5cfe475ea4c22f19b833d7ebf86ba43"
+  url "https://files.pythonhosted.org/packages/bb/91/b7d2f353828d1bc57bb43cfe9006b0fde4d6ffe1458d5045c58f567ed33a/nicotine_plus-3.3.10.tar.gz"
+  sha256 "a4f4cbfade9cf48af10ecb7bde1eac8b5c1b0194f9cd01c814349ddba453dd12"
   license "GPL-3.0-or-later"
   head "https://github.com/nicotine-plus/nicotine-plus.git", branch: "master"
 
+  no_autobump! because: "`update-python-resources` cannot determine dependencies"
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "d0214a718bc6c2b9c4ea4e017ce586a8c0c23adc0f223b5ce32f1d96b75c3530"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "d0214a718bc6c2b9c4ea4e017ce586a8c0c23adc0f223b5ce32f1d96b75c3530"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "d0214a718bc6c2b9c4ea4e017ce586a8c0c23adc0f223b5ce32f1d96b75c3530"
-    sha256 cellar: :any_skip_relocation, sonoma:        "d0214a718bc6c2b9c4ea4e017ce586a8c0c23adc0f223b5ce32f1d96b75c3530"
-    sha256 cellar: :any_skip_relocation, ventura:       "d0214a718bc6c2b9c4ea4e017ce586a8c0c23adc0f223b5ce32f1d96b75c3530"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "67745151b15f23707214562a009840c9d64c133e8c22f48fc04774beafa1de85"
+    sha256 cellar: :any_skip_relocation, all: "86dd09af957c7be8e3c7559e1c9b67d2536f0c3025cd70bbe08a17d98ad1f89a"
   end
 
   depends_on "adwaita-icon-theme"
@@ -22,7 +19,7 @@ class NicotinePlus < Formula
   depends_on "libadwaita"
   depends_on "py3cairo"
   depends_on "pygobject3"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   on_linux do
     depends_on "gettext" => :build # for `msgfmt`

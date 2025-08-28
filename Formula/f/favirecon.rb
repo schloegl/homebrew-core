@@ -1,19 +1,18 @@
 class Favirecon < Formula
   desc "Uses favicon.ico to improve the target recon phase"
   homepage "https://github.com/edoardottt/favirecon"
-  url "https://github.com/edoardottt/favirecon/archive/refs/tags/v0.1.2.tar.gz"
-  sha256 "517de215cb746be7382e08e35f718ac50fae4e0fd372d480e9cdb843749c8f5d"
+  url "https://github.com/edoardottt/favirecon/archive/refs/tags/v1.0.1.tar.gz"
+  sha256 "72d8c7b8584322f5e82a140abc46c95ae3b86580353f7e79a395e2351b8293f1"
   license "MIT"
+  head "https://github.com/edoardottt/favirecon.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "3ebf89bd6a29519404f1ec141c22061f09ca6eaf2cb800bcf976bc1d7b6ee320"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "dd279747468dfdd1496e881d31ce02048e0c3de496e9dfaaae7711c13571ae98"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "71e61dc5adee7c23bab7414c942f1c2c4220c184ac66eabee31a01d0475bde29"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "de3abb664903dddc3fa69e955fc96fc593624d563ee7108327b0fd9e34db5aa3"
-    sha256 cellar: :any_skip_relocation, sonoma:         "1d219a7e987fc830017455d2f646c85ca8c842d89493a177992001fcee021b1a"
-    sha256 cellar: :any_skip_relocation, ventura:        "ada10f915426b8b5b24bea1a2b67c6c86ae5534061bfb8266dcd322e9ffbe5ae"
-    sha256 cellar: :any_skip_relocation, monterey:       "349250061f59593497791c2b7a7cf2c0a1fc7b7b9c2d86c4bcdeb50b1043d60c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "a83f313e99f7d4077e41f9f1e3a37de502e031fda1798270d07c9223ed8a62da"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "ebc4ff865a852564480d49a059d2ec8b4fbbac34e72c6af365557f2a6bd16a9c"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "ebc4ff865a852564480d49a059d2ec8b4fbbac34e72c6af365557f2a6bd16a9c"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "ebc4ff865a852564480d49a059d2ec8b4fbbac34e72c6af365557f2a6bd16a9c"
+    sha256 cellar: :any_skip_relocation, sonoma:        "514f536af4919aedbdeed9facdfb99092371d498680871e09fb19a21b4aa94cc"
+    sha256 cellar: :any_skip_relocation, ventura:       "514f536af4919aedbdeed9facdfb99092371d498680871e09fb19a21b4aa94cc"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9f47ca49a30aef22ce88fe13109b5aa79e3be9ff68387f3d66b28fc02253afa5"
   end
 
   depends_on "go" => :build
@@ -23,7 +22,9 @@ class Favirecon < Formula
   end
 
   test do
-    output = shell_output("#{bin}/favirecon -u https://www.github.com")
-    assert_match "[GitHub] https://www.github.com/favicon.ico", output
+    assert_match version.to_s, shell_output("#{bin}/favirecon --help")
+
+    output = shell_output("#{bin}/favirecon -u https://www.github.com -verbose 2>&1")
+    assert_match "Checking favicon for https://www.github.com/favicon.ico", output
   end
 end

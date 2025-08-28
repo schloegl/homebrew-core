@@ -1,24 +1,26 @@
 class Unxip < Formula
   desc "Fast Xcode unarchiver"
   homepage "https://github.com/saagarjha/unxip"
-  url "https://github.com/saagarjha/unxip/archive/refs/tags/v3.0.tar.gz"
-  sha256 "3e2b841eb06462110a83f90584d7e0c4bcac90de23ccd45d2eba6a29066a7e2d"
+  url "https://github.com/saagarjha/unxip/archive/refs/tags/v3.2.tar.gz"
+  sha256 "6ce48aa06d1fe06352f2937912cb43c7cd93c0a8066222af35d29d6d08130788"
   license "LGPL-3.0-only"
   head "https://github.com/saagarjha/unxip.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "e258056cbfae75aceca91e4cceb40bc97f5c82102b09263a8e6825dc2d8bc359"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "5df678380dc576645ab13265af663404c88cef771a7edf7ca0c72e7d7d2bf22d"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "7946cf4496d6f0718efe70b88c95932679c00a0f4398f0d6979cbad5c4cecd91"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "79f5dbbcea07409b9ce470c9bff60c82d4399db176b77bc450f2900022346377"
-    sha256 cellar: :any_skip_relocation, sonoma:         "0662fe63df14c1571631b8f4e57381045e93d7f4269dc7e0b1c6d95bcaabc4d4"
-    sha256 cellar: :any_skip_relocation, ventura:        "0fdd0cc7f70a1ebc9181687ebbdff2401a7f7a8e3e11aa50e7d0c8f58748097d"
-    sha256 cellar: :any_skip_relocation, monterey:       "039ceba020c663073c09912b6c25230a4735cff3bf775074e5d3e4bba5591c1d"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "1fa72679808308ce14aee5bf55c8d8c9080de2514705afcd8b5405ffdbfd71b0"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "db9c5c1721975700b4b3bd8b55bb651a9fac41f8723dbad495495a5924905f34"
+    sha256 cellar: :any_skip_relocation, sonoma:        "5ca746820d1e0bfdaacd3c9b051b62239cef1c765bb1b8434461aa07d8749454"
+    sha256                               arm64_linux:   "a5dab6693c7660439be128a6bf2abcbd81bacad55360c439daa4a8833f4c4315"
+    sha256                               x86_64_linux:  "a0f1eaa4fd6f16d6a20b9cc5707bf569748878e60e76e849d41fddd3115b8797"
   end
 
-  depends_on macos: :monterey
+  depends_on macos: :sonoma
 
-  uses_from_macos "swift"
+  uses_from_macos "swift", since: :sonoma
+
+  on_sonoma :or_older do
+    depends_on xcode: ["16.0", :build]
+  end
 
   # Uses Compression framework on macOS
   on_linux do

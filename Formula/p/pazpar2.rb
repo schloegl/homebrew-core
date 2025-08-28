@@ -4,22 +4,23 @@ class Pazpar2 < Formula
   url "https://ftp.indexdata.com/pub/pazpar2/pazpar2-1.14.1.tar.gz"
   sha256 "9baf590adb52cd796eccf01144eeaaf7353db1fd05ae436bdb174fe24362db53"
   license "GPL-2.0-or-later"
-  revision 5
+  revision 8
 
   livecheck do
     url "https://ftp.indexdata.com/pub/pazpar2/"
     regex(/href=.*?pazpar2[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "2e52d8a22589e2f6678dc1d75ee1a467b64f1f1ae9104d0fba38839ae5191cbf"
-    sha256 cellar: :any,                 arm64_sonoma:   "0f5b9eda587cc7108478df960e74800ce079e09bc131199b24cc37c6ed2ed0aa"
-    sha256 cellar: :any,                 arm64_ventura:  "19fe5a070389f82d87c36335ac4b123d8c72cff599e973acda4adb6e7be0384f"
-    sha256 cellar: :any,                 arm64_monterey: "c849fb96b762c184451e288ccde1514420e2b8071856d000e5b0a4ba5176a278"
-    sha256 cellar: :any,                 sonoma:         "7da68c0e0be9587afa65f166f41e20d6e6e6dcfc1d0fa55443c747ca867e4f03"
-    sha256 cellar: :any,                 ventura:        "5ec6a7c0bd7bb41976b42b3514b5c66f58e0021a027ac7136fbc3d2e942d6055"
-    sha256 cellar: :any,                 monterey:       "e0d0e10a9d903782753abe567aa3610a310276f2f4ce0a1332c02e0b22e5cfa2"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3122dee93d74f767ca110f6ca80763c78c4fa9d376892b08fdbe3e27f98d0cce"
+    sha256 cellar: :any,                 arm64_sequoia: "44eb9c8baaa3da4352d9bffbbc57a4d97023c2f26ac3c82f11791cc43b17012d"
+    sha256 cellar: :any,                 arm64_sonoma:  "2aa9e4eb2662d4e016671bd0c1dd0c23f185ff7d98d5b1ad77fe59ae5728a6a6"
+    sha256 cellar: :any,                 arm64_ventura: "f30a7a5de7036e177a68214b7f727ead6dbcc832d52389d80d01521b3c636d91"
+    sha256 cellar: :any,                 sonoma:        "2c60c0c004da43eb19a4b349a22d6f4da124acefb48238881550625bfbb9a129"
+    sha256 cellar: :any,                 ventura:       "489ed1569becf8b4dad09fb19fa0085a40dca876351f8165c404cf6c1ecaabf3"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "50996b95efc667e7e352ec8f13b1e4183b5d425da8779b5e872ac51b096e9ce0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5dc29a2de7c71fb13f0defd9fc5e20d4466a9a74d1d67afb3b1710f52be869bc"
   end
 
   head do
@@ -29,9 +30,9 @@ class Pazpar2 < Formula
     depends_on "libtool" => :build
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
-  depends_on "icu4c"
+  depends_on "icu4c@77"
   depends_on "yaz"
 
   uses_from_macos "libxml2"
@@ -44,7 +45,7 @@ class Pazpar2 < Formula
   end
 
   test do
-    (testpath/"test-config.xml").write <<~EOS
+    (testpath/"test-config.xml").write <<~XML
       <?xml version="1.0" encoding="UTF-8"?>
       <pazpar2 xmlns="http://www.indexdata.com/pazpar2/1.0">
         <threads number="2"/>
@@ -52,8 +53,8 @@ class Pazpar2 < Formula
           <listen port="8004"/>
         </server>
       </pazpar2>
-    EOS
+    XML
 
-    system "#{sbin}/pazpar2", "-t", "-f", "#{testpath}/test-config.xml"
+    system sbin/"pazpar2", "-t", "-f", testpath/"test-config.xml"
   end
 end

@@ -3,30 +3,21 @@ class Fobis < Formula
 
   desc "KISS build tool for automatically building modern Fortran projects"
   homepage "https://github.com/szaghi/FoBiS"
-  url "https://files.pythonhosted.org/packages/53/3a/5533ab0277977027478b4c1285bb20b6beb221b222403b10398fb24e81a2/FoBiS.py-3.0.5.tar.gz"
-  sha256 "ef23fde4199277abc693d539a81e0728571c349174da6b7476579f82482ab96c"
+  url "https://files.pythonhosted.org/packages/0c/b0/6c713be09d7d0cb3af98e3f5ec3d29aa74d85de571936242ba2cb0b51736/FoBiS.py-3.1.0.tar.gz"
+  sha256 "1c1df040c42596de49e402b00823e6feec1c06b2d6bc7ffcb1a6db605e75e9e1"
   license "GPL-3.0-or-later"
-  revision 2
 
   bottle do
-    rebuild 3
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "f207c61f2ce77fc893cdd2977e12643ddadea1a4d60df31d019dfda5599096be"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "147212cd6a9f780dbada04421a8fbf84e68b48a010b67a40db34b8f5ade5e771"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "26c58909011ac4d947e902e1128ed5bcbf2c8847d90b00cb7d9ed43ecd0a33bb"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "deb8ce8e0404339cb83dcc86b9e7a877e57a1d7ecf8813841ddfe076f095c2ce"
-    sha256 cellar: :any_skip_relocation, sonoma:         "117442d15b852a02ffd674c2a0644a110dea8a39308f8a64b9427fc029385a76"
-    sha256 cellar: :any_skip_relocation, ventura:        "5689771979471f64086c656e092dce45e26311836a9a6932723d208b70f80c20"
-    sha256 cellar: :any_skip_relocation, monterey:       "47191b5e509953a6b701c57810b7f93bc855ed515c047d8d27a0e556a7dd0c67"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "48182e9f5852fac9b862d87d2c10efeb1bbd0d384ffdfbaf7626918a6ea3746a"
+    sha256 cellar: :any_skip_relocation, all: "1b1f66d81ce0cdbbe8e74af5922384040aec477f8e9fdbf76bfae4672bd17f0e"
   end
 
   depends_on "gcc" # for gfortran
   depends_on "graphviz"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "configparser" do
-    url "https://files.pythonhosted.org/packages/0b/65/bad3eb64f30657ee9fa2e00e80b3ad42037db5eb534fadd15a94a11fe979/configparser-6.0.0.tar.gz"
-    sha256 "ec914ab1e56c672de1f5c3483964e68f71b34e457904b7b76e06b922aec067a8"
+    url "https://files.pythonhosted.org/packages/8b/ac/ea19242153b5e8be412a726a70e82c7b5c1537c83f61b20995b2eda3dcd7/configparser-7.2.0.tar.gz"
+    sha256 "b629cc8ae916e3afbd36d1b3d093f34193d851e11998920fdcfc4552218b7b70"
   end
 
   resource "future" do
@@ -39,21 +30,21 @@ class Fobis < Formula
   end
 
   test do
-    (testpath/"test-mod.f90").write <<~EOS
+    (testpath/"test-mod.f90").write <<~FORTRAN
       module fobis_test_m
         implicit none
         character(*), parameter :: message = "Hello FoBiS"
       end module
-    EOS
+    FORTRAN
 
-    (testpath/"test-prog.f90").write <<~EOS
+    (testpath/"test-prog.f90").write <<~FORTRAN
       program fobis_test
         use iso_fortran_env, only: stdout => output_unit
         use fobis_test_m, only: message
         implicit none
         write(stdout,'(A)') message
       end program
-    EOS
+    FORTRAN
 
     system bin/"FoBiS.py", "build", "-compiler", "gnu"
     assert_match "Hello FoBiS", shell_output(testpath/"test-prog")

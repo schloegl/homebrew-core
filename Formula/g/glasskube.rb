@@ -1,18 +1,18 @@
 class Glasskube < Formula
   desc "Missing Package Manager for Kubernetes"
-  homepage "https://glasskube.dev/"
-  url "https://github.com/glasskube/glasskube/archive/refs/tags/v0.23.0.tar.gz"
-  sha256 "307096ce6c5be8575bf73285e462974494facbf24c3eefa3a3faea3227743f55"
+  homepage "https://glasskube.dev/products/package-manager/docs/"
+  url "https://github.com/glasskube/glasskube/archive/refs/tags/v0.26.1.tar.gz"
+  sha256 "c044187e49683b39aa89c26bc02dab38781578c24b6ab277c0a58ae811066996"
   license "Apache-2.0"
   head "https://github.com/glasskube/glasskube.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "f23f64e6d65b28c48ce8a62fb410c5897ecb8ea95c45effb0916739f25b3d3f4"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "f23f64e6d65b28c48ce8a62fb410c5897ecb8ea95c45effb0916739f25b3d3f4"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "f23f64e6d65b28c48ce8a62fb410c5897ecb8ea95c45effb0916739f25b3d3f4"
-    sha256 cellar: :any_skip_relocation, sonoma:        "d4e489bed061e7cd5bad7dc09f13942b9554479385f3b324b07d231e00eb1be1"
-    sha256 cellar: :any_skip_relocation, ventura:       "d4e489bed061e7cd5bad7dc09f13942b9554479385f3b324b07d231e00eb1be1"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "128930e46210e821fe3eb06f3c15c8080884e8d99726b21388ba7b910edf9ba0"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "063ecfd9f5070323a625742f6501bfa047a48b75ae7b82034a65019fb28d383a"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "063ecfd9f5070323a625742f6501bfa047a48b75ae7b82034a65019fb28d383a"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "063ecfd9f5070323a625742f6501bfa047a48b75ae7b82034a65019fb28d383a"
+    sha256 cellar: :any_skip_relocation, sonoma:        "e973c658e887038f7e9af6391821dd0ab5c5e8c8e576b5a607f0f786b9a1cf98"
+    sha256 cellar: :any_skip_relocation, ventura:       "e973c658e887038f7e9af6391821dd0ab5c5e8c8e576b5a607f0f786b9a1cf98"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2ba2615470cf6001762cdb9acc28d84417494d385b53bd4c73a69e7a9109d56c"
   end
 
   depends_on "go" => :build

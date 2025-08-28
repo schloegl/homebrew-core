@@ -1,9 +1,10 @@
 class Dynare < Formula
   desc "Platform for economic models, particularly DSGE and OLG models"
   homepage "https://www.dynare.org/"
-  url "https://www.dynare.org/release/source/dynare-6.2.tar.xz"
-  sha256 "312a3358bb0735f09b13f996e2d32cfd297292201897c1075c399554398862d9"
+  url "https://www.dynare.org/release/source/dynare-6.4.tar.xz"
+  sha256 "9865e2e7f6b3705155538d5fb1fb0b01bc9decf07250b3b054d3555d651c3843"
   license "GPL-3.0-or-later"
+  revision 1
   head "https://git.dynare.org/Dynare/dynare.git", branch: "master"
 
   livecheck do
@@ -12,11 +13,11 @@ class Dynare < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_sonoma:  "671126f94d857b02545ac86704022beeabbc0c4fd2157ddd79c5460dcb6211e1"
-    sha256 cellar: :any, arm64_ventura: "0b12dc3e5e8d91e682298603296284c4c063d48cc661b99b26c950dd906c15d2"
-    sha256 cellar: :any, sonoma:        "863bd394606e7a19c734de48986bfc76e6cc6c43a7d31191ad0e9304fa44c8bd"
-    sha256 cellar: :any, ventura:       "f562fcaedbd71d2f38f6ba7edbad86f0a624b5780585a42381a40c8233882d34"
-    sha256               x86_64_linux:  "576424c0f8bad1fffd803bd071e4cbefb405699599f95bccb65d566a2df69b48"
+    sha256 cellar: :any, arm64_sonoma:  "f8e8a2c036bc5c3dae19b0c928936c424499bccf8059f1eb58e247ec349ba2ab"
+    sha256 cellar: :any, arm64_ventura: "948c9c2169b07c7f69ba0b46dd85f84e7a6c6765a8aab7a5aff4a3c14cde8b61"
+    sha256 cellar: :any, sonoma:        "ef2157fe6556619e676f697ef14dc59cdd815d8da820eb64e8d5dbd8c7d9e997"
+    sha256 cellar: :any, ventura:       "a46f9093f5999e6b35cb8049347e98285059c29c75db1ea19e22085f4a39eb67"
+    sha256               x86_64_linux:  "98253a5506492a3afcf9adcad5d56e2a79d50531a422fd66cf7a9a5513e79266"
   end
 
   depends_on "bison" => :build
@@ -25,7 +26,7 @@ class Dynare < Formula
   depends_on "flex" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "fftw"
   depends_on "gcc"
   depends_on "gsl"
@@ -63,6 +64,10 @@ class Dynare < Formula
     # https://git.dynare.org/Dynare/dynare/-/blob/master/macOS/homebrew-native-arm64.ini
     ENV.append "LDFLAGS", "-Wl,-ld_classic" if DevelopmentTools.clang_build_version >= 1500
 
+    # This needs a bit of extra help in finding the Octave libraries on Linux.
+    octave = Formula["octave"]
+    ENV.append "LDFLAGS", "-Wl,-rpath,#{octave.opt_lib}/octave/#{octave.version.major_minor_patch}" if OS.linux?
+
     # Help meson find `suite-sparse` and `slicot`
     ENV.append_path "LIBRARY_PATH", Formula["suite-sparse"].opt_lib
     ENV.append_path "LIBRARY_PATH", buildpath/"slicot/lib"
@@ -82,11 +87,12 @@ class Dynare < Formula
 
   test do
     resource "statistics" do
-      url "https://github.com/gnu-octave/statistics/archive/refs/tags/release-1.6.5.tar.gz", using: :nounzip
-      sha256 "0ea8258c92ce67e1bb75a9813b7ceb56fff1dacf6c47236d3da776e27b684cee"
+      url "https://github.com/gnu-octave/statistics/archive/refs/tags/release-1.7.3.tar.gz", using: :nounzip
+      sha256 "570d52af975ea9861a6fb024c23fc0f403199e4b56d7a883ee6ca17072e26990"
     end
 
-    ENV.cxx11
+    ENV.cxx
+    ENV.append "CXXFLAGS", "-std=c++17" # octave >= 10 requires c++17
     ENV.delete "LDFLAGS" # avoid overriding Octave flags
 
     # Work around Xcode 15.0 ld error with GCC: https://github.com/Homebrew/homebrew-core/issues/145991
@@ -102,12 +108,12 @@ class Dynare < Formula
 
     # Replace `makeinfo` with dummy command `true` to prevent generating docs
     # that are not useful to the test.
-    (testpath/"dyn_test.m").write <<~EOS
+    (testpath/"dyn_test.m").write <<~MATLAB
       makeinfo_program true
       pkg prefix #{testpath}/octave
       pkg install statistics-release-#{statistics.version}.tar.gz
       dynare bkk.mod console
-    EOS
+    MATLAB
 
     system Formula["octave"].opt_bin/"octave", "--no-gui",
            "--no-history", "--path", "#{lib}/dynare/matlab", "dyn_test.m"

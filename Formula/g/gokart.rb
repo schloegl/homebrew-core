@@ -21,6 +21,7 @@ class Gokart < Formula
   end
 
   deprecate! date: "2024-06-20", because: :repo_archived
+  disable! date: "2025-06-21", because: :repo_archived
 
   depends_on "go" => [:build, :test]
 
@@ -31,11 +32,11 @@ class Gokart < Formula
   test do
     mkdir "brewtest" do
       system "go", "mod", "init", "brewtest"
-      (testpath/"brewtest/main.go").write <<~EOS
+      (testpath/"brewtest/main.go").write <<~GO
         package main
 
         func main() {}
-      EOS
+      GO
     end
 
     assert_match "GoKart found 0 potentially vulnerable functions",

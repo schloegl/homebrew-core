@@ -3,31 +3,33 @@ class Glib < Formula
 
   desc "Core application library for C"
   homepage "https://docs.gtk.org/glib/"
-  url "https://download.gnome.org/sources/glib/2.82/glib-2.82.1.tar.xz"
-  sha256 "478634440bf52ee4ec4428d558787398c0be6b043c521beb308334b3db4489a6"
+  url "https://download.gnome.org/sources/glib/2.84/glib-2.84.4.tar.xz"
+  sha256 "8a9ea10943c36fc117e253f80c91e477b673525ae45762942858aef57631bb90"
   license "LGPL-2.1-or-later"
 
   bottle do
-    sha256 arm64_sequoia: "922c92018e72eb1b0aa972a39f9b04227dd50c2600434943584727f3d78fd672"
-    sha256 arm64_sonoma:  "be85658ed18ee50aa6f9c9ca016bdc97bd665129f1de350a2c0ae45bd5cea1a8"
-    sha256 arm64_ventura: "ddfe7b3569d9e0ef8c279ad311910a0f5f238a97425f4aecc9c568430c6fc5f9"
-    sha256 sonoma:        "d84c34b9572aca1b723f915debdbcc676e1ce3528b0c6ced48c92adbe0ecb917"
-    sha256 ventura:       "319c0b60fad79996858ca4b440f58798b2ed45f0971881ff6b0b164a75de1619"
-    sha256 x86_64_linux:  "67d479d1efa505b1c6af6ed6e4fb75cc8d51c0275f50fc44ef954c73e94eecb9"
+    sha256 arm64_sequoia: "8c27060502813360234e956090f1c6436f83769c422434e022921afa2f8c5f62"
+    sha256 arm64_sonoma:  "70669bafa8dd2da14026b6af440d6e61c9b2a7585fca97199ad3d0654348144b"
+    sha256 arm64_ventura: "48925bd88a19e3646c4e2f598da917fa4699cc8002aa2be99d3fe5d0241a745f"
+    sha256 sonoma:        "329bf204062422ce1fc93520491c5a27d6b8813037c2fa1a0aa211626c580011"
+    sha256 ventura:       "78c58e67316430396ebd04e055eccf0df777cfb79fbd136d1f2e26c4b8c03739"
+    sha256 arm64_linux:   "4d2f5b29a90d31c9e98e7f1a8f76837abb1e9371c0c0d7da9d848551e2fcc0be"
+    sha256 x86_64_linux:  "3505e47e9e696cf046824dcf246bb8a2c1562a903a392f53274e16d75a520bab"
   end
 
   depends_on "bison" => :build # for gobject-introspection
   depends_on "gettext" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "python-setuptools" => :build # for gobject-introspection
+  depends_on "python@3.13" => :build
   depends_on "pcre2"
-  depends_on "python-packaging"
-  depends_on "python@3.12"
 
   uses_from_macos "flex" => :build # for gobject-introspection
   uses_from_macos "libffi", since: :catalina
+  uses_from_macos "python"
+  uses_from_macos "zlib"
 
   on_macos do
     depends_on "gettext"
@@ -48,24 +50,23 @@ class Glib < Formula
                  "share/gir-1.0/GObject-2.0.gir", "share/gir-1.0/Gio-2.0.gir"
 
   resource "gobject-introspection" do
-    url "https://download.gnome.org/sources/gobject-introspection/1.82/gobject-introspection-1.82.0.tar.xz"
-    sha256 "0f5a4c1908424bf26bc41e9361168c363685080fbdb87a196c891c8401ca2f09"
+    url "https://download.gnome.org/sources/gobject-introspection/1.84/gobject-introspection-1.84.0.tar.xz"
+    sha256 "945b57da7ec262e5c266b89e091d14be800cc424277d82a02872b7d794a84779"
+
+    livecheck do
+      formula "gobject-introspection"
+    end
   end
 
   # replace several hardcoded paths with homebrew counterparts
   patch do
-    url "https://raw.githubusercontent.com/Homebrew/formula-patches/43467fd8dfc0e8954892ecc08fab131242dca025/glib/hardcoded-paths.diff"
-    sha256 "d81c9e8296ec5b53b4ead6917f174b06026eeb0c671dfffc4965b2271fb6a82c"
+    url "https://raw.githubusercontent.com/Homebrew/formula-patches/b46d8deae6983110b4e39bb2971bcbd10bb59716/glib/hardcoded-paths.diff"
+    sha256 "d846efd0bf62918350da94f850db33b0f8727fece9bfaf8164566e3094e80c97"
   end
 
   def install
-    python = "python3.12"
-    inreplace %w[gio/xdgmime/xdgmime.c glib/gutils.c], "@@HOMEBREW_PREFIX@@", HOMEBREW_PREFIX
     # Avoid the sandbox violation when an empty directory is created outside of the formula prefix.
     inreplace "gio/meson.build", "install_emptydir(glib_giomodulesdir)", ""
-
-    python_packaging_site_packages = Formula["python-packaging"].opt_prefix/Language::Python.site_packages(python)
-    (share/"glib-2.0").install_symlink python_packaging_site_packages.children
 
     # build patch for `ld: missing LC_LOAD_DYLIB (must link with at least libSystem.dylib) \
     # in ../gobject-introspection-1.80.1/build/tests/offsets/liboffsets-1.0.1.dylib`
@@ -88,16 +89,19 @@ class Glib < Formula
     # Ref: https://discourse.gnome.org/t/dealing-with-glib-and-gobject-introspection-circular-dependency/18701
     staging_dir = buildpath/"staging"
     staging_meson_args = std_meson_args.map { |s| s.sub prefix, staging_dir }
-    system "meson", "setup", "build_staging", "-Dintrospection=disabled", *args, *staging_meson_args
+    system "meson", "setup", "build_staging", "-Dintrospection=disabled", *args, *std_meson_args
     system "meson", "compile", "-C", "build_staging", "--verbose"
     system "meson", "install", "-C", "build_staging"
-    ENV.append_path "PKG_CONFIG_PATH", staging_dir/"lib/pkgconfig"
-    ENV.append_path "LD_LIBRARY_PATH", staging_dir/"lib" if OS.linux?
+    ENV.append_path "PKG_CONFIG_PATH", lib/"pkgconfig"
+    ENV.append_path "LD_LIBRARY_PATH", lib if OS.linux?
+
     resource("gobject-introspection").stage do
       system "meson", "setup", "build", "-Dcairo=disabled", "-Ddoctool=disabled", *staging_meson_args
       system "meson", "compile", "-C", "build", "--verbose"
       system "meson", "install", "-C", "build"
     end
+    ENV.append_path "PKG_CONFIG_PATH", staging_dir/"lib/pkgconfig"
+    ENV.append_path "LD_LIBRARY_PATH", staging_dir/"lib" if OS.linux?
     ENV.append_path "PATH", staging_dir/"bin"
 
     system "meson", "setup", "build", "--default-library=both", "-Dintrospection=enabled", *args, *std_meson_args
@@ -113,7 +117,6 @@ class Glib < Formula
 
     (buildpath/"gio/completion/.gitignore").unlink
     bash_completion.install (buildpath/"gio/completion").children
-    rewrite_shebang detected_python_shebang, *bin.children
     return unless OS.mac?
 
     # `pkg-config --libs glib-2.0` includes -lintl, and gettext itself does not
@@ -140,7 +143,7 @@ class Glib < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <string.h>
       #include <glib.h>
 
@@ -154,14 +157,14 @@ class Glib < Formula
 
           return (strcmp(str, result_2) == 0) ? 0 : 1;
       }
-    EOS
+    C
     system ENV.cc, "-o", "test", "test.c", "-I#{include}/glib-2.0",
                    "-I#{lib}/glib-2.0/include", "-L#{lib}", "-lglib-2.0"
     system "./test"
 
     assert_match "This file is generated by glib-mkenum", shell_output(bin/"glib-mkenums")
 
-    (testpath/"net.Corp.MyApp.Frobber.xml").write <<~EOS
+    (testpath/"net.Corp.MyApp.Frobber.xml").write <<~XML
       <node>
         <interface name="net.Corp.MyApp.Frobber">
           <method name="HelloWorld">
@@ -178,17 +181,17 @@ class Glib < Formula
           <property name="Verbose" type="b" access="readwrite"/>
         </interface>
       </node>
-    EOS
+    XML
 
     system bin/"gdbus-codegen", "--generate-c-code", "myapp-generated",
                                 "--c-namespace", "MyApp",
                                 "--interface-prefix", "net.corp.MyApp.",
                                 "net.Corp.MyApp.Frobber.xml"
-    assert_predicate testpath/"myapp-generated.c", :exist?
+    assert_path_exists testpath/"myapp-generated.c"
     assert_match "my_app_net_corp_my_app_frobber_call_hello_world", (testpath/"myapp-generated.h").read
 
     # Keep (u)int64_t and g(u)int64 aligned. See install comment for details
-    (testpath/"typecheck.cpp").write <<~EOS
+    (testpath/"typecheck.cpp").write <<~CPP
       #include <cstdint>
       #include <type_traits>
       #include <glib.h>
@@ -199,7 +202,7 @@ class Glib < Formula
         static_assert(std::is_same<uint64_t, guint64>::value == true, "guint64 should match uint64_t");
         return 0;
       }
-    EOS
+    CPP
     system ENV.cxx, "-o", "typecheck", "typecheck.cpp", "-I#{include}/glib-2.0", "-I#{lib}/glib-2.0/include"
   end
 end

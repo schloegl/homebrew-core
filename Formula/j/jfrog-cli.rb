@@ -1,18 +1,26 @@
 class JfrogCli < Formula
   desc "Command-line interface for JFrog products"
   homepage "https://www.jfrog.com/confluence/display/CLI/JFrog+CLI"
-  url "https://github.com/jfrog/jfrog-cli/archive/refs/tags/v2.70.0.tar.gz"
-  sha256 "0bb7e009a9148026cc5e3acd93a692d72841da42fdd301e0892a9f6e1d949db9"
+  url "https://github.com/jfrog/jfrog-cli/archive/refs/tags/v2.78.7.tar.gz"
+  sha256 "23f1fd98af8331818729d0255d0334b479f7681bd8577b0023813787740d7f5f"
   license "Apache-2.0"
   head "https://github.com/jfrog/jfrog-cli.git", branch: "v2"
 
+  # There can be a notable gap between when a version is tagged and a
+  # corresponding release is created, so we check the "latest" release instead
+  # of the Git tags.
+  livecheck do
+    url :stable
+    strategy :github_latest
+  end
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "145f7c81c2f912229cc7701c0c9025970bab1d28f16183c8513df31fa6fbcb23"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "145f7c81c2f912229cc7701c0c9025970bab1d28f16183c8513df31fa6fbcb23"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "145f7c81c2f912229cc7701c0c9025970bab1d28f16183c8513df31fa6fbcb23"
-    sha256 cellar: :any_skip_relocation, sonoma:        "9826c0e4217d90a185ecf6d23764cb71e0b4b783ef378343734e58d3ea1701c6"
-    sha256 cellar: :any_skip_relocation, ventura:       "9826c0e4217d90a185ecf6d23764cb71e0b4b783ef378343734e58d3ea1701c6"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "093dbf2f0648d9a732ed32d5d5f5de8b57b94878aac63852e42fa5385578b369"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "acec14a921314725cea3d970aebfe1478477edc5c91186b9ed585b080de022cc"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "acec14a921314725cea3d970aebfe1478477edc5c91186b9ed585b080de022cc"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "acec14a921314725cea3d970aebfe1478477edc5c91186b9ed585b080de022cc"
+    sha256 cellar: :any_skip_relocation, sonoma:        "6ada7a45e88a7a1901e975b9f93a675e104ef85853d96ca1d18d729f55c63cc1"
+    sha256 cellar: :any_skip_relocation, ventura:       "74b2976fbfb1087b3f76dedff31bc8a7eecf14883abdab50cbe2c3f991aa47c1"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ac136507cd4a192397cc7668f0557dfd89589785f4d2f2c386915e33b64fd5f5"
   end
 
   depends_on "go" => :build
@@ -21,7 +29,7 @@ class JfrogCli < Formula
     system "go", "build", *std_go_args(ldflags: "-s -w", output: bin/"jf")
     bin.install_symlink "jf" => "jfrog"
 
-    generate_completions_from_executable(bin/"jf", "completion", base_name: "jf")
+    generate_completions_from_executable(bin/"jf", "completion")
   end
 
   test do

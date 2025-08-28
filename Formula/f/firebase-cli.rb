@@ -1,34 +1,34 @@
 class FirebaseCli < Formula
   desc "Firebase command-line tools"
   homepage "https://firebase.google.com/docs/cli/"
-  url "https://registry.npmjs.org/firebase-tools/-/firebase-tools-13.20.2.tgz"
-  sha256 "22d7cba6438f8acffb9cfe0e7956873fbfb6991354c54a2d7b9a5178fd863044"
+  url "https://registry.npmjs.org/firebase-tools/-/firebase-tools-14.15.0.tgz"
+  sha256 "7796f04d8f4f52e5ce8b4836b8d71c7ba677647776f09b6b4883ae1317c1ea56"
   license "MIT"
-  head "https://github.com/firebase/firebase-tools.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "0fef2dc3881ff01f4a5f13a8f03cf477a6ac2d46524db4a39f3185bd743d03e9"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "0fef2dc3881ff01f4a5f13a8f03cf477a6ac2d46524db4a39f3185bd743d03e9"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "0fef2dc3881ff01f4a5f13a8f03cf477a6ac2d46524db4a39f3185bd743d03e9"
-    sha256 cellar: :any_skip_relocation, sonoma:        "bb10988b320b2da69de83a069c26d1bdde2f80a5a08d780ee885dfe476d0d45d"
-    sha256 cellar: :any_skip_relocation, ventura:       "bb10988b320b2da69de83a069c26d1bdde2f80a5a08d780ee885dfe476d0d45d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a76bfb253137b227eb5c03b90df58f5dac74cb44b5f5fa1d8c3b0a441b9d72a0"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "b199296b9d91f7f53ebb2f8a025ea4c60fee3151ba8fe08c807ff8281e89bd4b"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "b199296b9d91f7f53ebb2f8a025ea4c60fee3151ba8fe08c807ff8281e89bd4b"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "b199296b9d91f7f53ebb2f8a025ea4c60fee3151ba8fe08c807ff8281e89bd4b"
+    sha256 cellar: :any_skip_relocation, sonoma:        "b4c10728336e4cdb264c51f7e6dbb15d0ccbf557ecdb42188545cecc7822bfae"
+    sha256 cellar: :any_skip_relocation, ventura:       "b4c10728336e4cdb264c51f7e6dbb15d0ccbf557ecdb42188545cecc7822bfae"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "79b5436e68ce48dbadc31497d14d673fa0c02fe58d863f1c0bfaf2f60c623ed6"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7746f9e32fc8c463c0f0d7e2a62db24636880090f0ea6492953e61f42b734917"
   end
 
   depends_on "node"
 
-  uses_from_macos "expect" => :test
-
   def install
     system "npm", "install", *std_npm_args
-    bin.install_symlink Dir["#{libexec}/bin/*"]
+    bin.install_symlink libexec.glob("bin/*")
   end
 
   test do
-    (testpath/"test.exp").write <<~EOS
-      spawn #{bin}/firebase login:ci --no-localhost
-      expect "Paste"
-    EOS
-    assert_match "authorization code", shell_output("expect -f test.exp")
+    # Skip `firebase init` on self-hosted Linux as it has different behavior with nil exit status
+    if !OS.linux? || ENV["GITHUB_ACTIONS_HOMEBREW_SELF_HOSTED"].blank?
+      assert_match "Failed to authenticate", shell_output("#{bin}/firebase init", 1)
+    end
+
+    output = shell_output("#{bin}/firebase use dev 2>&1", 1)
+    assert_match "Failed to authenticate, have you run \e[1mfirebase login\e[22m?", output
   end
 end

@@ -1,24 +1,26 @@
 class Fourmolu < Formula
   desc "Formatter for Haskell source code"
   homepage "https://github.com/fourmolu/fourmolu"
-  url "https://github.com/fourmolu/fourmolu/archive/refs/tags/v0.16.2.0.tar.gz"
-  sha256 "3d4b36afaa6343f66f2cebb6df921aa51b796d0843a838a92627222112590166"
+  url "https://github.com/fourmolu/fourmolu/archive/refs/tags/v0.19.0.0.tar.gz"
+  sha256 "0ca870594e87ffa19fd39e49a65c45d4171f31b06bf03b6fd62717d7da93f323"
   license "BSD-3-Clause"
-  head "https://github.com/fourmolu/fourmolu.git", branch: "master"
+  head "https://github.com/fourmolu/fourmolu.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "0169d9e5786ce1d71d444ced3c11344de7f68bde62731e00b36bca9a602d5b6c"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "cf0db02a0898164b2824384a580c6b5522425374f368e7b2f4f7fca16b8709f0"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "0acac9a764b3e4c3685594c235eccbec37f2b7079a749e4eaf9cfdb4018f41ee"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "065133a0fe25829429bdc552ad223196aca2c5ef12a019615491b04b0ffb3f34"
-    sha256 cellar: :any_skip_relocation, sonoma:         "9cb449484c73336957da14fd5589d6e7f7d981ba4a4bfa81ecf5e58fc620c733"
-    sha256 cellar: :any_skip_relocation, ventura:        "7d6e90ad267ad10e1825a5cc86acb814b9a7652738db9fa48357af0782ba3683"
-    sha256 cellar: :any_skip_relocation, monterey:       "aab423c353efb09f503d3b502b6e513f91b76bb73be35f70bb64eb5753babfd9"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "396190a4f8bd9a84a887cfbd4fc906a4bc6995beadad477af8968f6fe52ead12"
+    sha256 cellar: :any,                 arm64_sequoia: "500fe7fdc2981ccddf4c12eac26eec5c3346989163d2088594907eb4af5d464b"
+    sha256 cellar: :any,                 arm64_sonoma:  "a32e1b13a822cfb21c6edca3805f9f153cfdb255f2444e513853246e10b87219"
+    sha256 cellar: :any,                 arm64_ventura: "bf6bcbba87e993c5fc23aa5418b34bed52f2d5f2b0f0ed9ceb9b9ff9c0b48a8a"
+    sha256 cellar: :any,                 sonoma:        "6d68970cd73b53c2194cd6f58f562fe40db19a6f2585031775f300ab8dc32c6f"
+    sha256 cellar: :any,                 ventura:       "2009975f2491b96b2654ee8445deaf0674bf46fdabaa76e486f040bbbcb3adb2"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "555a728fd178fd0a5d1ef144c9de23dc8e6b7ac3a7a86c89a224e2198580496c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a7ad8944689b56b3ee991d3f0cc05582a812d75faf9645822332525574eda1ff"
   end
 
   depends_on "cabal-install" => :build
   depends_on "ghc" => :build
+  depends_on "gmp"
+
+  uses_from_macos "libffi"
 
   def install
     system "cabal", "v2-update"
@@ -26,7 +28,7 @@ class Fourmolu < Formula
   end
 
   test do
-    (testpath/"test.hs").write <<~EOS
+    (testpath/"test.hs").write <<~HASKELL
       foo =
         f1
         p1
@@ -40,8 +42,8 @@ class Fourmolu < Formula
       foo'' =
         f3 p1 p2
         p3
-    EOS
-    expected = <<~EOS
+    HASKELL
+    expected = <<~HASKELL
       foo =
           f1
               p1
@@ -59,7 +61,7 @@ class Fourmolu < Formula
               p1
               p2
               p3
-    EOS
+    HASKELL
     assert_equal expected, shell_output("#{bin}/fourmolu test.hs")
   end
 end

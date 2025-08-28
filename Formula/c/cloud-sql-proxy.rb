@@ -1,20 +1,18 @@
 class CloudSqlProxy < Formula
   desc "Utility for connecting securely to your Cloud SQL instances"
   homepage "https://github.com/GoogleCloudPlatform/cloud-sql-proxy"
-  url "https://github.com/GoogleCloudPlatform/cloud-sql-proxy/archive/refs/tags/v2.13.0.tar.gz"
-  sha256 "bed0e7cd3d04a4b23826a486c57d74ed43fefb07fec73512e8bc9d634be020c8"
+  url "https://github.com/GoogleCloudPlatform/cloud-sql-proxy/archive/refs/tags/v2.18.2.tar.gz"
+  sha256 "98a7eeea8658505ce077728fbc6144f98ad44ba3ec1862e128c995a80c0ea7bf"
   license "Apache-2.0"
   head "https://github.com/GoogleCloudPlatform/cloud-sql-proxy.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "e37825842f5e4bda9b77a931e8673b189ec96680d23105de9d7caaaa7f7d9b66"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "6a395c2bda560d64c786a3b10bf720bfe783a1f21478a84e9b3e31108cdadde2"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "6a395c2bda560d64c786a3b10bf720bfe783a1f21478a84e9b3e31108cdadde2"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "6a395c2bda560d64c786a3b10bf720bfe783a1f21478a84e9b3e31108cdadde2"
-    sha256 cellar: :any_skip_relocation, sonoma:         "9c5a5b30d18af5b1031ab104847f045336db52083fd3b0bb1ef16b336635c89f"
-    sha256 cellar: :any_skip_relocation, ventura:        "9c5a5b30d18af5b1031ab104847f045336db52083fd3b0bb1ef16b336635c89f"
-    sha256 cellar: :any_skip_relocation, monterey:       "9c5a5b30d18af5b1031ab104847f045336db52083fd3b0bb1ef16b336635c89f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "6015d4c6720a3dd7b27a6175941c72af4e0c0b89a359c864088ae34fc95c9bef"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "de3b77fa160d3fd96901f232f04489201d70929424e2b0668182a6889ac3bab0"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "9bfddaf61cbe1885e4f4bb36a1de414209f7e34ca1c2a9d55d3e38be7ef1be2c"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "86cce3e6a7fa831e3e70ffa2060cef652e2ef7ae96749d7ccf8074d47203783e"
+    sha256 cellar: :any_skip_relocation, sonoma:        "45303b4eea93382f0ed7dbc66e280d485f2009cf5fee48c30da660ebb415b48e"
+    sha256 cellar: :any_skip_relocation, ventura:       "0bdb2c15f93d94f7df25a435ef8ac3a63b73c915f439f9b34aa39fc27304e1c5"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e0a8ba8d971b891a9a44f7c9384630de7022d3a237b3d60773b4f9dca631936b"
   end
 
   depends_on "go" => :build

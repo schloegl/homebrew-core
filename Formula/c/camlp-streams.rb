@@ -4,17 +4,18 @@ class CamlpStreams < Formula
   url "https://github.com/ocaml/camlp-streams/archive/refs/tags/v5.0.1.tar.gz"
   sha256 "ad71f62406e9bb4e7fb5d4593ede2af6c68f8b0d96f25574446e142c3eb0d9a4"
   license "LGPL-2.1-only" => { with: "OCaml-LGPL-linking-exception" }
-  revision 2
+  revision 4
+
+  no_autobump! because: :requires_manual_review
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "30108806277b639f8b7b9463eb73638b15ad0b885890afbb8c5353ab68eb4272"
-    sha256 cellar: :any,                 arm64_sonoma:   "2e14df738f00604bcc6f5bd534dc4a6216486240427aa007b5fe8df7b187b0fd"
-    sha256 cellar: :any,                 arm64_ventura:  "ca997e18666ae5d5a8e5763e33734b275cefe959a8f2e255d6851eb8f301978f"
-    sha256 cellar: :any,                 arm64_monterey: "f0a77287617143cdfa16431336601bf3a6f8a0414361b0b67b4516fc738f3c81"
-    sha256 cellar: :any,                 sonoma:         "b30608d83869c763c51775791e1d005d644c72cc64f2fa9d15c8cd2b11e77d39"
-    sha256 cellar: :any,                 ventura:        "c821b2f2fe7931a46ab12c76675d3ffb7dd6b52e867ea760043c5c3b0f3487c7"
-    sha256 cellar: :any,                 monterey:       "8c6b64e84a4345a3825af63c61b0e3240d5c3de2650cfbe7c3845d0a968eb4fd"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "94edf173dbacdba66a99216f910de374584c51a6a59ea97695ca251024a61a10"
+    sha256 cellar: :any,                 arm64_sequoia: "970fd620e3640135d45f61c7844b988f5a09dde94168f8649a8ec7f9e6f4a2cf"
+    sha256 cellar: :any,                 arm64_sonoma:  "1f73dac23e1b752a50fe5f3f68a6397c4a0cd7c350852451e5700c7806e00e71"
+    sha256 cellar: :any,                 arm64_ventura: "0a886bbea94a7e4d0540630b51923b68398a01ae609dd1193a251857567033fe"
+    sha256 cellar: :any,                 sonoma:        "38329d0763fc0c96171a6ac720b2bdc1cb88f66d2fff5422120cc54624123ec2"
+    sha256 cellar: :any,                 ventura:       "f4ee40b44bb00867dc0b570a71469bcf6e5f2024a32512747cddd2c5b29ff8e0"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "931af370b98b65b36f884ed1cb981cd88cb078bee5dac2be0dab438dd27eab07"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "037b83a383c536e2c9c5303ead944d3e4439bfaeba3d5d9f21f6165ca82bf1ed"
   end
 
   depends_on "dune" => :build
@@ -37,6 +38,6 @@ class CamlpStreams < Formula
     EOS
     system "ocamlfind", "ocamlopt", "-linkpkg", "-package", "camlp-streams",
                                     "-warn-error", "+3", "-o", "test", "test.ml"
-    assert_predicate testpath/"test", :exist?
+    assert_path_exists testpath/"test"
   end
 end

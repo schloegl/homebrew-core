@@ -1,36 +1,41 @@
 class Grails < Formula
   desc "Web application framework for the Groovy language"
   homepage "https://grails.org"
-  url "https://github.com/grails/grails-core/releases/download/v6.2.0/grails-6.2.0.zip"
-  sha256 "c2e7c0aa55a18bf07f0b0fba493c679261c4dd88cfa4a60fd6e142081aec616e"
+  url "https://github.com/apache/grails-core/releases/download/v6.2.3/grails-6.2.3.zip"
+  sha256 "b41e95efad66e2b93b4e26664f746a409ea70d43548e6c011e9695874a710b09"
   license "Apache-2.0"
 
   livecheck do
     url :stable
     regex(/^v?(\d+(?:\.\d+)+)$/i)
+    strategy :github_releases
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "45c0267b43c996861d95515bf9f4ecead095da10308382ee68a8f6c0842287f4"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "fd812c9a9d82a9520388c50bd217b79c54005af8d4c746738ed7818318b63d3b"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "fd812c9a9d82a9520388c50bd217b79c54005af8d4c746738ed7818318b63d3b"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "fd812c9a9d82a9520388c50bd217b79c54005af8d4c746738ed7818318b63d3b"
-    sha256 cellar: :any_skip_relocation, sonoma:         "5d0db416139b3cfc043c8b19d0bf002f59b1c2156d21309301ced52fa561d90c"
-    sha256 cellar: :any_skip_relocation, ventura:        "5d0db416139b3cfc043c8b19d0bf002f59b1c2156d21309301ced52fa561d90c"
-    sha256 cellar: :any_skip_relocation, monterey:       "5d0db416139b3cfc043c8b19d0bf002f59b1c2156d21309301ced52fa561d90c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "fd812c9a9d82a9520388c50bd217b79c54005af8d4c746738ed7818318b63d3b"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, all: "886fd3f292e6425dcc217aadb07ee135e47ea536ef199fcc3876dfe4bf6fe589"
   end
 
-  depends_on "openjdk@11"
+  depends_on "openjdk@17"
 
+  # TODO: grails-forge is merged into core at version 7
   resource "cli" do
-    url "https://github.com/grails/grails-forge/releases/download/v6.2.0/grails-cli-6.2.0.zip"
-    sha256 "de6eaa4389ce4cb08081e219f8838b6cb1a0445c8e6a4dd66cb4cc2fa7652776"
+    url "https://github.com/apache/grails-forge/releases/download/v6.2.3/grails-cli-6.2.3.zip"
+    sha256 "ef78a48238629a89d64996367d0424bc872978caf6c23c3cdae92b106e2b1731"
+
+    livecheck do
+      formula :parent
+    end
+  end
+
+  def java_version
+    "17"
   end
 
   def install
     odie "cli resource needs to be updated" if version != resource("cli").version
 
+    rm_r("bin") # Use cli resource, should be removed at version 7
     libexec.install Dir["*"]
 
     resource("cli").stage do
@@ -40,7 +45,7 @@ class Grails < Formula
       bash_completion.install "bin/grails_completion" => "grails"
     end
 
-    bin.env_script_all_files libexec/"bin", Language::Java.overridable_java_home_env("11")
+    bin.env_script_all_files libexec/"bin", Language::Java.overridable_java_home_env(java_version)
   end
 
   def caveats
@@ -51,10 +56,37 @@ class Grails < Formula
   end
 
   test do
+    assert_match "Grails Version: #{version}", shell_output("#{bin}/grails --version")
+
     system bin/"grails", "create-app", "brew-test"
-    assert_predicate testpath/"brew-test/gradle.properties", :exist?
+    assert_path_exists testpath/"brew-test/gradle.properties"
     assert_match "brew.test", File.read(testpath/"brew-test/build.gradle")
 
-    assert_match "Grails Version: #{version}", shell_output("#{bin}/grails --version")
+    cd "brew-test" do
+      system bin/"grails", "create-controller", "greeting"
+      rm "grails-app/controllers/brew/test/GreetingController.groovy"
+      Pathname("grails-app/controllers/brew/test/GreetingController.groovy").write <<~GROOVY
+        package brew.test
+        class GreetingController {
+            def index() {
+                render "Hello Homebrew"
+            }
+        }
+      GROOVY
+
+      # Test that scripts are compatible with OpenJDK version
+      port = free_port
+      ENV["JAVA_HOME"] = Language::Java.java_home(java_version)
+      system "./gradlew", "--no-daemon", "assemble"
+      pid = spawn "./gradlew", "--no-daemon", "bootRun", "-Dgrails.server.port=#{port}"
+      begin
+        sleep 20
+        sleep 20 if OS.mac? && Hardware::CPU.intel?
+        assert_equal "Hello Homebrew", shell_output("curl --silent http://localhost:#{port}/greeting/index")
+      ensure
+        Process.kill "TERM", pid
+        Process.wait pid
+      end
+    end
   end
 end

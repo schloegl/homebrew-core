@@ -14,6 +14,8 @@ class Qhull < Formula
     regex(/href=.*?qhull[._-][^"' >]+?[._-]src[^>]*?\.t[^>]+?>[^<]*Qhull v?(\d+(?:\.\d+)*)/i)
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     rebuild 1
     sha256 cellar: :any,                 arm64_sequoia:  "03294d7f8db8437cdf8d4d679ae41808a195b733907bf638671f99089592dc17"
@@ -25,19 +27,24 @@ class Qhull < Formula
     sha256 cellar: :any,                 ventura:        "8c5922f72dbf8061a0e6e0b459e6eca4898ee2236223965daae35fca77309b5c"
     sha256 cellar: :any,                 monterey:       "67ee6237ae95266f7acbb4e19ec2db41fd3fe22faa60060d9988e87cd473e073"
     sha256 cellar: :any,                 big_sur:        "dfd8138816f958dece1b6f30188ad3bfa53c3c8c74abf2ab22f3462477924b84"
+    sha256 cellar: :any_skip_relocation, arm64_linux:    "674616b881abea9139c0f2db580b813eecdc401e46842f792b19f843cff5eb11"
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "1dc32a7258d2f678417041a1dbd2ea922369e67209062ada7b19caee4fd2c55c"
   end
 
   depends_on "cmake" => :build
 
   def install
+    # Workaround for CMake 4.0+
+    ENV["CMAKE_POLICY_VERSION_MINIMUM"] = "3.5"
+    odie "Remove cmake workaround" if build.stable? && version > "2020.2"
+
     system "cmake", "-S", ".", "-B", "build", *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
   end
 
   test do
-    input = shell_output(bin/"rbox c D2")
+    input = shell_output("#{bin}/rbox c D2")
     output = pipe_output("#{bin}/qconvex s n 2>&1", input, 0)
     assert_match "Number of facets: 4", output
   end

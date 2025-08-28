@@ -4,18 +4,15 @@ class Carla < Formula
   license "GPL-2.0-or-later"
 
   stable do
-    url "https://github.com/falkTX/Carla/archive/refs/tags/v2.5.8.tar.gz"
-    sha256 "4ec96d06342ff28da4b80d4a76bc08fcaa5703726f96e5174afcdc4f7fc6195d"
+    url "https://github.com/falkTX/Carla/archive/refs/tags/v2.5.10.tar.gz"
+    sha256 "ae2835b12081f7271a6b0b25d34b87d36b022c40370028ca4a10f90fcedfa661"
 
-    # TODO: use `pyqt` and `qt` from HEAD unconditionally when new release includes Qt6 support
+    # TODO: Remove in 2.6.0
+    depends_on maximum_macos: [:sonoma, :build]
+
+    # TODO: Use `pyqt` and `qt` from HEAD in 2.6.0
     depends_on "pyqt@5"
     depends_on "qt@5"
-
-    # liblo API build patch, remove in next release
-    patch do
-      url "https://github.com/falkTX/Carla/commit/9370483b0a278eab6462c33b16e53377f7fffc6c.patch?full_index=1"
-      sha256 "eb9d9c45eaa95cb7756a0b0c38f7f2bd456a3ee3a0096a60d2fdd6af44bd1a49"
-    end
   end
 
   livecheck do
@@ -24,13 +21,11 @@ class Carla < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "ec1291381e671d32533a89d49ac8422f0c33fb88f9ad4738798f011028c2599c"
-    sha256 cellar: :any,                 arm64_ventura:  "56f402f64745b913bc0645dbf7fa8ba50ad420b982379c06a887d764bc873a03"
-    sha256 cellar: :any,                 arm64_monterey: "929e274b0219f74c23be1c65f9cdda50e3b5f8b9ae38ffd1afc0f55d0f535213"
-    sha256 cellar: :any,                 sonoma:         "3da956c57828aff90102bb0a76f37bfdf13b1b0dd0f5f6dfaf0a951e52aa7b17"
-    sha256 cellar: :any,                 ventura:        "8f378e081f6fb5ab948a97d31741b42e6dc51cd273219239a1e24873b9cb9403"
-    sha256 cellar: :any,                 monterey:       "2640474117ea51fa88e1289ee017bf440c6c00631339ddff05b9affa91e49f88"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "945471081c1fa496a673c4b0d86375612ff1198ccbe92dd799dfc93a8c2a893b"
+    sha256 cellar: :any,                 arm64_sonoma:  "e68c44affb1640960ee3a5523a637b149d5426ca0e40cc8434c1c93c81fbed9b"
+    sha256 cellar: :any,                 arm64_ventura: "ecbea509ddf5ef1074d5838e01669a49d48c24baf4ec10d816d894cb39830b7c"
+    sha256 cellar: :any,                 sonoma:        "768c0fccfd67bafa8c1e23bbf0531ae88e3f756d4d074079fbad4c7c2b0fe202"
+    sha256 cellar: :any,                 ventura:       "8e2274219eda8243736ed5e015cdb5ef62a2add1c1e59280e0ba84738c66abf3"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9a63e9f2d8ecfb2fbee7417dc8b0cb21fd55d64f5d75ae9cdf8d09cd60621c0b"
   end
 
   head do
@@ -40,13 +35,13 @@ class Carla < Formula
     depends_on "qt"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "fluid-synth"
   depends_on "liblo"
   depends_on "libmagic"
   depends_on "libsndfile"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   on_linux do
     depends_on "alsa-lib"
@@ -57,14 +52,12 @@ class Carla < Formula
     depends_on "sdl2"
   end
 
-  fails_with gcc: "5"
-
   def install
     system "make"
     system "make", "install", "PREFIX=#{prefix}"
 
     inreplace bin/"carla", "PYTHON=$(which python3 2>/dev/null)",
-                           "PYTHON=#{which("python3.12")}"
+                           "PYTHON=#{which("python3.13")}"
   end
 
   test do

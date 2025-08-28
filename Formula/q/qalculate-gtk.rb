@@ -1,22 +1,21 @@
 class QalculateGtk < Formula
   desc "Multi-purpose desktop calculator"
   homepage "https://qalculate.github.io/"
-  url "https://github.com/Qalculate/qalculate-gtk/releases/download/v5.2.0/qalculate-gtk-5.2.0.tar.gz"
-  sha256 "1a917fe5d5ca03e21a97308bac31f013d5459edd090ba20717eaf56259270dbd"
+  url "https://github.com/Qalculate/qalculate-gtk/releases/download/v5.7.0/qalculate-gtk-5.7.0.tar.gz"
+  sha256 "dcb3663b36abafdfe32e943644bf4fc64bd685c0225f944a3f1c4a85e70db3b5"
   license "GPL-2.0-or-later"
 
   bottle do
-    sha256 arm64_sonoma:   "645b694a80851f8b67fd45baf9b24cdcb4420c07b2807309eebf0ec14d778c07"
-    sha256 arm64_ventura:  "bf666fb4d35cf60fd4bbbee812bfb6561b7b1a4269cb8f91af5ee57d6bc6d581"
-    sha256 arm64_monterey: "e7b0e16b885d55ff247f2c03cb08df66874edeed05306fdae968b6d4c01f9d3c"
-    sha256 sonoma:         "e77f877ba1e0ff2251b984add05a071ea1e027a4ffdaee6c8dc215f76b1491ef"
-    sha256 ventura:        "f5978b9950674544b136c42cde24f4cc1fade12378e63064e8263a50961bb93d"
-    sha256 monterey:       "5bc3ca14a97963521c4ec0a0b55aa6f3ac09843dff6379cb50511299e3f54e65"
-    sha256 x86_64_linux:   "d8367367da463d8abb883fe8d6feae317dc755a304f6291e88038f2cf3208bb7"
+    sha256 arm64_sonoma:  "15bde61f26fa00d26cf9863d7a78a34239e25b3818466b101a37b882fae3605d"
+    sha256 arm64_ventura: "4af623c2b0a434da474d072f5ae0d277799022b64167d1363768c2be6228fdb7"
+    sha256 sonoma:        "8d82b164a2bfd123f543882c916b3493648dd15030aae95ba143b4cc85aae73e"
+    sha256 ventura:       "2a9cf3014005d73f22a5258e8f5fa251b1c3b934b9534d8636e6d390a78b61fe"
+    sha256 x86_64_linux:  "35c3ec2b11808358c7e0b8147f216c14934367f3d7771a1cf2091b009f9a34c4"
   end
 
+  depends_on "gettext" => :build
   depends_on "intltool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "adwaita-icon-theme"
   depends_on "cairo"
@@ -41,7 +40,7 @@ class QalculateGtk < Formula
   def install
     ENV.prepend_path "PERL5LIB", Formula["perl-xml-parser"].libexec/"lib/perl5" unless OS.mac?
 
-    system "./configure", *std_configure_args.reject { |s| s["--disable-debug"] }
+    system "./configure", *std_configure_args
     system "make", "install"
   end
 

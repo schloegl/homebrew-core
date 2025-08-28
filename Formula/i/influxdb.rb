@@ -1,13 +1,11 @@
 class Influxdb < Formula
   desc "Time series, events, and metrics database"
   homepage "https://influxdata.com/time-series-platform/influxdb/"
-  # When bumping to 3.x, update license stanza to `license any_of: ["Apache-2.0", "MIT"]`
-  # Ref: https://github.com/influxdata/influxdb/blob/main/Cargo.toml#L124
   url "https://github.com/influxdata/influxdb.git",
-      tag:      "v2.7.10",
-      revision: "f302d9730c3c66577bea7bc7199cfae773bf308e"
-  license "MIT"
-  head "https://github.com/influxdata/influxdb.git", branch: "main-2.x"
+      tag:      "v3.4.0",
+      revision: "9e26dadce59a3e453b80e8d2a9342da5bde3210a"
+  license any_of: ["Apache-2.0", "MIT"]
+  head "https://github.com/influxdata/influxdb.git", branch: "main"
 
   # There can be a notable gap between when a version is tagged and a
   # corresponding release is created, so we check releases instead of the Git
@@ -21,120 +19,63 @@ class Influxdb < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "3a42b508ddb1b9afa8127abf8b17de6f061bd82cf1e87fd03a82e4d7a17f5f9c"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "d77bc46ed3327b7b0fdbb00f043c2a1a19d60dea2ba1abc7b456b0132fd27f80"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "39520065d44f4c22f7e063dc7704779a4f6fc30cfbc8f5c726bc8bc24ca7ca92"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "1164aadaad10ad149b1751b8c0ccf0b96e671a880ea0ecee3b0bf05537013520"
-    sha256 cellar: :any_skip_relocation, sonoma:         "468a05d3b08bebb974a74c0835fbd390b3b779359b7bb7c0af5be1a6fdc444d5"
-    sha256 cellar: :any_skip_relocation, ventura:        "0d46147e4aed85b578105188ae7d99b1ce5344340ab1ff1dffac84ce3e001e0b"
-    sha256 cellar: :any_skip_relocation, monterey:       "b2b948941a88660812dbade01ef0b6aab00a63f116424c75f68abd831c93d6cd"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "cfc8959bddb5cd650a48835e00bc4b76402cc3c8d56b9efbadff72eb0e415411"
+    sha256 cellar: :any,                 arm64_sequoia: "251b2e5e5062197c33fc5c6ecf84d738c61b7ef7867fa31765144473c393b605"
+    sha256 cellar: :any,                 arm64_sonoma:  "b8fbde9575e53107687390fab5bf88b9ebbdb139bba58944ef7edb99e5192b70"
+    sha256 cellar: :any,                 arm64_ventura: "0ce4f55589ca17b33b09b0bd5288e673bac636716584009bb3bd61aeb68e3901"
+    sha256 cellar: :any,                 sonoma:        "b423c21c66e35080ba59e3f5646fbbc09cee9ff7bc44457687316b45242c9cc8"
+    sha256 cellar: :any,                 ventura:       "80e49708a33b6286d5c2801027de5f92438e9df0eff8c98b788fccedd061d28b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "471ea101ee4cbdf4d4bdb7a3542edaf2f5c15927cd928eda9106e72cfe1ed0ee"
   end
 
-  depends_on "breezy" => :build
-  depends_on "go" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "protobuf" => :build
   depends_on "rust" => :build
+  depends_on "python@3.13"
 
-  # NOTE: The version here is specified in the go.mod of influxdb.
-  # If you're upgrading to a newer influxdb version, check to see if this needs upgraded too.
-  resource "pkg-config-wrapper" do
-    url "https://github.com/influxdata/pkg-config/archive/refs/tags/v0.2.11.tar.gz"
-    sha256 "52b22c151163dfb051fd44e7d103fc4cde6ae8ff852ffc13adeef19d21c36682"
+  uses_from_macos "llvm" => :build
 
-    livecheck do
-      url "https://raw.githubusercontent.com/influxdata/influxdb/v#{LATEST_VERSION}/go.mod"
-      regex(/pkg-config\s+v?(\d+(?:\.\d+)+)/i)
-    end
-  end
-
-  # NOTE: The version/URL here is specified in scripts/fetch-ui-assets.sh in influxdb.
-  # If you're upgrading to a newer influxdb version, check to see if this needs upgraded too.
-  resource "ui-assets" do
-    url "https://github.com/influxdata/ui/releases/download/OSS-2.7.8/build.tar.gz"
-    sha256 "28ace1df37b7860b011e5c1b8c74830b0ec584d2f86c24e58a7c855c168f58a8"
-
-    livecheck do
-      url "https://raw.githubusercontent.com/influxdata/influxdb/v#{LATEST_VERSION}/scripts/fetch-ui-assets.sh"
-      regex(/UI_RELEASE=["']?OSS[._-]v?(\d+(?:\.\d+)+)["']?$/i)
-    end
+  on_linux do
+    depends_on "lld" => :build
   end
 
   def install
-    # Set up the influxdata pkg-config wrapper to enable just-in-time compilation & linking
-    # of the Rust components in the server.
-    resource("pkg-config-wrapper").stage do
-      system "go", "build", *std_go_args(output: buildpath/"bootstrap/pkg-config")
+    py = Formula["python@3.13"].opt_bin/"python3"
+    ENV["PYO3_PYTHON"] = py
+    ENV["PYTHON_SYS_EXECUTABLE"] = py
+
+    # Configure rpath to locate Python framework at runtime
+    if OS.mac?
+      fwk_dir = Formula["python@3.13"].opt_frameworks/"Python3.framework/Versions/3.13"
+      ENV.append "RUSTFLAGS", "-C link-arg=-Wl,-rpath,#{fwk_dir}"
     end
-    ENV.prepend_path "PATH", buildpath/"bootstrap"
 
-    # Extract pre-build UI resources to the location expected by go-bindata.
-    resource("ui-assets").stage(buildpath/"static/data/build")
-    # Embed UI files into the Go source code.
-    system "make", "generate-web-assets"
-
-    # Build the server.
-    ldflags = %W[
-      -s
-      -w
-      -X main.version=#{version}
-      -X main.commit=#{Utils.git_short_head(length: 10)}
-      -X main.date=#{time.iso8601}
-    ]
-
-    system "go", "build", *std_go_args(output: bin/"influxd", ldflags:),
-           "-tags", "assets,sqlite_foreign_keys,sqlite_json", "./cmd/influxd"
-
-    data = var/"lib/influxdb2"
-    data.mkpath
-
-    # Generate default config file.
-    config = buildpath/"config.yml"
-    config.write Utils.safe_popen_read(bin/"influxd", "print-config",
-                                       "--bolt-path=#{data}/influxdb.bolt",
-                                       "--engine-path=#{data}/engine")
-    (etc/"influxdb2").install config
-
-    # Create directory for DB stdout+stderr logs.
-    (var/"log/influxdb2").mkpath
-  end
-
-  def caveats
-    <<~EOS
-      This formula does not contain command-line interface; to install it, run:
-        brew install influxdb-cli
-    EOS
+    system "cargo", "install", *std_cargo_args(path: "influxdb3")
   end
 
   service do
-    run opt_bin/"influxd"
+    run opt_bin/"influxdb3"
     keep_alive true
     working_dir HOMEBREW_PREFIX
-    log_path var/"log/influxdb2/influxd_output.log"
-    error_log_path var/"log/influxdb2/influxd_output.log"
-    environment_variables INFLUXD_CONFIG_PATH: etc/"influxdb2/config.yml"
+    log_path var/"log/influxdb3/influxd_output.log"
+    error_log_path var/"log/influxdb3/influxd_output.log"
   end
 
   test do
-    influxd_port = free_port
-    influx_host = "http://localhost:#{influxd_port}"
-    ENV["INFLUX_HOST"] = influx_host
+    port = free_port
+    host = "http://localhost:#{port}"
+    pid = spawn bin/"influxdb3", "serve",
+                          "--node-id", "node1",
+                          "--object-store", "file",
+                          "--data-dir", testpath/"influxdb_data",
+                          "--http-bind", "0.0.0.0:#{port}"
 
-    influxd = fork do
-      exec "#{bin}/influxd", "--bolt-path=#{testpath}/influxd.bolt",
-                             "--engine-path=#{testpath}/engine",
-                             "--http-bind-address=:#{influxd_port}",
-                             "--log-level=error"
-    end
-    sleep 30
+    sleep 5
+    sleep 5 if OS.mac? && Hardware::CPU.intel?
 
-    # Check that the server has properly bundled UI assets and serves them as HTML.
-    curl_output = shell_output("curl --silent --head #{influx_host}")
-    assert_match "200 OK", curl_output
-    assert_match "text/html", curl_output
+    curl_output = shell_output("curl --silent --head #{host}")
+    assert_match "401 Unauthorized", curl_output
   ensure
-    Process.kill("TERM", influxd)
-    Process.wait influxd
+    Process.kill "TERM", pid
+    Process.wait pid
   end
 end

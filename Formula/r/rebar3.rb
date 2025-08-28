@@ -1,10 +1,9 @@
 class Rebar3 < Formula
   desc "Erlang build tool"
   homepage "https://rebar3.org"
-  url "https://github.com/erlang/rebar3/archive/refs/tags/3.24.0.tar.gz"
-  sha256 "391b0eaa2825bb427fef1e55a0d166493059175f57a33b00346b84a20398216c"
+  url "https://github.com/erlang/rebar3/archive/refs/tags/3.25.1.tar.gz"
+  sha256 "458d6ceaf7822dd7682288354ab3ba74e14b3ed11cc5b551af9eb312de894106"
   license "Apache-2.0"
-  revision 1
 
   livecheck do
     url :stable
@@ -12,16 +11,16 @@ class Rebar3 < Formula
   end
 
   bottle do
-    rebuild 2
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "6c00aba8ef8aa1954959241927a697dbb389af2e53113013ec740950859134b7"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "081a82ce85c737630c4f454e32031c095b5f7fb8c9139705c26ea1463b56bab2"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "daaf2e1860ada7bcaff3c59dd161611f4af4298893ee19d6b543523eecc060fd"
-    sha256 cellar: :any_skip_relocation, sonoma:        "c53cf3cf89d153a1c22c75077eb23e917806af58aac6ab58053537227a438970"
-    sha256 cellar: :any_skip_relocation, ventura:       "96c91363e3a00fc8b4cf1187601941bda4dff426e3e79f06f924225ea6de1c2f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "33ffd13dc4476f1006a2b10b00fbdc818178f902299d0384a98362c929268954"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "4ddc64334491a6041c62359f0071023f05c70165aa57d221a1924f378f932541"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "3b730f3c3eb084553b25e1fa3335188c31f6a41289057bab6715478c6f8ce799"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "e0349d3cde36fc0aa4e93a1ba35ab9a6ea44d8e526bb88f9cd4bd8aff7865896"
+    sha256 cellar: :any_skip_relocation, sonoma:        "00743ddb3ff230137c07049b4e837ca34065ec65156ab654e05f69107115e973"
+    sha256 cellar: :any_skip_relocation, ventura:       "d9e245b9abc51ba4ec06e7d9b803bbaf638cec0e9a087482261d38d4f418cd18"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "d230caab68a05bab0f6b2ad7635e3f0c20f87cb5458791d9c584a0bb4e07c03a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1b391ea3eceb1883cb2ec84a9b94b2803f9991cf2344d4672fdd7cd5bdaafa41"
   end
 
-  depends_on "erlang@25" => [:build, :test]
+  depends_on "erlang@26" => [:build, :test]
   depends_on "erlang"
 
   def install

@@ -1,8 +1,8 @@
 class Livekit < Formula
   desc "Scalable, high-performance WebRTC server"
   homepage "https://livekit.io"
-  url "https://github.com/livekit/livekit/archive/refs/tags/v1.7.2.tar.gz"
-  sha256 "8f8cae616a1bb35d8a83a050c90eff2b3158190bb9f352478f21745c917df869"
+  url "https://github.com/livekit/livekit/archive/refs/tags/v1.9.0.tar.gz"
+  sha256 "d7ccdc718be14ae97e07c368511cc4029a08761983727121fb5a888754ee1de0"
   license "Apache-2.0"
   head "https://github.com/livekit/livekit.git", branch: "master"
 
@@ -15,20 +15,19 @@ class Livekit < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "17ec5b8bc82f94ffcfaff37e89ca4e1bd26fb2ea1dc6ff7f202ca105f4898f69"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "2cc5c072e54c0254ed2945390a750e0b2c7d0d465af943486262d95764f8a1f8"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "bfc953fc7261c5354cddecd5937e08a36f7587f99c17554de72bd3a7701bbc03"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "9c4f3a86f5ebcecd4dca7c0320fa2ee87be0a20fa881f8b131c5ff8e7209ac91"
-    sha256 cellar: :any_skip_relocation, sonoma:         "79f8cd64c8e20cc0a97085b3d372502820cf58b5de3a9fde6463ac97b962dcac"
-    sha256 cellar: :any_skip_relocation, ventura:        "554087b3871473fbac9d99d7bee58716c2da5392bf667ec517961c4e04314829"
-    sha256 cellar: :any_skip_relocation, monterey:       "334dfb67a819d8ec455b5133087b81b43db133560e576057e7b3b07fcc6199a8"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "e5ffd1ce70d3d1414f12383678b48667b4a3be57a21d1b77bf6eec17cbf44bc9"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "87d0fcc931ad2190afc520eacf64c11a3de93eae38355ff30c12e69b52ed5cca"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "e04b597f894fa09a309dc58876672364f4a59365d10ce0816abd249c9ab4edb1"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "678485b983f20f2623ec565ce2e4730f5e9745f1e0cd803098cf65657746f4c5"
+    sha256 cellar: :any_skip_relocation, sonoma:        "55142ccfe82e873c50a246786c983d56a4280db237b3a0f3c68efbb334271044"
+    sha256 cellar: :any_skip_relocation, ventura:       "d2118f49cfe7a7ccf782ac834b2553f1670d61affeec4b05abc2517849c05f2b"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "d73d79fdce10aaeb241bed157768711f1822e88fe990c17a1136c623b72789ce"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9c76da4c5629de61ddfcc7ddd727abf3e91c5f322e18b76c54ce5835162691e9"
   end
 
   depends_on "go" => :build
 
   def install
-    system "go", "build", *std_go_args(output: bin/"livekit-server"), "./cmd/server"
+    system "go", "build", *std_go_args(ldflags: "-s -w", output: bin/"livekit-server"), "./cmd/server"
   end
 
   test do

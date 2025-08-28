@@ -6,23 +6,23 @@ class Coconut < Formula
   url "https://files.pythonhosted.org/packages/93/75/414f33186846444da53b4e834d5ccfb0577d0e09b997819c183fa509f70a/coconut-3.1.2.tar.gz"
   sha256 "ef0656ee2df4594007f998f4a9c2a1b9bfbc40541a400cbaa00ccbbac50e5414"
   license "Apache-2.0"
+  revision 1
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "f40d1201b9b52e5ef52b03102febee1add7119a7091bd9313b068ffe4ff62556"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "caf2ac1e1c6f0aed297ef0b9af1c49a8968c0cf4cfd8230e0b7e2cc618ae3090"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "e31ea818db43d09baa443fe2af11f981a1b2e625c88b629e1eef957bf05663a7"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "f97665b22bc5843e14c962ab685060b8eefb776ebfa14cfb01ff573ee5d8cf09"
-    sha256 cellar: :any_skip_relocation, sonoma:         "02c14e4de3171dcb73d5308375a2dd5b23f2edbf435685033235c8ba5e5a8b69"
-    sha256 cellar: :any_skip_relocation, ventura:        "2f950454d298751f88015943d97e7dd4bc504c254aa3d70946c9e8a3e31f94c4"
-    sha256 cellar: :any_skip_relocation, monterey:       "0ed68359bcf643eb9a67817660a59e2fbcf0c0b56ad9b0f072f6484a6ead0f02"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3bb84dd30519e83e8af41fd21ca1e4ec7df8562bee1e45a08575fa85e5b907b7"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "aca72ab34ede7dbd58511c74d31dcebe2b90c7948d65a2ce92401e1698bd3e32"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "3bb036eec407591dbd4d31cdc97c01f696460ad656dcc5d0a21eb63848c551ee"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "c486d46e3415d8c0f5064f71687f0664ad5dfe149a5ec130e459e02582b892fd"
+    sha256 cellar: :any_skip_relocation, sonoma:        "35c3781561619654eeaf06241ab7b28e448cb3c6b8a7207757b8a00bef0428a1"
+    sha256 cellar: :any_skip_relocation, ventura:       "f2c4749a3c72981112af8c425aba75e6e249c865deb2bfcfbd38117405cfd490"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "1e4fd56117be54c41ce2ab71455b742018dd7a75a615f1c0098531738aeaa4d0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fe45beaba4b1485125f179ada7eb31ced16be05bed6fe7d515f4eb982f04e6cb"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "anyio" do
-    url "https://files.pythonhosted.org/packages/e6/e3/c4c8d473d6780ef1853d630d581f70d655b4f8d7553c6997958c283039a2/anyio-4.4.0.tar.gz"
-    sha256 "5aadc6a1bbb7cdb0bede386cac5e2940f5e2ff3aa20277e991cf028e0585ce94"
+    url "https://files.pythonhosted.org/packages/95/7d/4c1bd541d4dffa1b52bd83fb8527089e097a106fc90b467a7313b105f840/anyio-4.9.0.tar.gz"
+    sha256 "673c0c244e15788651a4ff38710fea9675823028a6f08a5eda409e0c9840a028"
   end
 
   resource "async-generator" do
@@ -31,33 +31,33 @@ class Coconut < Formula
   end
 
   resource "cpyparsing" do
-    url "https://files.pythonhosted.org/packages/74/fe/7d45fc7fb67dd3cdaef4430c882b0b655e18ca45cf792d5feefb15f18ca2/cpyparsing-2.4.7.2.4.0.tar.gz"
-    sha256 "ee3d2f262712ad252a640131687d1b25985127a5d9ba2e1200f3017165f2ee7d"
+    url "https://files.pythonhosted.org/packages/d6/f8/76a0f8c9b16d7d4ac21a409a2d0e532095ff17217d4876d70f3be3f1297f/cpyparsing-2.4.7.2.4.1.tar.gz"
+    sha256 "d917f01a74b3fc614f939eb99fc328a08c9b1de58095660c0f29597744bf1d30"
   end
 
   resource "idna" do
-    url "https://files.pythonhosted.org/packages/e8/ac/e349c5e6d4543326c6883ee9491e3921e0d07b55fdf3cce184b40d63e72a/idna-3.8.tar.gz"
-    sha256 "d838c2c0ed6fced7693d5e8ab8e734d5f8fda53a039c0164afb0b82e771e3603"
+    url "https://files.pythonhosted.org/packages/f1/70/7703c29685631f5a7590aa73f1f1d3fa9a380e654b86af429e0934a32f7d/idna-3.10.tar.gz"
+    sha256 "12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9"
   end
 
   resource "prompt-toolkit" do
-    url "https://files.pythonhosted.org/packages/47/6d/0279b119dafc74c1220420028d490c4399b790fc1256998666e3a341879f/prompt_toolkit-3.0.47.tar.gz"
-    sha256 "1e1b29cb58080b1e69f207c893a1a7bf16d127a5c30c9d17a25a5d77792e5360"
+    url "https://files.pythonhosted.org/packages/bb/6e/9d084c929dfe9e3bfe0c6a47e31f78a25c54627d64a66e884a8bf5474f1c/prompt_toolkit-3.0.51.tar.gz"
+    sha256 "931a162e3b27fc90c86f1b48bb1fb2c528c2761475e57c9c06de13311c7b54ed"
   end
 
   resource "psutil" do
-    url "https://files.pythonhosted.org/packages/18/c7/8c6872f7372eb6a6b2e4708b88419fb46b857f7a2e1892966b851cc79fc9/psutil-6.0.0.tar.gz"
-    sha256 "8faae4f310b6d969fa26ca0545338b21f73c6b15db7c4a8d934a5482faa818f2"
+    url "https://files.pythonhosted.org/packages/2a/80/336820c1ad9286a4ded7e845b2eccfcb27851ab8ac6abece774a6ff4d3de/psutil-7.0.0.tar.gz"
+    sha256 "7be9c3eba38beccb6495ea33afd982a44074b78f28c434a1f51cc07fd315c456"
   end
 
   resource "pygments" do
-    url "https://files.pythonhosted.org/packages/8e/62/8336eff65bcbc8e4cb5d05b55faf041285951b6e80f33e2bff2024788f31/pygments-2.18.0.tar.gz"
-    sha256 "786ff802f32e91311bff3889f6e9a86e81505fe99f2735bb6d60ae0c5004f199"
+    url "https://files.pythonhosted.org/packages/7c/2d/c3338d48ea6cc0feb8446d8e6937e1408088a72a39937982cc6111d17f84/pygments-2.19.1.tar.gz"
+    sha256 "61c16d2a8576dc0649d9f39e089b5f02bcd27fba10d8fb4dcc28173f7a45151f"
   end
 
   resource "setuptools" do
-    url "https://files.pythonhosted.org/packages/6a/21/8fd457d5a979109603e0e460c73177c3a9b6b7abcd136d0146156da95895/setuptools-74.0.0.tar.gz"
-    sha256 "a85e96b8be2b906f3e3e789adec6a9323abf79758ecfa3065bd740d81158b11e"
+    url "https://files.pythonhosted.org/packages/9e/8b/dc1773e8e5d07fd27c1632c45c1de856ac3dbf09c0147f782ca6d990cf15/setuptools-80.7.1.tar.gz"
+    sha256 "f6ffc5f0142b1bd8d0ca94ee91b30c0ca862ffd50826da1ea85258a06fd94552"
   end
 
   resource "sniffio" do
@@ -66,8 +66,8 @@ class Coconut < Formula
   end
 
   resource "typing-extensions" do
-    url "https://files.pythonhosted.org/packages/df/db/f35a00659bc03fec321ba8bce9420de607a1d37f8342eee1863174c69557/typing_extensions-4.12.2.tar.gz"
-    sha256 "1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8"
+    url "https://files.pythonhosted.org/packages/f6/37/23083fcd6e35492953e8d2aaaa68b860eb422b34627b13f2ce3eb6106061/typing_extensions-4.13.2.tar.gz"
+    sha256 "e6c81219bd689f51865d9e372991c540bda33a0379d5573cddb9a3a23f7caaef"
   end
 
   resource "wcwidth" do

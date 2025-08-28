@@ -2,18 +2,18 @@ class Tile38 < Formula
   desc "In-memory geolocation data store, spatial index, and realtime geofence"
   homepage "https://tile38.com/"
   url "https://github.com/tidwall/tile38.git",
-      tag:      "1.33.3",
-      revision: "a3b5db776fdcdfa503cd2e22b4daa0f8a8e1440a"
+      tag:      "1.36.0",
+      revision: "bbbbabe198d46d4cc13efb8f4ec70064dc7b02c9"
   license "MIT"
   head "https://github.com/tidwall/tile38.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "ddc34844d55aaf73b4994a1c7abf922e055448f31746760591bd72b547e875de"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "ddc34844d55aaf73b4994a1c7abf922e055448f31746760591bd72b547e875de"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "ddc34844d55aaf73b4994a1c7abf922e055448f31746760591bd72b547e875de"
-    sha256 cellar: :any_skip_relocation, sonoma:        "45f8a59df70928a9f629d44751790e993e768c5b3383a76247241b8f4b95e980"
-    sha256 cellar: :any_skip_relocation, ventura:       "45f8a59df70928a9f629d44751790e993e768c5b3383a76247241b8f4b95e980"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "731efcfbf0573cc299d717af58fa82f6e3c6b9b780c043f99c23cc41c53c371f"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "7542cd4794ba5d0d7d69066f72dde9bcc5c061e916829156f41cf1a97b07b7ba"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "b2573f6756054ebfdffaff47c893643e9d8bf971563b38239dd054b20d862c59"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "b4fc23d47a92907760c3581a66dd866577f10aea3a385f698fb54a4af980a61b"
+    sha256 cellar: :any_skip_relocation, sonoma:        "79d51f28701233ffd8d867a167870bf977e3930b009ad156de1e928e24fd8af0"
+    sha256 cellar: :any_skip_relocation, ventura:       "786c7110493b4c75777757257cc72ffc2716567c65e26d92b81fc605e47e98f5"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5413d319c4f653374b5283d2a4861614eb9c3f69377bfb37bfbb9721cc554e50"
   end
 
   depends_on "go" => :build
@@ -27,10 +27,10 @@ class Tile38 < Formula
       -s -w
       -X github.com/tidwall/tile38/core.Version=#{version}
       -X github.com/tidwall/tile38/core.GitSHA=#{Utils.git_short_head}
-    ].join(" ")
+    ]
 
-    system "go", "build", *std_go_args(ldflags:), "-o", bin/"tile38-server", "./cmd/tile38-server"
-    system "go", "build", *std_go_args(ldflags:), "-o", bin/"tile38-cli", "./cmd/tile38-cli"
+    system "go", "build", *std_go_args(ldflags:, output: bin/"tile38-server"), "./cmd/tile38-server"
+    system "go", "build", *std_go_args(ldflags:, output: bin/"tile38-cli"), "./cmd/tile38-cli"
   end
 
   def post_install
@@ -63,7 +63,7 @@ class Tile38 < Formula
     tile38_server = JSON.parse(json_output)
 
     assert_equal tile38_server["ok"], true
-    assert_predicate testpath/"data", :exist?
+    assert_path_exists testpath/"data"
   ensure
     Process.kill("HUP", pid)
   end

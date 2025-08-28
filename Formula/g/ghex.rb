@@ -1,19 +1,18 @@
 class Ghex < Formula
   desc "GNOME hex editor"
   homepage "https://wiki.gnome.org/Apps/Ghex"
-  url "https://download.gnome.org/sources/ghex/46/ghex-46.0.tar.xz"
-  sha256 "a1c46f3020cb358b8323025db3a539c97d994a4c46f701f48edc6357f7fbcbd1"
+  url "https://download.gnome.org/sources/ghex/48/ghex-48.0.tar.xz"
+  sha256 "aa1d0ab5f74304aaa31987a182d421d63f19ce02465d7c642696e316123e30a8"
   license "GPL-2.0-or-later"
 
   bottle do
-    sha256 arm64_sequoia:  "0b7bdd05fff50a48e6f55287c17557c428d11c8111995a4d16aee7fe2683f4aa"
-    sha256 arm64_sonoma:   "9f4e0ef2491956e6ab73d699d2eb62c8e1e99fd0ba8559670d1effa005c901c4"
-    sha256 arm64_ventura:  "377d24393d5492f132cef436b302b43d6ec8d88324934fe8da2e3f3bbf0fdefa"
-    sha256 arm64_monterey: "50861d574cbbfee6159eb9727fd85491c68220876d5fad8657838a2bc09e15ee"
-    sha256 sonoma:         "3f646f8e3d4c910ca0bfcf9378e4714b83305a0240cb5c94ee9042a970e986b9"
-    sha256 ventura:        "df165bcd79ab7c61eb9d9309d5ac1f4210defbeb9366a5446ccd8cd77b956f3a"
-    sha256 monterey:       "bd928e90b41850305eada276227355bd89257e9c401dbff564dcb865e587fecc"
-    sha256 x86_64_linux:   "7634934203285fc6da5e3c7f08957c9d7c7c6cee162178dcdca920de417ae2bd"
+    sha256 arm64_sequoia: "49b9b6c5b1d514547b0149124cf2442ef8b84583d9cb2c0b1a8eb1dd93d409ed"
+    sha256 arm64_sonoma:  "ef17a612c186fd5e245f7df0b86c9b5c0c5df1e12bc089e4bc3992dafdeb2156"
+    sha256 arm64_ventura: "8405627babfb8e2995d69f486a6c9ddfab87e4d1df6b7ca56dbf073de1be1203"
+    sha256 sonoma:        "0e5187b6f9417ab226ee6cca61f1df3bf5dbc7d1836f20e38970699c9a2ccebd"
+    sha256 ventura:       "a917fa05efa6d694ae8d1d06dc785e3e9539e04afb05aaa8f91e2fa931cb1d72"
+    sha256 arm64_linux:   "3503e81b94bae1892beb464f58aff0f56fc21343c1c4f48344d7956aabb8251f"
+    sha256 x86_64_linux:  "b8fc872f8a462a52609cd99c67f0a5e7c3f03a52f5665eb9460b9f086a323cfc"
   end
 
   depends_on "desktop-file-utils" => :build
@@ -21,7 +20,7 @@ class Ghex < Formula
   depends_on "itstool" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "cairo"
   depends_on "glib"

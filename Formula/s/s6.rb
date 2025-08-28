@@ -1,8 +1,8 @@
 class S6 < Formula
   desc "Small & secure supervision software suite"
   homepage "https://skarnet.org/software/s6/"
-  url "https://skarnet.org/software/s6/s6-2.13.0.0.tar.gz"
-  sha256 "7e46f8f55d80bb0e2025a64d5d649af4a4ac21e348020caaadde30ba5e5b4830"
+  url "https://skarnet.org/software/s6/s6-2.13.2.0.tar.gz"
+  sha256 "c5114b8042716bb70691406931acb0e2796d83b41cbfb5c8068dce7a02f99a45"
   license "ISC"
 
   livecheck do
@@ -11,76 +11,34 @@ class S6 < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "beedd096c77c9b7809ddcd78c6121c50a3142342611a22fe250eeeb47ed2ff1d"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "58518d4c95e24a6b46a44e43916f9c22b7f1257633fc290a5834cc8d9780b4f6"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "37fe43970f0eec3c7898c2b625ef201be5be165e864e496ec92e806026dc64d1"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "cec74cd51d621de4e50d4269108c53ddc78eec6923b4869db5853a67edc62a8b"
-    sha256 cellar: :any_skip_relocation, sonoma:         "d2db3595e3a38f9900cc0cb1c843bca72d97c05fb22deb36d524996eeb38c83f"
-    sha256 cellar: :any_skip_relocation, ventura:        "fb4abfc1c7be1e3d6545d095f4b2849222a4934748730b57ffdaca48be546fe2"
-    sha256 cellar: :any_skip_relocation, monterey:       "0371dba9de65bc315ecab1c2630b5f767a2f03e37eb73c29726eb65680375078"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "87c249fb6a3fba985655871190aab45057a462edca7e92fdacc8e4078fed6f1f"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "88fb583281e696ad18a4dab7b34ec8794d1c58dfa48c40a4b6a020138f26b0d5"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "105a08c0079ab7fb9fd049443a888ec673c2f3e4e241d4a7cd52065403881b8a"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "de13a9f0b0d00175ce1365152621f160759d3de1d8344f520d19ff29418d5c38"
+    sha256 cellar: :any_skip_relocation, sonoma:        "ecc8dab8a302e3f58a67b5e48269eb272018d9cc8d22ba6d2bfaebb5ade0835e"
+    sha256 cellar: :any_skip_relocation, ventura:       "1ae26881433c5dfaa3b514e161423d44f8bf22431c75a39d54a0c6507ff4d9d0"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "267d6e94207cb929ba43e44a4bd589e7628fde0cbf42d242069e1c5af2f82f5f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f710b9295a5a5101c380603ed1741a4df17e5af0f5b21b7ea953c6a46065d12f"
   end
 
-  resource "skalibs" do
-    url "https://skarnet.org/software/skalibs/skalibs-2.14.2.0.tar.gz"
-    sha256 "ddfec5730e5b2f19d0381ecf7f796b39a6e473236bda0ad8d3776a3fe7b07e43"
-  end
-
-  resource "execline" do
-    url "https://skarnet.org/software/execline/execline-2.9.6.0.tar.gz"
-    sha256 "ba2a27e97c5eb6bd7ca6a0987a8925e44465a5be996daa0d18f8feca37d7571a"
-  end
+  depends_on "pkgconf" => :build
+  depends_on "execline"
+  depends_on "skalibs"
 
   def install
-    resources.each { |r| r.stage(buildpath/r.name) }
-    build_dir = buildpath/"build"
-
-    cd "skalibs" do
-      system "./configure", "--disable-shared", "--prefix=#{build_dir}", "--libdir=#{build_dir}/lib"
-      system "make", "install"
-    end
-
-    cd "execline" do
-      system "./configure",
-        "--prefix=#{build_dir}",
-        "--bindir=#{libexec}/execline",
-        "--with-include=#{build_dir}/include",
-        "--with-lib=#{build_dir}/lib",
-        "--with-sysdeps=#{build_dir}/lib/skalibs/sysdeps",
-        "--disable-shared"
-      system "make", "install"
-    end
-
-    system "./configure",
-      "--prefix=#{prefix}",
-      "--libdir=#{build_dir}/lib",
-      "--includedir=#{build_dir}/include",
-      "--with-include=#{build_dir}/include",
-      "--with-lib=#{build_dir}/lib",
-      "--with-lib=#{build_dir}/lib/execline",
-      "--with-sysdeps=#{build_dir}/lib/skalibs/sysdeps",
-      "--disable-static",
-      "--disable-shared"
+    # Shared libraries are linux targets and not supported on macOS.
+    args = %W[
+      --disable-silent-rules
+      --disable-shared
+      --enable-pkgconfig
+      --with-pkgconfig=#{Formula["pkgconf"].opt_bin}/pkg-config
+      --with-sysdeps=#{Formula["skalibs"].opt_lib}/skalibs/sysdeps
+    ]
+    system "./configure", *args, *std_configure_args
     system "make", "install"
-
-    # Some S6 tools expect execline binaries to be on the path
-    bin.env_script_all_files(libexec/"bin", PATH: "#{libexec}/execline:$PATH")
-    sbin.env_script_all_files(libexec/"sbin", PATH: "#{libexec}/execline:$PATH")
-    (bin/"execlineb").write_env_script libexec/"execline/execlineb", PATH: "#{libexec}/execline:$PATH"
-    doc.install Dir["doc/*"]
   end
 
   test do
-    (testpath/"test.eb").write <<~EOS
-      foreground
-      {
-        sleep 1
-      }
-      "echo"
-      "Homebrew"
-    EOS
-    assert_match "Homebrew", shell_output("#{bin}/execlineb test.eb")
-
     (testpath/"log").mkpath
     pipe_output("#{bin}/s6-log #{testpath}/log", "Test input\n", 0)
     assert_equal "Test input\n", File.read(testpath/"log/current")

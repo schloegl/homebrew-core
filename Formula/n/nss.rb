@@ -1,8 +1,8 @@
 class Nss < Formula
   desc "Libraries for security-enabled client and server applications"
   homepage "https://firefox-source-docs.mozilla.org/security/nss/index.html"
-  url "https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_105_RTM/src/nss-3.105.tar.gz"
-  sha256 "8e8e4c8c88ca5c828b207cfaf66c6188e7f96c97cc18946d3db7da4c0d395619"
+  url "https://ftp.mozilla.org/pub/security/nss/releases/NSS_3_115_1_RTM/src/nss-3.115.1.tar.gz"
+  sha256 "b8189c030b528e57dc5290023c07eea429ce242912a51a0388c184c75a257bcf"
   license "MPL-2.0"
 
   livecheck do
@@ -13,13 +13,16 @@ class Nss < Formula
     end
   end
 
+  no_autobump! because: :incompatible_version_format
+
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "461631eed597c21edfb3dfdf91a77cf4dabd63d10d752755d948ecdc494a505b"
-    sha256 cellar: :any,                 arm64_sonoma:  "29cf7d186cb005a367f1e6e745344fc13c57c98df5cef06d69e61a41276e2f26"
-    sha256 cellar: :any,                 arm64_ventura: "1e194894d302f1bf0638227a65cb926b7e91e6bd97d3a569d4ca9b1250a12c72"
-    sha256 cellar: :any,                 sonoma:        "9945a7e1645649519bfbbf23f9166b09567ef7042c9d6e14759498fa52251798"
-    sha256 cellar: :any,                 ventura:       "be7ab7d5cd49193f5b28959e82384d4e8cad545838af1a14f9e1182fbc6f7856"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "be7a3cf4ac2ca7d306981cc1464799bcdb9335017499974c26d943e3822ac706"
+    sha256 cellar: :any,                 arm64_sequoia: "16be7e36b934557b910b7b3068e29ff6c709bf946930c62e578ec60115a87600"
+    sha256 cellar: :any,                 arm64_sonoma:  "402c2044387b479fd052a16850917e15c2597262f99fcb0239056aa6c34e3898"
+    sha256 cellar: :any,                 arm64_ventura: "5d9383f5752744105eb49dabd1898e81f357f9f98883f4deab54f189550811ef"
+    sha256 cellar: :any,                 sonoma:        "351a27ba72c48a82714be3b00f61cde66bb5c72d85d8e252009936fc1304bc63"
+    sha256 cellar: :any,                 ventura:       "4e8bde62417f820e42aaf931f57036e57e6d1e2a8498be90f67d43c63e68c648"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "98a4f160f3a1c30d5d5f8c493769e1f2957f1d15f19c12e39c2331c1c90bd065"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "12c24f10b5766d597031f2878029ab8f5a3ced6b9ef1bd873c56acd24b1ad180"
   end
 
   depends_on "nspr"
@@ -31,6 +34,9 @@ class Nss < Formula
   conflicts_with "resty", because: "both install `pp` binaries"
 
   def install
+    # Fails on arm64 macOS for some reason with:
+    #   aes-armv8.c:14:2: error: "Compiler option is invalid"
+    ENV.runtime_cpu_detection if OS.linux? || Hardware::CPU.intel?
     ENV.deparallelize
     cd "nss"
 
@@ -60,7 +66,7 @@ class Nss < Formula
       cp file, bin unless file.include? ".dylib"
     end
 
-    include_target = include + "nss"
+    include_target = include/"nss"
     include_target.mkpath
     Dir.glob("public/{dbm,nss}/*") { |file| cp file, include_target }
 

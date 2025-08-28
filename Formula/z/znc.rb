@@ -1,9 +1,10 @@
 class Znc < Formula
   desc "Advanced IRC bouncer"
   homepage "https://wiki.znc.in/ZNC"
-  url "https://znc.in/releases/znc-1.9.1.tar.gz"
-  sha256 "e8a7cf80e19aad510b4e282eaf61b56bc30df88ea2e0f64fadcdd303c4894f3c"
+  url "https://znc.in/releases/znc-1.10.1.tar.gz"
+  sha256 "4e6e76851dbf2606185972b53ec5decad68fe53b63a56e4df8b8b3c0a6c46800"
   license "Apache-2.0"
+  revision 1
 
   livecheck do
     url "https://znc.in/releases/"
@@ -11,27 +12,30 @@ class Znc < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "f4a065725ff2dfe4a00d83c3745f708e31fe08f5aac6929880feb40879f74411"
-    sha256 arm64_sonoma:   "ee6eaf54730ba8dbb41db83afaf55dd576fb40d5d4d7240e91350b52bde15553"
-    sha256 arm64_ventura:  "b2b61efde97fb30819e20401df289b60b0785ebb50d59f6ed55e2d52883855f8"
-    sha256 arm64_monterey: "1ec419a63bc8bd6af046d8cab7cbc0faa0fd13385b90dea59c0d359548a41c91"
-    sha256 sonoma:         "97d86798faf0e95e85b1a7383c1e0ff4eacbce118af2ad76d6bcf10e1ffab337"
-    sha256 ventura:        "82d0ea87748360a70f0be47072f4a080396f8bc1bbce669d13dd68924fcdb40b"
-    sha256 monterey:       "21fa98d7aaa364cdc304fd4568897e241ec819441c345a3c1a9081703c722e3d"
-    sha256 x86_64_linux:   "f17e3e7b444ff827b864d63389e7e42e1cdbddfdd5faf0c1208d09ef62a86917"
+    sha256 arm64_sequoia: "a56a54ecdf856cb74c0c0d6645725c767c0b99eb99b9f0d61b86b6a22e6da0be"
+    sha256 arm64_sonoma:  "b8304f6432ef8092ed55159c4d8bb3fbf4564c8a5cacddba2e42ddbc0c9b6ebf"
+    sha256 arm64_ventura: "e4e5f167312e5627c114aa5fa2b596e75552401912ca233f4fa3da9c74d0bd77"
+    sha256 sonoma:        "0d28db60e5d7cb42ac82fee32eb026b922d88f4bfe9a2ebbeb62585f6974d460"
+    sha256 ventura:       "ada7a6b9202ebb004d9b91ceb90bc91104368308f952e4977b1f6f6af2dc81a8"
+    sha256 arm64_linux:   "fef09dd91fa5de23b2f87a6df3f70917ae514b0a938790ae1dc2fa8f9b85a7e3"
+    sha256 x86_64_linux:  "eda92c5a5f4093e2a6e5958b244dfef503a873af36d7c78140adcfe62ec31c21"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "gettext" => :build
+  depends_on "pkgconf" => :build
   depends_on "boost"
-  depends_on "icu4c"
+  depends_on "cctz"
+  depends_on "icu4c@77"
   depends_on "openssl@3"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   uses_from_macos "zlib"
 
   def install
-    python3 = "python3.12"
+    rm_r(["third_party/cctz", "third_party/googletest"])
+
+    python3 = "python3.13"
     xy = Language::Python.major_minor_version python3
 
     # Fixes: CMake Error: Problem with archive_write_header(): Can't create 'swigpyrun.h'
@@ -61,6 +65,6 @@ class Znc < Formula
   test do
     mkdir ".znc"
     system bin/"znc", "--makepem"
-    assert_predicate testpath/".znc/znc.pem", :exist?
+    assert_path_exists testpath/".znc/znc.pem"
   end
 end

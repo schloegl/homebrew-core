@@ -1,19 +1,17 @@
 class Thanos < Formula
   desc "Highly available Prometheus setup with long term storage capabilities"
   homepage "https://thanos.io"
-  url "https://github.com/thanos-io/thanos/archive/refs/tags/v0.36.1.tar.gz"
-  sha256 "0e0d8cec6137a2295f7b740762bc4ef6514e4602d69a7b08afd18363fba63280"
+  url "https://github.com/thanos-io/thanos/archive/refs/tags/v0.39.2.tar.gz"
+  sha256 "107d1976d5e7512747375770ed3efc92168a33732dcbb2a3fdbb4ce339fa7c9e"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "4c0c876b03d412a85cffeba3272453e974d7fac9ee0176196fd7264de7f28f5a"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "3c61253125cd3af16a7e021fa6eaf198d74f11a91e2de761d39c55e609553f88"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "601c1e0ed4d5afb03a8ddae86a6c930a893c0ce874d587a68ed77e062b265924"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "1a275f7ee72e326d5bb052c39159a6a9139a629bb0b5cf7831728d5ee263de20"
-    sha256 cellar: :any_skip_relocation, sonoma:         "a9c9d850ac2dce8d8e513f67df9324ea1a47adbaf402f4449c7e76410586bc73"
-    sha256 cellar: :any_skip_relocation, ventura:        "8ff7595e4e26e0c9c80252254ce5989a856ce644e0666f5ea279687aeff85bd8"
-    sha256 cellar: :any_skip_relocation, monterey:       "4150c2bcd2c75ca64a540506910d96e83ccaf0e3c64a351393722a0b43ffc8a1"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "0bdf5c566ca91784c389e0969009c7e0a5fef8f9180aeccf74d4d12853270087"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "3d777958f5a190f2452165e581998ddd14f3e20648540cbbb65c37cd38e67ced"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "f4935a9dfd7f35ceb40938830679b19de5deb032b3313a4a0d1a4be17d9069c1"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "025c060a2c3fe17f1ed2d50a08f2a381ab488668dba3aed50129b4f463e29235"
+    sha256 cellar: :any_skip_relocation, sonoma:        "3b0ae9f86bec8fd1d12d4f90417b008c98cec19d611ae331f09f187b2cb370bf"
+    sha256 cellar: :any_skip_relocation, ventura:       "6991dc6b39a456d814d923195c8a1df5f2cfa41884982d850abe206649bffc6e"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "27308a942580a9b5c026a1a4086f0b41ed076cdc6e6ee0b1d75d7982ab72e52e"
   end
 
   depends_on "go" => :build
@@ -23,11 +21,11 @@ class Thanos < Formula
   end
 
   test do
-    (testpath/"bucket_config.yaml").write <<~EOS
+    (testpath/"bucket_config.yaml").write <<~YAML
       type: FILESYSTEM
       config:
         directory: #{testpath}
-    EOS
+    YAML
 
     output = shell_output("#{bin}/thanos tools bucket inspect --objstore.config-file bucket_config.yaml")
     assert_match "| ULID |", output

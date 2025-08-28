@@ -1,8 +1,8 @@
 class OpenjdkAT11 < Formula
   desc "Development kit for the Java programming language"
   homepage "https://openjdk.java.net/"
-  url "https://github.com/openjdk/jdk11u/archive/refs/tags/jdk-11.0.24-ga.tar.gz"
-  sha256 "5232ca19c93b9dce023f7afd4e3914d19a914ac46632a1828635c24994f13048"
+  url "https://github.com/openjdk/jdk11u/archive/refs/tags/jdk-11.0.28-ga.tar.gz"
+  sha256 "c051b84b55a826ff90ac601ff7501449fb6a578a89357bbc7550990a78bb5f1b"
   license "GPL-2.0-only"
 
   livecheck do
@@ -11,20 +11,19 @@ class OpenjdkAT11 < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "b73c6e875074c710623034f21a5310a7a0b7cae2601612c8841fa12ae2af7117"
-    sha256 cellar: :any,                 arm64_sonoma:   "55565ebdad224446b1fc7dfb95ff248b474592e897e0f37fee42a926ba682853"
-    sha256 cellar: :any,                 arm64_ventura:  "09c82bc3af0f6e5fc83ff0711c1681b699f53434868a6a47487c8b78b8fc8930"
-    sha256 cellar: :any,                 arm64_monterey: "71d6ad32f6f8c0aabe9bfcdc9ae749e2467f4bffeae6b84afc3e5a46e97bc035"
-    sha256 cellar: :any,                 sonoma:         "8b4a1b4b6a758617dda6f1c1ae30dca60e2799af0932be5688561cbe6404b4d1"
-    sha256 cellar: :any,                 ventura:        "f8e39184846b63e6c8877cc670c1f56cc56e21dac4457d6fe2ac0016e81f24cc"
-    sha256 cellar: :any,                 monterey:       "f2a7b8fad66d410eb19117808387f476fb1ea98cc3a1a35ed50e5f433afe565b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "d9408b8162b2db62bafd59b10a5a53bf3161bf4c7ef2e6571c1884d96cdb87a4"
+    sha256 cellar: :any,                 arm64_sequoia: "c2f2b74da21a9062e4b288dedc5a0041814addbde1829b3113ef2d68e82821cc"
+    sha256 cellar: :any,                 arm64_sonoma:  "cadeb8b67fddfad5831b43590417fd0bc0b259c03baf162bdfc13dd99aa4a7ca"
+    sha256 cellar: :any,                 arm64_ventura: "d66cfeeac9d98b5f4868187eaf49753e5db88d416bdf39faa5357e29bb175367"
+    sha256 cellar: :any,                 sonoma:        "2e7f751a1f1ab3ccef7247e74d6c1f274a861d36c0b6e9df58f57a249eda4b6a"
+    sha256 cellar: :any,                 ventura:       "7249281922ef7324fac986eb4091ae1a38c3c1f3fba5438195b0c976ef675887"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "7d92efb4e4a7b77fe628ae75e2b01def4457110662e169a6dbcd90809e8c2992"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "422052b9e3633328435bb97e0ce20a001a1f9eea233f0f6bb7d9545b583b80b4"
   end
 
   keg_only :versioned_formula
 
   depends_on "autoconf" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "freetype"
   depends_on "giflib"
   depends_on "harfbuzz"
@@ -36,32 +35,6 @@ class OpenjdkAT11 < Formula
   uses_from_macos "unzip"
   uses_from_macos "zip"
   uses_from_macos "zlib"
-
-  on_macos do
-    if DevelopmentTools.clang_build_version == 1600
-      depends_on "llvm" => :build
-
-      fails_with :clang do
-        cause "fatal error while optimizing exploded image for BUILD_JIGSAW_TOOLS"
-      end
-
-      # Backport fix for UB that errors on LLVM 19
-      patch do
-        url "https://github.com/openjdk/jdk/commit/51be7db96f3fc32a7ddb24f8af19fb4fc0577aaf.patch?full_index=1"
-        sha256 "7fb09ce74a1cf534c976d0ea8aec285c86a832fe4fa016bdf79870ac5574b9a7"
-      end
-
-      # Apply FreeBSD workaround to avoid UB causing failure on recent Clang.
-      # A proper fix requires backport of 8229258[^1] which was previously attempted[^2].
-      #
-      # [^1]: https://bugs.openjdk.org/browse/JDK-8229258
-      # [^2]: https://github.com/openjdk/jdk11u/pull/23
-      patch do
-        url "https://github.com/battleblow/jdk11u/commit/305a68a90c722aa7a7b75589e24d5b5d554c96c1.patch?full_index=1"
-        sha256 "5327c249c379a8db6a9e844e4fb32471506db8b8e3fef1f62f5c0c892684fe15"
-      end
-    end
-  end
 
   on_linux do
     depends_on "alsa-lib"
@@ -101,20 +74,17 @@ class OpenjdkAT11 < Formula
   end
 
   def install
-    if DevelopmentTools.clang_build_version == 1600
-      ENV.llvm_clang
-      ENV.remove "HOMEBREW_LIBRARY_PATHS", Formula["llvm"].opt_lib
-      # ptrauth.h is not available in brew LLVM
-      inreplace "src/hotspot/os_cpu/bsd_aarch64/pauth_bsd_aarch64.inline.hpp" do |s|
-        s.sub! "#include <ptrauth.h>", ""
-        s.sub! "return ptrauth_strip(ptr, ptrauth_key_asib);", "return ptr;"
-      end
-    end
-
     boot_jdk = buildpath/"boot-jdk"
     resource("boot-jdk").stage boot_jdk
     boot_jdk /= "Contents/Home" if OS.mac? && !Hardware::CPU.arm?
     java_options = ENV.delete("_JAVA_OPTIONS")
+
+    # Fix pack200 failure only when building with newer Clang
+    if OS.mac? && DevelopmentTools.clang_build_version >= 1600
+      inreplace "src/jdk.pack/share/native/common-unpack/constants.h",
+                "(-1)<<13",
+                "static_cast<int32_t>(~0u << 13)"
+    end
 
     args = %W[
       --disable-hotspot-gtest
@@ -165,6 +135,10 @@ class OpenjdkAT11 < Formula
     end
     args << "--with-extra-ldflags=#{ldflags.join(" ")}"
 
+    if DevelopmentTools.clang_build_version == 1600
+      args << "--with-extra-cflags=-mllvm -enable-constraint-elimination=0"
+    end
+
     system "bash", "configure", *args
 
     ENV["MAKEFLAGS"] = "JOBS=#{ENV.make_jobs}"
@@ -194,13 +168,13 @@ class OpenjdkAT11 < Formula
   end
 
   test do
-    (testpath/"HelloWorld.java").write <<~EOS
+    (testpath/"HelloWorld.java").write <<~JAVA
       class HelloWorld {
         public static void main(String args[]) {
           System.out.println("Hello, world!");
         }
       }
-    EOS
+    JAVA
 
     system bin/"javac", "HelloWorld.java"
 

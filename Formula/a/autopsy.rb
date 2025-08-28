@@ -22,6 +22,7 @@ class Autopsy < Formula
 
   # Installs prebuilt binaries, broken on arm: https://github.com/Homebrew/homebrew-core/issues/175053
   deprecate! date: "2024-06-22", because: :does_not_build
+  disable! date: "2025-06-23", because: :does_not_build
 
   depends_on "sleuthkit"
 
@@ -92,7 +93,7 @@ class Autopsy < Formula
     mv "lib", "libexec"
     prefix.install %w[global.css help libexec pict]
     prefix.install Dir["*.txt"]
-    (prefix+"conf.pl").write autcfg
+    (prefix/"conf.pl").write autcfg
     inreplace "base/autopsy.base", "/tmp/autopsy", prefix
     inreplace "base/autopsy.base", "lib/define.pl", "#{libexec}/define.pl"
     bin.install "base/autopsy.base" => "autopsy"

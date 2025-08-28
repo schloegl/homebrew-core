@@ -1,11 +1,13 @@
 class Xboard < Formula
   desc "Graphical user interface for chess"
   homepage "https://www.gnu.org/software/xboard/"
-  url "https://ftp.gnu.org/gnu/xboard/xboard-4.9.1.tar.gz"
-  mirror "https://ftpmirror.gnu.org/xboard/xboard-4.9.1.tar.gz"
+  url "https://ftpmirror.gnu.org/gnu/xboard/xboard-4.9.1.tar.gz"
+  mirror "https://ftp.gnu.org/gnu/xboard/xboard-4.9.1.tar.gz"
   sha256 "2b2e53e8428ad9b6e8dc8a55b3a5183381911a4dae2c0072fa96296bbb1970d6"
   license "GPL-3.0-or-later"
   revision 4
+
+  no_autobump! because: :requires_manual_review
 
   bottle do
     sha256 arm64_sonoma:   "286ed707d8d03708c836b4ac6a00777425e5984b6fe5be083ae571cfcfccb877"
@@ -14,6 +16,7 @@ class Xboard < Formula
     sha256 sonoma:         "e03a15e4427bb343a6f1bdfbae67eb899542e0b9b78bb9bd70c8b3fe8efa1bee"
     sha256 ventura:        "144abeb78c31d18571fe410dbb0759657566bb9162013102bdb5c59fb95e1aae"
     sha256 monterey:       "983ceebe82b7abeb9c0126c06e9d8954302431c2de2f47e3a05b40423633be98"
+    sha256 arm64_linux:    "a3c183cb0e434de3eec05adddb804c87f92d93c892d908cfcbd47d25a92ecfea"
     sha256 x86_64_linux:   "fa58bc09398cf9c5fcfe470ee69366d7d2e07b8e369475f54ca6d0c7426281fb"
   end
 
@@ -25,7 +28,7 @@ class Xboard < Formula
     depends_on "gettext" => :build
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "cairo"
   depends_on "fairymax"
   depends_on "gdk-pixbuf"

@@ -1,24 +1,24 @@
 class OpentelemetryCpp < Formula
   desc "OpenTelemetry C++ Client"
   homepage "https://opentelemetry.io/"
-  url "https://github.com/open-telemetry/opentelemetry-cpp/archive/refs/tags/v1.16.1.tar.gz"
-  sha256 "b8a78bb2a3a78133dbb08bcd04342f4b1e03cb4a19079b8416d408d905fffc37"
+  url "https://github.com/open-telemetry/opentelemetry-cpp/archive/refs/tags/v1.22.0.tar.gz"
+  sha256 "3428f433f4b435ed1fad64cbdbe75b7288c06f6297786a7036d65d5b9a1d215b"
   license "Apache-2.0"
-  revision 6
+  revision 5
   head "https://github.com/open-telemetry/opentelemetry-cpp.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "2c5bdc4512e77b1b8870b3fc48399f13b088abf27e369bebd14d3c56ade17539"
-    sha256 cellar: :any,                 arm64_sonoma:  "72f8bd59002e47babeeb47123794d4bf83784a2c218c563667387b064dd62677"
-    sha256 cellar: :any,                 arm64_ventura: "243e9c4f1ba5abe3fcc2d5d2bf88f1354a18449df45a51fc2a46f53f2129d0d0"
-    sha256 cellar: :any,                 sonoma:        "efa1495775b734730b64dda4b10b02d3f49d17185cef9551c4b7cc4cb2aca2b0"
-    sha256 cellar: :any,                 ventura:       "160b7d91ee7713256ee6e4536405157528811b9074192e6da966613048c40b5b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0fc57ff00fa94eaeb0805523017bb3c9baaa3c7b5626e24e1500e804541163a7"
+    sha256               arm64_sequoia: "a231a9d1de3b7c9fb1b9dad44c29c56495e3306185cca6c9f35d01ed0ff9a5dd"
+    sha256               arm64_sonoma:  "083997f02647ab18973292a0f22a98601c93549a845d220506fcc0f51cdc8f00"
+    sha256               arm64_ventura: "95510e46dd5a48313d02b8205c9fde9b04990015b33ab857e986b798f0720428"
+    sha256 cellar: :any, sonoma:        "978910570433bdae9898d2a8aad657e71b45ce2d9f9c9d2b66847172355c914a"
+    sha256 cellar: :any, ventura:       "42659101db97f79060510d88b197a5d97aa749a5c274559ad5b8c659ecc32b56"
+    sha256               arm64_linux:   "46b660e08e8adb7273a64ebc0b71ae90911115fe6d11cdcc959add5f2f45a33a"
+    sha256               x86_64_linux:  "732c5234916d7d430ec7a4d3ea7805ad987d9fdc223ef8173e8fff3e28e11f80"
   end
 
   depends_on "cmake" => :build
   depends_on "abseil"
-  depends_on "boost"
   depends_on "grpc"
   depends_on "nlohmann-json"
   depends_on "prometheus-cpp"
@@ -32,16 +32,25 @@ class OpentelemetryCpp < Formula
     depends_on "re2"
   end
 
+  resource "openetelemetry-proto" do
+    url "https://github.com/open-telemetry/opentelemetry-proto/archive/refs/tags/v1.7.0.tar.gz"
+    sha256 "11330d850f5e24d34c4246bc8cb21fcd311e7565d219195713455a576bb11bed"
+  end
+
   def install
+    (buildpath/"opentelemetry-proto").install resource("openetelemetry-proto")
+
     ENV.append "LDFLAGS", "-Wl,-undefined,dynamic_lookup" if OS.mac?
     system "cmake", "-S", ".", "-B", "build",
+                    "-DBUILD_SHARED_LIBS=ON",
                     "-DCMAKE_CXX_STANDARD=17", # Keep in sync with C++ standard in abseil.rb
                     "-DCMAKE_INSTALL_RPATH=#{rpath}",
-                    "-DBUILD_TESTING=OFF",
+                    "-DHOMEBREW_ALLOW_FETCHCONTENT=ON",
+                    "-DFETCHCONTENT_FULLY_DISCONNECTED=ON",
+                    "-DFETCHCONTENT_TRY_FIND_PACKAGE_MODE=ALWAYS",
+                    "-DOTELCPP_PROTO_PATH=#{buildpath}/opentelemetry-proto",
                     "-DWITH_ELASTICSEARCH=ON",
                     "-DWITH_EXAMPLES=OFF",
-                    "-DWITH_JAEGER=OFF", # deprecated, needs older `thrift`
-                    "-DWITH_METRICS_PREVIEW=ON",
                     "-DWITH_OTLP_GRPC=ON",
                     "-DWITH_OTLP_HTTP=ON",
                     "-DWITH_ABSEIL=ON",
@@ -52,7 +61,7 @@ class OpentelemetryCpp < Formula
   end
 
   test do
-    (testpath/"test.cc").write <<~EOS
+    (testpath/"test.cc").write <<~CPP
       #include "opentelemetry/sdk/trace/simple_processor.h"
       #include "opentelemetry/sdk/trace/tracer_provider.h"
       #include "opentelemetry/trace/provider.h"
@@ -78,7 +87,7 @@ class OpentelemetryCpp < Formula
         auto tracer = provider->GetTracer("foo_library", "1.0.0");
         auto scoped_span = trace_api::Scope(tracer->StartSpan("test"));
       }
-    EOS
+    CPP
     system ENV.cxx, "test.cc", "-std=c++17",
                     "-DHAVE_ABSEIL",
                     "-I#{include}", "-L#{lib}",

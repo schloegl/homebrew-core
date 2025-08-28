@@ -1,8 +1,6 @@
 class Musikcube < Formula
   desc "Terminal-based audio engine, library, player and server"
   homepage "https://musikcube.com"
-  url "https://github.com/clangen/musikcube/archive/refs/tags/3.0.4.tar.gz"
-  sha256 "25bb95b8705d8c79bde447e7c7019372eea7eaed9d0268510278e7fcdb1378a5"
   license all_of: [
     "BSD-3-Clause",
     "GPL-2.0-or-later", # src/plugins/supereqdsp/supereq/
@@ -13,7 +11,32 @@ class Musikcube < Formula
     "bcrypt-Solar-Designer", # src/3rdparty/{include,src}/md5.*
     "blessing", # src/3rdparty/{include,src}/sqlite/sqlite3*
   ]
+  revision 2
   head "https://github.com/clangen/musikcube.git", branch: "master"
+
+  stable do
+    url "https://github.com/clangen/musikcube/archive/refs/tags/3.0.4.tar.gz"
+    sha256 "25bb95b8705d8c79bde447e7c7019372eea7eaed9d0268510278e7fcdb1378a5"
+
+    # Backport support for newer asio. Using resource to deal with submodule
+    resource "asio.patch" do
+      url "https://github.com/clangen/musikcube/commit/a5a8a4ba6e21e09185ce10b5ecb48d6bb30f3d07.patch?full_index=1"
+      sha256 "58e4215a6319b625a5c11990732ebabb2622e1dc7a91d5ef48ec791db415b704"
+
+      # Remove submodule modification as `patch` can't handle this
+      patch :DATA
+    end
+
+    # Backport support for FFmpeg 8.0
+    patch do
+      url "https://github.com/clangen/musikcube/commit/a0433606af616b6d1146d10c964195dd81d244c8.patch?full_index=1"
+      sha256 "ba1f480663d28e0d25f84c11e9b60a03600f37976794fd58349e038ac85e2229"
+    end
+    patch do
+      url "https://github.com/clangen/musikcube/commit/1a5887f6dcd8f0c3ed7ddef400a7dc1114721459.patch?full_index=1"
+      sha256 "a04ce7b24631d371ea77373026d617661cfe091b94cd356e349d77561b8bda84"
+    end
+  end
 
   livecheck do
     url :stable
@@ -22,19 +45,18 @@ class Musikcube < Formula
 
   bottle do
     rebuild 1
-    sha256 cellar: :any,                 arm64_sequoia:  "d04141a58c24c85ffa338bee5422ce3962667bb68549f9ecac5def08532034c6"
-    sha256 cellar: :any,                 arm64_sonoma:   "00e57d9c9357ab897d8323351cf88191b9cad6287137d0ae825f75bf0372e353"
-    sha256 cellar: :any,                 arm64_ventura:  "e6ca7dd553d722a0770980c8a28fca32bfff4493a14e09e09e9767ec223f727b"
-    sha256 cellar: :any,                 arm64_monterey: "20dea11a6b5a33fca28fa4bd4f78b3c81a464d14e441c95d402cd3c751b5fbf7"
-    sha256 cellar: :any,                 sonoma:         "0d6f7ff35bdd8033ba4b90d3b027b8d64cb1429dfcee43b084bfa1ae7804d3f3"
-    sha256 cellar: :any,                 ventura:        "4dd0a8e8881f3e1ca1cb537b13c5b0492af99838e9c2d14b2c60b4c2820fad4f"
-    sha256 cellar: :any,                 monterey:       "b57720e0c6a394c9e52406ed7bbc942ec61b01e9d1705b2caecf571fcbd478a5"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "a1615f9ef8bf8645ecf31d0679e1a96a526e881beddbc1e25d0fe8089f6385eb"
+    sha256 cellar: :any,                 arm64_sequoia: "9db1d89d137c22936f096852017272d7ba739ccda6b75771e983be8b9392ab7a"
+    sha256 cellar: :any,                 arm64_sonoma:  "69618b6cb44fed6f13814c8d7ef559dbd4f14bfd268952d58554a85d6baa315c"
+    sha256 cellar: :any,                 arm64_ventura: "a6f22f38cc129c056f1aecec46a00d6aac5a392f4707826c67872bccabf8fc12"
+    sha256 cellar: :any,                 sonoma:        "ebb47ab602bff2a08b8f610f862cb81df7252c6b3e1d66bf7a374b06edeaa8f6"
+    sha256 cellar: :any,                 ventura:       "1a4c4aef8caa5bfc661831b17b1bf84d6695dd4f686c48ef4b6bcd629fa92589"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "15eeed9a2b54c2822d34a1f951ccc7f0a06da22c4c6731f836ab8105d3a6609e"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "186e8821eb5685fe54c2419c8cdcbf018460b3e60fe434ea6b53392b78e081bb"
   end
 
   depends_on "asio" => :build
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "ffmpeg"
   depends_on "game-music-emu"
@@ -62,6 +84,11 @@ class Musikcube < Formula
   end
 
   def install
+    if build.stable?
+      resource("asio.patch").stage { buildpath.install Dir["*"].first => "asio.patch" }
+      Patch.create(:p1, File.read("asio.patch")).apply
+    end
+
     # Pretend to be Nix to dynamically link ncurses on macOS.
     ENV["NIX_CC"] = ENV.cc
 
@@ -85,3 +112,21 @@ class Musikcube < Formula
     end
   end
 end
+
+__END__
+--- a/a5a8a4ba6e21e09185ce10b5ecb48d6bb30f3d07.patch
++++ b/a5a8a4ba6e21e09185ce10b5ecb48d6bb30f3d07.patch
+@@ -29,13 +29,6 @@ Subject: [PATCH] Update to asio 1.36.0
+  create mode 100644 src/3rdparty/include/websocketpp/transport/debug/connection.hpp
+  create mode 100644 src/3rdparty/include/websocketpp/transport/debug/endpoint.hpp
+ 
+-diff --git a/src/3rdparty/asio b/src/3rdparty/asio
+-index f693a3eb7fe72a5f19b975289afc4f437d373d9c..231cb29bab30f82712fcd54faaea42424cc6e710 160000
+---- a/src/3rdparty/asio
+-+++ b/src/3rdparty/asio
+-@@ -1 +1 @@
+--Subproject commit f693a3eb7fe72a5f19b975289afc4f437d373d9c
+-+Subproject commit 231cb29bab30f82712fcd54faaea42424cc6e710
+ diff --git a/src/3rdparty/include/websocketpp/roles/server_endpoint.hpp b/src/3rdparty/include/websocketpp/roles/server_endpoint.hpp
+ index 9cc652f75ce1c31c597341e5ec2ad47ce17a40be..1967a4733e1a77045f8b5bce6cd0fad335c7a4a5 100644
+ --- a/src/3rdparty/include/websocketpp/roles/server_endpoint.hpp

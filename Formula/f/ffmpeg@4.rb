@@ -1,11 +1,12 @@
 class FfmpegAT4 < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-4.4.5.tar.xz"
-  sha256 "f9514e0d3515aee5a271283df71636e1d1ff7274b15853bcd84e144be416ab07"
+  url "https://ffmpeg.org/releases/ffmpeg-4.4.6.tar.xz"
+  sha256 "2290461f467c08ab801731ed412d8e724a5511d6c33173654bd9c1d2e25d0617"
   # None of these parts are used by default, you have to explicitly pass `--enable-gpl`
   # to configure to activate them. In this case, FFmpeg's license changes to GPL v2+.
   license "GPL-2.0-or-later"
+  revision 3
 
   livecheck do
     url "https://ffmpeg.org/download.html"
@@ -13,21 +14,19 @@ class FfmpegAT4 < Formula
   end
 
   bottle do
-    rebuild 1
-    sha256 arm64_sequoia:  "8decf6e0c5089d1274cf5018fa9cefe1bb45d9cfb7babcce2820713004ba2106"
-    sha256 arm64_sonoma:   "900f278bfd188297cebb2c3f7139c518ca00369c9b2e1c5b1fd10ad0f9d9bcdd"
-    sha256 arm64_ventura:  "28664131f7d21c16b18f8857b796c2d4a9ddb6e2c543844bebad85a77deeda64"
-    sha256 arm64_monterey: "846b9b2157d497f519411126166503b6227a463ce526f5e538185977402b9532"
-    sha256 sonoma:         "1a4db28b8d1bf1fcf0a47cb646fc78c581fe2c3bc69d03b3f3dffc6d3eeaa351"
-    sha256 ventura:        "66b707a4cd387e01fdd92ca66e46ba575bb25b8932dbd78fee746828b45ce3b4"
-    sha256 monterey:       "69d201503b3e29ad4842ba044786360258d5929d23e40e287a61beb199c0cad7"
-    sha256 x86_64_linux:   "b290118efecb94b72600d14677ca5ec69f660cddbbf53e92eb7162cd1b74fd81"
+    sha256 arm64_sequoia: "8f2ca1aa672ee047d483d63d5b027310c2a64db8e0fd73db576a46774d114e43"
+    sha256 arm64_sonoma:  "4000f78dc42ecc7bf032df1495fb439daeae8f33cac3356e44fc7e6dec77a420"
+    sha256 arm64_ventura: "4a8e6465bfa97df280cb0061675614c259e17b095d0fbb57148938ffa06317f8"
+    sha256 sonoma:        "a3b7d22b421648d2d92ac27e6b123ba4a836358600e006e8b23b709597c7edf2"
+    sha256 ventura:       "b9383d21ab9e161e487ad10bb20cdd2cedc1ee2dafd8ed902c42be16bea6e7e6"
+    sha256 arm64_linux:   "5dededdd595369c09c5723d8a095c315abfbbf3e712a81b82aa1f906dd112482"
+    sha256 x86_64_linux:  "14ab3d91eb9693a1ab7d069aa0d4620618b8fcc60d088eb8db314a0d75f846aa"
   end
 
   keg_only :versioned_formula
 
   depends_on "nasm" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "aom"
   depends_on "dav1d"
@@ -80,8 +79,6 @@ class FfmpegAT4 < Formula
     depends_on "libxext"
     depends_on "libxv"
   end
-
-  fails_with gcc: "5"
 
   def install
     args = %W[
@@ -153,6 +150,6 @@ class FfmpegAT4 < Formula
     # Create an example mp4 file
     mp4out = testpath/"video.mp4"
     system bin/"ffmpeg", "-filter_complex", "testsrc=rate=1:duration=1", mp4out
-    assert_predicate mp4out, :exist?
+    assert_path_exists mp4out
   end
 end

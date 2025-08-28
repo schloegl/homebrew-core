@@ -6,25 +6,27 @@ class Eralchemy < Formula
   url "https://files.pythonhosted.org/packages/19/05/5f69930e83a02360d9ed16660bdd58d9d501bffabd43d7dbbe8c14269143/eralchemy-1.5.0.tar.gz"
   sha256 "fa66a3cd324abd27ad8e65908d7af48d8198c0c185aeb22189cf40516de25941"
   license "Apache-2.0"
+  revision 1
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "d452d498ff2c9ad70a113315111586eb97087ad72efabc9f11d1d1a02387ceca"
-    sha256 cellar: :any,                 arm64_sonoma:  "e055bcdd47c8969f7cfcfa2a91f98790e67be7ec5988a6c30d2c5594ac6b2f79"
-    sha256 cellar: :any,                 arm64_ventura: "f72636b38733fa8a0e7fa45321e3b7d0b5632932be0d5c4874e8285ade43bcf4"
-    sha256 cellar: :any,                 sonoma:        "8141288b90a807f7fa65b45264525b3d3431bdbb977b61e22e8eb00cd43aaa46"
-    sha256 cellar: :any,                 ventura:       "27eeaec09061fe0ac139c6abd239a8c876b35a8d3cb542d9efc9e18c17f636f2"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "33e02d317b404340e438a30ad0845114e11976856db134e76ff4ac7fcf6a99b0"
+    sha256 cellar: :any,                 arm64_sequoia: "08649146de0cdf02e659ede3d8a0abcf22ceef117c63df9f556414137f04d692"
+    sha256 cellar: :any,                 arm64_sonoma:  "f18d6b415538d24a6777d5589f0a1c36386a541765baef679e9152f36c9d2f47"
+    sha256 cellar: :any,                 arm64_ventura: "bcbea307eb470ce0f6a1ed9ec24536e421be304087f58b4669f970a514f33fc6"
+    sha256 cellar: :any,                 sonoma:        "285c6bda5678f036aa4315660073df0bd86e68f9a761fe66a5ea4f4a8be3f4bf"
+    sha256 cellar: :any,                 ventura:       "90a5befab4b548f14b9a203fd1c802910b9ff3511653d62666f338a814d489b2"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "4eab42a4e1af97949850753589b99b101b5e66c6d2b3fcdc6f6caabec7d388ea"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3be4ace8ed5abe63973efc16f9c8a88b99a267743d05ae0045ff8d58c841d02e"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "graphviz"
   depends_on "libpq"
   depends_on "openssl@3"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "pygraphviz" do
-    url "https://files.pythonhosted.org/packages/8c/41/7b9a22df38bb7884012b34f2986d765691dbe41bf5e7af881dfd09f8145f/pygraphviz-1.13.tar.gz"
-    sha256 "6ad8aa2f26768830a5a1cfc8a14f022d13df170a8f6fdfd68fd1aa1267000964"
+    url "https://files.pythonhosted.org/packages/66/ca/823d5c74a73d6b8b08e1f5aea12468ef334f0732c65cbb18df2a7f285c87/pygraphviz-1.14.tar.gz"
+    sha256 "c10df02377f4e39b00ae17c862f4ee7e5767317f1c6b2dfd04cea6acc7fc2bea"
   end
 
   resource "sqlalchemy" do
@@ -43,14 +45,14 @@ class Eralchemy < Formula
 
   test do
     resource "er_example" do
-      url "https://raw.githubusercontent.com/Alexis-benoist/eralchemy/v1.1.0/example/newsmeme.er"
+      url "https://raw.githubusercontent.com/Alexis-benoist/eralchemy/refs/tags/v1.1.0/example/newsmeme.er"
       sha256 "5c475bacd91a63490e1cbbd1741dc70a3435e98161b5b9458d195ee97f40a3fa"
     end
 
     system bin/"eralchemy", "-v"
     resource("er_example").stage do
       system bin/"eralchemy", "-i", "newsmeme.er", "-o", "test_eralchemy.pdf"
-      assert_predicate Pathname.pwd/"test_eralchemy.pdf", :exist?
+      assert_path_exists Pathname.pwd/"test_eralchemy.pdf"
     end
   end
 end

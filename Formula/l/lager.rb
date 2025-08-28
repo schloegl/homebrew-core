@@ -5,6 +5,8 @@ class Lager < Formula
   sha256 "9e4743c3fe2c95c1653c3fd088a2200108f09d758725697831852dc91d15d174"
   license "MIT"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     rebuild 2
     sha256 cellar: :any_skip_relocation, all: "092b29ac8e64b817faba834b6b03d4970ce7cf939a271e812bdfcfd09dd081ff"
@@ -26,7 +28,7 @@ class Lager < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <iostream>
       #include <lager/state.hpp>
       #include <string>
@@ -45,7 +47,7 @@ class Lager < Formula
         state2.set(2);
         std::cout << state2.get() << std::endl; // 2
       }
-    EOS
+    CPP
 
     system ENV.cxx, "-std=c++17", "-I#{include}", "test.cpp", "-o", "test"
     system "./test"

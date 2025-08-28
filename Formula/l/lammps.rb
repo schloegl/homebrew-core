@@ -1,12 +1,12 @@
 class Lammps < Formula
   desc "Molecular Dynamics Simulator"
   homepage "https://docs.lammps.org/"
-  url "https://github.com/lammps/lammps/archive/refs/tags/stable_29Aug2024.tar.gz"
+  url "https://github.com/lammps/lammps/archive/refs/tags/stable_22Jul2025.tar.gz"
   # lammps releases are named after their release date. We transform it to
   # YYYY-MM-DD (year-month-day) so that we get a sane version numbering.
   # We only track stable releases as announced on the LAMMPS homepage.
-  version "20240829"
-  sha256 "6112e0cc352c3140a4874c7f74db3c0c8e30134024164509ecf3772b305fde2e"
+  version "20250722"
+  sha256 "38d7ab508433f33a53e11f0502aa0253945ce45d5595baf69665961c0a76da26"
   license "GPL-2.0-only"
 
   # The `strategy` block below is used to massage upstream tags into the
@@ -26,28 +26,30 @@ class Lammps < Formula
     end
   end
 
+  no_autobump! because: :incompatible_version_format
+
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "5b581262cd98e2c79b89882fdafb83ac0bde0bd37be5285bc5c6d2426b33a7b3"
-    sha256 cellar: :any,                 arm64_ventura:  "b7accba094e2ca417c737492f5223c6cafbd864c3466a2e23985160ff37d5466"
-    sha256 cellar: :any,                 arm64_monterey: "b8e3d38d52cedab8ed377b4424e83bd36b6a9f6e1f148c4f128748286e5b2ca8"
-    sha256 cellar: :any,                 sonoma:         "51e16b825b69c5bb59b75b3b88a2ee7fc02f82b296dd0b6e335c0313c8ecdc70"
-    sha256 cellar: :any,                 ventura:        "dc6cddae1cbd649dfcc6e01a852e30d866729dfd6fb88cd8e20ab1d34589a9ce"
-    sha256 cellar: :any,                 monterey:       "1951d9aabdc07cf991bf0613b1895ca46a705957a0b666ecdee38b4e82bd309f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "bebcbb2129c3580d79f51e68843300dbb90c332312ab11f1aa23aa82a102f9af"
+    sha256 cellar: :any,                 arm64_sequoia: "5dcbe62c226d2b98ebede1269ac9a31c1c1a5846f58d678e37061846ba0cba67"
+    sha256 cellar: :any,                 arm64_sonoma:  "dd3a100bb7068a71b8dfaf28e492a3ce20c227f2f9e0644b94f6d4f899ed99cf"
+    sha256 cellar: :any,                 arm64_ventura: "9928dabf3feeecf5d8203d596d566d391f10c5a9b420e18360c88c3b0092fde4"
+    sha256 cellar: :any,                 sonoma:        "71e66176a276d78240fee653eb06df98e95624e1d7abdedb1f303b81d822ab51"
+    sha256 cellar: :any,                 ventura:       "ff8e8db48554205827c9a973b98eec0081968ce2ffb6624719f509633aa5a86b"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "491186c7e5217a82b045d031bca445dfdb0db940e75fd4285890565f249c91c3"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0721f7b5637369e7fc3677f0f0e4dd66ef06c8bc1c81a1b938c796cf2ddf527d"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
+  depends_on "voro++" => :build
 
   depends_on "fftw"
-  depends_on "gcc" # for gfortran
-  depends_on "gsl"
   depends_on "jpeg-turbo"
   depends_on "kim-api"
   depends_on "libpng"
   depends_on "open-mpi"
 
   uses_from_macos "curl"
+  uses_from_macos "python"
 
   on_macos do
     depends_on "libomp"
@@ -55,21 +57,25 @@ class Lammps < Formula
 
   def install
     %w[serial mpi].each do |variant|
-      system "cmake", "-S", "cmake", "-B", "build_#{variant}",
-                      "-C", "cmake/presets/all_on.cmake",
-                      "-C", "cmake/presets/nolib.cmake",
-                      "-DPKG_INTEL=no",
-                      "-DPKG_KIM=yes",
-                      "-DLAMMPS_MACHINE=#{variant}",
-                      "-DBUILD_MPI=#{(variant == "mpi") ? "yes" : "no"}",
-                      "-DBUILD_OMP=#{(variant == "serial") ? "no" : "yes"}",
-                      "-DBUILD_SHARED_LIBS=yes",
-                      "-DFFT=FFTW3",
-                      "-DWITH_GZIP=yes",
-                      "-DWITH_JPEG=yes",
-                      "-DWITH_PNG=yes",
-                      "-DCMAKE_INSTALL_RPATH=#{rpath}",
-                      *std_cmake_args
+      args = [
+        "-S", "cmake", "-B", "build_#{variant}",
+        "-C", "cmake/presets/all_on.cmake",
+        "-C", "cmake/presets/nolib.cmake",
+        "-DPKG_INTEL=no",
+        "-DPKG_KIM=yes",
+        "-DPKG_VORONOI=yes",
+        "-DLAMMPS_MACHINE=#{variant}",
+        "-DBUILD_MPI=#{(variant == "mpi") ? "yes" : "no"}",
+        "-DBUILD_OMP=#{(variant == "serial") ? "no" : "yes"}",
+        "-DBUILD_SHARED_LIBS=yes",
+        "-DFFT=FFTW3",
+        "-DWITH_GZIP=yes",
+        "-DWITH_JPEG=yes",
+        "-DWITH_PNG=yes",
+        "-DCMAKE_INSTALL_RPATH=#{rpath}"
+      ]
+      args << "-DOpenMP_CXX_FLAGS=-I#{Formula["libomp"].opt_include}" if OS.mac?
+      system "cmake", *args, *std_cmake_args
       system "cmake", "--build", "build_#{variant}"
       system "cmake", "--install", "build_#{variant}"
     end
@@ -79,5 +85,9 @@ class Lammps < Formula
 
   test do
     system bin/"lmp_serial", "-in", pkgshare/"bench/in.lj"
+    output = shell_output("#{bin}/lmp_serial -h")
+    %w[KSPACE POEMS VORONOI].each do |pkg|
+      assert_match pkg, output
+    end
   end
 end

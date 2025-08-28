@@ -1,8 +1,8 @@
 class Remind < Formula
   desc "Sophisticated calendar and alarm"
   homepage "https://dianne.skoll.ca/projects/remind/"
-  url "https://dianne.skoll.ca/projects/remind/download/remind-05.00.06.tar.gz"
-  sha256 "b861a1d5e44f4fa6c6605e05f5eefd0fe68c9e9390ba492d96625bc8cdae45ca"
+  url "https://dianne.skoll.ca/projects/remind/download/remind-06.00.01.tar.gz"
+  sha256 "0705b6f700d6cd7b0f59af106495f7dd726ea14b641d9d8408f532fb28d2f007"
   license "GPL-2.0-only"
   head "https://git.skoll.ca/Skollsoft-Public/Remind.git", branch: "master"
 
@@ -12,24 +12,31 @@ class Remind < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia: "6dbfc52304409b334a566ecdcfd909f3e84ca55744d3efee5a60ec47129e935c"
-    sha256 arm64_sonoma:  "6964936e270bae2211787139ce2b1537f848cf19e0a887a17c10d36f7b53a781"
-    sha256 arm64_ventura: "9e489e10211bd3fe609d5e95b546abccb9315785524bb0b9e1275103eed11b71"
-    sha256 sonoma:        "85bde519fd4ee68c9541a795189018452a599b40ebc7c4cc77c7955fce8ae74b"
-    sha256 ventura:       "cdb3314524948d539d4fb1264fdce7b59499c673ad7f4a3d1299c75d998ea85d"
-    sha256 x86_64_linux:  "6bc46b925d1d6c72b9a126c09c4097cb81c3ea9900cc524469d423bbbc036897"
+    sha256 arm64_sequoia: "1ed2f2ca8a5b9d89774a8d78fa1c945706641302ba5df3fefcabb435dbb9304f"
+    sha256 arm64_sonoma:  "284b7f3b9ac52755750fdaf3695e4f5abfec923a88d448f6e4ffc63849e390f4"
+    sha256 arm64_ventura: "c1b0a299ccccbbc3087786331911c9c5083cc60e344ce988cbbcf406726e1be9"
+    sha256 sonoma:        "69e433382670efa0b5e86d2e616d5f409998e832eaac9d66aa3ad7917bdac99b"
+    sha256 ventura:       "274971f7f508e0ae046d17dbb742b5288528379e80cac90a00b6de09a76539b1"
+    sha256 arm64_linux:   "a736b1d9ab98946ffc36529f13735d6df39034394fb887be88c9b6ba3b6323c3"
+    sha256 x86_64_linux:  "00a4f0ef7dd110797056e2d3f802d87de21cacbf13f7c532e1f77e9a5a9d20d5"
   end
 
   conflicts_with "rem", because: "both install `rem` binaries"
 
   def install
+    # Fix to error: unsupported option '-ffat-lto-objects' for target 'arm64-apple-darwin24.4.0'
+    inreplace "configure", "-ffat-lto-objects", "" if DevelopmentTools.clang_build_version >= 1700
+
     system "./configure", "--prefix=#{prefix}"
     system "make", "install"
   end
 
   test do
-    (testpath/"reminders").write "ONCE 2015-01-01 Homebrew Test"
+    (testpath/"reminders.rem").write <<~REM
+      SET $OnceFile "./once.timestamp"
+      REM ONCE 2015-01-01 MSG Homebrew Test
+    REM
     assert_equal "Reminders for Thursday, 1st January, 2015:\n\nHomebrew Test\n\n",
-      shell_output("#{bin}/remind reminders 2015-01-01")
+      shell_output("#{bin}/remind reminders.rem 2015-01-01")
   end
 end

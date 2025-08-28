@@ -1,34 +1,33 @@
 class Synfig < Formula
   desc "Command-line renderer"
-  homepage "https://synfig.org/"
+  homepage "https://www.synfig.org/"
   # TODO: Update livecheck to track only stable releases when 1.6.x is available.
-  url "https://downloads.sourceforge.net/project/synfig/development/1.5.2/source/synfig-1.5.2.tar.gz"
-  mirror "https://github.com/synfig/synfig/releases/download/v1.5.2/synfig-1.5.2.tar.gz"
-  sha256 "0a7cff341eb0bcd31725996ad70c1461ce5ddb3c3ee9f899abeb4a3e77ab420e"
+  url "https://github.com/synfig/synfig/releases/download/v1.5.3/synfig-1.5.3.tar.gz"
+  sha256 "913c9cee6e5ad8fd6db3b3607c5b5ae0312f9ee6720c60619e3a97da98501ea8"
   license "GPL-3.0-or-later"
-  revision 1
+  revision 3
   head "https://github.com/synfig/synfig.git", branch: "master"
 
   livecheck do
     url :stable
-    regex(%r{url=.*?/synfig[._-]v?(\d+(?:\.\d+)+)\.t}i)
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 arm64_sonoma:   "215e214b9ebb1e44193cc9c9b72d79dc6f9a35a33f4bab89893c1943a553a38a"
-    sha256 arm64_ventura:  "005402c971bd3fff896a2b5953029bc47c74d9ad47c244b8876d37c0008b8acd"
-    sha256 arm64_monterey: "87580f412466c2cc5f6e871de5ae2f331831abc02d204dda705f00ca8c87e216"
-    sha256 sonoma:         "91327f9de2c7cfaa6d805338e5b7c9a4bc4f3c6e6166ee815de090f38e4b6c74"
-    sha256 ventura:        "d0eecbd0a7629c95a7e2d2b447ed88388772cb81a822cc0fb31e129fa17f108c"
-    sha256 monterey:       "a136f2dd2ce9ca0860ebbf517831b4ead42250a92e4fc2aeee0c88186f301d4e"
-    sha256 x86_64_linux:   "8756ad19dc3c0f2b49a0b07a8e07d4766df49f3aa6cdcc6ae1c95cadab4306b0"
+    sha256                               arm64_sonoma:  "3c3a98577381b53308561bed6a7b384fe937e07a90370920e99ec8961baa7ee4"
+    sha256                               arm64_ventura: "417d5f08a21f086cac5f783e38c25c0892dd926e6c68b56be06480a58cc3e918"
+    sha256                               sonoma:        "2e3ba3584439484f6b26d6f83c4479862eabc64a72b8a1fc4ac69bd819055af4"
+    sha256                               ventura:       "5aecf1d776296f38eaeb436669755a56bc2e2e87ad7cb16bb3bf688393a7e171"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "bf67766653f8f6273dbf9b5285dbbbd16aeb1d11032505d11ef142b178cc42fb"
   end
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "intltool" => :build
   depends_on "libtool" => :build
-  depends_on "pkg-config" => [:build, :test]
+  depends_on "pkgconf" => [:build, :test]
 
   depends_on "cairo"
   depends_on "etl"
@@ -65,11 +64,7 @@ class Synfig < Formula
     depends_on "perl-xml-parser" => :build
   end
 
-  fails_with gcc: "5"
-
   def install
-    ENV.prepend_path "PERL5LIB", Formula["perl-xml-parser"].libexec/"lib/perl5" unless OS.mac?
-
     ENV.cxx11
 
     # missing install-sh in the tarball, and re-generate configure script
@@ -83,7 +78,7 @@ class Synfig < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <stddef.h>
       #include <synfig/version.h>
       int main(int argc, char *argv[])
@@ -91,11 +86,10 @@ class Synfig < Formula
         const char *version = synfig::get_version();
         return 0;
       }
-    EOS
+    CPP
 
-    ENV.append_path "PKG_CONFIG_PATH", Formula["ffmpeg@6"].opt_lib/"pkgconfig"
-    pkg_config_flags = shell_output("pkg-config --cflags --libs libavcodec synfig").chomp.split
-    system ENV.cxx, "-std=c++11", "test.cpp", "-o", "test", *pkg_config_flags
+    pkgconf_flags = shell_output("pkgconf --cflags --libs libavcodec synfig").chomp.split
+    system ENV.cxx, "-std=c++11", "test.cpp", "-o", "test", *pkgconf_flags
     system "./test"
   end
 end

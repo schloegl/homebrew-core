@@ -2,9 +2,10 @@ class Rdkit < Formula
   desc "Open-source chemoinformatics library"
   homepage "https://rdkit.org/"
   # NOTE: Make sure to update RPATHs if any "@rpath-referenced libraries" show up in `brew linkage`
-  url "https://github.com/rdkit/rdkit/archive/refs/tags/Release_2024_09_1.tar.gz"
-  sha256 "034c00d6e9de323506834da03400761ed8c3721095114369d06805409747a60f"
+  url "https://github.com/rdkit/rdkit/archive/refs/tags/Release_2025_03_5.tar.gz"
+  sha256 "8bdb3c774ed4ae9e2727b6ce005004191447d630d8e857d36839cd8f1bca55b5"
   license "BSD-3-Clause"
+  revision 1
   head "https://github.com/rdkit/rdkit.git", branch: "master"
 
   livecheck do
@@ -16,18 +17,18 @@ class Rdkit < Formula
   end
 
   bottle do
-    rebuild 2
-    sha256 cellar: :any,                 arm64_sequoia: "7037436f7dd820eb9a6bf062d8ac724d97bd9b5fd1c269de1f7981698587ff88"
-    sha256 cellar: :any,                 arm64_sonoma:  "8901e8d1946cffb1810524c003ffc4424078037efc0b6b73de274d6fbb1cd1b7"
-    sha256 cellar: :any,                 arm64_ventura: "8de1b84bedd61a137f223a38c42278b8f389a4aa4cd50cb1ed34401d1d6a4b88"
-    sha256 cellar: :any,                 sonoma:        "4dc2bafd2f99c04fb7adb37e75d8203c549401c2fe3b9291fa9b1ce3e1e98f3b"
-    sha256 cellar: :any,                 ventura:       "37d8191f6e36cafaa6fe80edbd8e3bd8fc7e3ca66302e643fc6ae9ed5c067aa3"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "68d0cb71514d8459ebb22439074ca38139fdb2ce2eff21abcd41e13227feadb9"
+    sha256                               arm64_sequoia: "31f019544b98eb48d87bf91447af4544502f282c457bf5dd3b72266143fa7ec7"
+    sha256                               arm64_sonoma:  "13219543e31aedeaaacc98bffa89528193bafc9014965662dec609715e79c5e5"
+    sha256                               arm64_ventura: "b34c3831c49708ca91129cb60638b09b1249c7be83dd4a1ff604e24be0dd7ad2"
+    sha256 cellar: :any,                 sonoma:        "1aa34a1087e741ce6a3ce7271e22373051b8646494c19dc34c9cedef171280c3"
+    sha256 cellar: :any,                 ventura:       "72db4c060d276fc5ee9fdff989c9fe8fccf418ac05644a1750fae8f657a9052c"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "5b1564fcda61fe18ed23f84fbc79c5f65f3af55804836a3a15ee0ce3f200b75b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4dac9109a35ad92e4a2301652261e47b986b94981c1472d2ca52bbab72904b0f"
   end
 
   depends_on "catch2" => :build
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "postgresql@14" => [:build, :test]
   depends_on "postgresql@17" => [:build, :test]
   depends_on "boost"
@@ -40,18 +41,21 @@ class Rdkit < Formula
   depends_on "maeparser"
   depends_on "numpy"
   depends_on "py3cairo"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
-  # Apply open PR commit to use .dylib for PostgreSQL 16+ modules
-  # TODO: Remove if merged and available in a release
-  # PR ref: https://github.com/rdkit/rdkit/pull/7869
+  resource "better_enums" do
+    url "https://github.com/aantron/better-enums/archive/refs/tags/0.11.3.tar.gz"
+    sha256 "1b1597f0aa5452b971a94ab13d8de3b59cce17d9c43c8081aa62f42b3376df96"
+  end
+
+  # Fix build with Boost 1.89.0, pr ref: https://github.com/rdkit/rdkit/pull/8694
   patch do
-    url "https://github.com/rdkit/rdkit/commit/3ade0f8cd31be54fc267b9f5e94e8aa755f56f36.patch?full_index=1"
-    sha256 "09696dc4c26832f5c5126d059ae0d71a12ab404438e55e8f9a90880a1fad6c03"
+    url "https://github.com/rdkit/rdkit/commit/ee6abc196954a4e8a9e8517e451a21277eac6e6a.patch?full_index=1"
+    sha256 "811da1b8bd4655728c8c9f615dd1e5d8ba8baa4d29258f43717e25d3677735e8"
   end
 
   def python3
-    "python3.12"
+    "python3.13"
   end
 
   def postgresqls
@@ -60,14 +64,18 @@ class Rdkit < Formula
   end
 
   def install
+    (buildpath/"better_enums").install resource("better_enums")
+
     python_rpath = rpath(source: lib/Language::Python.site_packages(python3))
     python_rpaths = [python_rpath, "#{python_rpath}/..", "#{python_rpath}/../.."]
     args = %W[
       -DCMAKE_INSTALL_RPATH=#{rpath}
       -DCMAKE_MODULE_LINKER_FLAGS=#{python_rpaths.map { |path| "-Wl,-rpath,#{path}" }.join(" ")}
+      -DCMAKE_PREFIX_PATH='#{Formula["maeparser"].opt_lib};#{Formula["coordgen"].opt_lib}'
       -DCMAKE_REQUIRE_FIND_PACKAGE_coordgen=ON
       -DCMAKE_REQUIRE_FIND_PACKAGE_maeparser=ON
       -DCMAKE_REQUIRE_FIND_PACKAGE_Inchi=ON
+      -DFETCHCONTENT_SOURCE_DIR_BETTER_ENUMS=#{buildpath}/better_enums
       -DINCHI_INCLUDE_DIR=#{Formula["inchi"].opt_include}/inchi
       -DRDK_INSTALL_INTREE=OFF
       -DRDK_BUILD_SWIG_WRAPPERS=OFF
@@ -125,10 +133,10 @@ class Rdkit < Formula
 
   test do
     # Test Python module
-    (testpath/"test.py").write <<~EOS
+    (testpath/"test.py").write <<~PYTHON
       from rdkit import Chem
       print(Chem.MolToSmiles(Chem.MolFromSmiles('C1=CC=CN=C1')))
-    EOS
+    PYTHON
     assert_equal "c1ccncc1", shell_output("#{python3} test.py 2>&1").chomp
 
     # Test PostgreSQL extension

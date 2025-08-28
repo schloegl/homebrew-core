@@ -1,9 +1,9 @@
 class Maven < Formula
   desc "Java-based project management"
   homepage "https://maven.apache.org/"
-  url "https://www.apache.org/dyn/closer.lua?path=maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz"
-  mirror "https://archive.apache.org/dist/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz"
-  sha256 "7a9cdf674fc1703d6382f5f330b3d110ea1b512b51f1652846d9e4e8a588d766"
+  url "https://www.apache.org/dyn/closer.lua?path=maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.tar.gz"
+  mirror "https://archive.apache.org/dist/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.tar.gz"
+  sha256 "4b7195b6a4f5c81af4c0212677a32ee8143643401bc6e1e8412e6b06ea82beac"
   license "Apache-2.0"
 
   livecheck do
@@ -12,19 +12,13 @@ class Maven < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "106bdaaec0342b1656442dd5d1521b3edf69df22576726110bf1d56af0d4bfef"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "106bdaaec0342b1656442dd5d1521b3edf69df22576726110bf1d56af0d4bfef"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "106bdaaec0342b1656442dd5d1521b3edf69df22576726110bf1d56af0d4bfef"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "106bdaaec0342b1656442dd5d1521b3edf69df22576726110bf1d56af0d4bfef"
-    sha256 cellar: :any_skip_relocation, sonoma:         "019b91415dce288368bd462ebbfa009a262f7d9a4eb05f1bf64a4d09c4f65d91"
-    sha256 cellar: :any_skip_relocation, ventura:        "019b91415dce288368bd462ebbfa009a262f7d9a4eb05f1bf64a4d09c4f65d91"
-    sha256 cellar: :any_skip_relocation, monterey:       "019b91415dce288368bd462ebbfa009a262f7d9a4eb05f1bf64a4d09c4f65d91"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "106bdaaec0342b1656442dd5d1521b3edf69df22576726110bf1d56af0d4bfef"
+    rebuild 2
+    sha256 cellar: :any_skip_relocation, all: "2f1d82c971cd4c85e9d2dac09ecab088398d2313144648110efad51a0eccb53b"
   end
 
   depends_on "openjdk"
 
-  conflicts_with "mvnvm", because: "also installs a 'mvn' executable"
+  conflicts_with "mvnvm", because: "both install `mvn` executables"
 
   def install
     # Remove windows files
@@ -34,6 +28,10 @@ class Maven < Formula
     chmod 0644, "conf/settings.xml"
 
     libexec.install Dir["*"]
+
+    # Build an `:all` bottle by changing the path for `mavenrc`
+    file = libexec/"bin/mvn"
+    inreplace file, "/usr/local/etc/mavenrc", "#{HOMEBREW_PREFIX}/etc/mavenrc"
 
     # Leave conf file in libexec. The mvn symlink will be resolved and the conf
     # file will be found relative to it
@@ -48,7 +46,7 @@ class Maven < Formula
   end
 
   test do
-    (testpath/"pom.xml").write <<~EOS
+    (testpath/"pom.xml").write <<~XML
       <?xml version="1.0" encoding="UTF-8"?>
       <project xmlns="https://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -62,16 +60,16 @@ class Maven < Formula
           <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         </properties>
       </project>
-    EOS
+    XML
 
-    (testpath/"src/main/java/org/homebrew/MavenTest.java").write <<~EOS
+    (testpath/"src/main/java/org/homebrew/MavenTest.java").write <<~JAVA
       package org.homebrew;
       public class MavenTest {
         public static void main(String[] args) {
           System.out.println("Testing Maven with Homebrew!");
         }
       }
-    EOS
+    JAVA
 
     system bin/"mvn", "compile", "-Duser.home=#{testpath}"
   end

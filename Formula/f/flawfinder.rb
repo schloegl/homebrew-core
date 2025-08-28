@@ -14,19 +14,14 @@ class Flawfinder < Formula
     regex(/href=.*?flawfinder[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    rebuild 2
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "42f5bed6b68e93a4761483efd269bbeb4fba2d0920f2c2ad28e67812d220429c"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "29f9397a8cee6ea519559666eca9fd4323259bc449543e8bc0f4afd30aeaceaa"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "29f9397a8cee6ea519559666eca9fd4323259bc449543e8bc0f4afd30aeaceaa"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "29f9397a8cee6ea519559666eca9fd4323259bc449543e8bc0f4afd30aeaceaa"
-    sha256 cellar: :any_skip_relocation, sonoma:         "532b4e68f1878d52077507f2ad662a5b6c86f410854a952f2269c1db2d34f778"
-    sha256 cellar: :any_skip_relocation, ventura:        "532b4e68f1878d52077507f2ad662a5b6c86f410854a952f2269c1db2d34f778"
-    sha256 cellar: :any_skip_relocation, monterey:       "532b4e68f1878d52077507f2ad662a5b6c86f410854a952f2269c1db2d34f778"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "29f9397a8cee6ea519559666eca9fd4323259bc449543e8bc0f4afd30aeaceaa"
+    rebuild 4
+    sha256 cellar: :any_skip_relocation, all: "3d21cca878025689c10c24b55855c5cd035eb4dd0601707bc412eb17e97545ab"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   def install
     rewrite_shebang detected_python_shebang, "flawfinder.py"
@@ -34,12 +29,12 @@ class Flawfinder < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       int demo(char *a, char *b) {
         strcpy(a, "\n");
         strcpy(a, gettext("Hello there"));
       }
-    EOS
+    C
     assert_match("Hits = 2\n", shell_output("#{bin}/flawfinder test.c"))
   end
 end

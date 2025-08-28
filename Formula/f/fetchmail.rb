@@ -1,8 +1,8 @@
 class Fetchmail < Formula
   desc "Client for fetching mail from POP, IMAP, ETRN or ODMR-capable servers"
   homepage "https://www.fetchmail.info/"
-  url "https://downloads.sourceforge.net/project/fetchmail/branch_6.4/fetchmail-6.4.39.tar.xz"
-  sha256 "75109a1f307b538155fa05f5ef298e8298cb4deae95aed24c16b38d36ff0a186"
+  url "https://downloads.sourceforge.net/project/fetchmail/branch_6.5/fetchmail-6.5.4.tar.xz"
+  sha256 "c859156e9bff841d4d984cb3fdcb8042b6b31789fc3387c2649baa95a88d698b"
   license all_of: [
     "LGPL-2.1-or-later",
     "ISC",
@@ -17,16 +17,16 @@ class Fetchmail < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_sequoia:  "531a98d2af949d23b2de33b7e9cedfe3c7aa39a49d59f52023531d3184ba6119"
-    sha256 cellar: :any, arm64_sonoma:   "91549ee97ce356ed5b3b7004a06f04195d528413f2dbf02fdda99cac0c162090"
-    sha256 cellar: :any, arm64_ventura:  "104754306bfc7cf87ab281d313496931d9b34252efdf981e512dbd1d4f101e0c"
-    sha256 cellar: :any, arm64_monterey: "6cdcdf18636df7649a006751f4f2e0c548c6d1d23f687dcb8ae57caf9402040b"
-    sha256 cellar: :any, sonoma:         "ea579492596d6f2972e800ebbaf5936dad15801a64b61d6bd7af4f1da05461ca"
-    sha256 cellar: :any, ventura:        "b1bfc5a0f4903f38135411c86eeb8e800e413a5c3f4209d7d992fa12d786e5d4"
-    sha256 cellar: :any, monterey:       "0910b99beb30cdae8fed6132f2d8dd934d4d0210b8b83e01a4a7902e0203a95e"
-    sha256               x86_64_linux:   "913eaf667d5718b8b1a58ccc8d3c531dc45257ae0e8cbb23304d283daf30f91c"
+    sha256 cellar: :any, arm64_sequoia: "daf595c9ee9c4c8b64f534e7db0432f4e514a7087a8a62e287faac4cdd78f0e7"
+    sha256 cellar: :any, arm64_sonoma:  "e0d032448a5d853a87042083a7942556c42c13f71eb5ddf32fb6a4562f5444cd"
+    sha256 cellar: :any, arm64_ventura: "8986b9ee8c100f0d141144c57d0abe790023d31e5ff0ae5cbd39c19f2b868e41"
+    sha256 cellar: :any, sonoma:        "812b774ef6547548f915952f4522b8ca7b7f7be24b749e7fca410701ad973080"
+    sha256 cellar: :any, ventura:       "30ab543b6ef257a4324c98bee2f770edc2371c84752b86b8d93ba8ee72b5af0e"
+    sha256               arm64_linux:   "a2f7f8c5f56107b456c97e53ec2f1c5abe445cccef609f92e0583dde033412f5"
+    sha256               x86_64_linux:  "c0689bb6b80ddad96a9d209e8fc2aec58e48de412f00815a53d49bda0754141e"
   end
 
+  depends_on "pkgconf" => :build
   depends_on "openssl@3"
 
   def install

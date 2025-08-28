@@ -1,24 +1,25 @@
 class Uwsgi < Formula
   desc "Full stack for building hosting services"
   homepage "https://uwsgi-docs.readthedocs.io/en/latest/"
-  url "https://files.pythonhosted.org/packages/e1/46/fb08706bc5d922584a5aaed1f73e7a17313310aa34615c74406112ea04a6/uwsgi-2.0.27.tar.gz"
-  sha256 "3ee5bfb7e6e9c93478c22aa8183eef35b95a2d5b14cca16172e67f135565c458"
+  url "https://files.pythonhosted.org/packages/6f/f0/d794e9c7359f488b158e88c9e718c5600efdb74a0daf77331e5ffb6c87c4/uwsgi-2.0.30.tar.gz"
+  sha256 "c12aa652124f062ac216077da59f6d247bd7ef938234445881552e58afb1eb5f"
   license "GPL-2.0-or-later"
   head "https://github.com/unbit/uwsgi.git", branch: "master"
 
   bottle do
-    sha256 arm64_sequoia: "406f6148141cf2dc39642509f9824f1194f45594671c403e22021f387d31a3c4"
-    sha256 arm64_sonoma:  "7046ea7b89717b42bc3bad1ade91da787dd75ef1cb3b3125dd6f3f6995838f88"
-    sha256 arm64_ventura: "aaf2ae027abd418337f7d61e86217392debf3cef30405c2efd4d064836ef6236"
-    sha256 sonoma:        "a081e3ca5de740c4ac25d8f8f26bf109f190e752470b9de8bc78bee743c1a0d2"
-    sha256 ventura:       "0204e8b97e173f10d0119f81d54017543bdea15af77fed0b58ab1ac9f83dd52d"
-    sha256 x86_64_linux:  "f5cd1e574fd5317bf912c6bef2c352401f3c5fda30c9c76f1503659722129e47"
+    sha256 arm64_sequoia: "b2386757296c38cd05ba889d19d2bc6d29c07ba6124657f1d905965fc3da1e1a"
+    sha256 arm64_sonoma:  "45c740b6194c9740b2d88e40a67ebf5d6019869e13faf2b40d6cf747a87808d3"
+    sha256 arm64_ventura: "dd78e316d8d60fc40c16425d7bd57788725052921e79bd1291a81c81f1c3b00d"
+    sha256 sonoma:        "8c1aff88354475b992347f8449ef581753a402dce09b4318d6c6ef1c378d4e65"
+    sha256 ventura:       "0de8c5fcee50137e7e2346567afb07ec1fa9b995bd3392604f1e3e812393824e"
+    sha256 arm64_linux:   "472b257c4aa0a1ff3d7e915bda3196681cc459de6964b19d9670cf26ee3516e1"
+    sha256 x86_64_linux:  "3c27e5bd84f5135985cce5e2c13f8a7845074bab10040fccf09caa9d0bc0e4d9"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "openssl@3"
   depends_on "pcre2"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "sqlite"
   depends_on "yajl"
 
@@ -32,12 +33,16 @@ class Uwsgi < Formula
     depends_on "linux-pam"
   end
 
+  def python3
+    "python3.13"
+  end
+
   def install
     openssl = Formula["openssl@3"]
     ENV.prepend "CFLAGS", "-I#{openssl.opt_include}"
     ENV.prepend "LDFLAGS", "-L#{openssl.opt_lib}"
 
-    (buildpath/"buildconf/brew.ini").write <<~EOS
+    (buildpath/"buildconf/brew.ini").write <<~INI
       [uwsgi]
       ssl = true
       json = yajl
@@ -46,9 +51,8 @@ class Uwsgi < Formula
       inherit = base
       plugin_dir = #{libexec}/uwsgi
       embedded_plugins = null
-    EOS
+    INI
 
-    python3 = "python3.12"
     system python3, "uwsgiconfig.py", "--verbose", "--build", "brew"
 
     plugins = %w[airbrake alarm_curl asyncio cache
@@ -88,18 +92,22 @@ class Uwsgi < Formula
   end
 
   test do
-    (testpath/"helloworld.py").write <<~EOS
+    (testpath/"helloworld.py").write <<~PYTHON
       def application(env, start_response):
         start_response('200 OK', [('Content-Type','text/html')])
         return [b"Hello World"]
-    EOS
+    PYTHON
 
     port = free_port
-
-    pid = fork do
-      exec "#{bin}/uwsgi --http-socket 127.0.0.1:#{port} --protocol=http --plugin python3 -w helloworld"
-    end
-    sleep 2
+    args = %W[
+      --http-socket 127.0.0.1:#{port}
+      --protocol=http
+      --plugin python3
+      -w helloworld
+    ]
+    pid = spawn("#{bin}/uwsgi", *args)
+    sleep 4
+    sleep 6 if Hardware::CPU.intel?
 
     begin
       assert_match "Hello World", shell_output("curl localhost:#{port}")

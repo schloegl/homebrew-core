@@ -1,11 +1,14 @@
 class IncludeWhatYouUse < Formula
   desc "Tool to analyze #includes in C and C++ source files"
   homepage "https://include-what-you-use.org/"
-  url "https://include-what-you-use.org/downloads/include-what-you-use-0.22.src.tar.gz"
-  sha256 "859074b461ea4b8325a73418c207ca33b5e6566b08e6b587eb9164416569a6dd"
   license "NCSA"
   revision 1
-  head "https://github.com/include-what-you-use/include-what-you-use.git", branch: "master"
+
+  stable do
+    url "https://include-what-you-use.org/downloads/include-what-you-use-0.24.src.tar.gz"
+    sha256 "a23421ceff601d3ea215e8fa9292bfa8ca39eb1ac2098dbbedfc6cfe65541c10"
+    depends_on "llvm@20" # TODO: use `llvm` in 0.25
+  end
 
   # This omits the 3.3, 3.4, and 3.5 versions, which come from the older
   # version scheme like `Clang+LLVM 3.5` (25 November 2014). The current
@@ -17,20 +20,23 @@ class IncludeWhatYouUse < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "4ed20fb4c62baae23a67013b1bb285f4cf0c778a852725e5ea4cce31139003c5"
-    sha256 cellar: :any,                 arm64_sonoma:  "efb3d600d636270fc665c6f3d64aa81caff7c5cc2ef94b2d84267a9dc4e94648"
-    sha256 cellar: :any,                 arm64_ventura: "933355061e43480f8722c0d8ab8d69f0fb9b6fe0c86a1b0722f6fe3e8bcfab5e"
-    sha256 cellar: :any,                 sonoma:        "15ea39d4a8af3fc9ffc9e77fb2850494464ce24188f6b0519badd941e65048cf"
-    sha256 cellar: :any,                 ventura:       "eb459172046d8b587994857fc8adc042d309f228e5bda5019eec35fbf77e526d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c3a1e76cb95512dba345a66ddcd90d17ffc6aa855faa95350c335b5c867cd919"
+    sha256 arm64_sequoia: "a4ddb8fded4e60f585786a9812ea44463605664e4e08f9699a46fbdba6d792bd"
+    sha256 arm64_sonoma:  "a84ad2297f240dfaf9c93b7faf3b0454fdaa3bf5894b6324942a518cd12aaf92"
+    sha256 arm64_ventura: "024a17a51b89dd85b62e2ed1cb27750d4a1c7e332111eef74754c3aa61254c97"
+    sha256 sonoma:        "af4b93c97732e208b154f0c8ad25704388db44b728415db0fc82d4b32c538bca"
+    sha256 ventura:       "98a1fa193264a29dd811f4acac7172999a991fe80e1894f7afedfb7ca64f7246"
+    sha256 arm64_linux:   "0ee5d2b838c652f4d129eaf73cdcac8a1c1b587153f6a8b76ebf6a7db4165e1f"
+    sha256 x86_64_linux:  "b08052109946612bea46917bd7e110d436618f49f214a07e84bf8c8c55dbbc39"
+  end
+
+  head do
+    url "https://github.com/include-what-you-use/include-what-you-use.git", branch: "master"
+    depends_on "llvm"
   end
 
   depends_on "cmake" => :build
-  depends_on "llvm@18"
   uses_from_macos "ncurses"
   uses_from_macos "zlib"
-
-  fails_with gcc: "5" # LLVM is built with GCC
 
   def llvm
     deps.map(&:to_formula).find { |f| f.name.match?(/^llvm(@\d+(\.\d+)*)?$/) }
@@ -67,19 +73,19 @@ class IncludeWhatYouUse < Formula
   end
 
   test do
-    (testpath/"direct.h").write <<~EOS
+    (testpath/"direct.h").write <<~C
       #include <stddef.h>
       size_t function() { return (size_t)0; }
-    EOS
-    (testpath/"indirect.h").write <<~EOS
+    C
+    (testpath/"indirect.h").write <<~C
       #include "direct.h"
-    EOS
-    (testpath/"main.c").write <<~EOS
+    C
+    (testpath/"main.c").write <<~C
       #include "indirect.h"
       int main() {
         return (int)function();
       }
-    EOS
+    C
     expected_output = <<~EOS
       main.c should add these lines:
       #include "direct.h"  // for function
@@ -94,17 +100,18 @@ class IncludeWhatYouUse < Formula
     assert_match expected_output,
       shell_output("#{bin}/include-what-you-use main.c 2>&1")
 
-    (testpath/"main.cc").write <<~EOS
+    mapping_file = "#{llvm.opt_include}/c++/v1/libcxx.imp"
+    (testpath/"main.cc").write <<~CPP
       #include <iostream>
       int main() {
         std::cout << "Hello, world!" << std::endl;
         return 0;
       }
-    EOS
+    CPP
     expected_output = <<~EOS
       (main.cc has correct #includes/fwd-decls)
     EOS
     assert_match expected_output,
-      shell_output("#{bin}/include-what-you-use main.cc 2>&1")
+      shell_output("#{bin}/include-what-you-use main.cc -Xiwyu --mapping_file=#{mapping_file} 2>&1")
   end
 end

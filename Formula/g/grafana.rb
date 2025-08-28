@@ -1,9 +1,8 @@
 class Grafana < Formula
   desc "Gorgeous metric visualizations and dashboards for timeseries databases"
   homepage "https://grafana.com"
-  # TODO: switch to use go1.23 when 11.3.0 is released
-  url "https://github.com/grafana/grafana/archive/refs/tags/v11.2.1.tar.gz"
-  sha256 "7881d5feb8942fb3adf42167534ded3efd876bc2e8b729ee4e693f096ee38924"
+  url "https://github.com/grafana/grafana/archive/refs/tags/v12.1.0.tar.gz"
+  sha256 "9e2f3f11eff01f8b86c2c232c6a3c3a32fa303589ea9829538ffc867684a4436"
   license "AGPL-3.0-only"
   head "https://github.com/grafana/grafana.git", branch: "main"
 
@@ -13,17 +12,17 @@ class Grafana < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "033a9ab8f119b781f571ac60defd2636e007dfe7dc860eb88819896f8d488a28"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "172cd02cbe0e053b57db8892eccc37f6da44aecbb35e13550f752d5d4d13ec06"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "e0bb0a4c465960237b150909574ef4dab85a41d25d7b1d4d3b4e90d78414891e"
-    sha256 cellar: :any_skip_relocation, sonoma:        "c8d8ce03672255c5dcff14381f1c609648c12b0f84f8f3652c07939e6eba4a40"
-    sha256 cellar: :any_skip_relocation, ventura:       "480f989583dcd8454ec47f936554c42545af39a12b65d3490fd66ac532c53751"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d5a53914e944e0b631462bda267dadbb8f053ef4f3487af7d06cda0998547645"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "a6639b084a92df9ee36e004f42f4e6b9408e987bfd16bea116c3065c6c3e27a9"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "308c3471f361ba71cd9b2045f57e403187047d0b559d87d0c8e2fe2db3b96757"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "0c241cdd832abfdbd10e8f6d8b470248734a2c995fe3a1bb999bbd045c6a0215"
+    sha256 cellar: :any_skip_relocation, sonoma:        "c595bb5383f6a46cae69cba6aa21dc421c69e6788a574cd932685ac02ec3cbd8"
+    sha256 cellar: :any_skip_relocation, ventura:       "4bfab1f08ad02bfcf248cfeeae524792dee393afa0de5b3f8b37bbe922c238c7"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a4e4d396d5276b1b1482cbea776462f399e78a58c437111b3889bbc82dc11972"
   end
 
-  depends_on "corepack" => :build
-  depends_on "go@1.22" => :build
-  depends_on "node" => :build
+  depends_on "go" => :build
+  depends_on "node@22" => :build
+  depends_on "yarn" => :build
 
   uses_from_macos "python" => :build, since: :catalina
   uses_from_macos "zlib"
@@ -33,11 +32,9 @@ class Grafana < Formula
     depends_on "freetype"
   end
 
-  # update yarn.lock, upstream pr ref, https://github.com/grafana/grafana/pull/92543
-  patch :DATA
-
   def install
     ENV["NODE_OPTIONS"] = "--max-old-space-size=8000"
+
     system "make", "gen-go"
     system "go", "run", "build.go", "build"
 
@@ -50,10 +47,9 @@ class Grafana < Formula
     bin.install "bin/#{os}-#{arch}/grafana-cli"
     bin.install "bin/#{os}-#{arch}/grafana-server"
 
-    (etc/"grafana").mkpath
     cp "conf/sample.ini", "conf/grafana.ini.example"
-    etc.install "conf/sample.ini" => "grafana/grafana.ini"
-    etc.install "conf/grafana.ini.example" => "grafana/grafana.ini.example"
+    pkgetc.install "conf/sample.ini" => "grafana.ini"
+    pkgetc.install "conf/grafana.ini.example"
     pkgshare.install "conf", "public", "tools"
   end
 
@@ -120,48 +116,3 @@ class Grafana < Formula
     listening
   end
 end
-
-__END__
-diff --git a/package.json b/package.json
-index bbef4b75..18c56900 100644
---- a/package.json
-+++ b/package.json
-@@ -414,6 +414,7 @@
-     "semver@7.3.4": "7.5.4",
-     "debug@npm:^0.7.2": "2.6.9",
-     "debug@npm:^0.7.4": "2.6.9",
-+    "@grafana/e2e-selectors": "^11.1.0",
-     "slate-dev-environment@^0.2.2": "patch:slate-dev-environment@npm:0.2.5#.yarn/patches/slate-dev-environment-npm-0.2.5-9aeb7da7b5.patch",
-     "react-split-pane@0.1.92": "patch:react-split-pane@npm:0.1.92#.yarn/patches/react-split-pane-npm-0.1.92-93dbf51dff.patch",
-     "history@4.10.1": "patch:history@npm%3A4.10.1#./.yarn/patches/history-npm-4.10.1-ee217563ae.patch",
-diff --git a/yarn.lock b/yarn.lock
-index ddae709e..7c38a43a 100644
---- a/yarn.lock
-+++ b/yarn.lock
-@@ -3233,7 +3233,7 @@ __metadata:
-   languageName: unknown
-   linkType: soft
- 
--"@grafana/e2e-selectors@npm:11.2.1, @grafana/e2e-selectors@workspace:*, @grafana/e2e-selectors@workspace:packages/grafana-e2e-selectors":
-+"@grafana/e2e-selectors@npm:^11.1.0, @grafana/e2e-selectors@workspace:packages/grafana-e2e-selectors":
-   version: 0.0.0-use.local
-   resolution: "@grafana/e2e-selectors@workspace:packages/grafana-e2e-selectors"
-   dependencies:
-@@ -3251,17 +3251,6 @@ __metadata:
-   languageName: unknown
-   linkType: soft
- 
--"@grafana/e2e-selectors@npm:^11.0.0":
--  version: 11.1.0
--  resolution: "@grafana/e2e-selectors@npm:11.1.0"
--  dependencies:
--    "@grafana/tsconfig": "npm:^1.3.0-rc1"
--    tslib: "npm:2.6.3"
--    typescript: "npm:5.4.5"
--  checksum: 10/010a32e8b562d0da83b008646b9928a96a79957096eed713aa67b227d8ad6055d22cc0ec26f87fd9839cfb28344d0012f49c3c823defc6e91f4ab05ed7d8c465
--  languageName: node
--  linkType: hard
--
- "@grafana/eslint-config@npm:7.0.0":
-   version: 7.0.0
-   resolution: "@grafana/eslint-config@npm:7.0.0"

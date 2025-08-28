@@ -1,33 +1,29 @@
 class Gollama < Formula
   desc "Go manage your Ollama models"
   homepage "https://smcleod.net"
-  url "https://github.com/sammcj/gollama/archive/refs/tags/v1.27.10.tar.gz"
-  sha256 "a6bd0a52c3c1a52f65444bd497b728999f765a8f694300d773f908b99179cd44"
+  url "https://github.com/sammcj/gollama/archive/refs/tags/v1.37.1.tar.gz"
+  sha256 "1fc563d1be7b6b8e73be0c3079a02fb85a48f5a14695347d6541967afec32458"
   license "MIT"
   head "https://github.com/sammcj/gollama.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "3a68aa55ad73f9c767d9226cce942a23818e32dbeb68fce4c5a1d32cabdfd3a7"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "b09685abe9791d8629cd19975adb1120cb24c3dc14a782a9238cd1cacc04db25"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "17c48ceb6e1eed6786552bd8f9b47a2bf865d98fe21dfd627576166c509eedab"
-    sha256 cellar: :any_skip_relocation, sonoma:        "779f4f0486e505f71fe7786bb8cf61756698353e9020f11d3072c56666640f9a"
-    sha256 cellar: :any_skip_relocation, ventura:       "7ee7784a0c42b1d0eec77a054939575799599e320bb79467ae13a5a95d03f8db"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "da6b38aee826a8d086dab5fdf90eafd9814fce7148b3f8e8c4bdd385e2b1eca2"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "5764230094d0eef2083d635182e03f9d2d074c386691fac5ee30f8c45038b79f"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "1c1b0c072d882872d9e0a1b2e7e78ad71f5dc1da3de4c7fa38ac22f029ff589f"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "225d21f860afdad36d8cfdc7c0114012e36d494fb614acc28a1983ff3616a886"
+    sha256 cellar: :any_skip_relocation, sonoma:        "59897e2ed59f4704aac2c9536a9acb6601d9090b82de2ad142834c4b59be926e"
+    sha256 cellar: :any_skip_relocation, ventura:       "9676e306be2d43d07522c518d3592d8e100b6dbc629f3430167bc6c1835df9a8"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b871114fbbed6ebd63027ab3748559f942031ccb36c1186bebd698ddf8009679"
   end
 
   depends_on "go" => :build
   depends_on "ollama" => :test
 
   def install
-    ldflags = %W[
-      -s -w
-      -X main.Version=#{version}
-    ]
-    system "go", "build", *std_go_args(ldflags:)
+    system "go", "build", *std_go_args(ldflags: "-s -w -X main.Version=#{version}")
   end
 
   test do
-    assert_match version.to_s, shell_output(bin/"gollama -v")
+    assert_match version.to_s, shell_output("#{bin}/gollama -v")
 
     port = free_port
     ENV["OLLAMA_HOST"] = "localhost:#{port}"
@@ -36,7 +32,7 @@ class Gollama < Formula
     sleep 3
     begin
       assert_match "No matching models found.",
-        shell_output(bin/"gollama -h http://localhost:#{port} -s chatgpt")
+        shell_output("#{bin}/gollama -h http://localhost:#{port} -s chatgpt")
     ensure
       Process.kill "SIGTERM", pid
     end

@@ -1,57 +1,60 @@
 class Vte3 < Formula
   desc "Terminal emulator widget used by GNOME terminal"
   homepage "https://wiki.gnome.org/Apps/Terminal/VTE"
-  url "https://download.gnome.org/sources/vte/0.76/vte-0.76.4.tar.xz"
-  sha256 "9c52d1da6c6f7409289351fc1cba8948cd3b47d048cbfede763a0f75b77453cc"
+  url "https://download.gnome.org/sources/vte/0.80/vte-0.80.3.tar.xz"
+  sha256 "2e596fd3fbeabb71531662224e71f6a2c37f684426136d62854627276ef4f699"
   license "LGPL-2.0-or-later"
 
   bottle do
-    sha256 arm64_sequoia:  "e9968ae162ed90b8c97aa6c8628263a4287f83475e4bb94e3d16f4345831b4b0"
-    sha256 arm64_sonoma:   "e493a594877dcc06595b725b96dd915289bdd2293f467c746a07c685aaa0e9b2"
-    sha256 arm64_ventura:  "fef9c048213f11fe2cace83bd11a7c2d239bc3c4f0acad94206e7a758135f6ea"
-    sha256 arm64_monterey: "f80b773894ca38262ec0dcb54581c3daf3e975a3d6cb8f3f079b921289a824fb"
-    sha256 sonoma:         "422a31aaa3512958bd5f6546d5480ba2e61db36f674e0b3dfb6ee5eb8cf16f27"
-    sha256 ventura:        "4bd7c053119db55c5763afb4c8210b54932a578d55eaf17143bd9b9a6ee1f2ae"
-    sha256 monterey:       "4f9d6a846c608303d5f2bb81441732bc2be1fb5f1de94c103dd9fa191dca8f14"
-    sha256 x86_64_linux:   "f465add75933021f53c62287933fea92353640ec7e5e36c5be73ed0e541aa459"
+    sha256 arm64_sequoia: "960756705e94da9d25ec5dc389a9ba7cc2f91df7fc0a355c90f7d33643130e7a"
+    sha256 arm64_sonoma:  "3cd96db88e4b28490f5a9a40e2bf12737e8bc30edf62272b3e43ce1d89ff44e7"
+    sha256 arm64_ventura: "8b7acea9ae8aa671d249e2a24cefa855dc3657e05099d45c32501d9ba6591f13"
+    sha256 sonoma:        "e0f7aef9cd845c59965d333204040a8262e1637965d028e411b69a78634cc830"
+    sha256 ventura:       "0237892df0c51fe19e26558ad6a25f6a98b9d4b4dee2282ca2fed48f02b2f7f8"
+    sha256 arm64_linux:   "4af2394777d998b709a29dd57bb755703d875d210e7818c5addf932ed385e626"
+    sha256 x86_64_linux:  "0931a6292223f35b4ad272caf0a0cfd8006e37e31c23e773ee286c43ec6a9919"
   end
 
+  depends_on "fast_float" => :build
   depends_on "gettext" => :build
   depends_on "gobject-introspection" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => [:build, :test]
+  depends_on "pkgconf" => [:build, :test]
   depends_on "vala" => :build
+
   depends_on "at-spi2-core"
   depends_on "cairo"
   depends_on "fribidi"
   depends_on "gdk-pixbuf"
   depends_on "glib"
   depends_on "gnutls"
+  depends_on "graphene"
   depends_on "gtk+3"
   depends_on "gtk4"
-  depends_on "icu4c"
+  depends_on "icu4c@77"
   depends_on "lz4"
   depends_on macos: :mojave
   depends_on "pango"
   depends_on "pcre2"
 
+  uses_from_macos "python" => :build
+
   on_macos do
-    depends_on "llvm" => :build if DevelopmentTools.clang_build_version <= 1500
     depends_on "gettext"
-    # Undefined symbols for architecture x86_64:
-    #   "std::__1::__libcpp_verbose_abort(char const*, ...)", referenced from: ...
-    depends_on "llvm" if DevelopmentTools.clang_build_version <= 1400
+  end
+
+  on_ventura :or_older do
+    depends_on "llvm" => :build
+
+    fails_with :clang do
+      cause "error: 'to_chars' is unavailable: introduced in macOS 13.3"
+    end
   end
 
   on_linux do
     depends_on "linux-headers@5.15" => :build
     depends_on "systemd"
-  end
-
-  fails_with :clang do
-    build 1500
-    cause "Requires C++20"
   end
 
   fails_with :gcc do
@@ -63,12 +66,7 @@ class Vte3 < Formula
   patch :DATA
 
   def install
-    if OS.mac? && DevelopmentTools.clang_build_version <= 1500
-      ENV.llvm_clang
-      if DevelopmentTools.clang_build_version <= 1400
-        ENV.prepend "LDFLAGS", "-L#{Formula["llvm"].opt_lib}/c++ -L#{Formula["llvm"].opt_lib} -lunwind"
-      end
-    end
+    ENV.llvm_clang if OS.mac? && MacOS.version <= :ventura
 
     ENV["XML_CATALOG_FILES"] = etc/"xml/catalog"
 
@@ -84,21 +82,19 @@ class Vte3 < Formula
   end
 
   test do
-    ENV.clang if OS.mac? && (DevelopmentTools.clang_build_version <= 1500)
-
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <vte/vte.h>
 
       int main(int argc, char *argv[]) {
         guint v = vte_get_major_version();
         return 0;
       }
-    EOS
-    flags = shell_output("pkg-config --cflags --libs vte-2.91").chomp.split
+    C
+    flags = shell_output("pkgconf --cflags --libs vte-2.91").chomp.split
     system ENV.cc, "test.c", "-o", "test", *flags
     system "./test"
 
-    flags = shell_output("pkg-config --cflags --libs vte-2.91-gtk4").chomp.split
+    flags = shell_output("pkgconf --cflags --libs vte-2.91-gtk4").chomp.split
     system ENV.cc, "test.c", "-o", "test", *flags
     system "./test"
   end

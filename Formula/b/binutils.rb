@@ -1,32 +1,29 @@
 class Binutils < Formula
   desc "GNU binary tools for native development"
   homepage "https://www.gnu.org/software/binutils/binutils.html"
-  url "https://ftp.gnu.org/gnu/binutils/binutils-2.43.1.tar.bz2"
-  mirror "https://ftpmirror.gnu.org/binutils/binutils-2.43.1.tar.bz2"
-  sha256 "becaac5d295e037587b63a42fad57fe3d9d7b83f478eb24b67f9eec5d0f1872f"
+  url "https://ftpmirror.gnu.org/gnu/binutils/binutils-2.45.tar.bz2"
+  mirror "https://ftp.gnu.org/gnu/binutils/binutils-2.45.tar.bz2"
+  sha256 "1393f90db70c2ebd785fb434d6127f8888c559d5eeb9c006c354b203bab3473e"
   license all_of: ["GPL-2.0-or-later", "GPL-3.0-or-later", "LGPL-2.0-or-later", "LGPL-3.0-only"]
 
   bottle do
-    sha256                               arm64_sequoia:  "c645c3616086c374d30a1f3c1c6001f6f2562198efdf7ffea7d081eb33e36449"
-    sha256                               arm64_sonoma:   "88c34d875602f7bce1ad098b0dc61df8018db8febcd8a6d4759971cae74403d7"
-    sha256                               arm64_ventura:  "79dc9dfa4c4af46fe047c8c362c2cbad169d5d4c6c7d21d105e23ed1411ac3cd"
-    sha256                               arm64_monterey: "f46062326982276204aa358adc611d074b5872951678bb06a82fe399b7929b4a"
-    sha256                               sonoma:         "c88cb916d41507aed43ffe00cfbea11069e86ef78eb997db9ca7da1a48312f98"
-    sha256                               ventura:        "63bd99b78b6df776b633ed15439abd116afdd1a2b29e392191e37efaa58a3657"
-    sha256                               monterey:       "809e8a094c8bd8c03fee89af3d50a5837644b1af6184754d732981e628be98a8"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "ab5913dd80970340737b8450c3d227f2e6ad07874c240a82d1749ff4bba8b863"
+    sha256 arm64_sequoia: "4f7274b8d53163dc1d8dc2b18cc2c7eff75d5efd01db222e7d8bd5f3f05af2c2"
+    sha256 arm64_sonoma:  "bcf972b443b276ee59fc94a4c5c84b54d7702ef6bab66b55c811420eaf548dcd"
+    sha256 arm64_ventura: "db7f43289bcfffe3c70abef62a1a641671ae8fefb858b654161f7914109286fa"
+    sha256 sonoma:        "dfb68055c0d2bddab0e17ab861d76be558877d5f3d960c826fb26a0d59eede14"
+    sha256 ventura:       "a1821fba84ee3cbaab966febef3bedc05dc1c1327fadeb768c2f19790c97bf10"
+    sha256 arm64_linux:   "f2b26e219cd1a37afbd7743be40ce71525604979d0f7bcdc63fbbce016f4cd4d"
+    sha256 x86_64_linux:  "0b5a67a3cfd1779c829a131f38895e1b6c755c57187510cf998f77d4d3a7ddd7"
   end
 
   keg_only "it shadows the host toolchain"
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "zstd"
 
   uses_from_macos "bison" => :build
   uses_from_macos "zlib"
 
-  link_overwrite "bin/gold"
-  link_overwrite "bin/ld.gold"
   link_overwrite "bin/dwp"
 
   def install
@@ -45,7 +42,6 @@ class Binutils < Formula
       "--enable-interwork",
       "--enable-multilib",
       "--enable-64-bit-bfd",
-      "--enable-gold",
       "--enable-plugins",
       "--enable-targets=all",
       "--with-system-zlib",
@@ -61,7 +57,6 @@ class Binutils < Formula
         bin.install_symlink f => "g" + File.basename(f)
       end
     else
-      bin.install_symlink "ld.gold" => "gold"
       # Reduce the size of the bottle.
       bin_files = bin.children.select(&:elf?)
       system "strip", *bin_files, *lib.glob("*.a")

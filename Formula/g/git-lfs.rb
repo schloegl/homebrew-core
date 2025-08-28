@@ -1,8 +1,8 @@
 class GitLfs < Formula
   desc "Git extension for versioning large files"
-  homepage "https://git-lfs.github.com/"
-  url "https://github.com/git-lfs/git-lfs/releases/download/v3.5.1/git-lfs-v3.5.1.tar.gz"
-  sha256 "fc19c7316e80a6ef674aa4e1863561c1263cd4ce0588b9989e4be9461664d752"
+  homepage "https://git-lfs.com/"
+  url "https://github.com/git-lfs/git-lfs/releases/download/v3.7.0/git-lfs-v3.7.0.tar.gz"
+  sha256 "d078b8393514c65c485d1628e610449ba048af746749912bd082d818b2454348"
   license "MIT"
 
   # Upstream creates releases that are sometimes not the latest stable version,
@@ -13,13 +13,12 @@ class GitLfs < Formula
   end
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "6ae42cee04c1e4c25cfe7c2cfbde067060b1b96ac1ec80da9d63c5a4b4e0c909"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "6ae42cee04c1e4c25cfe7c2cfbde067060b1b96ac1ec80da9d63c5a4b4e0c909"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "6ae42cee04c1e4c25cfe7c2cfbde067060b1b96ac1ec80da9d63c5a4b4e0c909"
-    sha256 cellar: :any_skip_relocation, sonoma:        "63e2c1dbdc3df326ddea622cd7d134935a9545ab14f5bc871b23739b82792c67"
-    sha256 cellar: :any_skip_relocation, ventura:       "63e2c1dbdc3df326ddea622cd7d134935a9545ab14f5bc871b23739b82792c67"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1f8525605ee1028c3a5e2dd762270b3a89da7e3b1355ee701bc791a5272ad843"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "1e905231194b4144c52b981a2a52868f6fb2c8ffc27099a0771362dc45890879"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "1e905231194b4144c52b981a2a52868f6fb2c8ffc27099a0771362dc45890879"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "1e905231194b4144c52b981a2a52868f6fb2c8ffc27099a0771362dc45890879"
+    sha256 cellar: :any_skip_relocation, sonoma:        "db9022729517fff9457056b559e9d43db5bba5531ae9b636f140ce41bb4e0d95"
+    sha256 cellar: :any_skip_relocation, ventura:       "db9022729517fff9457056b559e9d43db5bba5531ae9b636f140ce41bb4e0d95"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "6926c738974ed58fb5dec2bf00cbb4f759db8d7e8554c347d7d039a7135ba4da"
   end
 
   depends_on "asciidoctor" => :build

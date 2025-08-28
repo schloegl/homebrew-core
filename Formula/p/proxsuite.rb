@@ -1,63 +1,51 @@
 class Proxsuite < Formula
   desc "Advanced Proximal Optimization Toolbox"
   homepage "https://github.com/Simple-Robotics/proxsuite"
-  url "https://github.com/Simple-Robotics/proxsuite/releases/download/v0.6.7/proxsuite-0.6.7.tar.gz"
-  sha256 "3a397ba96ddcfe5ade150951f70f867a3741206a694e50588f954a94c4cf3f27"
+  url "https://github.com/Simple-Robotics/proxsuite/releases/download/v0.7.2/proxsuite-0.7.2.tar.gz"
+  sha256 "dedda8e06b2880f99562622368abb0c0130cc2ab3bff0dc0b26477f88458a136"
   license "BSD-2-Clause"
   head "https://github.com/Simple-Robotics/proxsuite.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "23034630476e74271706b395357d46ec16bb3b90a1370839629724ee3fda27de"
-    sha256 cellar: :any,                 arm64_sonoma:   "ca70c376b0a3759a4c95571c61fdcbd1ff793cef20457572fdd08cd622594a82"
-    sha256 cellar: :any,                 arm64_ventura:  "3e6bf30c36a80f68ddbbf9ad638bc1ea4a2326584f90d6ac2b29308b475e1674"
-    sha256 cellar: :any,                 arm64_monterey: "0726349c4172e3a0d03ca44be63ee8feec13999dd139d213f9da3ade150bcc89"
-    sha256 cellar: :any,                 sonoma:         "46455dfe6c6ee2701940b4e2a829810730d3ffe341e8e5172e7373f6c81ede73"
-    sha256 cellar: :any,                 ventura:        "bb01853666ccb2f5333133972e86ff6f80be0f5925bfec9339b6c6cd3d43022b"
-    sha256 cellar: :any,                 monterey:       "978d86948711a81e3418af1386b9837bf065c2f7725bbe9281e763d8c821df8f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "adf28af671df40fef0c8f9ee27812ae8778c669f6b5fc580711b18963ef00000"
+    sha256 cellar: :any,                 arm64_sequoia: "55eeaba27c0759020f1af4fee87c57cd7f06250654985fcb314aafd65bd94bc2"
+    sha256 cellar: :any,                 arm64_sonoma:  "039089b526b129afda357462b2c41773e3a711ba40cfd5570cdfa97265e3bd8e"
+    sha256 cellar: :any,                 arm64_ventura: "bd8a4c2c6c377eddc448910028a0afde9db6185a77c4bcf600191384c6529eb6"
+    sha256 cellar: :any,                 sonoma:        "03ca17384128ebc8d2b88b241ccb12947e808186bc52fe15b84499953172bfe7"
+    sha256 cellar: :any,                 ventura:       "a09b9bbd5e73a56ca6b74b63e278a434adcd3d93d3fd3502dfdbb55e72526212"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "e9125d101cc2a36b0d25ace483151f343264097ad3e30612e0262ec3e7016e3a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "57b4ac4f02b44ae31592270e00b6119b22be2e99d685b2d7981cb9b02820eb06"
   end
 
   depends_on "cmake" => :build
   depends_on "doxygen" => :build
-  depends_on "pkg-config" => :build
-  depends_on "python-setuptools" => :build
+  depends_on "pkgconf" => :build
   depends_on "eigen"
   depends_on "numpy"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "scipy"
   depends_on "simde"
 
   def python3
-    "python3.12"
+    "python3.13"
   end
 
   def install
     system "git", "submodule", "update", "--init", "--recursive" if build.head?
-
-    pyver = Language::Python.major_minor_version python3
-    python_exe = Formula["python@#{pyver}"].opt_libexec/"bin/python"
-
-    ENV.prepend_path "PYTHONPATH", Formula["eigenpy"].opt_prefix/Language::Python.site_packages
-
-    # simde include dir can be removed after https://github.com/Simple-Robotics/proxsuite/issues/65
     system "cmake", "-S", ".", "-B", "build",
-                    "-DPYTHON_EXECUTABLE=#{python_exe}",
+                    "-DPYTHON_EXECUTABLE=#{which(python3)}",
                     "-DBUILD_UNIT_TESTS=OFF",
                     "-DBUILD_PYTHON_INTERFACE=ON",
                     "-DINSTALL_DOCUMENTATION=ON",
-                    "-DSimde_INCLUDE_DIR=#{Formula["simde"].opt_prefix/"include"}",
                     *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
   end
 
   test do
-    pyver = Language::Python.major_minor_version python3
-    python_exe = Formula["python@#{pyver}"].opt_libexec/"bin/python"
-    system python_exe, "-c", <<~EOS
+    system python3, "-c", <<~PYTHON
       import proxsuite
       qp = proxsuite.proxqp.dense.QP(10,0,0)
       assert qp.model.H.shape[0] == 10 and qp.model.H.shape[1] == 10
-    EOS
+    PYTHON
   end
 end

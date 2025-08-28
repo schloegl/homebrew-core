@@ -1,10 +1,10 @@
 class Onednn < Formula
   desc "Basic building blocks for deep learning applications"
   homepage "https://www.oneapi.io/open-source/"
-  url "https://github.com/oneapi-src/oneDNN/archive/refs/tags/v3.5.3.tar.gz"
-  sha256 "ddbc26c75978c5e864050f699dbefbf5bff9c0b8d2af827845708e1376471f17"
+  url "https://github.com/uxlfoundation/oneDNN/archive/refs/tags/v3.9.tar.gz"
+  sha256 "806ec963b8a89cc7555c43afbb6f5369dc9010c8cf435b85aaf708acd1a2d837"
   license "Apache-2.0"
-  head "https://github.com/oneapi-src/onednn.git", branch: "master"
+  head "https://github.com/uxlfoundation/oneDNN.git", branch: "master"
 
   livecheck do
     url :stable
@@ -12,35 +12,34 @@ class Onednn < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "f761e3c1833d6bc77a0eabea1c0cf1c4a8b6dfcfe7a64c1ea26e22bdcfe7ee32"
-    sha256 cellar: :any,                 arm64_sonoma:   "8b62f040afa960e4efbe8893f066aecb5898d16f04871747ac44f15054219089"
-    sha256 cellar: :any,                 arm64_ventura:  "a5b3155297d8e59ee361c9818420a09171a36d57afb86e2277a4840baee5df3b"
-    sha256 cellar: :any,                 arm64_monterey: "3fbd5c8cd2c995d1aba81dab78f643b4104859331e5632838dde943f53222dd2"
-    sha256 cellar: :any,                 sonoma:         "454aa728dd13c5984c1abbf8e0ec2050e767982ff0899df89f37bc54038f7db7"
-    sha256 cellar: :any,                 ventura:        "87ef1fe3ae6948662daefc2aee0cd1393a17f0d230ab69f2495f258ab106f37a"
-    sha256 cellar: :any,                 monterey:       "986af6311eb00492062ed5bef9c85727c6f012ae3200e819c344c2645ac7c00d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "e5069655b504607e07453313f1947520676ad195642f13c021229f521da9b4d7"
+    sha256 cellar: :any,                 arm64_sequoia: "4c279c3ec4e3763e00f249143330a3ba97f96ba728829a6f206d2ff2a0e4975e"
+    sha256 cellar: :any,                 arm64_sonoma:  "fbb3ee6a0d6fb0c2fe79bcd79651175bfe7c7636d804dcfe86be055b59d3a95e"
+    sha256 cellar: :any,                 arm64_ventura: "939a5abbe9e3f3fd731d572b8d87403b3f4fdc4a53ba74f7f670a608a3a4578e"
+    sha256 cellar: :any,                 sonoma:        "e368e43870532ef4b9888b15460423da6561e0f14b90480fb08d249a53f86dea"
+    sha256 cellar: :any,                 ventura:       "e54cc603b01a29c610e410086969adb84b43941e168493932c104ed7ed25cd1a"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "ada273fc1287cce826890450a8f8cef8d14aa055161df6b287fa7d6facd75654"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fbab775c3beada472908d0a69582d5d475942936ba44605ef383b59268e585bc"
   end
 
   depends_on "cmake" => :build
   depends_on "doxygen" => :build
 
   def install
-    system "cmake", ".", *std_cmake_args
-    system "make"
-    system "make", "doc"
-    system "make", "install"
+    system "cmake", "-S", ".", "-B", "build", *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <oneapi/dnnl/dnnl.h>
       int main() {
         dnnl_engine_t engine;
         dnnl_status_t status = dnnl_engine_create(&engine, dnnl_cpu, 0);
         return !(status == dnnl_success);
       }
-    EOS
+    C
+
     system ENV.cc, "test.c", "-L#{lib}", "-ldnnl", "-o", "test"
     system "./test"
   end

@@ -1,10 +1,12 @@
 class Libmpc < Formula
   desc "C library for the arithmetic of high precision complex numbers"
   homepage "https://www.multiprecision.org/"
-  url "https://ftp.gnu.org/gnu/mpc/mpc-1.3.1.tar.gz"
-  mirror "https://ftpmirror.gnu.org/mpc/mpc-1.3.1.tar.gz"
+  url "https://ftpmirror.gnu.org/gnu/mpc/mpc-1.3.1.tar.gz"
+  mirror "https://ftp.gnu.org/gnu/mpc/mpc-1.3.1.tar.gz"
   sha256 "ab642492f5cf882b74aa0cb730cd410a81edcdbec895183ce930e706c1c759b8"
   license "LGPL-3.0-or-later"
+
+  no_autobump! because: :requires_manual_review
 
   bottle do
     sha256 cellar: :any,                 arm64_sequoia:  "5c8cdc4d460525025f69157ea5187c4119da8bffab33e7923dc374c011c9cdac"
@@ -17,6 +19,7 @@ class Libmpc < Formula
     sha256 cellar: :any,                 ventura:        "aa4ddb0e50ace93746e6af2e6185493698b501e9359cf73ce41cfbb70369db09"
     sha256 cellar: :any,                 monterey:       "c32f2c3fe7ab06e308e6fa74874e1d4d92ff6eb3598da6e0f8e6fa7a333350f5"
     sha256 cellar: :any,                 big_sur:        "47b50c3df6a35ea3c876397eac4a7dc157b5f4109247671a16599a9a41b9c035"
+    sha256 cellar: :any_skip_relocation, arm64_linux:    "95086731276eec60b5ec29b5f07214b6fdb5d1327c7652c12cf68a99b731b760"
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "f6542ae5bcf643ca0c980c7000cde1585922e76be080b3cc3422dac0d4a50904"
   end
 
@@ -41,7 +44,7 @@ class Libmpc < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <mpc.h>
       #include <assert.h>
       #include <math.h>
@@ -55,7 +58,7 @@ class Libmpc < Formula
         mpc_clear (x);
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-L#{lib}", "-L#{Formula["mpfr"].opt_lib}",
                    "-L#{Formula["gmp"].opt_lib}", "-lmpc", "-lmpfr",
                    "-lgmp", "-o", "test"

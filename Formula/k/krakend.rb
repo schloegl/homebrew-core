@@ -1,28 +1,35 @@
 class Krakend < Formula
   desc "Ultra-High performance API Gateway built in Go"
   homepage "https://www.krakend.io/"
-  url "https://github.com/krakendio/krakend-ce/archive/refs/tags/v2.7.2.tar.gz"
-  sha256 "7dae53c65e46fea0bfea04d2c48f3fd0ada29d8ba94a7d97fccf4632bd067859"
+  url "https://github.com/krakend/krakend-ce/archive/refs/tags/v2.10.2.tar.gz"
+  sha256 "af027e0bef3d69d5920c1d85b5235074c46b955e89e328a3fb627e0df4a379f8"
   license "Apache-2.0"
+  head "https://github.com/krakend/krakend-ce.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "a5e9504308ab6a66b2076ad0a98dc247132c460af21d25f899e24afab7332866"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "e54c08be7e967c1cfa79ae1c1c0f58c9bf2eeff837b237b4cfa9dc53c99a67ba"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "a6076f63b9d36baeaec5fabcf47890f71433b11e013bfe95560c15bbad3731d3"
-    sha256 cellar: :any_skip_relocation, sonoma:        "4663bd621d5eb1f61aacf45f286742d45dd7cecdea04bda27b7a119ae69093a3"
-    sha256 cellar: :any_skip_relocation, ventura:       "56d5cb44c1bb08393cfdd31b3073df7a5f390cf8c0dbc3fe5dae27d10d624c9c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5132790c24c6cdf5f3d221e71b15eabc6fe1e7d632d09b8d0e6f8a60bb1a97dd"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "19a57d25bd1f8de7125c840e9f6e1ee792f33613a3d97a2c7b4705bdd8a76d74"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "8442425dd4b7291cc34e4d9898ce6df5ec419a671ed3cb7e5e24f90082fa4a41"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "cfd1f923eaab46896846bf9f55975488185f6df0d5199c1744f99103651c665b"
+    sha256 cellar: :any_skip_relocation, sonoma:        "7e6b6a65b01b7776a0c8af860889e953940f30bb0590b64ca687536851f6ebc8"
+    sha256 cellar: :any_skip_relocation, ventura:       "557f6ac3a82c46cd55d0afc552bc869695cf44e8abb442e9dfa1d6f2dc28a327"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "d6dfc2ef6335910ace383bd6e4422b56f4db3192d6bc8172444df5caaf51b94c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8ef8ea192d571bd05dd25b8e61edb724ebbe7d2aff39b7be99374c36e093833f"
   end
 
   depends_on "go" => :build
 
   def install
-    system "make", "build"
-    bin.install "krakend"
+    ldflags = %W[
+      -s -w
+      -X github.com/krakendio/krakend-ce/v2/pkg.Version=#{version}
+      -X github.com/luraproject/lura/v2/core.KrakendVersion=#{version}
+    ]
+
+    system "go", "build", *std_go_args(ldflags:), "./cmd/krakend-ce"
   end
 
   test do
-    (testpath/"krakend_unsupported_version.json").write <<~EOS
+    (testpath/"krakend_unsupported_version.json").write <<~JSON
       {
         "version": 2,
         "extra_config": {
@@ -34,20 +41,20 @@ class Krakend < Formula
           }
         }
       }
-    EOS
+    JSON
     assert_match "unsupported version",
       shell_output("#{bin}/krakend check -c krakend_unsupported_version.json 2>&1", 1)
 
-    (testpath/"krakend_bad_file.json").write <<~EOS
+    (testpath/"krakend_bad_file.json").write <<~JSON
       {
         "version": 3,
         "bad": file
       }
-    EOS
+    JSON
     assert_match "ERROR",
       shell_output("#{bin}/krakend check -c krakend_bad_file.json 2>&1", 1)
 
-    (testpath/"krakend.json").write <<~EOS
+    (testpath/"krakend.json").write <<~JSON
       {
         "version": 3,
         "extra_config": {
@@ -72,7 +79,7 @@ class Krakend < Formula
           }
         ]
       }
-    EOS
+    JSON
     assert_match "Syntax OK",
       shell_output("#{bin}/krakend check -c krakend.json 2>&1")
   end

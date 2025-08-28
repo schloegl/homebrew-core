@@ -1,9 +1,9 @@
 class ArmNoneEabiBinutils < Formula
   desc "GNU Binutils for arm-none-eabi cross development"
   homepage "https://www.gnu.org/software/binutils/"
-  url "https://ftp.gnu.org/gnu/binutils/binutils-2.43.1.tar.bz2"
-  mirror "https://ftpmirror.gnu.org/binutils/binutils-2.43.1.tar.bz2"
-  sha256 "becaac5d295e037587b63a42fad57fe3d9d7b83f478eb24b67f9eec5d0f1872f"
+  url "https://ftpmirror.gnu.org/gnu/binutils/binutils-2.45.tar.bz2"
+  mirror "https://ftp.gnu.org/gnu/binutils/binutils-2.45.tar.bz2"
+  sha256 "1393f90db70c2ebd785fb434d6127f8888c559d5eeb9c006c354b203bab3473e"
   license "GPL-3.0-or-later"
 
   livecheck do
@@ -11,17 +11,16 @@ class ArmNoneEabiBinutils < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "3ede55fd67ae38d15ea1a383a32c230ddb0a2d6057bfd044b22243220ec48773"
-    sha256 arm64_sonoma:   "458b71485352dd068e53201d3dfd0ae417f79e384be6c816c698ed91a5a21807"
-    sha256 arm64_ventura:  "9461459c5f9f830ffbd029b10ae10e89b54e031a654364843d2cc481dc408168"
-    sha256 arm64_monterey: "1104d62a87e30a3700af18eecb281a22211cf48d90e270430c63c7d69facc0f1"
-    sha256 sonoma:         "503af491e4b77482a66f288f54c29a9d00c2ebeab5567cd68199c635e51c96f7"
-    sha256 ventura:        "452522df713af1ba29de9deff36d6fab797968184ce125db047c65ab55a76e2d"
-    sha256 monterey:       "f91d4b2fbbf3a0f2320f98c4ab78449276331d68956383a2e11c266d06ac9955"
-    sha256 x86_64_linux:   "b76702db7f7daed88627a97c16ffc1d028ad34f3a6fcf2fc8e8c1ee6d16d562e"
+    sha256 arm64_sequoia: "9d2d6391ad41a79397d221cc7def963c36afbae486a6063f33400244ed640beb"
+    sha256 arm64_sonoma:  "cd29ee3d38b8e7f479ffbd0c9467d5c752f26c80eb9ac5bb0ff96625d58d92ce"
+    sha256 arm64_ventura: "42e5869d2ab0312188377d65b066f0bf612773445c51f9801dc2a67642cd4a37"
+    sha256 sonoma:        "827b68df4de6ee8faa94066073e9c4b68dc24f4bf05a20294b9847001becc890"
+    sha256 ventura:       "74db40f7b62e88c11db9270d1f2e4f594b8ba69117a634f54a5b1414837260d0"
+    sha256 arm64_linux:   "66359d623c04dc1ab75a3c59cc557add208046e847d33f196218cac9ddadebd7"
+    sha256 x86_64_linux:  "ad176f02f9fe696910855d5f9a70f2fefc54095f8a22fcc0054dc8e76b1d42ec"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "zstd"
 
   uses_from_macos "zlib"
@@ -33,25 +32,26 @@ class ArmNoneEabiBinutils < Formula
   def install
     target = "arm-none-eabi"
     system "./configure", "--target=#{target}",
-           "--prefix=#{prefix}",
-           "--libdir=#{lib}/#{target}",
-           "--infodir=#{info}/#{target}",
-           "--with-system-zlib",
-           "--with-zstd",
-           "--disable-nls"
+                          "--prefix=#{prefix}",
+                          "--libdir=#{lib}/#{target}",
+                          "--infodir=#{info}/#{target}",
+                          "--with-system-zlib",
+                          "--with-zstd",
+                          "--enable-multilib",
+                          "--disable-nls"
     system "make"
     system "make", "install"
   end
 
   test do
-    (testpath/"test-s.s").write <<~EOS
+    (testpath/"test-s.s").write <<~ASM
       .section .text
       .globl _start
       _start:
           mov r1, #0
           mov r2, #1
           svc #0x80
-    EOS
+    ASM
 
     system bin/"arm-none-eabi-as", "-o", "test-s.o", "test-s.s"
     assert_match "file format elf32-littlearm",

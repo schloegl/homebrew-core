@@ -1,19 +1,19 @@
 class Edgevpn < Formula
   desc "Immutable, decentralized, statically built p2p VPN"
   homepage "https://mudler.github.io/edgevpn"
-  url "https://github.com/mudler/edgevpn/archive/refs/tags/v0.28.3.tar.gz"
-  sha256 "266e436fab3ecd322c0753a7592b6be862ce1e44d31c4282edac5ddccb8057be"
+  url "https://github.com/mudler/edgevpn/archive/refs/tags/v0.31.0.tar.gz"
+  sha256 "954c4496f944a7856d62ed3a513d08d8a24936de980ad7d9e60fac47b53aa8da"
   license "Apache-2.0"
+  head "https://github.com/mudler/edgevpn.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "9717cea2975a02761489cb7dabba9547d8da7bfde74f272e4be05fcf69e005e2"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "68cdccdf9dbcf1b161a7931699caeb7825237a7012ae4288ed0222361a397042"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "68cdccdf9dbcf1b161a7931699caeb7825237a7012ae4288ed0222361a397042"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "68cdccdf9dbcf1b161a7931699caeb7825237a7012ae4288ed0222361a397042"
-    sha256 cellar: :any_skip_relocation, sonoma:         "38c7d12310b09c737b49da4228ed97b7cfc27882e2e7abdd7842fd0aa622b29b"
-    sha256 cellar: :any_skip_relocation, ventura:        "38c7d12310b09c737b49da4228ed97b7cfc27882e2e7abdd7842fd0aa622b29b"
-    sha256 cellar: :any_skip_relocation, monterey:       "38c7d12310b09c737b49da4228ed97b7cfc27882e2e7abdd7842fd0aa622b29b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "8712e4c349b3ae6182dd5d19dd057cc87e62633a2fdd57fe9afd929ce1519261"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "11be39a4e3c030035667e2be8ccca2fbf050f1189baabcc23e237f5d199907e0"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "11be39a4e3c030035667e2be8ccca2fbf050f1189baabcc23e237f5d199907e0"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "11be39a4e3c030035667e2be8ccca2fbf050f1189baabcc23e237f5d199907e0"
+    sha256 cellar: :any_skip_relocation, sonoma:        "ee426e010211a2f60e888c1d55576da41e570403637a62244482f65796a13373"
+    sha256 cellar: :any_skip_relocation, ventura:       "ee426e010211a2f60e888c1d55576da41e570403637a62244482f65796a13373"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "1376c05a07ebf5a286266d2d6e0616bcf384b197ab61774a7ac09e10a6ba2978"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "30cc58b27ecd610b5e2b6291ae3e7e6b210e0d5d1c3dd8898d8877e9f4be1e97"
   end
 
   depends_on "go" => :build

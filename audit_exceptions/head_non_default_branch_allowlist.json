@@ -1,3 +1,5 @@
 {
-  "botan@2": "release-2"
+  "awscli": "v2",
+  "botan@2": "release-2",
+  "squid": "v6"
 }

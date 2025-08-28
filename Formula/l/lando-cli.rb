@@ -1,9 +1,10 @@
 class LandoCli < Formula
   desc "Cli part of Lando"
   homepage "https://docs.lando.dev/cli"
-  url "https://github.com/lando/cli/archive/refs/tags/v3.21.2.tar.gz"
-  sha256 "2b930fa5c7cbe50396d147d3cf51f382e8a7312607f9dcefc04a4ad1399f4a46"
-  license "GPL-3.0-or-later"
+  url "https://github.com/lando/core/archive/refs/tags/v3.25.3.tar.gz"
+  sha256 "63de05a1ba1b7eeb93396b8fd343ae2bfb5c83141a5c1dedc08abb4022e23675"
+  license "MIT"
+  head "https://github.com/lando/core.git", branch: "main"
 
   livecheck do
     url :stable
@@ -11,15 +12,13 @@ class LandoCli < Formula
   end
 
   bottle do
-    rebuild 2
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "d3a305e43d27240a99f679127bd247afbb401adda932f3d9a78721af40a88bce"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "b9d8a04967096e248ac76dff7fb285bf51ab9315cb8ff0d64e59d2c7140091a8"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "b9d8a04967096e248ac76dff7fb285bf51ab9315cb8ff0d64e59d2c7140091a8"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "b9d8a04967096e248ac76dff7fb285bf51ab9315cb8ff0d64e59d2c7140091a8"
-    sha256 cellar: :any_skip_relocation, sonoma:         "532c6a084e1bef8b5ced5974e881305d28d2a97ee1f888da5d2af5bc9a551f43"
-    sha256 cellar: :any_skip_relocation, ventura:        "532c6a084e1bef8b5ced5974e881305d28d2a97ee1f888da5d2af5bc9a551f43"
-    sha256 cellar: :any_skip_relocation, monterey:       "532c6a084e1bef8b5ced5974e881305d28d2a97ee1f888da5d2af5bc9a551f43"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "b9d8a04967096e248ac76dff7fb285bf51ab9315cb8ff0d64e59d2c7140091a8"
+    sha256                               arm64_sequoia: "dca994a5900c55f2cd8700dbcc841b7757892603c986818d2799e31f7449319b"
+    sha256                               arm64_sonoma:  "eb6b24bbb68130d563a3c1c3081ed4ad4b28e05435f030a3d1a90e0f062c80a0"
+    sha256                               arm64_ventura: "fdf7fce52cb5a623c9ee4ee3eace9781556f38a3b75c911225f03997e90536a1"
+    sha256                               sonoma:        "a259d6c4772088eb2838c64a40ab2d26aeef0cdbfce33eedad5b07d02a31b219"
+    sha256                               ventura:       "87b9abb2295ce83977ca950eaff7b46339022679704a96067e76707d6e762648"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "b5202e6605ef2991cc6b2580e6b0f7391d3c026597ba0ee7bd03152793e452c6"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b5202e6605ef2991cc6b2580e6b0f7391d3c026597ba0ee7bd03152793e452c6"
   end
 
   depends_on "node"

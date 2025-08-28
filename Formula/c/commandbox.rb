@@ -1,8 +1,8 @@
 class Commandbox < Formula
   desc "CFML embedded server, package manager, and app scaffolding tools"
   homepage "https://www.ortussolutions.com/products/commandbox"
-  url "https://downloads.ortussolutions.com/ortussolutions/commandbox/6.0.0/commandbox-bin-6.0.0.zip"
-  sha256 "38746956adc14e9196eb9670e599c482dabd2f82e40a6256bc8e26a4435a488b"
+  url "https://downloads.ortussolutions.com/ortussolutions/commandbox/6.2.1/commandbox-bin-6.2.1.zip"
+  sha256 "c8f4c9befda31046fd535542024b21ae121ce12fa517f6c1405f88b432ce1f1a"
   license "Apache-2.0"
 
   livecheck do
@@ -11,17 +11,23 @@ class Commandbox < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "fae0635162a96e2463c50058a2020f540821a563a3bd5d3d0ec881dff8e29ad0"
+    sha256 cellar: :any_skip_relocation, all: "89fa62b33dfb9f7f9e0ff49252d252cf366d496ae3191d9fda916b4a6c999ef4"
   end
 
   depends_on "openjdk"
 
   resource "apidocs" do
-    url "https://downloads.ortussolutions.com/ortussolutions/commandbox/6.0.0/commandbox-apidocs-6.0.0.zip"
-    sha256 "48b62497772cd61dcfa57f603111853e44defeedb70c632f19b19af1e6f3bd91"
+    url "https://downloads.ortussolutions.com/ortussolutions/commandbox/6.2.1/commandbox-apidocs-6.2.1.zip"
+    sha256 "ff1c3eed5fd1036de851b57a6be25041844ca00516b7aa4ce6d1365eb8be47d5"
+
+    livecheck do
+      formula :parent
+    end
   end
 
   def install
+    odie "apidocs resource needs to be updated" if version != resource("apidocs").version
+
     (libexec/"bin").install "box"
     (bin/"box").write_env_script libexec/"bin/box", Language::Java.java_home_env
     doc.install resource("apidocs")

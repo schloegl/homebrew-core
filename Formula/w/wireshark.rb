@@ -1,9 +1,9 @@
 class Wireshark < Formula
   desc "Network analyzer and capture tool - without graphical user interface"
   homepage "https://www.wireshark.org"
-  url "https://www.wireshark.org/download/src/all-versions/wireshark-4.4.0.tar.xz"
-  mirror "https://1.eu.dl.wireshark.org/src/all-versions/wireshark-4.4.0.tar.xz"
-  sha256 "ead5cdcc08529a2e7ce291e01defc3b0f8831ba24c938db0762b1ebc59c71269"
+  url "https://www.wireshark.org/download/src/all-versions/wireshark-4.4.8.tar.xz"
+  mirror "https://1.eu.dl.wireshark.org/src/all-versions/wireshark-4.4.8.tar.xz"
+  sha256 "dd648c5c5994843205cd73e57d6673f6f4e12718e1c558c674cb8bdafeacde47"
   license "GPL-2.0-or-later"
   head "https://gitlab.com/wireshark/wireshark.git", branch: "master"
 
@@ -15,14 +15,13 @@ class Wireshark < Formula
   end
 
   bottle do
-    sha256                               arm64_sequoia:  "76bfc1b990e65ce54f87d77059c4ce987d8b020511c80695b9756e2766a500af"
-    sha256                               arm64_sonoma:   "eb2fbcad494c5c771d81b0ed2c97457f9040edab06e255ba9f66bbe4eaa13aae"
-    sha256                               arm64_ventura:  "b7af5a5a1e7be6d024b458ef3eafe08bfc87435142a617daa8cd6557d1a77da8"
-    sha256                               arm64_monterey: "3d893b3ae03ef775f22e14bbaa97818468c83e0f3a526a609d87c54014a8889c"
-    sha256                               sonoma:         "c22b3cc90875322b3111df470e71dc0af3fa694669ceeca18bfe31dda1225eca"
-    sha256                               ventura:        "6f6fb024037e2e1d8d897d515f7d2dc7a011de15e32bfb3b0829668bf1b4ec1d"
-    sha256                               monterey:       "390b319c86383cbe63fa7f4d9bf0de38fd20226b7c1c8e30024234feb632939f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "35daa653db2da3a34359deac318ace5087e0b2a9b5aaea0d675fffd6b8744156"
+    sha256                               arm64_sequoia: "6755ed77fca27e6492f395aa5f4d9c46fd4ba35c5f88667f9f37aeb8f86c0ecc"
+    sha256                               arm64_sonoma:  "4287cae1e433091625017b0e76707e7642e0438fc998a2f0f76b001420a4825e"
+    sha256                               arm64_ventura: "14338b7dee71552cd57aa0f803a3eac73cf7abe614be4d794fc9fda8ecc62ebb"
+    sha256                               sonoma:        "dcc43ac17bb00d45dad81745adca2e7653a48bc947a36bda05aff7b4e0ee8272"
+    sha256                               ventura:       "15ec6aba405d29aca7ae9356f7b8d199667686fed5060c016c22b7ae913173dc"
+    sha256                               arm64_linux:   "601b36fe8aa3e5c6bd156614c484028df4c694713687b70077e2de967446b71a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1725704e5e0be9dabb48ea060746afa3d4f32a3f20b0f503729fc95c0d7d5d06"
   end
 
   depends_on "cmake" => :build
@@ -51,6 +50,8 @@ class Wireshark < Formula
     depends_on "libgpg-error"
   end
 
+  conflicts_with cask: "wireshark-app"
+
   def install
     args = %W[
       -DLUA_INCLUDE_DIR=#{Formula["lua"].opt_include}/lua
@@ -62,7 +63,7 @@ class Wireshark < Formula
       -DBUILD_wireshark=OFF
       -DBUILD_logray=OFF
       -DENABLE_APPLICATION_BUNDLE=OFF
-      -DCMAKE_INSTALL_NAME_DIR:STRING=#{lib}
+      -DCMAKE_INSTALL_RPATH=#{rpath}
     ]
 
     system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
@@ -76,7 +77,7 @@ class Wireshark < Formula
       This formula only installs the command-line utilities by default.
 
       Install Wireshark.app with Homebrew Cask:
-        brew install --cask wireshark
+        brew install wireshark-app
 
       If your list of available capture interfaces is empty
       (default macOS behavior), install ChmodBPF:
@@ -85,7 +86,7 @@ class Wireshark < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <stdio.h>
       #include <ws_version.h>
 
@@ -94,7 +95,7 @@ class Wireshark < Formula
                WIRESHARK_VERSION_MICRO);
         return 0;
       }
-    EOS
+    CPP
     system ENV.cxx, "-std=c++11", "test.cpp", "-I#{include}/wireshark", "-o", "test"
     output = shell_output("./test")
     assert_equal version.to_s, output

@@ -1,8 +1,8 @@
 class Gwt < Formula
   desc "Google web toolkit"
   homepage "https://www.gwtproject.org/"
-  url "https://github.com/gwtproject/gwt/releases/download/2.11.0/gwt-2.11.0.zip"
-  sha256 "44d83cd0eb32d857f197e9e76f0fdf79f1ed240b47173bafeeaf8db2b5ad205c"
+  url "https://github.com/gwtproject/gwt/releases/download/2.12.2/gwt-2.12.2.zip"
+  sha256 "32c17bbc8e98548c0be433aab36a3b8ba7428cfc70a26c41c4af4e0d6ecff1e1"
   license "Apache-2.0"
 
   livecheck do
@@ -11,8 +11,7 @@ class Gwt < Formula
   end
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any_skip_relocation, all: "eb87a6195740729c45e945d12e0dd004824713dc2f5396e67061aee7c6d92743"
+    sha256 cellar: :any_skip_relocation, all: "82a74ed6f9efb134bb789174581dd637b7986775ec1ced9fac1d24b453e9a609"
   end
 
   depends_on "openjdk"
@@ -27,6 +26,6 @@ class Gwt < Formula
 
   test do
     system bin/"webAppCreator", "sh.brew.test"
-    assert_predicate testpath/"src/sh/brew/test.gwt.xml", :exist?
+    assert_path_exists testpath/"src/sh/brew/test.gwt.xml"
   end
 end

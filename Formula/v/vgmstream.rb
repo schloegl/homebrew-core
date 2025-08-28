@@ -1,13 +1,23 @@
 class Vgmstream < Formula
   desc "Library for playing streamed audio formats from video games"
   homepage "https://vgmstream.org"
-  url "https://github.com/vgmstream/vgmstream.git",
-      tag:      "r1951",
-      revision: "4b2dc01ccdcd3eeccb7b2ca0d7a32692dfdec947"
-  version "r1951"
   license "ISC"
+  revision 1
   version_scheme 1
   head "https://github.com/vgmstream/vgmstream.git", branch: "master"
+
+  stable do
+    url "https://github.com/vgmstream/vgmstream.git",
+        tag:      "r2023",
+        revision: "f96812ead1560b43ef56d1d388a5f01ed92a8cc0"
+    version "r2023"
+
+    # Backport CMake install support
+    patch do
+      url "https://github.com/vgmstream/vgmstream/commit/e4a00bc710e99c29b6a932ec353d8bc6ba461270.patch?full_index=1"
+      sha256 "9ee47e5b35e571a9241bcab6ebe8ae09ecffde72702cacb82b4e93f765813e0b"
+    end
+  end
 
   livecheck do
     url :stable
@@ -16,24 +26,20 @@ class Vgmstream < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "320febc8b8756f21ae417f9bfca4115d9dee1b280ba1e4d37c4d5a782899e2d0"
-    sha256 cellar: :any,                 arm64_sonoma:   "473e523caa4f0e1d7ddc10db89bd0026f9c77aa79ea14ed2e5397b2d6498beca"
-    sha256 cellar: :any,                 arm64_ventura:  "3a8b812aee5900288cb4ce80da9c5ccbf7dd048b5c5c6c38cf4eaa9cc17fe459"
-    sha256 cellar: :any,                 arm64_monterey: "143bd9cd3cbd99ef6215b8d7405d16be28dc4ddd2350a065083ace69d5b6c3e5"
-    sha256 cellar: :any,                 sonoma:         "cdd43e401e7b9d329e14018ad3e749dc5a2889cecebecd09523924ab4de9ae53"
-    sha256 cellar: :any,                 ventura:        "f0b9eca5a0aade2f45b8c20dfb74be67d8e11818122bca2cf8b59eb434d4fb64"
-    sha256 cellar: :any,                 monterey:       "97a73ec58ba7f6e75056fd424a4c88343b6ab476763676aee8147e8d2122fcf5"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "5ace993f67bbb22a913e59246a9e6c9877bacebb8516aa07ac433f1e1609309b"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia: "4bfc16d7e11604d78e45b14a806816ab697d21913cf0c421a21bf58bd54be1c4"
+    sha256 cellar: :any,                 arm64_sonoma:  "ae63cd86273517312f26ed2b044d83a376c907b21d1eb74bd0e5cea844f332c0"
+    sha256 cellar: :any,                 arm64_ventura: "8d8296a13a9c4c0eed313d63d2974dedf5f9ac6af6cc28c7f2dc618b7471fc42"
+    sha256 cellar: :any,                 sonoma:        "29cabdb26b4cf7cf575668cee96f1c8ac443b57629293004b4236cf92235d3ad"
+    sha256 cellar: :any,                 ventura:       "b21b65d7c738ced87097c6934291ed67552556b606e186198dca32d1454d0ff3"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "32ec88b2016eaacec8f1817288fd1d846729dea8df4e374cae07e78822d1de0c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3672b0394462a9bd7a250af7f8089ee64430f6c56ad20f93c636b9fe3d2c7968"
   end
 
-  depends_on "autoconf" => :build
-  depends_on "automake" => :build
   depends_on "cmake" => :build
-  depends_on "libtool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "ffmpeg"
-  depends_on "jansson"
   depends_on "libao"
   depends_on "libvorbis"
   depends_on "mpg123"
@@ -43,18 +49,23 @@ class Vgmstream < Formula
     depends_on "libogg"
   end
 
-  fails_with gcc: "5" # ffmpeg is compiled with GCC
+  # Apply open PR to support FFmpeg 8
+  # PR ref: https://github.com/vgmstream/vgmstream/pull/1769
+  patch do
+    url "https://github.com/vgmstream/vgmstream/commit/3e12a08a248cfb06f776b746238ee6ba38369d02.patch?full_index=1"
+    sha256 "4d0eed438f24b0dd8fa217cf261cf8ddb8e7772d63fc51180fe79ddceb6a8914"
+  end
 
   def install
-    ENV["LIBRARY_PATH"] = HOMEBREW_PREFIX/"lib"
+    # TODO: Try adding `-DBUILD_SHARED_LIBS=ON` in a future release.
+    # Currently failing with requires target "g719_decode" that is not in any export set
     system "cmake", "-S", ".", "-B", "build",
                     "-DBUILD_AUDACIOUS:BOOL=OFF",
                     "-DUSE_CELT=OFF",
-                    *std_cmake_args,
-                    "-DFETCHCONTENT_FULLY_DISCONNECTED=OFF" # FIXME: Find a way to build without this.
+                    *std_cmake_args
     system "cmake", "--build", "build"
-    bin.install "build/cli/vgmstream-cli", "build/cli/vgmstream123"
-    lib.install "build/src/libvgmstream.a"
+    system "cmake", "--install", "build"
+    lib.install "build/src/libvgmstream.a" # remove when switching to shared libs
   end
 
   test do

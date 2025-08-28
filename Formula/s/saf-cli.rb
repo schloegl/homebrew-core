@@ -1,17 +1,18 @@
 class SafCli < Formula
   desc "CLI for the MITRE Security Automation Framework (SAF)"
   homepage "https://saf-cli.mitre.org"
-  url "https://registry.npmjs.org/@mitre/saf/-/saf-1.4.15.tgz"
-  sha256 "1d4d1c0ab94f7b86dd772ee8167f34e730432a52b8a0d0972077ee290e3e179a"
+  url "https://registry.npmjs.org/@mitre/saf/-/saf-1.4.22.tgz"
+  sha256 "4686e49d17dc6c1a11160dd2ffb069cce80af44b518a77e1983ec8f009735b07"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "1c2a517175584071429f989b8dd120991d302962f8ba774a1fbca8ea5434b2aa"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "1c2a517175584071429f989b8dd120991d302962f8ba774a1fbca8ea5434b2aa"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "1c2a517175584071429f989b8dd120991d302962f8ba774a1fbca8ea5434b2aa"
-    sha256 cellar: :any_skip_relocation, sonoma:        "2ae5c83812d68f4b9019176e3d00c56a1e0090e1f4c5b6877c6f99e811c6bd3d"
-    sha256 cellar: :any_skip_relocation, ventura:       "2ae5c83812d68f4b9019176e3d00c56a1e0090e1f4c5b6877c6f99e811c6bd3d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1c2a517175584071429f989b8dd120991d302962f8ba774a1fbca8ea5434b2aa"
+    sha256 cellar: :any,                 arm64_sequoia: "c6520a069786f4d6b8583a2738f1ded656a222a397a744c9c6557ddfb5ff31b4"
+    sha256 cellar: :any,                 arm64_sonoma:  "c6520a069786f4d6b8583a2738f1ded656a222a397a744c9c6557ddfb5ff31b4"
+    sha256 cellar: :any,                 arm64_ventura: "c6520a069786f4d6b8583a2738f1ded656a222a397a744c9c6557ddfb5ff31b4"
+    sha256 cellar: :any,                 sonoma:        "e47c9751091879c5e7cfffbea996ba3d54228adfa74c8bfa50793d97718bab92"
+    sha256 cellar: :any,                 ventura:       "e47c9751091879c5e7cfffbea996ba3d54228adfa74c8bfa50793d97718bab92"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "7ea58435d04be976f0d76850798d61a320532818fcc12b6a56925b093e584126"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "941541523dd33daab07bfd0470f08bada035552e525b89e67f22b3b46cb024b3"
   end
 
   depends_on "node"
@@ -19,9 +20,6 @@ class SafCli < Formula
   def install
     system "npm", "install", *std_npm_args
     bin.install_symlink Dir["#{libexec}/bin/*"]
-
-    # Replace universal binaries with their native slices
-    deuniversalize_machos
   end
 
   test do

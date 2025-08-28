@@ -1,8 +1,8 @@
 class OcamlFindlib < Formula
   desc "OCaml library manager"
   homepage "http://projects.camlcity.org/projects/findlib.html"
-  url "http://download.camlcity.org/download/findlib-1.9.6.tar.gz"
-  sha256 "2df996279ae16b606db5ff5879f93dbfade0898db9f1a3e82f7f845faa2930a2"
+  url "http://download.camlcity.org/download/findlib-1.9.8.tar.gz"
+  sha256 "662c910f774e9fee3a19c4e057f380581ab2fc4ee52da4761304ac9c31b8869d"
   license "MIT"
   revision 2
 
@@ -12,14 +12,13 @@ class OcamlFindlib < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "b87ed1fe983ab11326fec9a012141bd8a3b880354e478dcdef6ab8359e26cbe1"
-    sha256 arm64_sonoma:   "27db02a3efa66607b5131c5c7e2fe171540b3967ab0e80da5c62252b2cf8936b"
-    sha256 arm64_ventura:  "c9b81ddf8a113a064ef29cc3f0477a608367cec59a87885101ae5ab7063010dd"
-    sha256 arm64_monterey: "e37c0b5bf1940cbbc4bfb6406e10d060aa76164bb77d598adf82834a9b725a07"
-    sha256 sonoma:         "c7dd3598b58e99b1dfcc4060a1b4bb244e289ae9a13fe98914f29217b5ab67d7"
-    sha256 ventura:        "ba4ead7c276b54aa9c48c6e2b929aea8f04a1cbbb808fbfb087a5d9f03fe47ee"
-    sha256 monterey:       "5fc964c610117d95d20857f3ffffb52d6f518fe502c74a3ec40e108e60d9e40d"
-    sha256 x86_64_linux:   "75203b91c65f7c6ca18a0105202a5a6aeffbd225a4f97fc7a1d977bcaa403f30"
+    sha256               arm64_sequoia: "d6a7d8f506f4d089a8f30572798cb972357c01eac1a487f14c3aafeecf1fe980"
+    sha256               arm64_sonoma:  "ca98c985d8842a3f5062b7d48592b6f0347a8f5459b23907253d15e0b3abfd29"
+    sha256               arm64_ventura: "8b74e02480dff2c49430ee62defa16c3f9dcd87f174b98e6e8e648dcbc8bd8ef"
+    sha256 cellar: :any, sonoma:        "40788547ebec28eaed2a8811f9b3bd748a069abe43cca7c9485705d1b82681d1"
+    sha256 cellar: :any, ventura:       "b48edfe29118e8d0a15ac967c3dd8b8aa4de92c6e7b70190658a08e3a7e58398"
+    sha256               arm64_linux:   "37808e687a6c05f3ffcc60ebbcc85c816e2daea1b7298f6cde2a1b67718cfc1b"
+    sha256               x86_64_linux:  "2f34394dd75304d28a920c3f20abb41d206af10ba07b010fa3d702ea09293537"
   end
 
   depends_on "ocaml"

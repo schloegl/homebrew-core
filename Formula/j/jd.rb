@@ -1,28 +1,29 @@
 class Jd < Formula
   desc "JSON diff and patch"
   homepage "https://github.com/josephburnett/jd"
-  url "https://github.com/josephburnett/jd/archive/refs/tags/v1.9.1.tar.gz"
-  sha256 "92f1b183510874a73327bfb70cb2c0fed2fc1f2d08191f0736dc4863d6766110"
+  url "https://github.com/josephburnett/jd/archive/refs/tags/v2.3.0.tar.gz"
+  sha256 "5c7c749f58655a29345d7c0345b803d554629ecbad439096a6fb28eeeff276c0"
   license "MIT"
+  head "https://github.com/josephburnett/jd.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "e8fc3eccec5d7cdd882b9b457051fe4126e27a633d42c5f71921889c8d0086f1"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "00a6b8ffb60f702efa00a994ebc0524702950a2625910a62cc440d7b49c86a22"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "00a6b8ffb60f702efa00a994ebc0524702950a2625910a62cc440d7b49c86a22"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "00a6b8ffb60f702efa00a994ebc0524702950a2625910a62cc440d7b49c86a22"
-    sha256 cellar: :any_skip_relocation, sonoma:         "c8c2f957c610c1cd6a61d16db61993fcddfdf99af05bc66ad3bcbd9f1ea49600"
-    sha256 cellar: :any_skip_relocation, ventura:        "c8c2f957c610c1cd6a61d16db61993fcddfdf99af05bc66ad3bcbd9f1ea49600"
-    sha256 cellar: :any_skip_relocation, monterey:       "c8c2f957c610c1cd6a61d16db61993fcddfdf99af05bc66ad3bcbd9f1ea49600"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "eb4a069f48c9659771846717bfd6539bc67ab48d9874f57e06e826e20631ca73"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "65c8688b9faa2ed36501f6cd8b07a424844c1addd0d5e9a5a800aac3b2acce32"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "65c8688b9faa2ed36501f6cd8b07a424844c1addd0d5e9a5a800aac3b2acce32"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "65c8688b9faa2ed36501f6cd8b07a424844c1addd0d5e9a5a800aac3b2acce32"
+    sha256 cellar: :any_skip_relocation, sonoma:        "3528b572d310d68bbbb04d7ee487142e34e2a4402cc279b45c9fe89458b02624"
+    sha256 cellar: :any_skip_relocation, ventura:       "3528b572d310d68bbbb04d7ee487142e34e2a4402cc279b45c9fe89458b02624"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "105ce145b5b39abed50c84e01d71f75a0cdfc23cb6d67c627b81ff2d4a8ab177"
   end
 
   depends_on "go" => :build
 
   def install
-    system "go", "build", *std_go_args(ldflags: "-s -w")
+    system "go", "build", *std_go_args(ldflags: "-s -w"), "./v2/jd/main.go"
   end
 
   test do
+    assert_match version.to_s, shell_output("#{bin}/jd --version")
+
     (testpath/"a.json").write('{"foo":"bar"}')
     (testpath/"b.json").write('{"foo":"baz"}')
     (testpath/"c.json").write('{"foo":"baz"}')
@@ -31,8 +32,7 @@ class Jd < Formula
       - "bar"
       + "baz"
     EOF
-    output = shell_output("#{bin}/jd a.json b.json", 1)
-    assert_equal output, expected
+    assert_equal expected, shell_output("#{bin}/jd a.json b.json", 1)
     assert_empty shell_output("#{bin}/jd b.json c.json")
   end
 end

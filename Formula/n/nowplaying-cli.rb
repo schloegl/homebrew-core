@@ -15,6 +15,9 @@ class NowplayingCli < Formula
     sha256 cellar: :any_skip_relocation, monterey:       "4a6d9fdc2681a4912562186b4ee2c0965e56c0ec2c9189314afb505424745bb3"
   end
 
+  # see upstream discussion, https://github.com/kirtan-shah/nowplaying-cli/issues/28
+  deprecate! date: "2026-04-17", because: :unmaintained
+
   depends_on :macos
 
   def install

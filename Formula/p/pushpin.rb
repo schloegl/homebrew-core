@@ -1,31 +1,28 @@
 class Pushpin < Formula
   desc "Reverse proxy for realtime web services"
   homepage "https://pushpin.org/"
-  url "https://github.com/fastly/pushpin/releases/download/v1.40.1/pushpin-1.40.1.tar.bz2"
-  sha256 "64b6486160ecffdac9d6452463e980433800858cc0877c40736985bf67634044"
+  url "https://github.com/fastly/pushpin/releases/download/v1.41.0/pushpin-1.41.0.tar.bz2"
+  sha256 "1ceef0b8da5229a066906797e47795905f1fe8fb1477edc9d5799720df9943ef"
   license "Apache-2.0"
-  revision 1
   head "https://github.com/fastly/pushpin.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:  "1d120efbfadd608cd604b66470462a3e4488f69b86e46808797d230d25790303"
-    sha256 cellar: :any,                 arm64_ventura: "0e40cbd84d4f05265640af260ebe60817491fc1025aa38589912ece4b4ee7998"
-    sha256 cellar: :any,                 sonoma:        "77d2d0fb0619c56b39c9cef7ffcc21d41a47be7b9886842feb157164090c336d"
-    sha256 cellar: :any,                 ventura:       "a9eb99d74245913f4e521c113fb5b2abcdd6ad97db162f86abae790efb27534f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "848d95a2cf6027fd9c0bdb99b34fe0d7a70b86784a40365bd7c432506b70e2e2"
+    sha256 cellar: :any,                 arm64_sonoma:  "1434389dc49466bf5fd7db467fae69f1a4cb1a40fad0ba208424d9cd668561d8"
+    sha256 cellar: :any,                 arm64_ventura: "6a6e1589b2426b8865342dc8ca4e1e40f458566914b4d9bc2acfe5026a5913d3"
+    sha256 cellar: :any,                 sonoma:        "e556f7e386f9754072825140963bcf97500b0913028224c0c41e34b06ec5101e"
+    sha256 cellar: :any,                 ventura:       "794dab5892a1cd01292d6e30e5630f3a532dae8592a86c676822ea748e80f416"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "37e7dd8b643404da43b6445a0d0af373eb2e13724797c7b78c00771844f41def"
   end
 
   depends_on "boost" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
 
   depends_on "openssl@3"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "qt"
   depends_on "zeromq"
   depends_on "zurl"
-
-  fails_with gcc: "5"
 
   def install
     # Work around `cc` crate picking non-shim compiler when compiling `ring`.
@@ -62,7 +59,7 @@ class Pushpin < Formula
       * localhost:10080
     EOS
 
-    runfile.write <<~EOS
+    runfile.write <<~PYTHON
       import threading
       import time
       from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -103,17 +100,16 @@ class Pushpin < Formula
           if tries >= 10:
             raise Exception(f'test client giving up after {tries} tries')
           time.sleep(1)
-    EOS
+    PYTHON
 
     ENV["LC_ALL"] = "en_US.UTF-8"
     ENV["LANG"] = "en_US.UTF-8"
 
-    pid = fork do
-      exec bin/"pushpin", "--config=#{conffile}"
-    end
+    pid = spawn bin/"pushpin", "--config=#{conffile}"
+    sleep 5
 
     begin
-      system Formula["python@3.12"].opt_bin/"python3.12", runfile
+      system Formula["python@3.13"].opt_bin/"python3.13", runfile
     ensure
       Process.kill("TERM", pid)
       Process.wait(pid)

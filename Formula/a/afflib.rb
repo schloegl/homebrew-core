@@ -1,56 +1,37 @@
 class Afflib < Formula
   desc "Advanced Forensic Format"
   homepage "https://github.com/sshock/AFFLIBv3"
-  url "https://github.com/sshock/AFFLIBv3/archive/refs/tags/v3.7.20.tar.gz"
-  sha256 "7264d705ff53185f0847c69abdfce072779c0b907257e087a6372c7608108f65"
+  url "https://github.com/sshock/AFFLIBv3/archive/refs/tags/v3.7.21.tar.gz"
+  sha256 "047fce790d69c234dde1d23ad9e1f0cf868ac51b2ad9a76560d01e80f2f1c452"
   license all_of: [
     "BSD-4-Clause", # AFFLIB 2.0a14 and before
     :public_domain, # contributions after 2.0a14
   ]
-  revision 1
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any,                 arm64_sequoia:  "20ba271eae6ec7f44e4be0b019f2106c41b54f2f8b4ed6ee538b5df2931e7316"
-    sha256 cellar: :any,                 arm64_sonoma:   "645ea2880c23e3613925a61a769d6df03d272f14d398ed5b38250e1ff17178ef"
-    sha256 cellar: :any,                 arm64_ventura:  "39944f02e04efff99d4ba079e10d0e396dfb6025a7129591be8bd69fe194174f"
-    sha256 cellar: :any,                 arm64_monterey: "feb3ea9b5e4778eec142cf4d229d49cfc727d9579c5b432fbb3cbce28ce4bce1"
-    sha256 cellar: :any,                 sonoma:         "16a7055a8cc8d4ffab10cf59613d06dd26b7e79b70c029bbb60d0cbebdd8e926"
-    sha256 cellar: :any,                 ventura:        "4fe2379aa5371898278a70039518c72579e5d19758bcc0dcccc446044a01e703"
-    sha256 cellar: :any,                 monterey:       "8970905f67c00de1d7598feec1bd05ccc8db924f1cb267a570530a63ee4fe60c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "8743cca0396f102a6a57ae731d00b9974e990442101444bccab41c669afe37a5"
+    sha256 cellar: :any,                 arm64_sequoia: "415198525cd476abc0821e74c603ed01181276a3dd535ab18040cbe069195581"
+    sha256 cellar: :any,                 arm64_sonoma:  "5f03dcc0b3c684a789bf81d700e7ddfe0a14093915c2872634424b55652a1389"
+    sha256 cellar: :any,                 arm64_ventura: "6e8bbe1340c8f6b0c0b4e171ce27e0bb58fc7dd4c582dd55ca22cc78f5738599"
+    sha256 cellar: :any,                 sonoma:        "dd9226742b7b0c22ec05712fe074202a59af8d6734062ae86080843c8bfa71d1"
+    sha256 cellar: :any,                 ventura:       "79daeac53f022c937b8f637b1be92b5b710b9aad7d2072225bacd85516229df9"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "11e7390f80f0cec23e526eebc6347ec8632dd5c1e0fd7e209c0db7cc330e8acb"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7fad4c5a290b821683ac96da984b2dd64a3c7b09277e58d8a6cf571825069d8c"
   end
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on "pkg-config" => :build
-
+  depends_on "pkgconf" => :build
+  depends_on "python@3.13" => [:build, :test] # for bindings, avoid runtime dependency due to `expat`
   depends_on "openssl@3"
-  depends_on "python@3.12"
   depends_on "readline"
 
   uses_from_macos "curl"
   uses_from_macos "expat"
   uses_from_macos "zlib"
 
-  # Backport commits for regenerated pyaff.c to fix build with Python 3.12.
-  # Remove in the next release.
-  patch do
-    url "https://github.com/sshock/AFFLIBv3/commit/e465b771c11a975e69bd3d89c11dbc15b6c3c951.patch?full_index=1"
-    sha256 "833e168baaddbf243d8a58cd370998c47745fe6bd6d1e4a912bd00df05fb28aa"
-  end
-  patch do
-    url "https://github.com/sshock/AFFLIBv3/commit/4309b86f4a5e9beab4c41e16a7a971f79b56f644.patch?full_index=1"
-    sha256 "48f0852729ff33f53d8f2a6aa135ef7459ce481d2d34a5fa27068edd3a883401"
-  end
-  patch do
-    url "https://github.com/sshock/AFFLIBv3/commit/01210f488410a23838c54fcc22297cf08ac7de66.patch?full_index=1"
-    sha256 "7ad16951841f278631f11432ba7ec2284c317367bb5f28816eb9a6748be1065a"
-  end
-
   def python3
-    which("python3.12")
+    which("python3.13")
   end
 
   def install

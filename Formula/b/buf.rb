@@ -1,8 +1,8 @@
 class Buf < Formula
   desc "New way of working with Protocol Buffers"
   homepage "https://github.com/bufbuild/buf"
-  url "https://github.com/bufbuild/buf/archive/refs/tags/v1.43.0.tar.gz"
-  sha256 "08d2099a3fd90945228c68077bea101a67076170574f73e74f70b6025e2e02c0"
+  url "https://github.com/bufbuild/buf/archive/refs/tags/v1.57.0.tar.gz"
+  sha256 "9d3cde708b61190dc8906bd590c0fec2587aac43bba0dfc561a917bee8207bc8"
   license "Apache-2.0"
   head "https://github.com/bufbuild/buf.git", branch: "main"
 
@@ -15,12 +15,12 @@ class Buf < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "8b65837dedf0cc357b199c229e7e7c1df133b16621ff3859a6d7522b933ee6be"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "8b65837dedf0cc357b199c229e7e7c1df133b16621ff3859a6d7522b933ee6be"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "8b65837dedf0cc357b199c229e7e7c1df133b16621ff3859a6d7522b933ee6be"
-    sha256 cellar: :any_skip_relocation, sonoma:        "b8e36a93d173debbdcb4bd6cd79ffeb0fa2330d6758b2856af5fa78093791a01"
-    sha256 cellar: :any_skip_relocation, ventura:       "b8e36a93d173debbdcb4bd6cd79ffeb0fa2330d6758b2856af5fa78093791a01"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "990dc3e1f041cd4640f63d1de8d944f141d1c479004f6e83f055369ccf7a6a68"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "45d24ce7cddc71352b742fad2579041b71cb1942e1c2624312ebe9fb0d7d9ae3"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "45d24ce7cddc71352b742fad2579041b71cb1942e1c2624312ebe9fb0d7d9ae3"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "45d24ce7cddc71352b742fad2579041b71cb1942e1c2624312ebe9fb0d7d9ae3"
+    sha256 cellar: :any_skip_relocation, sonoma:        "c702d47b64399cad8a87d9f2eac29c0b3f29133f3a0890cb92b4cbe27f08f4f4"
+    sha256 cellar: :any_skip_relocation, ventura:       "c702d47b64399cad8a87d9f2eac29c0b3f29133f3a0890cb92b4cbe27f08f4f4"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f2d0c1ca8d7d7b93b6a6e9791b93187f5b042869cc8d08a0f9dab757430f4249"
   end
 
   depends_on "go" => :build
@@ -36,12 +36,12 @@ class Buf < Formula
   end
 
   test do
-    (testpath/"invalidFileName.proto").write <<~EOS
+    (testpath/"invalidFileName.proto").write <<~PROTO
       syntax = "proto3";
       package examplepb;
-    EOS
+    PROTO
 
-    (testpath/"buf.yaml").write <<~EOS
+    (testpath/"buf.yaml").write <<~YAML
       version: v1
       name: buf.build/bufbuild/buf
       lint:
@@ -52,7 +52,7 @@ class Buf < Formula
         use:
           - FILE
         ignore_unstable_packages: true
-    EOS
+    YAML
 
     expected = <<~EOS
       invalidFileName.proto:1:1:Filename "invalidFileName.proto" should be \

@@ -1,19 +1,19 @@
 class Virtuoso < Formula
   desc "High-performance object-relational SQL database"
-  homepage "https://virtuoso.openlinksw.com/wiki/main/"
-  url "https://github.com/openlink/virtuoso-opensource/releases/download/v7.2.13/virtuoso-opensource-7.2.13.tar.gz"
-  sha256 "7c138389fb412ca45935ab605daa16e96df1c11b67373a9b92f03c9fd6c35ec4"
+  homepage "https://virtuoso.openlinksw.com"
+  url "https://github.com/openlink/virtuoso-opensource/releases/download/v7.2.15/virtuoso-opensource-7.2.15.tar.gz"
+  sha256 "e0b6dbcf09b58f30a4205c41041daa4050e00af1474e3d5e3ab3fcce5b9be6db"
   license "GPL-2.0-only" => { with: "openvpn-openssl-exception" }
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "1c07489e94dc7864ebac9cd3360b530aeb13d871ea3552c94caf86b8ece564a8"
-    sha256 cellar: :any,                 arm64_sonoma:   "73ea2ae83de5dede38609a3bb93fbd170bfbc84ab81a46d3653704f546b84270"
-    sha256 cellar: :any,                 arm64_ventura:  "aee80e84acb4348d360de4ec9d3fa868c5785983bc278d06cf25ac108493e564"
-    sha256 cellar: :any,                 arm64_monterey: "67399c6e0e2f05a0474ba1687ad45d4a4a306c70cbe2a568f47ae33eece75b50"
-    sha256 cellar: :any,                 sonoma:         "a73f74103ffb52c691aaf413358b04b389d325987e48fddfe13608c22d70f89d"
-    sha256 cellar: :any,                 ventura:        "10938d0db150f8c612e6126f22b6b25bbaaf424c23d17cbf36dc4df6420c1ecc"
-    sha256 cellar: :any,                 monterey:       "cb01a85ca94e9a63608653fa758453593081714f4a385f79d2e53c0bf4e889eb"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "24fc37ec8db10030a0acdbaea2185c30431936c16510ea6ba8efe0adc6c9a5ed"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia: "554f70d10abdd7c5e5f1c0eed8d202de4e62740bde00ac9d3e26d32168859f6d"
+    sha256 cellar: :any,                 arm64_sonoma:  "b2740440db3983362e3543c4642d097c46a7fe318a48e6bf39988cc73089628c"
+    sha256 cellar: :any,                 arm64_ventura: "54d673c5a3bded8b8246864ecfee54b8a501a2f88e703fd2c4c0754821e5f0cd"
+    sha256 cellar: :any,                 sonoma:        "d0e5dfddf198d9d81c4a62a545cc1791f849c8cb211272b0e361057383339f01"
+    sha256 cellar: :any,                 ventura:       "3836ad54c55271fbcf39b080dfb087d392d9ef1ee549713d0550438925d0668c"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "13cf4c0d1af7fa2ceb8aeab1e3d9ec3dc0c61f73b3f551aaceeeeb9ea4f7353d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c72bb1f9b52ea3ef7efc4609fc07b475ca0a7f51c09cec3770dfa90117685f40"
   end
 
   head do
@@ -26,7 +26,7 @@ class Virtuoso < Formula
 
   # If gawk isn't found, make fails deep into the process.
   depends_on "gawk" => :build
-  depends_on "openssl@3.0"
+  depends_on "openssl@3"
 
   uses_from_macos "bison" => :build
   uses_from_macos "flex" => :build

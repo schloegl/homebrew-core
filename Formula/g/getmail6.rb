@@ -3,8 +3,8 @@ class Getmail6 < Formula
 
   desc "Extensible mail retrieval system with POP3, IMAP4, SSL support"
   homepage "https://getmail6.org/"
-  url "https://github.com/getmail6/getmail6/archive/refs/tags/v6.19.04.tar.gz"
-  sha256 "992d838b114842fb5055a85d9b581152b1b11ff444f20402b8662d9dd07d51ab"
+  url "https://github.com/getmail6/getmail6/archive/refs/tags/v6.19.10.tar.gz"
+  sha256 "e18c6e56af9ff51ae0f9db88b985102046aa7d91c48f823135874bb78312be8b"
   license "GPL-2.0-only"
 
   # Upstream uses GitHub releases to indicate that a version is released
@@ -16,14 +16,7 @@ class Getmail6 < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "c3c54257bf96d211850e6955d7e6a71bb7027876a7dfc259a7094eac51a02b6f"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "c3c54257bf96d211850e6955d7e6a71bb7027876a7dfc259a7094eac51a02b6f"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "c3c54257bf96d211850e6955d7e6a71bb7027876a7dfc259a7094eac51a02b6f"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "c3c54257bf96d211850e6955d7e6a71bb7027876a7dfc259a7094eac51a02b6f"
-    sha256 cellar: :any_skip_relocation, sonoma:         "3d387a9a7fc7645e62b7d457f513dc2ca77851e85933760d70bb0795388cf43f"
-    sha256 cellar: :any_skip_relocation, ventura:        "3d387a9a7fc7645e62b7d457f513dc2ca77851e85933760d70bb0795388cf43f"
-    sha256 cellar: :any_skip_relocation, monterey:       "3d387a9a7fc7645e62b7d457f513dc2ca77851e85933760d70bb0795388cf43f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "c3c54257bf96d211850e6955d7e6a71bb7027876a7dfc259a7094eac51a02b6f"
+    sha256 cellar: :any_skip_relocation, all: "6e0e153c6fb32e3d5b781e90169ccc56a3af19242503cb85ac1f668e29059cd2"
   end
 
   uses_from_macos "python", since: :catalina

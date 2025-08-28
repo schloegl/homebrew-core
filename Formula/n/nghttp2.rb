@@ -1,20 +1,19 @@
 class Nghttp2 < Formula
   desc "HTTP/2 C Library"
   homepage "https://nghttp2.org/"
-  url "https://github.com/nghttp2/nghttp2/releases/download/v1.63.0/nghttp2-1.63.0.tar.gz"
-  mirror "http://fresh-center.net/linux/www/nghttp2-1.63.0.tar.gz"
-  sha256 "9318a2cc00238f5dd6546212109fb833f977661321a2087f03034e25444d3dbb"
+  url "https://github.com/nghttp2/nghttp2/releases/download/v1.66.0/nghttp2-1.66.0.tar.gz"
+  mirror "http://fresh-center.net/linux/www/nghttp2-1.66.0.tar.gz"
+  sha256 "e178687730c207f3a659730096df192b52d3752786c068b8e5ee7aeb8edae05a"
   license "MIT"
 
   bottle do
-    sha256 arm64_sequoia:  "5c7d02e5e38397cc7ac2eaece928ce96086049905abf0be03d44df61fe74f465"
-    sha256 arm64_sonoma:   "1490d262d370565e6399f14557e025dd4d3ccf3e66429aa10752f53767b09396"
-    sha256 arm64_ventura:  "e8ce0af1e523291e56047e1634bb6e708586dc690c015db53284a3acf11ed002"
-    sha256 arm64_monterey: "e24a10fd5248deb0c987e7b275c0c1b6c9616b00edddf190849c205e95d7b443"
-    sha256 sonoma:         "8bf2e26f765f1e145e8f7fba8a9cd869498b867ca7e4c5b5c852248fb6cc72b4"
-    sha256 ventura:        "3640220afb57c9119758f684438af9f36eaeb7b1270f5387683b9415e5cf5202"
-    sha256 monterey:       "2896740b3d373771797a09e29dd1c6a65e64e3f02482295dd395e5dd06460ee9"
-    sha256 x86_64_linux:   "7a0b6480bad985d920b7d2394a05bfd8e56ad09df98b2a3e78bd2e847a3420fd"
+    sha256 cellar: :any,                 arm64_sequoia: "20ea8dcfeed5fde8c9792199c2af43ab04f5d1c88e7a3907f99b9e0b89d23cd0"
+    sha256 cellar: :any,                 arm64_sonoma:  "77896cb1a06e09459c9f8658010cbc63391a83da609ea5d1c02dd253be8d2ba4"
+    sha256 cellar: :any,                 arm64_ventura: "9bb9732aa5e6d6a7f29535c94f851995aeda41917d728e6e60690f0985261bda"
+    sha256 cellar: :any,                 sonoma:        "4c717a81d420ff96dff267fa9ae9384cd4a6528643900843a6a7d8dc9f49c0fb"
+    sha256 cellar: :any,                 ventura:       "f9d36daccc853e2d71d771e6d1d0fe8c71a0bf791a1626fa11723781bbd63ac8"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "80bc5f0551dd694b145553635898067a618d7a1c1b27db74fff5af4d278588cc"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3ae3de4374e9293eff1c07cb0fc7ef960cfb7444da930bf0ede9e39c8836a17f"
   end
 
   head do
@@ -25,7 +24,7 @@ class Nghttp2 < Formula
     depends_on "libtool" => :build
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "c-ares"
   depends_on "jemalloc"
   depends_on "libev"
@@ -36,8 +35,7 @@ class Nghttp2 < Formula
   uses_from_macos "zlib"
 
   on_macos do
-    # macOS 12 or older
-    depends_on "llvm" => :build if DevelopmentTools.clang_build_version <= 1400
+    depends_on "llvm" => :build if DevelopmentTools.clang_build_version <= 1500
   end
 
   on_linux do
@@ -45,14 +43,17 @@ class Nghttp2 < Formula
   end
 
   fails_with :clang do
-    build 1400
+    build 1500
     cause "Requires C++20 support"
   end
 
-  fails_with gcc: "11"
+  fails_with :gcc do
+    version "11"
+    cause "Requires C++20 support"
+  end
 
   def install
-    ENV.llvm_clang if OS.mac? && DevelopmentTools.clang_build_version <= 1400
+    ENV.llvm_clang if OS.mac? && DevelopmentTools.clang_build_version <= 1500
 
     # fix for clang not following C++14 behaviour
     # https://github.com/macports/macports-ports/commit/54d83cca9fc0f2ed6d3f873282b6dd3198635891
@@ -66,8 +67,7 @@ class Nghttp2 < Formula
       s.gsub!(%r{\$[({]top_builddir[)}]/lib/libnghttp2\.la}, "", audit_result: false)
     end
 
-    args = %W[
-      --prefix=#{prefix}
+    args = %w[
       --disable-silent-rules
       --enable-app
       --disable-examples
@@ -76,8 +76,8 @@ class Nghttp2 < Formula
       --without-systemd
     ]
 
-    system "autoreconf", "-ivf" if build.head?
-    system "./configure", *args
+    system "autoreconf", "--force", "--install", "--verbose" if build.head?
+    system "./configure", *args, *std_configure_args
     system "make"
     system "make", "install"
   end

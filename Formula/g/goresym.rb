@@ -1,20 +1,19 @@
 class Goresym < Formula
   desc "Go symbol recovery tool"
   homepage "https://github.com/mandiant/GoReSym"
-  url "https://github.com/mandiant/GoReSym/archive/refs/tags/v2.7.4.tar.gz"
-  sha256 "9823bdec19c6efc8d2bc5c9fdb4fff2ef6ad282e953cc6265dc131d9724e841f"
+  url "https://github.com/mandiant/GoReSym/archive/refs/tags/v3.1.2.tar.gz"
+  sha256 "5ed82506ca6d79968c6dfe3ac721a14ca886a19394228c2dce71ef69941aea90"
   license "MIT"
   head "https://github.com/mandiant/GoReSym.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "453adb66503e9417a6181bd9d63d34dca7b2e777e7bf365fb431ead7046f9eaa"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "35d29fce859bbd78dbf8e6d4d42a59a7e7bb094c4aaf12ad7e14c72087eeae1e"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "35d29fce859bbd78dbf8e6d4d42a59a7e7bb094c4aaf12ad7e14c72087eeae1e"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "35d29fce859bbd78dbf8e6d4d42a59a7e7bb094c4aaf12ad7e14c72087eeae1e"
-    sha256 cellar: :any_skip_relocation, sonoma:         "39e52b4f73da3c322974581c8b6126407cd934b8948d300b4fdcbab4f6b2bfe2"
-    sha256 cellar: :any_skip_relocation, ventura:        "39e52b4f73da3c322974581c8b6126407cd934b8948d300b4fdcbab4f6b2bfe2"
-    sha256 cellar: :any_skip_relocation, monterey:       "39e52b4f73da3c322974581c8b6126407cd934b8948d300b4fdcbab4f6b2bfe2"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "018ea7622684548654f49750c30113a2ca1c313db36e72c0c4fb5d621199c504"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "acf2b47031c6261e1d977bf293fb452485fea96cc206a6f3027ec7e18f86e04a"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "acf2b47031c6261e1d977bf293fb452485fea96cc206a6f3027ec7e18f86e04a"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "acf2b47031c6261e1d977bf293fb452485fea96cc206a6f3027ec7e18f86e04a"
+    sha256 cellar: :any_skip_relocation, sonoma:        "91cbad4c26d47b16a46c27d48cc9798bca37915f72870ba29fb3a069bafa3295"
+    sha256 cellar: :any_skip_relocation, ventura:       "91cbad4c26d47b16a46c27d48cc9798bca37915f72870ba29fb3a069bafa3295"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "e7e30fb975d2d32fa76af54e04edc2b138b8b878b9c5e13fd1bd74d0e3322f05"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f6414715ef12ade766c4e58fe223f6a341c4fbde88bf69495260bde6e100870b"
   end
 
   depends_on "go" => :build

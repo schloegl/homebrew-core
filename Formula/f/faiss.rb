@@ -1,8 +1,8 @@
 class Faiss < Formula
   desc "Efficient similarity search and clustering of dense vectors"
   homepage "https://github.com/facebookresearch/faiss"
-  url "https://github.com/facebookresearch/faiss/archive/refs/tags/v1.8.0.tar.gz"
-  sha256 "56ece0a419d62eaa11e39022fa27c8ed6d5a9b9eb7416cc5a0fdbeab07ec2f0c"
+  url "https://github.com/facebookresearch/faiss/archive/refs/tags/v1.12.0.tar.gz"
+  sha256 "561376d1a44771bf1230fabeef9c81643468009b45a585382cf38d3a7a94990a"
   license "MIT"
 
   livecheck do
@@ -11,14 +11,13 @@ class Faiss < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "beaee8de8a8cfe79fa86a0fa308766823f21572b256f8857b5f7fe434c7b7722"
-    sha256 cellar: :any,                 arm64_sonoma:   "ef550d42c8097e4bea9ca7543b72d3ed40e597dd25c1ad2a6a501b4f63525df9"
-    sha256 cellar: :any,                 arm64_ventura:  "3a3d3fa6342d689f10f613925903be22e7facd9336c1a45727e52ab1cb45001f"
-    sha256 cellar: :any,                 arm64_monterey: "f4018c8f975b35daac3d18292d071951dfa44504ca7395b15e7459bb7857050f"
-    sha256 cellar: :any,                 sonoma:         "53379730b560a7f052a012ec2a0b737d07d82d75a07fe4bc4a15fe7f65c5d938"
-    sha256 cellar: :any,                 ventura:        "8a4df73b9d6753f5470cd82cafe9574b52bb6328017b12c6d17bd293c0a4cfca"
-    sha256 cellar: :any,                 monterey:       "8f3121a6d49431aacfc93bcc59a98573cbbd99cc6683196b412b267064b9775b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "7039257213591de45492e514610f7f94b0463c8dde4705238d16bed04eecb536"
+    sha256 cellar: :any,                 arm64_sequoia: "3c564c210de8128af0dc4a016277e846277395d9acc0051582931ae78a385315"
+    sha256 cellar: :any,                 arm64_sonoma:  "310d97a638f6f9cf838a4786f255a187dcb5547cdb9c6cf4d1a1e5daae086ece"
+    sha256 cellar: :any,                 arm64_ventura: "ea0b4cb763e453695ba67eb9ead7cfc1dace62b17987d2380bfba363fe66dd54"
+    sha256 cellar: :any,                 sonoma:        "bd332b0c966b40480b2e31d403c61f506d5869c44fe757429c2545cc6166aba5"
+    sha256 cellar: :any,                 ventura:       "73527c8cd2e52c74f972b1f1ae556be41b32469030106e07f78591a6e86d6d85"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "145f84010379e5cf39515890eee772e1053e22d0bd7c2a93e7cd1875c5020a6c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "53c5a32eb14b7ac73d388e4c9944109085fdf904e4b6a3157f95602e54e2a373"
   end
 
   depends_on "cmake" => :build
@@ -29,17 +28,16 @@ class Faiss < Formula
   end
 
   def install
-    args = *std_cmake_args + %w[
+    args = %W[
+      -DBUILD_SHARED_LIBS=ON
+      -DCMAKE_INSTALL_RPATH=#{rpath}
+      -DFAISS_ENABLE_C_API=ON
       -DFAISS_ENABLE_GPU=OFF
       -DFAISS_ENABLE_PYTHON=OFF
-      -DFAISS_ENABLE_C_API=ON
-      -DBUILD_SHARED_LIBS=ON
     ]
-    system "cmake", "-B", "build", ".", *args
-    cd "build" do
-      system "make"
-      system "make", "install"
-    end
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
     pkgshare.install "demos"
   end
 

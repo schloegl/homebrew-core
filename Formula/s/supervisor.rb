@@ -3,29 +3,22 @@ class Supervisor < Formula
 
   desc "Process Control System"
   homepage "http://supervisord.org/"
-  url "https://files.pythonhosted.org/packages/ce/37/517989b05849dd6eaa76c148f24517544704895830a50289cbbf53c7efb9/supervisor-4.2.5.tar.gz"
-  sha256 "34761bae1a23c58192281a5115fb07fbf22c9b0133c08166beffc70fed3ebc12"
+  url "https://files.pythonhosted.org/packages/a9/b5/37e7a3706de436a8a2d75334711dad1afb4ddffab09f25e31d89e467542f/supervisor-4.3.0.tar.gz"
+  sha256 "4a2bf149adf42997e1bb44b70c43b613275ec9852c3edacca86a9166b27e945e"
   license "BSD-3-Clause-Modification"
-  revision 1
-  head "https://github.com/Supervisor/supervisor.git", branch: "master"
+  head "https://github.com/Supervisor/supervisor.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "451fc426f65e766105f5984229fd998477ebce5ff61e3905ed0de3e91e0cb5f3"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "ec664bd2e3bc60bd9a8514ac2a16da34a0a9efcebb8fe775b21698af40909444"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "ec664bd2e3bc60bd9a8514ac2a16da34a0a9efcebb8fe775b21698af40909444"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "ec664bd2e3bc60bd9a8514ac2a16da34a0a9efcebb8fe775b21698af40909444"
-    sha256 cellar: :any_skip_relocation, sonoma:         "2eb8e7fba66707eda58ce2a41920c5a0281e64a376a0e1130018ae3ba32f3c9b"
-    sha256 cellar: :any_skip_relocation, ventura:        "2eb8e7fba66707eda58ce2a41920c5a0281e64a376a0e1130018ae3ba32f3c9b"
-    sha256 cellar: :any_skip_relocation, monterey:       "2eb8e7fba66707eda58ce2a41920c5a0281e64a376a0e1130018ae3ba32f3c9b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "78207f4fe866c1554ce1ffc5d574a74fb8ccc7cf30fd662917bcc6e76023457f"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "d1a68ce041e29ddbb3243a78077da5b7319335b708c7269c17101e22bad70c6b"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "d1a68ce041e29ddbb3243a78077da5b7319335b708c7269c17101e22bad70c6b"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "d1a68ce041e29ddbb3243a78077da5b7319335b708c7269c17101e22bad70c6b"
+    sha256 cellar: :any_skip_relocation, sonoma:        "c94a5fa21547627537c69f8b8ebaa5f27072b8306769495d076080f235c7b9f8"
+    sha256 cellar: :any_skip_relocation, ventura:       "c94a5fa21547627537c69f8b8ebaa5f27072b8306769495d076080f235c7b9f8"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "d1a68ce041e29ddbb3243a78077da5b7319335b708c7269c17101e22bad70c6b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d1a68ce041e29ddbb3243a78077da5b7319335b708c7269c17101e22bad70c6b"
   end
 
-  depends_on "python@3.12"
-
-  resource "setuptools" do
-    url "https://files.pythonhosted.org/packages/65/d8/10a70e86f6c28ae59f101a9de6d77bf70f147180fbf40c3af0f64080adc3/setuptools-70.3.0.tar.gz"
-    sha256 "f171bab1dfbc86b132997f26a119f6056a57950d058587841a0082e8830f9dc5"
-  end
+  depends_on "python@3.13"
 
   def install
     inreplace buildpath/"supervisor/skel/sample.conf" do |s|
@@ -59,7 +52,7 @@ class Supervisor < Formula
   end
 
   test do
-    (testpath/"sd.ini").write <<~EOS
+    (testpath/"sd.ini").write <<~INI
       [unix_http_server]
       file=supervisor.sock
 
@@ -71,11 +64,12 @@ class Supervisor < Formula
 
       [supervisorctl]
       serverurl=unix://supervisor.sock
-    EOS
+    INI
 
     begin
-      pid = fork { exec bin/"supervisord", "--nodaemon", "-c", "sd.ini" }
-      sleep 1
+      pid = spawn bin/"supervisord", "--nodaemon", "-c", "sd.ini"
+      sleep 3
+      sleep 9 if OS.mac? && Hardware::CPU.intel?
       output = shell_output("#{bin}/supervisorctl -c sd.ini version")
       assert_match version.to_s, output
     ensure

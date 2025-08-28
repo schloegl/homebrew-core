@@ -3,21 +3,17 @@ class Px < Formula
 
   desc "Ps and top for human beings (px / ptop)"
   homepage "https://github.com/walles/px"
-  url "https://github.com/walles/px.git",
-      tag:      "3.6.5",
-      revision: "837bd0e16a0abfd4a315f7d240d6227a6b861e07"
+  url "https://files.pythonhosted.org/packages/6c/84/0d8c82c54f5014340df9e44d89e0c09a9261a61bfce656f0a7f09eb3c275/pxpx-3.7.0.tar.gz"
+  sha256 "18961d377c41f65fa944b5c08db6f60a5919c15dbcd83df9f8e95ff594241cb0"
   license "MIT"
 
+  no_autobump! because: :bumped_by_upstream
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "2f01f55912fe2c6b625844c3c511d3e922021a61c3739867fc2b977dd3e4b466"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "2f01f55912fe2c6b625844c3c511d3e922021a61c3739867fc2b977dd3e4b466"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "2f01f55912fe2c6b625844c3c511d3e922021a61c3739867fc2b977dd3e4b466"
-    sha256 cellar: :any_skip_relocation, sonoma:        "9f931b1bdc8604a0fa2c22649f0da98dbbe7e513b80d601fe01a17b4621337da"
-    sha256 cellar: :any_skip_relocation, ventura:       "9f931b1bdc8604a0fa2c22649f0da98dbbe7e513b80d601fe01a17b4621337da"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2f01f55912fe2c6b625844c3c511d3e922021a61c3739867fc2b977dd3e4b466"
+    sha256 cellar: :any_skip_relocation, all: "dbc12da3ec4c8724b3126a1d814f35b3278888e3d93e423f82fca6f1e15d635f"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   uses_from_macos "lsof"
 
@@ -26,8 +22,6 @@ class Px < Formula
 
   def install
     virtualenv_install_with_resources
-
-    man1.install Dir["doc/*.1"]
   end
 
   test do

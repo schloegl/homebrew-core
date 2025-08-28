@@ -1,13 +1,13 @@
 class EasyRsa < Formula
   desc "CLI utility to build and manage a PKI CA"
   homepage "https://github.com/OpenVPN/easy-rsa"
-  url "https://github.com/OpenVPN/easy-rsa/releases/download/v3.2.1/EasyRSA-3.2.1.tgz"
-  sha256 "ec0fdca46c07afef341e0e0eeb2bf0cfe74a11322b77163e5d764d28cb4eec89"
+  url "https://github.com/OpenVPN/easy-rsa/releases/download/v3.2.4/EasyRSA-3.2.4.tgz"
+  sha256 "ed65e88cea892268efa71eb1161ce13af3beded6754301e1e713e36ff3613cac"
   license "GPL-2.0-only"
   head "https://github.com/OpenVPN/easy-rsa.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "3057967081df2d2d15bf9547dc7d7a25019fccd91340ecb5f801c1f6c9c71d5a"
+    sha256 cellar: :any_skip_relocation, all: "27faeb23bcc2261704d7df714c7a5295e9af55781843523f766ded08ca04d80c"
   end
 
   depends_on "openssl@3"
@@ -22,7 +22,7 @@ class EasyRsa < Formula
     (bin/"easyrsa").write_env_script libexec/"easyrsa",
       EASYRSA:         pkgetc,
       EASYRSA_OPENSSL: Formula["openssl@3"].opt_bin/"openssl",
-      EASYRSA_PKI:     "${EASYRSA_PKI:-#{etc}/pki}"
+      EASYRSA_PKI:     "${EASYRSA_PKI:-#{etc}/easy-rsa/pki}"
 
     pkgetc.install %w[
       openssl-easyrsa.cnf
@@ -43,7 +43,7 @@ class EasyRsa < Formula
   def caveats
     <<~EOS
       By default, keys will be created in:
-        #{etc}/pki
+        #{etc}/easy-rsa/pki
 
       The configuration may be modified by editing and renaming:
         #{pkgetc}/vars.example

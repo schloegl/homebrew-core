@@ -1,23 +1,22 @@
 class Convco < Formula
   desc "Conventional commits, changelog, versioning, validation"
   homepage "https://convco.github.io"
-  url "https://github.com/convco/convco/archive/refs/tags/v0.6.0.tar.gz"
-  sha256 "e6a7dbaddd39172927170d5d0b7aec12c7b72531d8961963e6059dd432555488"
+  url "https://github.com/convco/convco/archive/refs/tags/v0.6.2.tar.gz"
+  sha256 "6f8e58f8572a785e32d287cad80d174303a5db5abc4ce0cf50022e05125549dd"
   license "MIT"
-  head "https://github.com/convco/convco.git", branch: "master"
+  head "https://github.com/convco/convco.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "d3935804ee673dac405a2666336683616f4e426e124b43a5ea7310e4995ed7b1"
-    sha256 cellar: :any,                 arm64_sonoma:   "902794609fffacf8a4895bea16bc5f62fbe61d6e42e7e4b878ff6880be0e0764"
-    sha256 cellar: :any,                 arm64_ventura:  "a1690a307a760ff0779ec5bce8fea4f0e78ca4a941e8d96d048e9cbefe00b656"
-    sha256 cellar: :any,                 arm64_monterey: "0ddff4579aa41e1e7f56bf1fba06ffd19905622371cace49642c0fe54e8c6321"
-    sha256 cellar: :any,                 sonoma:         "98287b7930a2f98d2764560def4d7326e72098cb6f893f1479b45faeefad54c9"
-    sha256 cellar: :any,                 ventura:        "c09e5ad6ce54f02b3c0ad421a38b6be6166b4d8c8cc826ac7c73143ee53eef7b"
-    sha256 cellar: :any,                 monterey:       "b2def2b2af3644f4838801838ebc718dceed43d815bbb992c05f28f0c489e84d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "ecef0dce0dbf92b77bf0339985fa945020247ea7bfdee80c272aaa79f052fb51"
+    sha256 cellar: :any,                 arm64_sequoia: "e1c093220b014473d3a149c15ae6b832e5bd00a29f53e4536e7e61c5f5d23fc7"
+    sha256 cellar: :any,                 arm64_sonoma:  "8735477bfe61112d9b04356962c578a92ce2b446cb05086932e9ef8d2c452a28"
+    sha256 cellar: :any,                 arm64_ventura: "e66f77d70c4c03b8a9057b0bb1625bc299a53f6ff009df8360a337ec1295cc76"
+    sha256 cellar: :any,                 sonoma:        "e43a535594de8583f7313f689d34110c44d8470848187d3996f1c3ec1ff91d0f"
+    sha256 cellar: :any,                 ventura:       "cb1e5727f7cfee8c3a2c83e916cf870a99ee440d238727cc3d89c8d062eedc69"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "8a970e8d83d06d8484d388e474354b61c547792c1e27ed72ad2f8eb0d6008b80"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "889fe4c5139b8dd815723ed30fad7566fdee06967247cfae99bf5604ec394991"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
   depends_on "libgit2"
 

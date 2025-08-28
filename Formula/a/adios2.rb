@@ -1,10 +1,9 @@
 class Adios2 < Formula
   desc "Next generation of ADIOS developed in the Exascale Computing Program"
   homepage "https://adios2.readthedocs.io"
-  url "https://github.com/ornladios/ADIOS2/archive/refs/tags/v2.10.1.tar.gz"
-  sha256 "ce776f3a451994f4979c6bd6d946917a749290a37b7433c0254759b02695ad85"
+  url "https://github.com/ornladios/ADIOS2/archive/refs/tags/v2.10.2.tar.gz"
+  sha256 "14cf0bcd94772194bce0f2c0e74dba187965d1cffd12d45f801c32929158579e"
   license "Apache-2.0"
-  revision 1
   head "https://github.com/ornladios/ADIOS2.git", branch: "master"
 
   livecheck do
@@ -13,19 +12,20 @@ class Adios2 < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "4313cd9f05eb9c542c79ddd813453e8eaf33803e8742402382aea0aa52305720"
-    sha256 arm64_sonoma:   "c6173e887d128c8868a087e0cb87c024d6a4eca32509f5de491875d637e18632"
-    sha256 arm64_ventura:  "4063bcd651c2f7e2a7b387a8fbba8962835575e9d087f908a23f62e66a4e463d"
-    sha256 arm64_monterey: "cc1db18103afaa9280c284a63976630445f3b2f1bc7eb0ff2d21300aa817a8d7"
-    sha256 sonoma:         "097a2eebee3f943828cd737fe4973b7029fc6dffa6f7ff0d54143b91944b52c8"
-    sha256 ventura:        "5cdf5e17e24daa2bfa0d641c3d28737ac616237d4637ccc851963a6552d800ea"
-    sha256 monterey:       "cec63f45515bf942144e7d15be9c87606949b42f85dfc9424b1f1be97dda582e"
-    sha256 x86_64_linux:   "d9f8c709fc2a57f9bd8970160862a10b2070fe87cb30705e0758ca1317b17cc4"
+    rebuild 1
+    sha256 arm64_sequoia: "caf49db76e7ccd69679a897c33cae89ce8f6c3791b37e1e9e64f44b5ed1d3681"
+    sha256 arm64_sonoma:  "f1d5cea886ed8cd5f968a842aca88fe6a45ecb2bce617aec503b52bed5da7ed9"
+    sha256 arm64_ventura: "b1f76254ef5027a9f7b4975d78f978e08cb83fbabccf3f1c563b561ab894a27e"
+    sha256 sonoma:        "14dcca08d1cc8ec5c34bbb9fd652e67614fa300dcc4cc1764279021ebe4eb1d0"
+    sha256 ventura:       "7f46f4a0b3a3f652c98ad7ee92c0b7d12c32dd3ea35c990092f3194abc92940d"
+    sha256 arm64_linux:   "4d6e615acfb2490c76cf4489959c40fbcda944ed33ae983157a2cac241de6e6f"
+    sha256 x86_64_linux:  "9496dbfe1f33f6ee68f69692c979e083525425da1e3a8d220eab5d19f82e6a2b"
   end
 
   depends_on "cmake" => :build
   depends_on "nlohmann-json" => :build
-  depends_on "c-blosc"
+  depends_on "pybind11" => :build
+  depends_on "c-blosc2"
   depends_on "gcc" # for gfortran
   depends_on "libfabric"
   depends_on "libpng"
@@ -34,8 +34,7 @@ class Adios2 < Formula
   depends_on "numpy"
   depends_on "open-mpi"
   depends_on "pugixml"
-  depends_on "pybind11"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "sqlite"
   depends_on "yaml-cpp"
   depends_on "zeromq"
@@ -45,6 +44,8 @@ class Adios2 < Formula
 
   on_macos do
     depends_on "llvm" => :build if DevelopmentTools.clang_build_version == 1400
+    depends_on "lz4"
+    depends_on "zstd"
   end
 
   # clang: error: unable to execute command: Segmentation fault: 11
@@ -53,7 +54,7 @@ class Adios2 < Formula
   fails_with :clang if DevelopmentTools.clang_build_version == 1400
 
   def python3
-    "python3.12"
+    "python3.13"
   end
 
   def install
@@ -66,7 +67,7 @@ class Adios2 < Formula
     end
 
     args = %W[
-      -DADIOS2_USE_Blosc=ON
+      -DADIOS2_USE_Blosc2=ON
       -DADIOS2_USE_BZip2=ON
       -DADIOS2_USE_DataSpaces=OFF
       -DADIOS2_USE_Fortran=ON
@@ -101,12 +102,13 @@ class Adios2 < Formula
 
   test do
     adios2_config_flags = Utils.safe_popen_read(bin/"adios2-config", "--cxx").chomp.split
-    system "mpic++", pkgshare/"test/bpWriter.cpp", *adios2_config_flags
+    adios2_config_flags += %W[-L#{Formula["lz4"].opt_lib} -llz4]
+    system "mpic++", "-std=c++17", pkgshare/"test/bpWriter.cpp", *adios2_config_flags
     system "./a.out"
-    assert_predicate testpath/"myVector_cpp.bp", :exist?
+    assert_path_exists testpath/"myVector_cpp.bp"
 
     system python3, "-c", "import adios2"
     system python3, pkgshare/"test/bpWriter.py"
-    assert_predicate testpath/"bpWriter-py.bp", :exist?
+    assert_path_exists testpath/"bpWriter-py.bp"
   end
 end

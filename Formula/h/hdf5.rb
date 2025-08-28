@@ -1,9 +1,8 @@
 class Hdf5 < Formula
   desc "File format designed to store large amounts of data"
   homepage "https://www.hdfgroup.org/solutions/hdf5/"
-  url "https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.4.3/hdf5-1.14.4-3.tar.gz"
-  version "1.14.4.3"
-  sha256 "019ac451d9e1cf89c0482ba2a06f07a46166caf23f60fea5ef3c37724a318e03"
+  url "https://github.com/HDFGroup/hdf5/releases/download/hdf5_1.14.6/hdf5-1.14.6.tar.gz"
+  sha256 "e4defbac30f50d64e1556374aa49e574417c9e72c6b1de7a4ff88c4b1bea6e9b"
   license "BSD-3-Clause"
   version_scheme 1
 
@@ -11,30 +10,32 @@ class Hdf5 < Formula
   # may be for a lower version, so we have to check multiple releases to
   # identify the highest version.
   livecheck do
-    url :url
+    url :stable
     strategy :github_releases
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "5cc08587212e632e4ef2b8ca037d679cf011297333bfc95bd0f753b452e7b514"
-    sha256 cellar: :any,                 arm64_sonoma:  "4c249b2b21f8a306715a5d35f61b83f0b9839c0335f2a5751902ff2cfef1820b"
-    sha256 cellar: :any,                 arm64_ventura: "914aee87d16c9ddeaf88e00ef33db5cd4e942655c69ed91f11aac4f916dbc949"
-    sha256 cellar: :any,                 sonoma:        "72da6906e4f1589d8224f878278c09b445fdd077597be4065c3efe28eec5cf29"
-    sha256 cellar: :any,                 ventura:       "9b776abda0d9124d8afed04bf881521ca8ea4e9232a8bb82bf6d12209bcd4300"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fa1d18554918eee7081b17be953886f1dc250d190792eef50e7a3cc4bb7b8bc8"
+    sha256 cellar: :any,                 arm64_sequoia: "2338b44eb0a44fbb3261862de8310f98f749caef3ae9387687b961e7f3b97d0f"
+    sha256 cellar: :any,                 arm64_sonoma:  "50b38bf19514ed01f14c9c2d94619945fcdc60c5deaf83ea1595916093f7977c"
+    sha256 cellar: :any,                 arm64_ventura: "3bbb75b9bb29386801e650f2406ecde85ec9d73460b0b1bd2629d457a7ba1672"
+    sha256 cellar: :any,                 sonoma:        "13a628da9dbe2b7528532731dabe50715bf0487ce069f040fac75f9eadd8b3b5"
+    sha256 cellar: :any,                 ventura:       "ee3258e58082872fac217ece616a82a76c945ba9f38362c710b77df833adbceb"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "8a5ab8ac6290a03e1e69dda1ff8363c8f2dfdfed2e7491e8d04d95987a3f98fc"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "526dee09cdfb1857f883931aa914cab567df80cf2cc95dfaa899d6fbee9f6619"
   end
 
   depends_on "cmake" => :build
   depends_on "gcc" # for gfortran
   depends_on "libaec"
-  depends_on "pkg-config"
+  depends_on "pkgconf"
 
   uses_from_macos "zlib"
 
   conflicts_with "hdf5-mpi", because: "hdf5-mpi is a variant of hdf5, one can only use one or the other"
 
   def install
-    ENV["libaec_DIR"] = Formula["libaec"].opt_prefix.to_s
     args = %w[
       -DHDF5_USE_GNU_DIRS:BOOL=ON
       -DHDF5_INSTALL_CMAKE_DIR=lib/cmake/hdf5
@@ -70,7 +71,7 @@ class Hdf5 < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <stdio.h>
       #include "hdf5.h"
       int main()
@@ -78,11 +79,11 @@ class Hdf5 < Formula
         printf("%d.%d.%d\\n", H5_VERS_MAJOR, H5_VERS_MINOR, H5_VERS_RELEASE);
         return 0;
       }
-    EOS
+    C
     system bin/"h5cc", "test.c"
     assert_equal version.major_minor_patch.to_s, shell_output("./a.out").chomp
 
-    (testpath/"test.f90").write <<~EOS
+    (testpath/"test.f90").write <<~FORTRAN
       use hdf5
       integer(hid_t) :: f, dspace, dset
       integer(hsize_t), dimension(2) :: dims = [2, 2]
@@ -108,7 +109,7 @@ class Hdf5 < Formula
       if (error /= 0) call abort
       write (*,"(I0,'.',I0,'.',I0)") major, minor, rel
       end
-    EOS
+    FORTRAN
     system bin/"h5fc", "test.f90"
     assert_equal version.major_minor_patch.to_s, shell_output("./a.out").chomp
 

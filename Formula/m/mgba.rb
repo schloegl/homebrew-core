@@ -1,11 +1,14 @@
 class Mgba < Formula
   desc "Game Boy Advance emulator"
   homepage "https://mgba.io/"
-  url "https://github.com/mgba-emu/mgba/archive/refs/tags/0.10.3.tar.gz"
-  sha256 "be2cda7de3da8819fdab0c659c5cd4c4b8ca89d9ecddeeeef522db6d31a64143"
   license "MPL-2.0"
   revision 1
-  head "https://github.com/mgba-emu/mgba.git", branch: "master"
+
+  stable do
+    url "https://github.com/mgba-emu/mgba/archive/refs/tags/0.10.5.tar.gz"
+    sha256 "91d6fbd32abcbdf030d58d3f562de25ebbc9d56040d513ff8e5c19bee9dacf14"
+    depends_on "qt@5"
+  end
 
   livecheck do
     url :stable
@@ -13,26 +16,29 @@ class Mgba < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "2c4dbac84443147a058fcd1d4ae9c43ecc7e1a838279f92cdaf7765702b9d166"
-    sha256 arm64_sonoma:   "d25d99aa5db8c8e0c860a7687b81fba01607282028f9e27cce4c1f92fddf7a6a"
-    sha256 arm64_ventura:  "b7a07ec0ed66d699a0fa40a780aa46b2bf22491223beb111b33e16df6ae1e94c"
-    sha256 arm64_monterey: "948767938e7aeaeabd951f600a1907018e42f3eabf559a97a5865074b2e1ca4f"
-    sha256 sonoma:         "3089a1cdc7212c1b45bd4cb8f09909f76fb2fd11cc2900d9ed4ceff82b958545"
-    sha256 ventura:        "7ecd5443f866e0de40fcfac597266bda37fe1cb0fe2f4b5ba6cbf297f57279ca"
-    sha256 monterey:       "6cc7a183ecfe59b30ed0211682fcc04ba755bd40d42a98deed8e032831abdbca"
-    sha256 x86_64_linux:   "36cf3e2fd99036777e5dfe0566a34003e526c5b6e500e5afd9ac2f3db24d19d0"
+    rebuild 1
+    sha256 arm64_sequoia: "0b47b22819b56f4f974b3bc13229329cbef0fc1df0474a2d2ffba3ced580b2e5"
+    sha256 arm64_sonoma:  "038e56d90cd6ded9ac8150847bc86c43dc57c2441496916c2a0f3b232608927c"
+    sha256 arm64_ventura: "0e89003774f3a0164c890f1732242969cc013b269b037bd01d8b97a3ae4bf4a7"
+    sha256 sonoma:        "d56566a7d206c7850126abbcb2c85ea659f995c30efce5886344e27aeca427e7"
+    sha256 ventura:       "d90396f1c7b48efb28edfd391a82fc0a6bb83a9dd3046398f8b5a16b66a4eea3"
+    sha256 x86_64_linux:  "4ef9822d552b0d2ac6d038f63539af007285ed9132e0098594ebb49ef10278c1"
+  end
+
+  head do
+    url "https://github.com/mgba-emu/mgba.git", branch: "master"
+    depends_on "freetype"
+    depends_on "qt"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "ffmpeg"
   depends_on "libepoxy"
   depends_on "libpng"
-  depends_on "libsamplerate"
   depends_on "libzip"
   depends_on "lua"
-  depends_on "qt@5"
   depends_on "sdl2"
   depends_on "sqlite"
 
@@ -50,21 +56,32 @@ class Mgba < Formula
   end
 
   def install
-    # https://github.com/mgba-emu/mgba/issues/3115
     args = []
+    # TODO: Remove minimum policy in 0.11. Upstream commit doesn't cleanly apply
+    # https://github.com/mgba-emu/mgba/commit/e95b81f1f7b95161fbda81fa5e931e3bcb193ccf
+    args << "-DCMAKE_POLICY_VERSION_MINIMUM=3.5" if build.stable?
+    # https://github.com/mgba-emu/mgba/issues/3115
     args << "-DUSE_DISCORD_RPC=OFF" if OS.linux?
 
-    # Disable CMake fixup_bundle to prevent copying dylibs into app bundle
-    inreplace "src/platform/qt/CMakeLists.txt", "fixup_bundle(", "# \\0"
-
-    # Install .app bundle into prefix, not prefix/Applications
-    inreplace "src/platform/qt/CMakeLists.txt", "Applications", "."
+    inreplace "src/platform/qt/CMakeLists.txt" do |s|
+      # Disable CMake fixup_bundle to prevent copying dylibs into app bundle
+      s.gsub! "fixup_bundle(", "# \\0"
+      # Install .app bundle into prefix, not prefix/Applications
+      s.gsub! "Applications", "."
+    end
 
     # Fix OpenGL linking on macOS.
     if OS.mac?
-      inreplace "CMakeLists.txt",
-                "list(APPEND DEPENDENCY_LIB ${EPOXY_LIBRARIES})",
-                'list(APPEND DEPENDENCY_LIB ${EPOXY_LIBRARIES} "-framework OpenGL")'
+      if build.stable?
+        inreplace "CMakeLists.txt",
+                  "list(APPEND DEPENDENCY_LIB ${EPOXY_LIBRARIES})",
+                  'list(APPEND DEPENDENCY_LIB ${EPOXY_LIBRARIES} "-framework OpenGL")'
+      else
+        # Work around failure running `cmake -E tar` within brew's build environment.
+        # CMake Error: Unable to read from file 'fish.fs': Could not open extended attribute file
+        # FIXME: Build is fine outside brew's environment
+        args << "-DUSE_LIBZIP=OFF"
+      end
     end
 
     system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args

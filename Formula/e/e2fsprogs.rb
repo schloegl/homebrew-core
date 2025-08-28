@@ -1,8 +1,8 @@
 class E2fsprogs < Formula
   desc "Utilities for the ext2, ext3, and ext4 file systems"
   homepage "https://e2fsprogs.sourceforge.net/"
-  url "https://downloads.sourceforge.net/project/e2fsprogs/e2fsprogs/v1.47.1/e2fsprogs-1.47.1.tar.gz"
-  sha256 "9afcd201f39429d2db2492aeb13dba5e75d6cc50682b732dca35643bd5f092e3"
+  url "https://downloads.sourceforge.net/project/e2fsprogs/e2fsprogs/v1.47.3/e2fsprogs-1.47.3.tar.gz"
+  sha256 "2f5164e64dd7d91eadd1e0e8a77d92c06dd7837bb19f1d9189ce1939b363d2b4"
   license all_of: [
     "GPL-2.0-or-later",
     "LGPL-2.0-or-later", # lib/ex2fs
@@ -18,19 +18,18 @@ class E2fsprogs < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "fe6514a7b9690195806c16b1eebeaf0a991f0944c6cfe76681a4c57e07e8a660"
-    sha256 arm64_sonoma:   "98368d23728fb485ff67766148c8aee4bbeee3c542ba0d5c200cb608aedb8e1a"
-    sha256 arm64_ventura:  "2226708887d3d43427d39d355a75b2367d7ecf5145621de5dae2749dd4f130e4"
-    sha256 arm64_monterey: "942b459a0a9bc92157d4afa5e0f71d3f14d5ddccb0b8d652c4e70416d6d32cc4"
-    sha256 sonoma:         "248320615070b5b3f32ee4c581c46a4e9e74e51c4765624d253aa74a2cc44469"
-    sha256 ventura:        "85f74a6d50a82f4e2f2c29e0569cd102034a127e81d0fdef83c15411aa240042"
-    sha256 monterey:       "07e61dc2625c27caa877ce698f5c3f5cd2f7aaee3cba6da22d865db7224105ae"
-    sha256 x86_64_linux:   "eb63ea295700e11246a09b546f36a360db3c56c227deb4a30e12450e2c76dbab"
+    sha256 arm64_sequoia: "0425f6b5ae2cfd69bce77df9368dae0b237abdf27f02de2eddfa799c84ff44f3"
+    sha256 arm64_sonoma:  "2104bdc9d9d3ca85605ec7a3a897ca4f810ceaef1e2c560def59b04b2dd18074"
+    sha256 arm64_ventura: "316a532eec3aa1ef23259fce5cbb692f2d04540b9eca3f54393c55e4d336a8e7"
+    sha256 sonoma:        "f56432934bf673ee57900c3be5f9da1dd7341d2f6465642b106729361e2c77da"
+    sha256 ventura:       "cf1bb22c088497db81c2ff02b71257ac5886e4c810c792302572768608987b12"
+    sha256 arm64_linux:   "dc14ab2441da84c2d2db5baea06deb6bc6dae44ae5f9818849f005664c58a6d0"
+    sha256 x86_64_linux:  "d66bd31538beae13ac1db1d4f53a81cf32ec32d0bcc9e17bc7b32d33420eedcb"
   end
 
   keg_only :shadowed_by_macos
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   on_macos do
     depends_on "gettext"

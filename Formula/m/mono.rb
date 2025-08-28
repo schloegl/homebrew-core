@@ -1,38 +1,53 @@
 class Mono < Formula
   desc "Cross platform, open source .NET development framework"
   homepage "https://www.mono-project.com/"
-  url "https://github.com/mono/mono.git",
-      tag:      "mono-6.12.0.206",
-      revision: "0cbf0e290c31adb476f9de0fa44b1d8829affa40"
-  license "MIT"
+  url "https://dl.winehq.org/mono/sources/mono/mono-6.14.1.tar.xz"
+  sha256 "3024c97c0bc8cbcd611c401d5f994528704108ceb31f31b28dea4783004d0820"
+  license "Apache-2.0"
+  head "https://gitlab.winehq.org/mono/mono.git", branch: "main"
 
   livecheck do
-    url "https://www.mono-project.com/download/stable/"
-    regex(/href=.*?(\d+(?:\.\d+)+)[._-]macos/i)
+    url :head
+    regex(/^mono[._-]v?(\d+(?:\.\d+)+)$/i)
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    rebuild 1
-    sha256 arm64_sonoma:   "9fee41ae69ff582e63f5f7aadbcafd151e904739f9402d12f9b774a5fae87eb0"
-    sha256 arm64_ventura:  "ee4c4db59ad92b5414af6ddb44e21f46b32be19245dba35c184f15adef6d589a"
-    sha256 arm64_monterey: "788b47ba1b9b6f5ed463913fe0aebedf944004c114a7d29a3b7f779de366998a"
-    sha256 sonoma:         "c245b5d70a6e0b5176c6dc35058797ca1945900a1c9b791dadb01a6df1020744"
-    sha256 ventura:        "1b11efe11ce0f4d943f58dfe23a966941c46639520d0f07257c2f1142098846d"
-    sha256 monterey:       "bd04c2a52a00ad941de846f0f30e979a374460e0c850c63f7585cfb8c89d1657"
-    sha256 x86_64_linux:   "d5a14ba095473a74d4105976fbe1bca5054cc4ae3e1324b879e63f05ab4dcd99"
+    sha256 arm64_sequoia: "41128a9161b2880c1ff0da606a970a610255f46426ea970ac505c7f7cc77c817"
+    sha256 arm64_sonoma:  "2207ce97c51add48bdb178771a7e6496da62c099a8a740c976772a4f69ff2cd4"
+    sha256 arm64_ventura: "a98870bf0b93c31318f1edbf9b441c24ecb805ef32e0c2e92654b457dd27346a"
+    sha256 sonoma:        "3a024c3814922097b3b8b08d9a80b7ce81100e1da46b137857507eb0565bd63e"
+    sha256 ventura:       "90b8a3c1bb6caea2325c4fc796890c8d0256a8ffc9058699fdc6917538f187c3"
+    sha256 arm64_linux:   "acbf40ca28dfb5b841e215db980aea60894545ce8104864b78b3e447467dc70e"
+    sha256 x86_64_linux:  "e444b5cd477167205ef6e5fcb7ecddf09781ea3edc2ce53ea0879511fcc2055b"
   end
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "cmake" => :build
   depends_on "libtool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   uses_from_macos "unzip" => :build
   uses_from_macos "krb5"
   uses_from_macos "zlib"
+
+  on_macos do
+    if DevelopmentTools.clang_build_version >= 1600
+      depends_on "llvm" => :build
+
+      fails_with :clang do
+        cause <<~EOS
+          Got a segv while executing native code. This usually indicates
+          a fatal error in the mono runtime or one of the native libraries
+          used by your application.
+        EOS
+      end
+    end
+  end
 
   on_linux do
     depends_on "ca-certificates"
@@ -40,7 +55,7 @@ class Mono < Formula
 
   conflicts_with "xsd", because: "both install `xsd` binaries"
   conflicts_with cask: "mono-mdk"
-  conflicts_with cask: "homebrew/cask-versions/mono-mdk-for-visual-studio"
+  conflicts_with cask: "mono-mdk-for-visual-studio"
   conflicts_with "chicken", because: "both install `csc`, `csi` binaries"
   conflicts_with "pedump", because: "both install `pedump` binaries"
 
@@ -52,6 +67,8 @@ class Mono < Formula
   link_overwrite "lib/cli"
 
   def install
+    ENV.llvm_clang if DevelopmentTools.clang_build_version >= 1600
+
     # Replace hardcoded /usr/share directory. Paths like /usr/share/.mono,
     # /usr/share/.isolatedstorage, and /usr/share/template are referenced in code.
     inreplace_files = %w[
@@ -63,10 +80,6 @@ class Mono < Formula
       man/mozroots.1
     ]
     inreplace inreplace_files, %r{/usr/share(?=[/"])}, pkgshare
-
-    # Remove use of -flat_namespace. Upstreamed at
-    # https://github.com/mono/mono/pull/21257
-    inreplace "mono/profiler/Makefile.am", "-Wl,suppress -Wl,-flat_namespace", "-Wl,dynamic_lookup"
 
     system "./autogen.sh", "--disable-nls",
                            "--disable-silent-rules",
@@ -92,7 +105,7 @@ class Mono < Formula
   test do
     test_str = "Hello Homebrew"
     test_name = "hello.cs"
-    (testpath/test_name).write <<~EOS
+    (testpath/test_name).write <<~CSHARP
       public class Hello1
       {
          public static void Main()
@@ -100,7 +113,7 @@ class Mono < Formula
             System.Console.WriteLine("#{test_str}");
          }
       }
-    EOS
+    CSHARP
     shell_output("#{bin}/mcs #{test_name}")
     output = shell_output("#{bin}/mono hello.exe")
     assert_match test_str, output.strip

@@ -7,23 +7,30 @@ class Genometools < Formula
   license "ISC"
   head "https://github.com/genometools/genometools.git", branch: "master"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "bd860c933e3158b691757af5aef7a545663460f0f826606ec3f8b6f77e11c9a7"
-    sha256 cellar: :any,                 arm64_sonoma:   "b77af810fa9096b084bb34232bb09883a7237ddac28d7fc35957793892a516eb"
-    sha256 cellar: :any,                 arm64_ventura:  "c079e91767b29ab5b0379cc09e4ca0960717c9cfa5e580d3527696edb59a6680"
-    sha256 cellar: :any,                 arm64_monterey: "fb27b879e1e52641f42f05e8ce408583e17722bddfe0e1c3f6cd677001eabc6d"
-    sha256 cellar: :any,                 sonoma:         "0092f0d2c9f6ba739db151bebfa5251372d34458577b16abeba11e816ca212f7"
-    sha256 cellar: :any,                 ventura:        "7e4baa8bc25ac68f65b1c2b1ea66b0e909514779d9c66bf40fca41aa4cc3cb3d"
-    sha256 cellar: :any,                 monterey:       "5d93f579a6e42f7a472ece7eb28116a7b9010c4782a3f8727547f81d2684801a"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "da071e747525684debd137ce912248016a49ed34377020ca7a4192258ba44cc0"
+    rebuild 2
+    sha256 cellar: :any,                 arm64_sequoia: "c1a9595a2911398dab4d2b22c2b0182e1cf5b83f5c648ba3e61787ac9a2f9250"
+    sha256 cellar: :any,                 arm64_sonoma:  "fada49496d68c5b3270ca9a075e7ea313eeb9c9bdaa263e3f16d12b3cb087b69"
+    sha256 cellar: :any,                 arm64_ventura: "a6ee8e5efc50803249afd3d9eb483e48f0008840800075aa1ab3a382b3800fad"
+    sha256 cellar: :any,                 sonoma:        "a04778fc4c9cb45a2b8f728527e3d865f653c1674f19c1972ef8d1144afdb955"
+    sha256 cellar: :any,                 ventura:       "14a0b5028decdfcc90c0d3220cbe2b48880e346509a05507bb0dabbefa91a9f2"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "dd73938ff6ed8d07d1d3e028ff9b198e3439b7987daf61dd92c68b4c744926e0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c570e15eef30b96b5ae3e6e398097589d6c8f9827a0694835071026e2793b3cf"
   end
 
-  depends_on "pkg-config" => :build
-  depends_on "python-setuptools" => :build
+  depends_on "pkgconf" => :build
+  depends_on "python@3.13" => [:build, :test]
   depends_on "cairo"
   depends_on "glib"
   depends_on "pango"
-  depends_on "python@3.12"
+  depends_on "tre"
+
+  uses_from_macos "bzip2"
+  uses_from_macos "expat"
+  uses_from_macos "sqlite"
+  uses_from_macos "zlib"
 
   on_macos do
     depends_on "gettext"
@@ -33,12 +40,27 @@ class Genometools < Formula
   conflicts_with "libslax", because: "both install `bin/gt`"
 
   def python3
-    which("python3.12")
+    which("python3.13")
   end
 
   def install
-    system "make", "prefix=#{prefix}"
-    system "make", "install", "prefix=#{prefix}"
+    # Workaround for arm64 linux from char being unsigned.
+    # Same root cause as https://github.com/genometools/genometools/issues/311
+    ENV.append_to_cflags "-fsigned-char" if OS.linux? && Hardware::CPU.arm?
+
+    # Manually unbundle as useshared=yes requires Lua 5.1 and older SAMtools
+    rm_r(Dir["src/external/{bzip2,expat,sqlite,tre,zlib}*"])
+
+    system "make", "install", "prefix=#{prefix}",
+                              "ADDITIONAL_SO_DEPS=",
+                              "ADDITIONAL_ZLIBS=",
+                              "DEPLIBS=-lbz2 -lz -lexpat -ltre -lsqlite3",
+                              "LIBBZ2_SRC=",
+                              "LIBEXPAT_SRC=",
+                              "LIBTRE_SRC=",
+                              "OVERRIDELIBS=",
+                              "SQLITE3_SRC=",
+                              "ZLIB_SRC="
 
     cd "gtpython" do
       # Use the shared library from this specific version of genometools.
@@ -46,7 +68,7 @@ class Genometools < Formula
         "gtlib = CDLL(\"libgenometools\" + soext)",
         "gtlib = CDLL(\"#{lib}/libgenometools\" + soext)"
 
-      system python3, "-m", "pip", "install", *std_pip_args, "."
+      system python3, "-m", "pip", "install", *std_pip_args(build_isolation: true), "."
       system python3, "-m", "unittest", "discover", "tests"
     end
   end

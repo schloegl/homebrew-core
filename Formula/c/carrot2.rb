@@ -2,37 +2,39 @@ class Carrot2 < Formula
   desc "Search results clustering engine"
   homepage "https://search.carrot2.org/"
   url "https://github.com/carrot2/carrot2.git",
-      tag:      "release/4.6.0",
-      revision: "a29bd71366f2ac3c135ee1a9cb9da3748954e088"
+      tag:      "release/4.8.1",
+      revision: "102ecc3d83e95cb2fefe061116f0b01882a6d2ec"
   license "Apache-2.0"
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "42cb2196e42f3dcad47280ea9bd1e744084f0f68a609f39c9537c9f84900fa6d"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "63b10879de0b38414b6d3d0a77a7d1301d43e877f41e6c5a3f593f71da12378a"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "baf90c58c0de1fb56ec3d47d263ca2b2fd5596d26bd31cb5bd23f0000e7e94ac"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "e2b5d97a750dae863513da210590e6f182c83c77e8485b4af3090d52002ca65f"
-    sha256 cellar: :any_skip_relocation, sonoma:         "7d8d893393a220446ab0409b49350cd3c1b51e223671eb10b5ad235905d4df01"
-    sha256 cellar: :any_skip_relocation, ventura:        "7172200db6bf11abff4c0eb13e4b8ca9a1aebe11fd86d36c7c946c9e82be19a5"
-    sha256 cellar: :any_skip_relocation, monterey:       "bea99b1b19f45ac46a26d418ecd07f79a099e69aafe2c9a027223e5c0bdbbedf"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "d8441898809575d62112c43a0662bb50171bc5492ff80ce451a6dd2b51a412ee"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "14bb225f30be22eb91287e80e02350c1993587ff2c61c4fac3a5f7e38332729e"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "4667e867fdc53456269c94885a150b8e2cf0f5b9f87d79d235e031a9f11a51c0"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "6e738ae94bcd072d42f41c4ab3be0a702a43ab7135ccb0cec766c385f6376c86"
+    sha256 cellar: :any_skip_relocation, sonoma:        "0ef9dac90b90a3607ca5e98e9668dcaec5755658c3c24523862c14f3c52fce52"
+    sha256 cellar: :any_skip_relocation, ventura:       "3378de48381ca0794ebef99173884faa190fd15871c6d9431c5b5f6364d51988"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "4b9bf87ecc619295a91aa4e6a74e33d9f2ecc6f7078fdbe399ad832c3c911b03"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2a640419faa82a316a67876291de8cab8999c1683bdce397fa77b681db12f87e"
   end
 
   depends_on "gradle" => :build
-  depends_on "node" => :build
+  depends_on "node@22" => :build
   depends_on "yarn" => :build
   depends_on "openjdk@21"
 
+  on_linux do
+    on_arm do
+      depends_on "python-setuptools" => :build
+    end
+  end
+
   def install
     # Make possible to build the formula with the latest available in Homebrew gradle
-    inreplace "gradle/validation/check-environment.gradle",
-      /expectedGradleVersion = '[^']+'/,
-      "expectedGradleVersion = '#{Formula["gradle"].version}'"
+    inreplace "gradle/wrapper/gradle-wrapper.properties", "gradle-8.14", "gradle-#{Formula["gradle"].version}"
 
     # Use yarn and node from Homebrew
     inreplace "gradle/node/yarn-projects.gradle", "download = true", "download = false"
-    inreplace "versions.toml" do |s|
-      s.gsub! "node = \"18.18.2\"", "node = \"#{Formula["node"].version}\""
+    inreplace "gradle/libs.versions.toml" do |s|
+      s.gsub! "node = \"18.18.2\"", "node = \"#{Formula["node@22"].version}\""
       s.gsub! "yarn = \"1.22.19\"", "yarn = \"#{Formula["yarn"].version}\""
     end
 

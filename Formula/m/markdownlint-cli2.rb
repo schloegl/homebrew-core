@@ -1,12 +1,12 @@
 class MarkdownlintCli2 < Formula
   desc "Fast, flexible, config-based cli for linting Markdown/CommonMark files"
   homepage "https://github.com/DavidAnson/markdownlint-cli2"
-  url "https://registry.npmjs.org/markdownlint-cli2/-/markdownlint-cli2-0.14.0.tgz"
-  sha256 "5eaf33fc6c6541032d5a6336d32929f54cde67e987cc4bef5e180ba61d935c4d"
+  url "https://registry.npmjs.org/markdownlint-cli2/-/markdownlint-cli2-0.18.1.tgz"
+  sha256 "c35d3ff486bf201d8b75877762f33f9e7d673082a85d0cdc29b05055880431ec"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "42872d0c007f9f32838e1a97c9e18b9d527fb6e095668ea2ecd660ddb27ce42e"
+    sha256 cellar: :any_skip_relocation, all: "9e6e7eb65eaf3bfe2141af846369a2cd4dbb41aafa99734bc56d656cea6fca32"
   end
 
   depends_on "node"
@@ -17,15 +17,15 @@ class MarkdownlintCli2 < Formula
   end
 
   test do
-    (testpath/"test-bad.md").write <<~EOS
+    (testpath/"test-bad.md").write <<~MARKDOWN
       # Header 1
       body
-    EOS
-    (testpath/"test-good.md").write <<~EOS
+    MARKDOWN
+    (testpath/"test-good.md").write <<~MARKDOWN
       # Header 1
 
       body
-    EOS
+    MARKDOWN
     assert_match "Summary: 1 error(s)",
       shell_output("#{bin}/markdownlint-cli2 :#{testpath}/test-bad.md 2>&1", 1)
     assert_match "Summary: 0 error(s)",

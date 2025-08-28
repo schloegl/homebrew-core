@@ -1,8 +1,8 @@
 class Xray < Formula
   desc "Platform for building proxies to bypass network restrictions"
   homepage "https://xtls.github.io/"
-  url "https://github.com/XTLS/Xray-core/archive/refs/tags/v1.8.24.tar.gz"
-  sha256 "86e3e388c77cda4d8457a607356416c201c1f18bbed53f0a9e76a228508ff298"
+  url "https://github.com/XTLS/Xray-core/archive/refs/tags/v25.8.3.tar.gz"
+  sha256 "a7d3785fdd46f1b045b1ef49a2a06e595c327f514b5ee8cd2ae7895813970b2c"
   license all_of: ["MPL-2.0", "CC-BY-SA-4.0"]
   head "https://github.com/XTLS/Xray-core.git", branch: "main"
 
@@ -12,32 +12,34 @@ class Xray < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "441bb2842199a775229b590d1f87ce2c3344d255265ea54cc164af64e4977a35"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "484206a5e13860d34f6cac072828c39fbbecdbe5c1df9c2c53e8342cad83a57a"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "484206a5e13860d34f6cac072828c39fbbecdbe5c1df9c2c53e8342cad83a57a"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "484206a5e13860d34f6cac072828c39fbbecdbe5c1df9c2c53e8342cad83a57a"
-    sha256 cellar: :any_skip_relocation, sonoma:         "adf5c8959cd593906725d1163943ffe1372a51cbc0c276bcf4fa8b0e17d34eea"
-    sha256 cellar: :any_skip_relocation, ventura:        "adf5c8959cd593906725d1163943ffe1372a51cbc0c276bcf4fa8b0e17d34eea"
-    sha256 cellar: :any_skip_relocation, monterey:       "adf5c8959cd593906725d1163943ffe1372a51cbc0c276bcf4fa8b0e17d34eea"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "03d0db86ba5d6e05983beaa169b7606f285d754b2ade1fc9748ba9284613becf"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "841277e2bcde24752b5cd836a1e9a8c54d864035ab06fd9193cd5ff2e1d1217c"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "841277e2bcde24752b5cd836a1e9a8c54d864035ab06fd9193cd5ff2e1d1217c"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "841277e2bcde24752b5cd836a1e9a8c54d864035ab06fd9193cd5ff2e1d1217c"
+    sha256 cellar: :any_skip_relocation, sonoma:        "24c73b787b97c47585b2e4286a14996d05f6cdfab6a3efc6a2cc0152399cd39a"
+    sha256 cellar: :any_skip_relocation, ventura:       "24c73b787b97c47585b2e4286a14996d05f6cdfab6a3efc6a2cc0152399cd39a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1c090917e84eefc6dd3e10af4db69f92b8c56adaac4814ad34286d2caa409839"
   end
 
   depends_on "go" => :build
 
   resource "geoip" do
-    url "https://github.com/v2fly/geoip/releases/download/202408290048/geoip.dat"
-    sha256 "428f8d3c2f65be51afa945a3464b44fde82d509f5df3f1383a5902d1706d1fe4"
+    url "https://github.com/v2fly/geoip/releases/download/202507050144/geoip.dat"
+    sha256 "d77289a7465b6e59df39a2d46bd02b30b4fa7dd70939c13d431fd2bd8f448e10"
   end
 
   resource "geosite" do
-    url "https://github.com/v2fly/domain-list-community/releases/download/20240829063032/dlc.dat"
-    sha256 "acabd214b0a05363f678baba64dfb745ffc551a9dea6d8c15abe0821a0cac5e9"
+    url "https://github.com/v2fly/domain-list-community/releases/download/20250627153051/dlc.dat"
+    sha256 "01dae2a9c31b5c74ba7e54d8d51e0060688ed22da493eaf09f6eeeec89db395e"
   end
 
   resource "example_config" do
     # borrow v2ray example config
-    url "https://raw.githubusercontent.com/v2fly/v2ray-core/v5.16.1/release/config/config.json"
-    sha256 "1bbadc5e1dfaa49935005e8b478b3ca49c519b66d3a3aee0b099730d05589978"
+    url "https://raw.githubusercontent.com/v2fly/v2ray-core/v5.37.0/release/config/config.json"
+    sha256 "15a66415d72df4cd77fcd037121f36604db244dcfa7d45d82a0c33de065c6a87"
+
+    livecheck do
+      url "https://github.com/v2fly/v2ray-core.git"
+    end
   end
 
   def install
@@ -67,7 +69,7 @@ class Xray < Formula
   end
 
   test do
-    (testpath/"config.json").write <<~EOS
+    (testpath/"config.json").write <<~JSON
       {
         "log": {
           "access": "#{testpath}/log"
@@ -97,10 +99,10 @@ class Xray < Formula
           ]
         }
       }
-    EOS
+    JSON
     output = shell_output "#{bin}/xray -c #{testpath}/config.json -test"
 
     assert_match "Configuration OK", output
-    assert_predicate testpath/"log", :exist?
+    assert_path_exists testpath/"log"
   end
 end

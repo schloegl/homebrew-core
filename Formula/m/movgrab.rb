@@ -4,17 +4,18 @@ class Movgrab < Formula
   url "https://github.com/ColumPaget/Movgrab/archive/refs/tags/3.1.2.tar.gz"
   sha256 "30be6057ddbd9ac32f6e3d5456145b09526cc6bd5e3f3fb3999cc05283457529"
   license "GPL-3.0-or-later"
-  revision 7
+  revision 9
+
+  no_autobump! because: :requires_manual_review
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "a58b74f845a6ae4a6900ea01ef855ba07bacf0fd24032764114c4fc18dc23bdb"
-    sha256 cellar: :any,                 arm64_sonoma:   "c04859b004d24cb057ef9bec210fbe2e5959d4344ba1c0bfa0d555f48797e76f"
-    sha256 cellar: :any,                 arm64_ventura:  "a1eb0df51a2bb3d1f5e689eee0c4e1d4c25f186e62e3215ddcfc6c26eee887fa"
-    sha256 cellar: :any,                 arm64_monterey: "364748c6707826fda84e14d5bdbc0ce0f35a1b23a5f3338e6023b4a06b4e3897"
-    sha256 cellar: :any,                 sonoma:         "c5c92bb08bb792fd166306b26154fe60e5cad236c152dbe5c7239fe1ac92f55b"
-    sha256 cellar: :any,                 ventura:        "247b1e77ca8f379ccae10a44961cb89574ea3bf3dd5e75cf8ae75187df5cc5a4"
-    sha256 cellar: :any,                 monterey:       "a76df40c5dd3e8ba646a55e44041b380f226c492e9e90ed03dade2794a8e51af"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "61963349a8e6379b370104ac522acbb4cf912ce67a8db566f7d42a6bb50c1895"
+    sha256 cellar: :any,                 arm64_sequoia: "eebe35ad85f24d6670b44de90e944d2ec6e7d8b3d678581d765b47a37b5921de"
+    sha256 cellar: :any,                 arm64_sonoma:  "8258f2373e9954cec98e1794809aceb67cb86a67b700534ca8e897399a462c1d"
+    sha256 cellar: :any,                 arm64_ventura: "be7032419023759e5106d77fe86d01c97967ae01cc30947fd6e35df5d6f9b0e5"
+    sha256 cellar: :any,                 sonoma:        "612d50cc540559cd4350504e7e31caa719e5f9bf1b68f6d0930328f4e56c0c17"
+    sha256 cellar: :any,                 ventura:       "44d0c548daababf4c81fd834331066cbfc94ff74b50df78d8689d21d4ab0f5a2"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "ad5d58b74de4a42085e384ad4e090bd6f43c063119ee56dbba896653d20c1f60"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "471324368d1763fdfac90349087bad2257726ba13eb462803435ed8c37a09131"
   end
 
   depends_on "libressl"

@@ -1,8 +1,8 @@
 class Gtkx3 < Formula
   desc "Toolkit for creating graphical user interfaces"
   homepage "https://gtk.org/"
-  url "https://download.gnome.org/sources/gtk+/3.24/gtk+-3.24.43.tar.xz"
-  sha256 "7e04f0648515034b806b74ae5d774d87cffb1a2a96c468cb5be476d51bf2f3c7"
+  url "https://download.gnome.org/sources/gtk/3.24/gtk-3.24.49.tar.xz"
+  sha256 "5ea52c6a28f0e5ecf2e9a3c2facbb30d040b73871fcd5f33cd1317e9018a146e"
   license "LGPL-2.0-or-later"
 
   livecheck do
@@ -11,14 +11,13 @@ class Gtkx3 < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "abbf588f64811f61c3e36cedabbc6d3cbe1187124e15c34362dd73b7fc9fb3ce"
-    sha256 arm64_sonoma:   "b3981b071d6b1214820c5be272256d1058a5f7db57fccb70da713516e2bad714"
-    sha256 arm64_ventura:  "b28221d07db5b16ce517acde4a9bdf2527f1c7f95e98a203278655f1149063d4"
-    sha256 arm64_monterey: "a026a7b6e8b6004a4090552abfb8eb458571773edcab0f3c71fd2cdb7eca0c3f"
-    sha256 sonoma:         "29584c089bc640848b755eabac8ece8cbc230e969423f612d87848e40e28d84e"
-    sha256 ventura:        "9bf9fe10db6c816825cc6e3f2a139201520f727755e539cf0a62907712571429"
-    sha256 monterey:       "3096c62e650b6807fbf37495da07f5113b91f82be3a627ae75c4684167c35d5e"
-    sha256 x86_64_linux:   "880cff997f0d940867b79dee4f87f22c8fa03adc377c2f793f85c72818a8cad6"
+    sha256 arm64_sequoia: "347b3e3e336edcb0c2b8aa5ad7efb0b1415ac65f67466275b05c2733abda16a0"
+    sha256 arm64_sonoma:  "ff498b6d04d99c1e2ec972b341e7bcae197727b2237e0b8f072e7a7020514fbc"
+    sha256 arm64_ventura: "3aa5ac2b8551cbf9eaf30713a8ab7907b82a904409d0516f303bbfd29256a946"
+    sha256 sonoma:        "2cacc04efe921c90b249335794eba802bad712bcca12232436be427d5bd0e65d"
+    sha256 ventura:       "854b5cdf5279ed10814059c24aad561a15d79374a340f11ffa63944f59e27e26"
+    sha256 arm64_linux:   "069191f41fb887645e43dd3d534b6291914c37e5c7c6c27bc0cbac23834bea3b"
+    sha256 x86_64_linux:  "b761f99380035f49c85f39523bde4be98baa8bda72d71d60273d0c4d8ce78774"
   end
 
   depends_on "docbook" => :build
@@ -27,7 +26,7 @@ class Gtkx3 < Formula
   depends_on "gobject-introspection" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => [:build, :test]
+  depends_on "pkgconf" => [:build, :test]
 
   depends_on "at-spi2-core"
   depends_on "cairo"
@@ -97,16 +96,16 @@ class Gtkx3 < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <gtk/gtk.h>
 
       int main(int argc, char *argv[]) {
         gtk_disable_setlocale();
         return 0;
       }
-    EOS
+    C
 
-    flags = shell_output("pkg-config --cflags --libs gtk+-3.0").chomp.split
+    flags = shell_output("pkgconf --cflags --libs gtk+-3.0").chomp.split
     system ENV.cc, "test.c", "-o", "test", *flags
     system "./test"
     # include a version check for the pkg-config files

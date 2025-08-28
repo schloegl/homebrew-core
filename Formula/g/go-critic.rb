@@ -1,8 +1,8 @@
 class GoCritic < Formula
   desc "Opinionated Go source code linter"
   homepage "https://go-critic.com"
-  url "https://github.com/go-critic/go-critic/archive/refs/tags/v0.11.4.tar.gz"
-  sha256 "6b5d2543c76700865de5d4cef17004cc1c33c437cccd04718cf40411a4cf6d83"
+  url "https://github.com/go-critic/go-critic/archive/refs/tags/v0.13.0.tar.gz"
+  sha256 "11d88b56179ecc08756a1330ba463e7bbeb9876399f0c6ba886eeff0d1e14e83"
   license "MIT"
   head "https://github.com/go-critic/go-critic.git", branch: "master"
 
@@ -12,26 +12,25 @@ class GoCritic < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "d14149ba927e9c4855fc81644ac54aa6875e6484cc22d47bb7fc608a004b9ead"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "a77ac84e936fdb767303dfa002b05c7092ad0257751156dde0743050ef7023d1"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "5d24bb21bc493d5662920c6a2453ae306ecce5390c41ce7b1ac329fd3294dd1f"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "a3f2d04eebe15c8a4f8cd94619c45a48f16ea7f413793bd461a61756b11b84b2"
-    sha256 cellar: :any_skip_relocation, sonoma:         "9ad340044411d6b2f4d5a6201c99c5f48d8cb595efcfd9b99bda2ddeb6e5fffe"
-    sha256 cellar: :any_skip_relocation, ventura:        "99ec7ce91c870c7c0fee8657cc5ea59a16d8e54c10aa451c49d90ea5c523b425"
-    sha256 cellar: :any_skip_relocation, monterey:       "83c43daed295f313406812cd0ef53145c915626e435d7be41ac8d4edd9c384e0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "45df76f9c365d8398b3ababa7f918d767e75fc2a201de9703fc94d85b5e3efb2"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "50c8c70c14a8e83675d4f1c4ffeefa2b644bfdb0cf839ce1e273edbd0750bb0a"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "50c8c70c14a8e83675d4f1c4ffeefa2b644bfdb0cf839ce1e273edbd0750bb0a"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "50c8c70c14a8e83675d4f1c4ffeefa2b644bfdb0cf839ce1e273edbd0750bb0a"
+    sha256 cellar: :any_skip_relocation, sonoma:        "f763440903ea98e812aeff067e3f7a9eb75dc7dc0d762b80220d174b3d23cccf"
+    sha256 cellar: :any_skip_relocation, ventura:       "f763440903ea98e812aeff067e3f7a9eb75dc7dc0d762b80220d174b3d23cccf"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "ee684f9410062dc2606295cd446a34e6bded25d617f79ce362c1eb0ad180a3f0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a9a66287c2f86b2a23054780b98fda6100e8b03dfe8a08501a84835f95e2de01"
   end
 
   depends_on "go"
 
   def install
     ldflags = "-s -w"
-    ldflags += " -X main.Version=v#{version}" unless build.head?
+    ldflags += " -X main.Version=v#{version}" if build.stable?
     system "go", "build", *std_go_args(ldflags:, output: bin/"gocritic"), "./cmd/gocritic"
   end
 
   test do
-    (testpath/"main.go").write <<~EOS
+    (testpath/"main.go").write <<~GO
       package main
 
       import "fmt"
@@ -42,7 +41,7 @@ class GoCritic < Formula
           fmt.Println("If you're reading this, something is wrong.")
         }
       }
-    EOS
+    GO
 
     output = shell_output("#{bin}/gocritic check main.go 2>&1", 1)
     assert_match "sloppyLen: len(str) <= 0 can be len(str) == 0", output

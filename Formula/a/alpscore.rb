@@ -1,19 +1,18 @@
 class Alpscore < Formula
   desc "Applications and libraries for physics simulations"
   homepage "https://alpscore.org"
-  url "https://github.com/ALPSCore/ALPSCore/archive/refs/tags/v2.3.1.tar.gz"
-  sha256 "384f25cd543ded1ac99fe8238db97a5d90d24e1bf83ca8085f494acdd12ed86c"
+  url "https://github.com/ALPSCore/ALPSCore/archive/refs/tags/v2.3.2.tar.gz"
+  sha256 "bd9b5af0a33acc825ffedfaa0bf794a420ab2b9b50f6a4e634ecbde43ae9cc24"
   license "GPL-2.0-only"
-  revision 2
-  head "https://github.com/ALPSCore/ALPSCore.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "b0b37cab12958e277e30b3a5a7c02ecfef33e3b6d99c962503776b049f436d63"
-    sha256 cellar: :any,                 arm64_sonoma:  "db8dc89b1424e97e6f82b09c0b8fd51c5ae9f2e8a12bfac8f77c59b80524b687"
-    sha256 cellar: :any,                 arm64_ventura: "8a97f12d5020decbb6af615cef1b06f095cf61050ee1da2d07640c4463ed98a4"
-    sha256 cellar: :any,                 sonoma:        "6e3428ea16b46226e1cb905ca2626720e33826779c6de5083508113d208a7f25"
-    sha256 cellar: :any,                 ventura:       "6d0ad2d5d76f50ae49277b54a30b933ad6f9978dcbcfa9bd0dfccd1607245669"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "74a4fe1f03be0984b0a8858af603e3edf6b3c41a5671413aa3774727024a6973"
+    sha256 cellar: :any,                 arm64_sequoia: "d32af432da55d533b24bd30a60f8e2845ae2bfe97a3b00d5f53e0d58282eeafe"
+    sha256 cellar: :any,                 arm64_sonoma:  "d8e1ec2c2f445c059c8a6097f6900c4b3366b61f17bb4e985a047dfc71545cb5"
+    sha256 cellar: :any,                 arm64_ventura: "7c51b1fafed3d6683f0a7711239ae8dfb960a3f9242e98d04889397112a0bbed"
+    sha256 cellar: :any,                 sonoma:        "ded6b4a5102bf72ee89b709f48c7363e592435dbf8cab002ec173c7d392ccf47"
+    sha256 cellar: :any,                 ventura:       "5bb961582c752e10a6d731ccbd7d546c1c2d4193af2c0f5cc1254e193d4568b8"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "99b0e57c0f9b7695869872b039c3d3723a86f4cf85a25eb44cbca47830a90d21"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "992bb58ad888c4accb8a6758f3ec2b4b378af7523626efa5d6785de54c32bf3b"
   end
 
   depends_on "cmake" => [:build, :test]
@@ -21,6 +20,12 @@ class Alpscore < Formula
   depends_on "eigen"
   depends_on "hdf5"
   depends_on "open-mpi"
+
+  # Backport support for CMake 4
+  patch do
+    url "https://github.com/ALPSCore/ALPSCore/commit/155e4327a78c1fa9442a179868994c8715582720.patch?full_index=1"
+    sha256 "9cb67c3d457a99fc799a60e8fcae0af63b99ebb18b5279b449ce9c0c1445077a"
+  end
 
   def install
     # Work around different behavior in CMake-built HDF5
@@ -30,8 +35,9 @@ class Alpscore < Formula
     end
 
     args = %W[
-      -DEIGEN3_INCLUDE_DIR=#{Formula["eigen"].opt_include}/eigen3
       -DALPS_BUILD_SHARED=ON
+      -DALPS_CXX_STD=c++14
+      -DEIGEN3_INCLUDE_DIR=#{Formula["eigen"].opt_include}/eigen3
       -DENABLE_MPI=ON
       -DTesting=OFF
     ]
@@ -58,7 +64,7 @@ class Alpscore < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <alps/mc/api.hpp>
       #include <alps/mc/mcbase.hpp>
       #include <alps/accumulators.hpp>
@@ -73,17 +79,18 @@ class Alpscore < Formula
         p["myparam"] = 1.0;
         cout << set["a"] << endl << p["myparam"] << endl;
       }
-    EOS
+    CPP
 
-    (testpath/"CMakeLists.txt").write <<~EOS
-      cmake_minimum_required(VERSION 3.5)
+    (testpath/"CMakeLists.txt").write <<~CMAKE
+      cmake_minimum_required(VERSION 3.10)
       project(test)
-      set(CMAKE_CXX_STANDARD 11)
+      set(CMAKE_CXX_STANDARD 14)
+      set(ALPS_FORCE_NO_COMPILER_CHECK TRUE)
       find_package(HDF5 REQUIRED)
       find_package(ALPSCore REQUIRED mc accumulators params)
       add_executable(test test.cpp)
       target_link_libraries(test ${ALPSCore_LIBRARIES})
-    EOS
+    CMAKE
 
     system "cmake", "."
     system "cmake", "--build", "."

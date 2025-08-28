@@ -4,18 +4,17 @@ class Unar < Formula
   url "https://github.com/MacPaw/XADMaster/archive/refs/tags/v1.10.8.tar.gz"
   sha256 "652953d7988b3c33f4f52b61c357afd1a7c2fc170e5e6e2219f4432b0c4cd39f"
   license "LGPL-2.1-or-later"
-  revision 2
+  revision 6
   head "https://github.com/MacPaw/XADMaster.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "48c1c1e8275ea52a2a50421d11ae0bed44735352053a9b3dca74c7c20cc71200"
-    sha256 cellar: :any,                 arm64_sonoma:   "4ff0ed25737fd69dffc7640a2185da60dd1be3c047ce7a2f32dcd2ee5de147af"
-    sha256 cellar: :any,                 arm64_ventura:  "fce2da0774b12aa7fc18741f7748002e40fa27bfa9325c7107531a88eabebee1"
-    sha256 cellar: :any,                 arm64_monterey: "c1f23406296141da895b5531199c4f093b265a75fa8db09139b7a74e7b56c367"
-    sha256 cellar: :any,                 sonoma:         "454a5e3f0fc4143b931eb1b03c9c8c9368eebe6e34918c60e4a1a86c837d6759"
-    sha256 cellar: :any,                 ventura:        "0ee3354104fa64d42e96c430eca72b4e29df3ccc3c96ec9b32a3156a91485b3a"
-    sha256 cellar: :any,                 monterey:       "e31763ef73cf0f606908700d15066e9a5375055c651cffa074bb6f1246d28100"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "afd209d4979e519ce8757b6e3223541907a8ac00e6d377302be151bc01dff5f8"
+    sha256 cellar: :any,                 arm64_sequoia: "3c3885c3e70e7e37ad4d2d2a4a3d8840cf53e9f675a6642f57ad93d4da4fa8a8"
+    sha256 cellar: :any,                 arm64_sonoma:  "456de86a2a8cf4b63c7b598f9b4740a4598af1b8dcfe066724601075da938739"
+    sha256 cellar: :any,                 arm64_ventura: "b9d20ecd5c6627f96ff7554775a5944848ff89ffc666e4b841bb67ab51782950"
+    sha256 cellar: :any,                 sonoma:        "e398cb80ec4fe5195312ecef6986e96858c7a172bf0aa5fb310d7a5738ba4bd8"
+    sha256 cellar: :any,                 ventura:       "ff08a4c92f3b66fc3bbd8f8e6ddfab7c4f82a7cad165c116a773402054131a74"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "c9447a1e19c7166109c05fbd7760c44e33442a3523857f0f7e71d1e46d8f59a5"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "19ffbed9a0f8c86c8b688e347e6b4bcb4f63aeaee730d511aa90b9e553a3060e"
   end
 
   depends_on xcode: :build
@@ -26,7 +25,7 @@ class Unar < Formula
 
   on_linux do
     depends_on "gnustep-base"
-    depends_on "icu4c"
+    depends_on "icu4c@77"
     depends_on "libobjc2"
     depends_on "wavpack"
   end
@@ -74,7 +73,8 @@ class Unar < Formula
 
     cd "Extra" do
       man1.install "lsar.1", "unar.1"
-      bash_completion.install "unar.bash_completion", "lsar.bash_completion"
+      bash_completion.install "unar.bash_completion" => "unar"
+      bash_completion.install "lsar.bash_completion" => "lsar"
     end
   end
 
@@ -83,6 +83,6 @@ class Unar < Formula
     system "gzip", "README.md"
     assert_equal "README.md.gz: Gzip\nREADME.md\n", shell_output("#{bin}/lsar README.md.gz")
     system bin/"unar", "README.md.gz"
-    assert_predicate testpath/"README.md", :exist?
+    assert_path_exists testpath/"README.md"
   end
 end

@@ -6,6 +6,8 @@ class Stuffbin < Formula
   license "MIT"
   head "https://github.com/knadh/stuffbin.git", branch: "master"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_sequoia:  "402fa14f5eb2b8e670aa9253aa94c89ad8f8153b005b85a9a96060114ff91ef7"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "075e2b5c0183fc8210112ffe224dfabd77f082428afa415880092398611c6ee3"
@@ -29,7 +31,7 @@ class Stuffbin < Formula
       system "go", "get", "github.com/knadh/stuffbin"
 
       (testpath/"brewtest/foo.txt").write "brewfoo"
-      (testpath/"brewtest/main.go").write <<~EOS
+      (testpath/"brewtest/main.go").write <<~GO
         package main
 
         import (
@@ -45,7 +47,7 @@ class Stuffbin < Formula
           f, _ := fs.Get("foo.txt")
           log.Println("foo.txt =", string(f.ReadBytes()))
         }
-      EOS
+      GO
 
       system "go", "build", "."
       output = shell_output("#{bin}/stuffbin -a stuff -in brewtest -out brewtest2 foo.txt")

@@ -1,17 +1,18 @@
 class Dicebear < Formula
   desc "CLI for DiceBear - An avatar library for designers and developers"
   homepage "https://github.com/dicebear/dicebear"
-  url "https://registry.npmjs.org/dicebear/-/dicebear-9.2.2.tgz"
-  sha256 "ac1d4abf73dce99db7535b2ccf43a8d55a4219ffa526b96db31809e77fe4aa23"
+  url "https://registry.npmjs.org/dicebear/-/dicebear-9.2.4.tgz"
+  sha256 "ab8e430f1b4fb999372cf78b274e04ca999fff16891f19ece63f63ab7f7aa373"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "5046d62bd429c224479312085090e5ffff58d13afc0296e39862a45478261a12"
-    sha256 cellar: :any,                 arm64_sonoma:  "5046d62bd429c224479312085090e5ffff58d13afc0296e39862a45478261a12"
-    sha256 cellar: :any,                 arm64_ventura: "5046d62bd429c224479312085090e5ffff58d13afc0296e39862a45478261a12"
-    sha256                               sonoma:        "51873d0358db2c72a4d0750e0d385b91f4956acf2bad9e6b5a53b46c695f5db2"
-    sha256                               ventura:       "51873d0358db2c72a4d0750e0d385b91f4956acf2bad9e6b5a53b46c695f5db2"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d8e5304c29b9f49af28a870360fc2964e32b884a2c59ebbd66ab028bda584ff7"
+    sha256 cellar: :any,                 arm64_sequoia: "6cd2e65e517ada31b350201063bab3ec51163447732ba73541e68158d565b1ae"
+    sha256 cellar: :any,                 arm64_sonoma:  "6cd2e65e517ada31b350201063bab3ec51163447732ba73541e68158d565b1ae"
+    sha256 cellar: :any,                 arm64_ventura: "6cd2e65e517ada31b350201063bab3ec51163447732ba73541e68158d565b1ae"
+    sha256 cellar: :any,                 sonoma:        "bec6992b45e1ace0b2862d90c2764aaf21d270227e652d05620078e3ec8e4f9a"
+    sha256 cellar: :any,                 ventura:       "bec6992b45e1ace0b2862d90c2764aaf21d270227e652d05620078e3ec8e4f9a"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "7828cf098c33bd975cad5f657ec7cdf4faad2c78cacf65293f0713fc42e198ef"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "45af81803b2bf97e8d4f50f64ba27a817f88b9b5cad916fa22bbf9232a78dc38"
   end
 
   depends_on "node"
@@ -36,7 +37,7 @@ class Dicebear < Formula
   test do
     output = shell_output("#{bin}/dicebear avataaars")
     assert_match "Avataaars by Pablo Stanley", output
-    assert_predicate testpath/"avataaars-0.svg", :exist?
+    assert_path_exists testpath/"avataaars-0.svg"
 
     assert_match version.to_s, shell_output("#{bin}/dicebear --version")
   end

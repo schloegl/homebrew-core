@@ -1,19 +1,18 @@
 class Godap < Formula
   desc "Complete TUI (terminal user interface) for LDAP"
   homepage "https://github.com/Macmod/godap"
-  url "https://github.com/Macmod/godap/archive/refs/tags/v2.7.5.tar.gz"
-  sha256 "06de1810cbb739658d77fcaae837a6bd91e1b0c0465bf418c75afe841d9c9d4e"
+  url "https://github.com/Macmod/godap/archive/refs/tags/v2.10.6.tar.gz"
+  sha256 "0f01e933efc7d297f84fc0ddb34a5476db45bfb53d0dc9c0d7784c37d74e9c54"
   license "MIT"
+  head "https://github.com/Macmod/godap.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "665c3f1ac6693f160ef39133d57581edd09da500c20d289a0eea999047860649"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "665c3f1ac6693f160ef39133d57581edd09da500c20d289a0eea999047860649"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "665c3f1ac6693f160ef39133d57581edd09da500c20d289a0eea999047860649"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "665c3f1ac6693f160ef39133d57581edd09da500c20d289a0eea999047860649"
-    sha256 cellar: :any_skip_relocation, sonoma:         "c9910e2217a37e46971e83f6539b3434d1a6da07f263a8bf03e7d5ba2e4fabb4"
-    sha256 cellar: :any_skip_relocation, ventura:        "c9910e2217a37e46971e83f6539b3434d1a6da07f263a8bf03e7d5ba2e4fabb4"
-    sha256 cellar: :any_skip_relocation, monterey:       "c9910e2217a37e46971e83f6539b3434d1a6da07f263a8bf03e7d5ba2e4fabb4"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "566af6ffd5e4710b5b987631f0c56034a4202d8783511e32d742d7ea02947c89"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "62370a7cb13319a0bb099c2d8ab0d6cc7f5c05e704fa23c0e33af39b6505179f"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "62370a7cb13319a0bb099c2d8ab0d6cc7f5c05e704fa23c0e33af39b6505179f"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "62370a7cb13319a0bb099c2d8ab0d6cc7f5c05e704fa23c0e33af39b6505179f"
+    sha256 cellar: :any_skip_relocation, sonoma:        "4aee3f2cdd062d384e8e1400535510098b75c2ed4fec7e73183734308cdc2798"
+    sha256 cellar: :any_skip_relocation, ventura:       "4aee3f2cdd062d384e8e1400535510098b75c2ed4fec7e73183734308cdc2798"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e2dae7760fd93ea6ccdb0052cbd62ffd58a096c016b997d9faa4478b0b6391ab"
   end
 
   depends_on "go" => :build

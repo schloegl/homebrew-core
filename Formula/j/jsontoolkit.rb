@@ -16,6 +16,9 @@ class Jsontoolkit < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "7201211ab61aa4766b12221174fd6fa7215e99571a2f898395d1fedbe19432c7"
   end
 
+  # Original source is no longer available after repo change
+  deprecate! date: "2025-04-17", because: :does_not_build
+
   depends_on "cmake" => :build
 
   def install
@@ -34,7 +37,7 @@ class Jsontoolkit < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <sourcemeta/jsontoolkit/json.h>
       #include <sourcemeta/jsontoolkit/jsonl.h>
       #include <sourcemeta/jsontoolkit/jsonpointer.h>
@@ -86,7 +89,7 @@ class Jsontoolkit < Formula
         std::cout << "JSON Toolkit works!" << std::endl;
         return 0;
       }
-    EOS
+    CPP
 
     system ENV.cxx, "test.cpp", "-std=c++20", "-I#{include}",
        "-L#{lib}",

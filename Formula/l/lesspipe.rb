@@ -1,8 +1,8 @@
 class Lesspipe < Formula
   desc "Input filter for the pager less"
   homepage "https://www-zeuthen.desy.de/~friebel/unix/lesspipe.html"
-  url "https://github.com/wofr06/lesspipe/archive/refs/tags/v2.14.tar.gz"
-  sha256 "8da921f34b428f6347a37c36b167a523bbacada7dbdd952b708f554012867b67"
+  url "https://github.com/wofr06/lesspipe/archive/refs/tags/v2.19.tar.gz"
+  sha256 "32a56f2db7a9b45daf10cec6445afc8b600a6e88793b9d0cee6abe6b30ad1d47"
   license all_of: [
     "GPL-2.0-only",
     "GPL-2.0-or-later", # sxw2txt
@@ -12,14 +12,18 @@ class Lesspipe < Formula
 
   bottle do
     rebuild 1
-    sha256 cellar: :any_skip_relocation, all: "51b462f428e3845d2615cb9456f0f62fce329f655a92f20df86f7a9692ca2355"
+    sha256 cellar: :any_skip_relocation, all: "c43495d6387ef2b753bd107583ec0d7016722a24ccec3d5b5ca7b54ccd5a33db"
   end
 
+  uses_from_macos "zsh" => :build # needed to guarantee installation of zsh completions
   uses_from_macos "perl"
 
+  on_macos do
+    depends_on "bash"
+  end
+
   def install
-    system "./configure", "--all-completions", "--prefix=#{prefix}"
-    man1.mkpath
+    system "./configure", "--prefix=#{prefix}", "--shell=#{which("bash")}"
     system "make", "install"
   end
 
@@ -35,7 +39,7 @@ class Lesspipe < Formula
     touch "file2.txt"
     system "tar", "-cvzf", "homebrew.tar.gz", "file1.txt", "file2.txt"
 
-    assert_predicate testpath/"homebrew.tar.gz", :exist?
+    assert_path_exists testpath/"homebrew.tar.gz"
     assert_match "file2.txt", pipe_output(bin/"archive_color", shell_output("tar -tvzf homebrew.tar.gz"))
   end
 end

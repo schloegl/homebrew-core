@@ -1,18 +1,19 @@
 class Croaring < Formula
   desc "Roaring bitmaps in C (and C++)"
   homepage "https://roaringbitmap.org"
-  url "https://github.com/RoaringBitmap/CRoaring/archive/refs/tags/v4.2.0.tar.gz"
-  sha256 "b5f2d184b0872f57dce911cb520925539cfa851deda516d1239e8e06aff96439"
+  url "https://github.com/RoaringBitmap/CRoaring/archive/refs/tags/v4.3.9.tar.gz"
+  sha256 "7e3150f21a5e064d302610828b575524b51c5626520b7533b4fd6aea623175c9"
   license "Apache-2.0"
   head "https://github.com/RoaringBitmap/CRoaring.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "87f8bbcf689ef1a542ed8cb44f152789d071bcf2236d6a140bf5ed350c11deaa"
-    sha256 cellar: :any,                 arm64_sonoma:  "72911b822dfea8ea1cb55230f59ff3f373e2b778f3c6edbd92ca425e5d3ed039"
-    sha256 cellar: :any,                 arm64_ventura: "b7b9fcc573dec988be1ade724fbe96021c175d0a79e8e9ba5f0a68cf4806f848"
-    sha256 cellar: :any,                 sonoma:        "6ce60b6ddf01d5065689ebccfa26e6a90695bf601bdf5b8fad427ce46365f1ba"
-    sha256 cellar: :any,                 ventura:       "e1e78d222aad887e440540e9e36575c307286959ecc9b5712173d1dd0665681b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "870e31742257ff334bbe20c84ab1109c0ef59ac2d96fc7393ee00805b0a9afb6"
+    sha256 cellar: :any,                 arm64_sequoia: "40524e98d254b4c8371ab13e47f43d51b05927e88d5461c5d2b23f9da9895b67"
+    sha256 cellar: :any,                 arm64_sonoma:  "dcd2359f1453d5e7d810e596695c623f5dc8becc5f9df6a19027a3a883e70a79"
+    sha256 cellar: :any,                 arm64_ventura: "00042eb729d3b5e9c2c4207336dd99d421b8a70e8cd004559bb33f05f28e2593"
+    sha256 cellar: :any,                 sonoma:        "e8e4c059b759dd17c9f9a58e8c27246f20a7183af41f53886c001cf047069fc6"
+    sha256 cellar: :any,                 ventura:       "d521202bf49485fcafe155864a11b8d9dfa75de903e464722f43d869da375d9b"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "6887b4786ba1b074ca657b462750a82bf1d920be3e2bfd56818feb0564def835"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "486eff2a1648ef84d512c4d20763a129add8117000ed3bd371b74c18b2ac5afc"
   end
 
   depends_on "cmake" => :build
@@ -29,7 +30,7 @@ class Croaring < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <stdio.h>
       #include <roaring/roaring.h>
       int main() {
@@ -39,7 +40,7 @@ class Croaring < Formula
           roaring_bitmap_free(r1);
           return 0;
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-I#{include}", "-L#{lib}", "-lroaring", "-o", "test"
     assert_equal "cardinality = 900\n", shell_output("./test")
   end

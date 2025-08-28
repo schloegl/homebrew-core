@@ -1,20 +1,18 @@
 class Sops < Formula
   desc "Editor of encrypted files"
-  homepage "https://github.com/getsops/sops"
-  url "https://github.com/getsops/sops/archive/refs/tags/v3.9.0.tar.gz"
-  sha256 "eda01428a4178903b2d9552940fe441d93fab7b4582cd3f5fee7b6b73404d8cb"
+  homepage "https://getsops.io/"
+  url "https://github.com/getsops/sops/archive/refs/tags/v3.10.2.tar.gz"
+  sha256 "2f7cfa67f23ccc553538450a1c3e3f7666ec934d94034457b3890dbcd49b0469"
   license "MPL-2.0"
-  head "https://github.com/getsops/sops.git", branch: "master"
+  head "https://github.com/getsops/sops.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "dbeafc2e473c0ce18ffe7399c7a908e645dc2fc8fbbb6673b1f54ba44c9f80aa"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "5dab5974dd8ac923b4accda24ed7870e276be4c57c9ceea93ccbc8b9a4e17f16"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "7324ab153b35c9a3a91dffa71f7439bdb2d55517a3cdbfba8c51e83563550a9a"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "4c5673e97c614897b740bfd2e73ccea03575604d32dc460896a3fd63673025b5"
-    sha256 cellar: :any_skip_relocation, sonoma:         "afc184e9aa7e08e5a3e1dafe30a84318e6620bd3a256a3ecacf4cc8959176080"
-    sha256 cellar: :any_skip_relocation, ventura:        "2efcf25ad7fcbaf94fcd05c4955712624695c9d1243ccce61ba91fd04a55af69"
-    sha256 cellar: :any_skip_relocation, monterey:       "aada106c2788e94fcf92d111e583f32311048f2b6ca75a8e0add655f0ed6cea1"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "817550a1b32ce9ba87701d51a50d9eedcfba936fd7bd8dd41484c9f590e14056"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "94f96e22f7a5e0aa190cd3ad84bd1c69c8a301c82c40c4aa915a7bfd47d3e59b"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "94f96e22f7a5e0aa190cd3ad84bd1c69c8a301c82c40c4aa915a7bfd47d3e59b"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "94f96e22f7a5e0aa190cd3ad84bd1c69c8a301c82c40c4aa915a7bfd47d3e59b"
+    sha256 cellar: :any_skip_relocation, sonoma:        "5103c9c60d2e5117114d429e3f488560127788b9bda5463fb4dff972417bd220"
+    sha256 cellar: :any_skip_relocation, ventura:       "5103c9c60d2e5117114d429e3f488560127788b9bda5463fb4dff972417bd220"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "86539d39f3aef614e81590fb805a61ffd4112dfd5abca1d35e553da388f3d4dd"
   end
 
   depends_on "go" => :build

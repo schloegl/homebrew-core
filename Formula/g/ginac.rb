@@ -1,8 +1,8 @@
 class Ginac < Formula
   desc "Not a Computer algebra system"
   homepage "https://www.ginac.de/"
-  url "https://www.ginac.de/ginac-1.8.7.tar.bz2"
-  sha256 "71ff4f2d8a00e6f07ce8fee69b76dcc1ebbb727be6760b587c1fbb5ccf7b61ea"
+  url "https://www.ginac.de/ginac-1.8.9.tar.bz2"
+  sha256 "6cfd46cf4e373690e12d16b772d7aed0f5c433da8c7ecd2477f2e736483bb439"
   license "GPL-2.0-or-later"
 
   livecheck do
@@ -11,20 +11,18 @@ class Ginac < Formula
   end
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any,                 arm64_sequoia:  "9a87dbb3381c9eb502f9f4d1c25cecb5d8517705017440d05d0d497d294faac6"
-    sha256 cellar: :any,                 arm64_sonoma:   "aacdfd913aacfa3202e10d9c37ea5bac1c64a0d80db396b5163c043d51b64f4f"
-    sha256 cellar: :any,                 arm64_ventura:  "e661fec026b0f5c59ed31cb8d24674ba15751983a2e5353b40049e51f8407d18"
-    sha256 cellar: :any,                 arm64_monterey: "4eacaea3545f31689873bc9ee681c96608bfd346f99ebcd52996a2a47a9684ec"
-    sha256 cellar: :any,                 sonoma:         "20aa8a3ddee662108a4d9abcca8efbb439a42b6518621604c2cd9f2f8358d21e"
-    sha256 cellar: :any,                 ventura:        "eea2055db77984131bb8e266e1011838c5d988a990c2268ef0f0f721a75d1a1c"
-    sha256 cellar: :any,                 monterey:       "c05da698a6f66bc30300c78da3ba78ab1a9f7b83aa039b93435768f9ca74a7bc"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "125b63819d971c7ca2fdc1edbe2234d8acf21bc8852ee2db4d728406bd056984"
+    sha256 cellar: :any,                 arm64_sequoia: "883d484b1214d73fb0a9d1a3abb1272c416710e13a03c9e033a349a430eba558"
+    sha256 cellar: :any,                 arm64_sonoma:  "c83c904f36bc6f67c50be2f63c97e222612c38b7cdb75bc6165932fb0d02ee8f"
+    sha256 cellar: :any,                 arm64_ventura: "91b38f0301a06bfd7da8d4156d01df8619f2fe0607a679b2bb9353ff7fcbfe46"
+    sha256 cellar: :any,                 sonoma:        "9a8246939afc6c0715768e4059eb043c6b30de52b9b14b88000d497593485888"
+    sha256 cellar: :any,                 ventura:       "8daafe6097f1dddebf76c3c5c16517ef2f4a47a605b265bb6c55cb832e5d7e47"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "630df100084e0ebcf28141863b6735bad56ecf8804bd1fba8318c489e2287601"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0a8e6089bd699f62ec5f3350eca6856c51be620187f8725198c8ebe06b1bdbe0"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "cln"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "readline"
 
   def install
@@ -33,7 +31,7 @@ class Ginac < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <iostream>
       #include <ginac/ginac.h>
       using namespace std;
@@ -50,11 +48,9 @@ class Ginac < Formula
         cout << poly << endl;
         return 0;
       }
-    EOS
-    system ENV.cxx, "test.cpp", "-L#{lib}",
-                                "-L#{Formula["cln"].lib}",
-                                "-lcln", "-lginac", "-o", "test",
-                                "-std=c++11"
+    CPP
+    system ENV.cxx, "-std=c++11", "test.cpp", "-o", "test",
+                    "-L#{lib}", "-L#{Formula["cln"].lib}", "-lcln", "-lginac"
     system "./test"
   end
 end

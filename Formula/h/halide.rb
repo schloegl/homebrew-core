@@ -1,11 +1,16 @@
 class Halide < Formula
   desc "Language for fast, portable data-parallel computation"
   homepage "https://halide-lang.org"
-  url "https://github.com/halide/Halide/archive/refs/tags/v18.0.0.tar.gz"
-  sha256 "1176b42a3e2374ab38555d9316c78e39b157044b5a8e765c748bf3afd2edb351"
   license "MIT"
   revision 1
-  head "https://github.com/halide/Halide.git", branch: "main"
+
+  stable do
+    url "https://github.com/halide/Halide/archive/refs/tags/v19.0.0.tar.gz"
+    sha256 "83bae1f0e24dc44d9d85014d5cd0474df2dd03975680894ce3fafd6e97dffee2"
+
+    depends_on "lld@19"
+    depends_on "llvm@19" # TODO: Use `lld`/`llvm` in both stable and head in Halide 20
+  end
 
   livecheck do
     url :stable
@@ -13,13 +18,20 @@ class Halide < Formula
   end
 
   bottle do
-    rebuild 2
-    sha256 cellar: :any,                 arm64_sequoia: "6f89eeee118f390658d2a52a67e41996ce89fcd058684961b27423d3b117eea9"
-    sha256 cellar: :any,                 arm64_sonoma:  "e76b080cba6f9754412e6df3562d6e03bbf601233a84d9364c4d63ab98d2029c"
-    sha256 cellar: :any,                 arm64_ventura: "b7dd542219917916ff63c94e29a2869cfbcf9758843c35f9990c06bed44e1348"
-    sha256 cellar: :any,                 sonoma:        "ddd5a3737ec06e925dbfab1487021b3785ef8bcdb300e9163242b9a60c394873"
-    sha256 cellar: :any,                 ventura:       "2f7c424d4540af2ae08aff4f90a019e83fbbd18a97b76571b7ad1456d638b83f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9f58f0eaa4f149d8685fd1f166cf3224995a89621c20e06a39fe0386e1ab71dd"
+    sha256 cellar: :any,                 arm64_sequoia: "33f39347076af5498e35bed325acfb3f3251de6efb4d54c72380901a3524ec70"
+    sha256 cellar: :any,                 arm64_sonoma:  "5fde8b88d62f8e6320f235828f0e81a91c021c1854688edfdb2203da69701a82"
+    sha256 cellar: :any,                 arm64_ventura: "14d6bd1d3b21ddd8c2048fb026c0602be863df3126f686e9e830ff0a475ccd9f"
+    sha256 cellar: :any,                 sonoma:        "aae907b9c881d5a750264f333ba2f3991fbe95c8d3dd50e6b2246fdbe0b37665"
+    sha256 cellar: :any,                 ventura:       "25f68206d87d7f26f557115db0f87686df2d2d378e619e0fd692d61c9333884a"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "fa6fe703b19d08cfee1366d5366fc1f5a9e93286566a91634007fa3191410417"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "559910d964d788f02580e34bb3483e083f4a292cd9cfb3ee52ee8d6fe0d76c24"
+  end
+
+  head do
+    url "https://github.com/halide/Halide.git", branch: "main"
+
+    depends_on "lld"
+    depends_on "llvm"
   end
 
   depends_on "cmake" => :build
@@ -27,47 +39,32 @@ class Halide < Formula
   depends_on "flatbuffers"
   depends_on "jpeg-turbo"
   depends_on "libpng"
-  depends_on "lld"
-  depends_on "llvm"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
+  depends_on "wabt"
 
-  fails_with :gcc do
-    version "6"
-    cause "Requires C++17"
-  end
-
-  # Check wabt version in `dependencies/wasm/CMakeLists.txt`.
-  # TODO: Ask upstream to support usage of a system-provided wabt.
-  # TODO: Do we really need a git checkout here?
-  resource "wabt" do
-    url "https://github.com/WebAssembly/wabt.git",
-        tag:      "1.0.33",
-        revision: "963f973469b45969ce198e0c86d3af316790a780"
+  on_macos do
+    depends_on "openssl@3"
   end
 
   def python3
-    "python3.12"
+    "python3.13"
   end
 
   def install
-    builddir = buildpath/"build"
-    (builddir/"_deps/wabt-src").install resource("wabt")
-
+    llvm = deps.map(&:to_formula).find { |f| f.name.match?(/^llvm(@\d+(\.\d+)*)?$/) }
     site_packages = prefix/Language::Python.site_packages(python3)
     rpaths = [rpath, rpath(source: site_packages/"halide")]
+    rpaths << llvm.opt_lib.to_s if OS.linux?
     args = [
       "-DCMAKE_INSTALL_RPATH=#{rpaths.join(";")}",
-      "-DHalide_INSTALL_PYTHONDIR=#{site_packages}",
-      "-DHalide_SHARED_LLVM=ON",
-      "-DPYBIND11_USE_FETCHCONTENT=OFF",
-      "-DFLATBUFFERS_USE_FETCHCONTENT=OFF",
-      "-DFETCHCONTENT_SOURCE_DIR_WABT=#{builddir}/_deps/wabt-src",
-      "-DCMAKE_SHARED_LINKER_FLAGS=-llldCommon",
+      "-DHalide_INSTALL_PYTHONDIR=#{site_packages}/halide",
+      "-DHalide_LLVM_SHARED_LIBS=ON",
+      "-DHalide_USE_FETCHCONTENT=OFF",
+      "-DWITH_TESTS=NO",
     ]
-    odie "CMAKE_SHARED_LINKER_FLAGS can be removed from `args`" if build.bottle? && version > "18.0.0"
-    system "cmake", "-S", ".", "-B", builddir, *args, *std_cmake_args
-    system "cmake", "--build", builddir
-    system "cmake", "--install", builddir
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   test do

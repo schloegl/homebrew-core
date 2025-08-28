@@ -1,8 +1,8 @@
 class Ckan < Formula
   desc "Comprehensive Kerbal Archive Network"
   homepage "https://github.com/KSP-CKAN/CKAN/"
-  url "https://github.com/KSP-CKAN/CKAN/releases/download/v1.35.0/ckan.exe"
-  sha256 "55ebaf6b1740fa5fa32a0e1b52fefd84d9ce5e02d7289762318b26a53bd7e288"
+  url "https://github.com/KSP-CKAN/CKAN/releases/download/v1.36.0/ckan.exe"
+  sha256 "4f0f2cf3a16d073ffddaeab68a61599b89fcf0d082a5e3d3a7276802862c1375"
   license "MIT"
 
   livecheck do
@@ -11,17 +11,17 @@ class Ckan < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "eb8addf38bd16ea1aec5629845aa2628ba88416fe242baa01eff838066fd38dd"
+    sha256 cellar: :any_skip_relocation, all: "0c13567285bd77c9390aa195b9e323b21cabfdfecc58d212fb54aec8e5dbc684"
   end
 
   depends_on "mono"
 
   def install
     (libexec/"bin").install "ckan.exe"
-    (bin/"ckan").write <<~EOS
+    (bin/"ckan").write <<~SHELL
       #!/bin/sh
       exec mono "#{libexec}/bin/ckan.exe" "$@"
-    EOS
+    SHELL
   end
 
   def caveats
@@ -31,9 +31,9 @@ class Ckan < Formula
   end
 
   test do
-    assert_match version.to_s, shell_output(bin/"ckan version")
+    assert_match version.to_s, shell_output("#{bin}/ckan version")
 
-    output = shell_output(bin/"ckan update", 1)
+    output = shell_output("#{bin}/ckan update", 1)
     assert_match "I don't know where a game instance is installed", output
   end
 end

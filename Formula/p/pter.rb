@@ -3,16 +3,15 @@ class Pter < Formula
 
   desc "Your console and graphical UI to manage your todo.txt file(s)"
   homepage "https://vonshednob.cc/pter/"
-  url "https://files.pythonhosted.org/packages/d9/35/247e5568d1e500266bda2601df5b5169aec86bc421e76df298eeb2678fcf/pter-3.17.1.tar.gz"
-  sha256 "26a10bca4bceaac4fcd722125bdc0cba839fa16e6abedb2b2de2d5aa626c3397"
+  url "https://files.pythonhosted.org/packages/1d/b5/4f0a60f67d9549e679aff1715aeb9c2ccedfe23ec25de544714f94de0b9b/pter-3.21.0.tar.gz"
+  sha256 "98fa3dbc35eeea48b3c37f893988e0cdba2ff407d2988a0696683995baf58f5d"
   license "MIT"
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any_skip_relocation, all: "90bbfdf7e7deda81b3bae38fb2e5b1983eae8ce7f551df4fb19ef4978ed46c5c"
+    sha256 cellar: :any_skip_relocation, all: "a04fb9d3590498d8ec46843d490bfa63ea5b259cc7ec24fce8b62c1b959e64c9"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "cursedspace" do
     url "https://files.pythonhosted.org/packages/cd/3b/72657c9e867dd5034814dcea21b1128a70a1b8427e48c7de8b3b9ea3dd93/cursedspace-1.5.2.tar.gz"
@@ -20,8 +19,8 @@ class Pter < Formula
   end
 
   resource "pytodotxt" do
-    url "https://files.pythonhosted.org/packages/51/18/a8f4d15eb31bcde441b0ec090c5d97c435beabc9620199e7f90d2f5ad1af/pytodotxt-1.5.0.tar.gz"
-    sha256 "99be359438c52e0c4fc007e11a89f5a03af00fc6851a6ba7070dfe0e00189009"
+    url "https://files.pythonhosted.org/packages/ac/72/8948cd01bd2c9c5a1c5a83cb42856b9db8118cd2ffc51cc934a8b53b421c/pytodotxt-3.0.0.tar.gz"
+    sha256 "6d24d9d66120e525b30c9239f26f09fdbb0ebf4654a3b4453a656d25387a8bff"
   end
 
   def install

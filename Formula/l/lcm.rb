@@ -1,8 +1,8 @@
 class Lcm < Formula
   desc "Libraries and tools for message passing and data marshalling"
   homepage "https://lcm-proj.github.io/"
-  url "https://github.com/lcm-proj/lcm/archive/refs/tags/v1.5.0.tar.gz"
-  sha256 "590a7d996daa3d33a7f3094e4054c35799a3d7a4780d732be78971323e730eeb"
+  url "https://github.com/lcm-proj/lcm/archive/refs/tags/v1.5.1.tar.gz"
+  sha256 "40ba0b7fb7c9ad06d05e06b4787d743cf11be30eb4f1a03abf4a92641c5b1203"
   license "LGPL-2.1-or-later"
   head "https://github.com/lcm-proj/lcm.git", branch: "master"
 
@@ -13,31 +13,34 @@ class Lcm < Formula
 
   bottle do
     rebuild 1
-    sha256 cellar: :any,                 arm64_sequoia:  "c097ae67003698e1aa377c073a2d8ceb85c7bf1940afd96040af0b6dfd31a099"
-    sha256 cellar: :any,                 arm64_sonoma:   "5d1db2950892b7453af6ef86c81e4ac03cd6b91f71b398c10d6848e5683339b7"
-    sha256 cellar: :any,                 arm64_ventura:  "4a809af57394e0379df764778977115dc8b8cf6d6c5f6898d95797012a7b4924"
-    sha256 cellar: :any,                 arm64_monterey: "f5afc343736b2f84e48b3d365a9424bf306fa1b0e72b70da628c7735eb90b7dd"
-    sha256 cellar: :any,                 sonoma:         "1d2f9816f32cb37046939805b19f143a86ef70fa4f9b6f9c46a9fbacb14b5120"
-    sha256 cellar: :any,                 ventura:        "cb6bb58d21d57f335f8bd021c021939b46f82050a05d56cca3c5642aef1650c3"
-    sha256 cellar: :any,                 monterey:       "fdf7d422eb1ccbe7a152dc3a1973913114eba7e2176f9c3aeb5de7511ad8fd74"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "276ec5165d97b216b53c9056674e853fc85f4e5420811cb034412591c746ba9a"
+    sha256 cellar: :any,                 arm64_sequoia: "cd5794313c2136f837cc4235fedc5bcb6dfa1300cc3a5d9524a0346c1e91bd97"
+    sha256 cellar: :any,                 arm64_sonoma:  "adb6c73895ff02cd561aea543e2fbd756d7aa2205237dbad6138c4516c34d6ad"
+    sha256 cellar: :any,                 arm64_ventura: "000805ebd7cd74df1f20575e964a84a1e671c110861a0c94e09a47b417cf2818"
+    sha256 cellar: :any,                 sonoma:        "3caf4d4ac4e480add5a3b74601a7be8d6c7d9f455eb2ddfede706614e30ded77"
+    sha256 cellar: :any,                 ventura:       "231e26c5826e2ae3f6c5cf0725d45f21e7a49a88a39f5a3bcc8f058003d185b2"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "ee71ab26af0ccabb7cd2a7b6648d9307293e6e72af5b061312cd49a7ea6c1375"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a73f26e38bef338372062dbc93ac8d69bd1fc27fe6df22e7d67c05d0cbc97023"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "glib"
   depends_on "lua"
   depends_on "openjdk"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   def python3
-    which("python3.12")
+    which("python3.13")
   end
 
   def install
     # Adding RPATH in #{lib}/lua/X.Y/lcm.so and some #{bin}/*.
+    lua_lib = lib/"lua"/Formula["lua"].version.major_minor
+    lcm_site_packages = prefix/Language::Python.site_packages("python3")/"lcm"
+    rpaths = [rpath, rpath(source: lua_lib), rpath(source: lcm_site_packages)]
+
     args = %W[
-      -DCMAKE_INSTALL_RPATH=#{lib}
+      -DCMAKE_INSTALL_RPATH=#{rpaths.join(";")}
       -DLCM_ENABLE_EXAMPLES=OFF
       -DLCM_ENABLE_TESTS=OFF
       -DLCM_JAVA_TARGET_VERSION=8
@@ -63,13 +66,13 @@ class Lcm < Formula
       }
     EOS
     system bin/"lcm-gen", "-c", "example_t.lcm"
-    assert_predicate testpath/"exlcm_example_t.h", :exist?, "lcm-gen did not generate C header file"
-    assert_predicate testpath/"exlcm_example_t.c", :exist?, "lcm-gen did not generate C source file"
+    assert_path_exists testpath/"exlcm_example_t.h", "lcm-gen did not generate C header file"
+    assert_path_exists testpath/"exlcm_example_t.c", "lcm-gen did not generate C source file"
     system bin/"lcm-gen", "-x", "example_t.lcm"
-    assert_predicate testpath/"exlcm/example_t.hpp", :exist?, "lcm-gen did not generate C++ header file"
+    assert_path_exists testpath/"exlcm/example_t.hpp", "lcm-gen did not generate C++ header file"
     system bin/"lcm-gen", "-j", "example_t.lcm"
-    assert_predicate testpath/"exlcm/example_t.java", :exist?, "lcm-gen did not generate Java source file"
+    assert_path_exists testpath/"exlcm/example_t.java", "lcm-gen did not generate Java source file"
     system bin/"lcm-gen", "-p", "example_t.lcm"
-    assert_predicate testpath/"exlcm/example_t.py", :exist?, "lcm-gen did not generate Python source file"
+    assert_path_exists testpath/"exlcm/example_t.py", "lcm-gen did not generate Python source file"
   end
 end

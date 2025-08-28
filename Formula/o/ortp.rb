@@ -4,24 +4,33 @@ class Ortp < Formula
   license "GPL-3.0-or-later"
 
   stable do
-    url "https://gitlab.linphone.org/BC/public/ortp/-/archive/5.3.84/ortp-5.3.84.tar.bz2"
-    sha256 "e0b539a0021c8b6babca5efddc9362954148824f59c4c316d772a124ebbb51bd"
+    url "https://gitlab.linphone.org/BC/public/ortp/-/archive/5.4.38/ortp-5.4.38.tar.bz2"
+    sha256 "344e4cc48450181f4afc350bc83c292ec8854875b666def7db401be003bf4181"
 
     # bctoolbox appears to follow ortp's version. This can be verified at the GitHub mirror:
     # https://github.com/BelledonneCommunications/bctoolbox
     resource "bctoolbox" do
-      url "https://gitlab.linphone.org/BC/public/bctoolbox/-/archive/5.3.84/bctoolbox-5.3.84.tar.bz2"
-      sha256 "1c9ec26a91e74f720b16416a0e9e5e84c8aeb04b3fc490c22a4b2fc10ab6d5e3"
+      url "https://gitlab.linphone.org/BC/public/bctoolbox/-/archive/5.4.38/bctoolbox-5.4.38.tar.bz2"
+      sha256 "9270ea8e148a3f25cd5a82ea1c531ece75277a879cc9d7b5a0df86bf1ad40ef9"
+
+      livecheck do
+        formula :parent
+      end
+
+      patch :DATA
     end
   end
 
+  no_autobump! because: "resources cannot be updated automatically"
+
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "4db45336c212cfb572b3ff42b878352733679fdbc11a79f6dc3dda037f220bab"
-    sha256 cellar: :any,                 arm64_sonoma:  "4214e613d3563fdb8e737376eabc9576e7b01ec5d001082e19169f1b9b6dff0b"
-    sha256 cellar: :any,                 arm64_ventura: "9cd9109b254d1d76307bc9c779d6e2b6da0ed264297421aac06ba61fdf2a66a9"
-    sha256 cellar: :any,                 sonoma:        "635f5d33e32f95b633923cbcb168f0be9705699b83da87a7fc3eb590f46de10c"
-    sha256 cellar: :any,                 ventura:       "113dff9d0907b040807916b184d3c722be016f952f4b0f7ca895c4eb4332fe6b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4b2f06f9efd8c6b09a40b5cd555d1a1ce5c782463cf60a5ddd324885a272b124"
+    sha256 cellar: :any,                 arm64_sequoia: "3a7e28866fe9891a9853007788834d2a183fe2e33dd271bf3c15b2758f4a07b6"
+    sha256 cellar: :any,                 arm64_sonoma:  "98808561b65a1c527fd3939047b6e13f0fe26ae7055b144d07a8662cb1f2333e"
+    sha256 cellar: :any,                 arm64_ventura: "f50049585c4b00ab5228b753e2072dd156244aa51875c98f8fce9abf2509edec"
+    sha256 cellar: :any,                 sonoma:        "93155b9954127bde123fd260347fe0540b7c33e36a8623c05ce92e76ecd4b719"
+    sha256 cellar: :any,                 ventura:       "3b4edc1c8c27d973052634899bfb79e0b1592ad315d1f884a1f49dbb9214a557"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "8ea605de0a0d946d99e6fd21ca2ac02974f98dd47ecad343131725774e528c2a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ace149b2da90b3f1b201b7642f051d9ff2e15c686fd5462a2b54f38ab6d95ef9"
   end
 
   head do
@@ -33,31 +42,30 @@ class Ortp < Formula
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "mbedtls"
 
   def install
     odie "bctoolbox resource needs to be updated" if build.stable? && version != resource("bctoolbox").version
 
     resource("bctoolbox").stage do
-      args = ["-DENABLE_TESTS_COMPONENT=OFF", "-DBUILD_SHARED_LIBS=ON"]
-      args << "-DCMAKE_C_FLAGS=-Wno-error=unused-parameter" if OS.linux?
-      system "cmake", "-S", ".", "-B", "build",
-                      *args,
-                      *std_cmake_args(install_prefix: libexec)
+      args = %w[
+        -DENABLE_TESTS_COMPONENT=OFF
+        -DBUILD_SHARED_LIBS=ON
+        -DENABLE_MBEDTLS=ON
+      ]
+
+      system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args(install_prefix: libexec)
       system "cmake", "--build", "build"
       system "cmake", "--install", "build"
     end
 
     ENV.prepend_path "PKG_CONFIG_PATH", libexec/"lib/pkgconfig"
     ENV.append "LDFLAGS", "-Wl,-rpath,#{libexec}/lib" if OS.linux?
-    cflags = ["-I#{libexec}/include"]
-    cflags << "-Wno-error=maybe-uninitialized" if OS.linux?
+    ENV.append_to_cflags "-I#{libexec}/include"
 
     args = %W[
       -DCMAKE_PREFIX_PATH=#{libexec}
-      -DCMAKE_C_FLAGS=#{cflags.join(" ")}
-      -DCMAKE_CXX_FLAGS=-I#{libexec}/include
       -DBUILD_SHARED_LIBS=ON
       -DENABLE_DOC=NO
       -DENABLE_UNIT_TESTS=NO
@@ -70,7 +78,7 @@ class Ortp < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include "ortp/logging.h"
       #include "ortp/rtpsession.h"
       #include "ortp/sessionset.h"
@@ -79,9 +87,32 @@ class Ortp < Formula
         ORTP_PUBLIC void ortp_init(void);
         return 0;
       }
-    EOS
+    C
     linker_flags = OS.mac? ? %W[-F#{frameworks} -framework ortp] : %W[-L#{lib} -lortp]
     system ENV.cc, "test.c", "-o", "test", "-I#{include}", "-I#{libexec}/include", *linker_flags
     system "./test"
   end
 end
+
+__END__
+diff --git a/src/crypto/mbedtls.cc b/src/crypto/mbedtls.cc
+index cf146fd..8886b2d 100644
+--- a/src/crypto/mbedtls.cc
++++ b/src/crypto/mbedtls.cc
+@@ -80,8 +80,6 @@ public:
+ 
+ 	std::unique_ptr<RNG> sRNG;
+ 	mbedtlsStaticContexts() {
+-		mbedtls_threading_set_alt(threading_mutex_init_cpp, threading_mutex_free_cpp, threading_mutex_lock_cpp,
+-		                          threading_mutex_unlock_cpp);
+ 		if (psa_crypto_init() != PSA_SUCCESS) {
+ 			bctbx_error("MbedTLS PSA init fail");
+ 		}
+@@ -92,7 +90,6 @@ public:
+ 		// before destroying mbedtls internal context, destroy the static RNG
+ 		sRNG = nullptr;
+ 		mbedtls_psa_crypto_free();
+-		mbedtls_threading_free_alt();
+ 	}
+ };
+ static const auto mbedtlsStaticContextsInstance = std::make_unique<mbedtlsStaticContexts>();

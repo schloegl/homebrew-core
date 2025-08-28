@@ -1,18 +1,17 @@
 class Minizinc < Formula
   desc "Medium-level constraint modeling language"
   homepage "https://www.minizinc.org/"
-  url "https://github.com/MiniZinc/libminizinc/archive/refs/tags/2.8.6.tar.gz"
-  sha256 "719469473bd0ad0f667d79e35735ef8c535f64642b3565a197ed09b285a3d506"
+  url "https://github.com/MiniZinc/libminizinc/archive/refs/tags/2.9.3.tar.gz"
+  sha256 "6380c8a294232bc3c015e63b5ac247885a3ae0e57badab8e329218288e396619"
   license "MPL-2.0"
   head "https://github.com/MiniZinc/libminizinc.git", branch: "develop"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "adf907c9b5c260d8a969db450e3f3cae49d6aa50ccd1fc2559c789172a0122e3"
-    sha256 cellar: :any,                 arm64_sonoma:  "5bf7ec3cf7331382ce08befe033fba2f08935e11378004bbde4beea5bc85024b"
-    sha256 cellar: :any,                 arm64_ventura: "6f3687c8c66335e6309e1356be97f30ad3047fbaa0054a240c3dd23ae664dadd"
-    sha256 cellar: :any,                 sonoma:        "ecd076a6b9e72089ff8cf0516c601fd7fba4b5bc16c4491c8dd29708c5b84c52"
-    sha256 cellar: :any,                 ventura:       "df93de241331ca6a0e6420b09ce5c746abd3baf720fcefea4f38c7bd8ad2840b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d449d38266c79bcbd9ae4a7104b44195b2a36addf744590a428535fdb4bf26b2"
+    sha256               arm64_sonoma:  "c79b4e639723b668800912165f376351716e7baca0d8b014e9055316e3032b1b"
+    sha256               arm64_ventura: "459f08c97a5b1a7ff4e4e3d96a926d01123b2cee146e71406840e6348724c2eb"
+    sha256 cellar: :any, sonoma:        "562bcc77b1ecb60f2831f9cf644c7f842204a19c1f2a2c684aed9f017393cdd4"
+    sha256 cellar: :any, ventura:       "7a7cbca75502ec6707743977524e1696d4dcd15517daf0520b661270098c364c"
+    sha256               x86_64_linux:  "63aa6820b2e56879877f12ca7673b0d8cbb3bcccaf34282051bafc7bbb2ea443"
   end
 
   depends_on "cmake" => :build
@@ -24,7 +23,7 @@ class Minizinc < Formula
   depends_on "gecode"
   depends_on "osi"
 
-  fails_with gcc: "5"
+  conflicts_with cask: "minizincide", because: "both install `minizinc` binaries"
 
   def install
     system "cmake", "-S", ".", "-B", "build", *std_cmake_args

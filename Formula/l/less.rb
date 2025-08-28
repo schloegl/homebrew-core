@@ -1,8 +1,8 @@
 class Less < Formula
   desc "Pager program similar to more"
   homepage "https://www.greenwoodsoftware.com/less/index.html"
-  url "https://www.greenwoodsoftware.com/less/less-661.tar.gz"
-  sha256 "2b5f0167216e3ef0ffcb0c31c374e287eb035e4e223d5dae315c2783b6e738ed"
+  url "https://www.greenwoodsoftware.com/less/less-679.tar.gz"
+  sha256 "9b68820c34fa8a0af6b0e01b74f0298bcdd40a0489c61649b47058908a153d78"
   license "GPL-3.0-or-later"
 
   livecheck do
@@ -11,14 +11,13 @@ class Less < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "8595f05fe334627e7645ef3c3b06dc82e33fe8df63ce750d56f06beadff26ac1"
-    sha256 cellar: :any,                 arm64_sonoma:   "cfb63b0a54db503b382df1eb92658b09e9e3234e25e8dc6973dedd1026e57c4e"
-    sha256 cellar: :any,                 arm64_ventura:  "8f013221c467b8a71d8c19251139f46cb727173adef7e11a1071be0c705d267e"
-    sha256 cellar: :any,                 arm64_monterey: "b21ce2f938836916b41daec8a906f64c9cf27b14cdc4ea4fe900a9e6dddc87dc"
-    sha256 cellar: :any,                 sonoma:         "d02a9931e1d951074b1cd9c3ca54f974e67a0153c78764f913246712c188dd2a"
-    sha256 cellar: :any,                 ventura:        "ee6f804370faa6b2b3f40db2080a291685c142bd2f7207c18bb77770cc71f726"
-    sha256 cellar: :any,                 monterey:       "791d4cd683fabf7f9b1342baee2b07f7ec40a67c3bc6d6be21ca69860026738c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "ee1f4afb1837a82ed5d16f7a547c3e542c0da2fef96fc8632ec3bc6b25665649"
+    sha256 cellar: :any,                 arm64_sequoia: "2c167ef66f66ea608f4d8c2a62daf90c54d209c492ca36373b6c4b21889c2124"
+    sha256 cellar: :any,                 arm64_sonoma:  "c8d271ef876c5591a67460068226247fb597f1b802b2616c85ba43d6b6b842e4"
+    sha256 cellar: :any,                 arm64_ventura: "bd30a0f7e3b09305d58c8b943341d19480292bfc0316a60c731ef95e7d943170"
+    sha256 cellar: :any,                 sonoma:        "6cb7136c30fc4695d509bb6fa174245f54fad777bdfc1cdd2d42e23708408128"
+    sha256 cellar: :any,                 ventura:       "56563af2638138d67278c41a1cdfc42a4ffaa2c85c7d89f3ec350a5a2b4d3f05"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "e7c4d002465a313676bc41faf9720028b932b49f83429bbaff52c1d94d62238a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f68b1ad54d048a50a5d738a1c38ad43c7a1789b9f8b5168d77fa8dc8ab21aa17"
   end
 
   head do

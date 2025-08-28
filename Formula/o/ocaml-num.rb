@@ -4,17 +4,18 @@ class OcamlNum < Formula
   url "https://github.com/ocaml/num/archive/refs/tags/v1.5.tar.gz"
   sha256 "7ae07c8f5601e2dfc5008a62dcaf2719912ae596a19365c5d7bdf2230515959a"
   license "LGPL-2.1-only" => { with: "OCaml-LGPL-linking-exception" }
-  revision 1
+  revision 3
+
+  no_autobump! because: :requires_manual_review
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "a50336b3ee1e973d360acb08d7b62f6945d73242a312ea047a1ad51912d96261"
-    sha256 cellar: :any,                 arm64_sonoma:   "7e7b2d6adfef7295f25999b02b580412d2fa696c6930b664c012a3de467d3573"
-    sha256 cellar: :any,                 arm64_ventura:  "75917ef34c2d9db4edb9e26c4032ed90e88b5b9c60d269a9d3eeec2d064b0010"
-    sha256 cellar: :any,                 arm64_monterey: "9e62643f96acfd3196326a958182691dac900fab5968460d4b94278e90c5a862"
-    sha256 cellar: :any,                 sonoma:         "82b313f948966c3e7ac0871dec7b2a086454c52701010a88a2f3eafea402db7b"
-    sha256 cellar: :any,                 ventura:        "3efd7a7c5e693579e750fbdf013e1cf709b31abe7bf41085b2223a31fcae5741"
-    sha256 cellar: :any,                 monterey:       "6d0fcf3f73719c755a40b41ca397a0210ac1ee336fb37685a3674673ae526de8"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "a8bd4fec57bb98c82767df5d77937b67170256cf20a67b9335ed30de3248ab75"
+    sha256 cellar: :any,                 arm64_sequoia: "781da529cdba86087750a800642a8cc2299be1d255149daff379164073ce7785"
+    sha256 cellar: :any,                 arm64_sonoma:  "ce6ae8fa010523ccf585e594d8822f0756f25b188ad869b191fa9bdd11294c01"
+    sha256 cellar: :any,                 arm64_ventura: "73245a4b0918db27313822585644728b34ca7b22d1fc4d765321c00f71d4d549"
+    sha256 cellar: :any,                 sonoma:        "3348af9bf9743fb08b24d8ca2b0c33c6ce5aa2ccad30af20eca1fb56ca1365cc"
+    sha256 cellar: :any,                 ventura:       "47b73fc8a4b41adcf949df605dd13c99f3387d0118aafd7f9795aea53fcd7062"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "4e692a6429d05500c5958081b2a5c863913b9d62a23d88bf692ba76fd34988bb"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "19bc0687d271a60a5acc1f4b8fd6d0a52c9d27ce3a4271760b39ea36ddaef17c"
   end
 
   depends_on "ocaml-findlib" => :build
@@ -36,7 +37,7 @@ class OcamlNum < Formula
       s.change_make_var! "prefix", prefix
     end
 
-    system "make"
+    ENV.deparallelize { system "make" }
     (lib/"ocaml/stublibs").mkpath # `make install` assumes this directory exists
     system "make", "install", "STDLIBDIR=#{lib}/ocaml"
 

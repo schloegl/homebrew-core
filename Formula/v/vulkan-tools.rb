@@ -1,8 +1,8 @@
 class VulkanTools < Formula
   desc "Vulkan utilities and tools"
   homepage "https://github.com/KhronosGroup/Vulkan-Tools"
-  url "https://github.com/KhronosGroup/Vulkan-Tools/archive/refs/tags/v1.3.296.tar.gz"
-  sha256 "a44b5456f473dae0b6d15c23d3b1eb461bb8ef58867271abd641d99735a54b6c"
+  url "https://github.com/KhronosGroup/Vulkan-Tools/archive/refs/tags/v1.4.325.tar.gz"
+  sha256 "8d4e921a1a66633210c48b9ecc0a7b79e578139e85636d8255e7de7bf265d40b"
   license "Apache-2.0"
   head "https://github.com/KhronosGroup/Vulkan-Tools.git", branch: "main"
 
@@ -12,16 +12,18 @@ class VulkanTools < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "47f50859981f13ae096b81e512353d7a038561f2b5c3994b4c3728172b96c4e2"
-    sha256 cellar: :any,                 arm64_sonoma:  "bc6e873fe5cf454783a410bde0ca985fd57cdefd5a7976a1df21dea2dce428cf"
-    sha256 cellar: :any,                 arm64_ventura: "9afeade2b8acf5999a8013e11b29f0dcc59f4d0c2939ab78bd3d03680bb0340c"
-    sha256 cellar: :any,                 sonoma:        "b3efe004bd4eddb0235d79ed9e779b93b03f7ce954327c34328b651e5da6fc79"
-    sha256 cellar: :any,                 ventura:       "80e88886f39d70433b768950de83192946377ccc9023d21d9c95c620f0eb4cb1"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3071e30552325cc54d5a483749d8bcf1674d6e890bc5f3b3aee239085166cfa3"
+    sha256                               arm64_sequoia: "428c778eb507613a35be7412dfc2a64ce0380d5bdd0e58fbc8985ab5d6d7c6c0"
+    sha256                               arm64_sonoma:  "fd7690c386a4932bacee257d968f2e05d824f26387a9b96ce8199848e3d5913e"
+    sha256                               arm64_ventura: "fe5307b5d24ecfecbb454c0cb026aa8ee0c8a0226aeebf0557261696c96b2c81"
+    sha256 cellar: :any,                 sonoma:        "94f1f101b389c95d118dacf5913b316f2f05b088463dc0f23ce63e204a20198a"
+    sha256 cellar: :any,                 ventura:       "7ada8e7d2d24125fd8cd3c4aa6b995c857ebb16c3db93df2aba8a85756ebb4bc"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "c56a04a5e919cc1d5f47448d1327a4445150843700c046c7d21e0d28023484ee"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f823d4948cc1b3b58ca20976878d75757b7e811708ba919649ac7d89f0114093"
   end
 
   depends_on "cmake" => :build
-  depends_on "python@3.12" => :build
+  depends_on "pkgconf" => :build
+  depends_on "python@3.13" => :build
   depends_on "vulkan-volk" => :build
   depends_on "glslang"
   depends_on "vulkan-headers"
@@ -32,7 +34,6 @@ class VulkanTools < Formula
   end
 
   on_linux do
-    depends_on "pkg-config" => :build
     depends_on "libx11"
     depends_on "libxcb"
     depends_on "libxkbfile"
@@ -46,13 +47,10 @@ class VulkanTools < Formula
       # account for using already-built MoltenVK instead of the source repo
       inreplace "cube/CMakeLists.txt",
                 "${MOLTENVK_DIR}/MoltenVK/icd/MoltenVK_icd.json",
-                "${MOLTENVK_DIR}/share/vulkan/icd.d/MoltenVK_icd.json"
-      inreplace buildpath.glob("*/macOS/*/CMakeLists.txt") do |s|
-        s.gsub! "${MOLTENVK_DIR}/MoltenVK/include",
-                "${MOLTENVK_DIR}/include"
-        s.gsub! "${MOLTENVK_DIR}/Package/Release/MoltenVK/dynamic/dylib/macOS/libMoltenVK.dylib",
+                "${MOLTENVK_DIR}/etc/vulkan/icd.d/MoltenVK_icd.json"
+      inreplace buildpath.glob("*/macOS/*/CMakeLists.txt"),
+                "${MOLTENVK_DIR}/Package/Release/MoltenVK/dynamic/dylib/macOS/libMoltenVK.dylib",
                 "${MOLTENVK_DIR}/lib/libMoltenVK.dylib"
-      end
     end
 
     args = [
@@ -107,7 +105,14 @@ class VulkanTools < Formula
   end
 
   test do
-    ENV["VK_ICD_FILENAMES"] = lib/"mock_icd/VkICD_mock_icd.json"
-    system bin/"vulkaninfo", "--summary"
+    with_env(VK_ICD_FILENAMES: lib/"mock_icd/VkICD_mock_icd.json") do
+      assert_match "Vulkan Mock Device", shell_output("#{bin}/vulkaninfo --summary")
+    end
+
+    return if !OS.mac? || (Hardware::CPU.intel? && ENV["HOMEBREW_GITHUB_ACTIONS"])
+
+    with_env(XDG_DATA_DIRS: testpath) do
+      assert_match "DRIVER_ID_MOLTENVK", shell_output("#{bin}/vulkaninfo --summary")
+    end
   end
 end

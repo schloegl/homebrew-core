@@ -3,8 +3,8 @@ class Netpbm < Formula
   homepage "https://netpbm.sourceforge.net/"
   # Maintainers: Look at https://sourceforge.net/p/netpbm/code/HEAD/tree/
   # for stable versions and matching revisions.
-  url "https://svn.code.sf.net/p/netpbm/code/stable", revision: "4950"
-  version "11.02.11"
+  url "https://svn.code.sf.net/p/netpbm/code/stable", revision: "5106"
+  version "11.02.18"
   license "GPL-3.0-or-later"
   version_scheme 1
   head "https://svn.code.sf.net/p/netpbm/code/trunk"
@@ -15,25 +15,43 @@ class Netpbm < Formula
     strategy :page_match
   end
 
+  no_autobump! because: :incompatible_version_format
+
   bottle do
-    sha256 arm64_sequoia: "bdf9bbf06bf3f356e3a07b66e75b25885485128742bab949955d10e490eaddfc"
-    sha256 arm64_sonoma:  "c1a49e6ff031ad726842a467942a257720601ee8e1c706212c42c204355a755e"
-    sha256 arm64_ventura: "dbaf3b3bc0c952493e077ce9ebe1f2079faa2ff83e9e44c73e807eae8836e14d"
-    sha256 sonoma:        "bed02f2b2101528bba5e9ce7ea8a0f34ce02aab7a034c2575fe1573a864435e0"
-    sha256 ventura:       "05af7687ceb593ffb1fc661db38801907067b9954e6e69454f03d2829221e4ea"
-    sha256 x86_64_linux:  "dfe5451a97b233d44ec3e2b83c7f4e896188adf175a09502fd19c46b8f3a376e"
+    sha256 arm64_sequoia: "7a2c4f7e057069298072f4b475a770fbcc4b486072ba5ee4fcfbe7e7f41434a9"
+    sha256 arm64_sonoma:  "30f3d8b1b807bda8ea88a092f99c50d9889911d8bfe3be063fd2fad0f0351185"
+    sha256 arm64_ventura: "2cf7cf11959257b6328ba7e1a3acb64792df4e229917203301db9ef991ba5978"
+    sha256 sonoma:        "870cc9fc12f23df3b7888481ec94f054ef00f812a0e719af3e6577c070644218"
+    sha256 ventura:       "103c3b5ef3812cc1cab2a15b1d340b203e306a1d027e6087a2b11106ec3d13d4"
+    sha256 arm64_linux:   "8ec3a50ac236c6725951a09adcc3bdaca90e16b24929ec3338bfc4649a05df69"
+    sha256 x86_64_linux:  "95c59772ace87bff6c75073cd0c5d38c574480521a9cae8cd2eb113a2405616e"
   end
 
+  depends_on "pkgconf" => :build
   depends_on "jasper"
   depends_on "jpeg-turbo"
   depends_on "libpng"
   depends_on "libtiff"
 
   uses_from_macos "flex" => :build
+  uses_from_macos "python" => :build
   uses_from_macos "libxml2"
   uses_from_macos "zlib"
 
   conflicts_with "jbigkit", because: "both install `pbm.5` and `pgm.5` files"
+
+  resource "html" do
+    # Rolling release, latest revision also documents previous software versions
+    # NOTE: Keep "revision" and "version" in sync
+    url "https://svn.code.sf.net/p/netpbm/code/userguide", revision: "5103"
+    version "5103"
+
+    livecheck do
+      url "https://sourceforge.net/p/netpbm/code/HEAD/log/?path=/userguide"
+      regex(/\[r?(\d+)\]/i)
+      strategy :page_match
+    end
+  end
 
   def install
     cp "config.mk.in", "config.mk"
@@ -57,6 +75,7 @@ class Netpbm < Formula
         s.change_make_var! "CFLAGS_SHLIB", "-fPIC"
       end
     end
+    inreplace "buildtools/manpage.mk", "python", "python3"
 
     ENV.deparallelize
 
@@ -78,17 +97,28 @@ class Netpbm < Formula
       (lib/"pkgconfig").install "pkgconfig_template" => "netpbm.pc"
     end
 
-    # We don't run `make install`, so an unversioned library symlink is never generated.
-    # FIXME: Check whether we can call `make install` instead of creating this manually.
+    # Generate unversioned library symlink (upstream does not do this)
     libnetpbm = lib.glob(shared_library("libnetpbm", "*")).reject(&:symlink?).first.basename
     lib.install_symlink libnetpbm => shared_library("libnetpbm")
+
+    resource("html").stage buildpath/"userguide"
+    make_args = %W[
+      USERGUIDE=#{buildpath}/userguide
+      -f
+      #{buildpath}/buildtools/manpage.mk
+    ]
+    mkdir buildpath/"netpbmdoc" do
+      system "make", *make_args, "manpages"
+      [man1, man3, man5].map(&:mkpath)
+      system "make", "MANDIR=#{man}", *make_args, "installman"
+    end
   end
 
   test do
     fwrite = shell_output("#{bin}/pngtopam #{test_fixtures("test.png")} -alphapam")
     (testpath/"test.pam").write fwrite
     system bin/"pamdice", "test.pam", "-outstem", testpath/"testing"
-    assert_predicate testpath/"testing_0_0.pam", :exist?
+    assert_path_exists testpath/"testing_0_0.pam"
     (testpath/"test.xpm").write <<~EOS
       /* XPM */
       static char * favicon_xpm[] = {

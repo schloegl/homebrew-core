@@ -1,8 +1,8 @@
 class Kdoctools < Formula
   desc "Create documentation from DocBook"
   homepage "https://api.kde.org/frameworks/kdoctools/html/index.html"
-  url "https://download.kde.org/stable/frameworks/6.6/kdoctools-6.6.0.tar.xz"
-  sha256 "149e0b442290f8bc9d2a0c99c8e27a5735a3a83870a82de007e487529f0aad44"
+  url "https://download.kde.org/stable/frameworks/6.17/kdoctools-6.17.0.tar.xz"
+  sha256 "27b0ecb023227837103e3fa6ade3de0aa4d5f56f4f6c97a996fe6ee74be89d2f"
   license all_of: [
     "BSD-3-Clause",
     "GPL-2.0-or-later",
@@ -17,11 +17,11 @@ class Kdoctools < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:  "2653e446feb7b80caf830a11dc7a2e4e234c17a099d1fd39a16f078aac0a8be8"
-    sha256 cellar: :any,                 arm64_ventura: "8a1c5f95c54d7512ca1112d8e7fd4209f4375f34008b43ee9e5fe07e8aebc32c"
-    sha256 cellar: :any,                 sonoma:        "cbc2a77f587f50f09202d576ced435c0f0134472d182446f05e323355315c1c4"
-    sha256 cellar: :any,                 ventura:       "e82357936bab9706db0884d1adfb4cb2c9c0a1708b615310e75fe9785023c8fc"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0a4f5843d383b2d41c63988d36b904d92c0fd29e5857939309668047b5256a6d"
+    sha256 cellar: :any,                 arm64_sonoma:  "af38a9d97412877e02d3f6fca994931ce055d08d93f6d640ecbbf63629cdd727"
+    sha256 cellar: :any,                 arm64_ventura: "8112798ee0f5482b3973f9d2a4450e88f426473c6a9440722295bbfe37f2fcb7"
+    sha256 cellar: :any,                 sonoma:        "230581f0634fee56033e6bb3d7b3b3034ecf8d2dec2b3a61c8293a0502e4a554"
+    sha256 cellar: :any,                 ventura:       "9908ada36f06cb88a808f531dfddceed8b6de5ff168bf410f5be7c1dda6f015c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "afed48a4e0b3a169122e4de0a72538cd7cfebd572e6f60887ec721c4dd897cdc"
   end
 
   depends_on "cmake" => [:build, :test]
@@ -37,12 +37,10 @@ class Kdoctools < Formula
   uses_from_macos "libxslt"
   uses_from_macos "perl"
 
-  fails_with gcc: "5"
-
   resource "URI::Escape" do
     on_linux do
-      url "https://cpan.metacpan.org/authors/id/O/OA/OALDERS/URI-5.27.tar.gz"
-      sha256 "11962d8a8a8496906e5d34774affc235a1c95c112d390c0b4171f3e91e9e2a97"
+      url "https://cpan.metacpan.org/authors/id/O/OA/OALDERS/URI-5.32.tar.gz"
+      sha256 "9632067d34e14e0dae2da94631c4f25a387fcc48d06fa29330e8b3c04c4e913d"
     end
   end
 
@@ -68,7 +66,7 @@ class Kdoctools < Formula
     qt = Formula["qt"]
     qt_major = qt.version.major
 
-    (testpath/"CMakeLists.txt").write <<~EOS
+    (testpath/"CMakeLists.txt").write <<~CMAKE
       cmake_minimum_required(VERSION 3.5)
       include(FeatureSummary)
       find_package(ECM #{version} NO_MODULE)
@@ -99,7 +97,7 @@ class Kdoctools < Formula
       add_subdirectory(autotests)
       add_subdirectory(tests/create-from-current-dir-test)
       add_subdirectory(tests/kdoctools_install-test)
-    EOS
+    CMAKE
 
     cp_r (pkgshare/"autotests"), testpath
     cp_r (pkgshare/"tests"), testpath

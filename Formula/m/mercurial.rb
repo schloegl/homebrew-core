@@ -3,8 +3,8 @@
 class Mercurial < Formula
   desc "Scalable distributed version control system"
   homepage "https://mercurial-scm.org/"
-  url "https://www.mercurial-scm.org/release/mercurial-6.8.1.tar.gz"
-  sha256 "030e8a7a6d590e4eaeb403ee25675615cd80d236f3ab8a0b56dcc84181158b05"
+  url "https://www.mercurial-scm.org/release/mercurial-7.1.tar.gz"
+  sha256 "e8d920c83c38c475d8e973be60760a49dc35c3795d64bd6876e56adba622e5cb"
   license "GPL-2.0-or-later"
 
   livecheck do
@@ -13,20 +13,19 @@ class Mercurial < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "bc71e58954265ccb0d8fb59144faf97c8745953a95801b1cc01b3aae089e9beb"
-    sha256 arm64_sonoma:   "7e9916632146a76c3fa34f285354914d50b69b5dab7781f50d1506006e7dcb36"
-    sha256 arm64_ventura:  "e4da6f70ba065c491af1ed51fca882d2df31f83ee48e22447911656d23150e56"
-    sha256 arm64_monterey: "e1917cfd510fefa726349a35fcf6c61416b6b23937bbf33adb57c0d11a97dfd1"
-    sha256 sonoma:         "c991c86e05628e89b8faed78ccd12c3604dc776a7e2c97779489b1ae46104826"
-    sha256 ventura:        "1274f63a129b7484b010da27e73a35e028dfcf5af30bf51c14e9c85a9462365b"
-    sha256 monterey:       "fba48480e228cb68950b39f3d21cd155d1317e8a915a4eae289a20d7d64d9187"
-    sha256 x86_64_linux:   "d7f3cc98cca1c75f5e74779f5c6dcc404337ecb4f42e462b78922b5d44ad6720"
+    sha256 arm64_sequoia: "6dacb3df287bea96d511ed7b426d732765e73d58fb2f62bc07c1a79f58114fcb"
+    sha256 arm64_sonoma:  "5b23ef0870e9d09e7c4f134f54fe2e25c32bcd09f71b79f1dd7a629ba6aecb2f"
+    sha256 arm64_ventura: "ac7d24972bb07c8aacc76c90d0627e24bcb78e52b70c9cc515d1975479bf04ef"
+    sha256 sonoma:        "4e90388a0bea9f05a6a51d1887766a6f4b75496fe697ccb264ab5c029664bb43"
+    sha256 ventura:       "5c3d3a26313081fc4a25994e6b111f0f079eabf5c7b227dc56cf355aa1741c86"
+    sha256 arm64_linux:   "bde09bcba3cb076e8d79d9f4d688901af1e1c4eff5dd8225ee7842f1bac694d7"
+    sha256 x86_64_linux:  "8f70495b2234464cf5206cfdaa071db27a69b1b64e644f7aef38372b9af40302"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   def install
-    python3 = "python3.12"
+    python3 = "python3.13"
     system python3, "-m", "pip", "install", *std_pip_args(build_isolation: true), "."
 
     # Install chg (see https://www.mercurial-scm.org/wiki/CHg)
@@ -48,14 +47,14 @@ class Mercurial < Formula
     bash_completion.install share/"bash-completion/completions/hg"
   end
 
-  def caveats
+  def post_install
     return unless (opt_bin/"hg").exist?
     return unless deps.all? { |d| d.build? || d.test? || d.to_formula.any_version_installed? }
 
     cacerts_configured = `#{opt_bin}/hg config web.cacerts`.strip
     return if cacerts_configured.empty?
 
-    <<~EOS
+    opoo <<~EOS
       Homebrew has detected that Mercurial is configured to use a certificate
       bundle file as its trust store for TLS connections instead of using the
       default OpenSSL store. If you have trouble connecting to remote

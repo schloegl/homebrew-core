@@ -6,27 +6,28 @@ class FfmpegAT28 < Formula
   # None of these parts are used by default, you have to explicitly pass `--enable-gpl`
   # to configure to activate them. In this case, FFmpeg's license changes to GPL v2+.
   license "GPL-2.0-or-later"
-  revision 1
+  revision 6
 
   livecheck do
     url "https://ffmpeg.org/download.html"
     regex(/href=.*?ffmpeg[._-]v?(2\.8(?:\.\d+)*)\.t/i)
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 arm64_sequoia:  "107971d3ced72af8965bde978ce6c26102459befded121633daa8de503663a21"
-    sha256 arm64_sonoma:   "ce4b0294dbd37cc84c451100c83b35d0dbb4a4f62c3ae6b897577928c2824c62"
-    sha256 arm64_ventura:  "9a6e193bd3e2c76dd1d44daa7f9da5e07e66ce364d83908e5e7fe26512545e2f"
-    sha256 arm64_monterey: "878e4d8b5d2e0da0f3dc31a802e3081e9a5bccde2a71cb171490ee8f1b9a271b"
-    sha256 sonoma:         "a190fb614704211a2d38ef2199c4da37c0318f5e59b40c799e105f7dbd084c50"
-    sha256 ventura:        "39dc3173f263a1a52631f29a2a24c9ca99307e10ddb02317bd73b797f097dce6"
-    sha256 monterey:       "7a9bf7a4e873d9693d5c14b2340382e8731acc1633a50f2f4b18b67cfb55401f"
-    sha256 x86_64_linux:   "a547e14ec86a6927096e887ac5f7308cdfdd3f4e0d3341afb3367f2e86e0e82a"
+    sha256 arm64_sequoia: "b2b5a2cb076c1150472f241f684d64b8ee170e85179da7be276409fffffef5d0"
+    sha256 arm64_sonoma:  "5a73991225ba8ff8c1462247d1fe4f568db84a983e60087f33625be195941548"
+    sha256 arm64_ventura: "61475338ab916860308f4ff53cdb0c75982a4144536fca3d53387e1bfee55cfe"
+    sha256 sonoma:        "ebdfe6009272b14b3cefed2ef6c153b502739e4392068490284cdc589ffb1372"
+    sha256 ventura:       "f76acf642185c5648f3a696d9ff11018cf114c32c2b44cfe3a29eb8aa46220da"
+    sha256 arm64_linux:   "a5d9cd0c1a2f51e03f5ac5a8bf0adbb8550d388871a17b8fdc92ae46077c7079"
+    sha256 x86_64_linux:  "3b48f2311d7ac6b799427c5f3dc42f1fd7e7bf9014c3068bfab6373bf7a93b1d"
   end
 
   keg_only :versioned_formula
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "texi2html" => :build
   depends_on "yasm" => :build
 
@@ -118,6 +119,6 @@ class FfmpegAT28 < Formula
     # Create an example mp4 file
     mp4out = testpath/"video.mp4"
     system bin/"ffmpeg", "-y", "-filter_complex", "testsrc=rate=1:duration=1", mp4out
-    assert_predicate mp4out, :exist?
+    assert_path_exists mp4out
   end
 end

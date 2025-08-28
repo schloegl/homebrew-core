@@ -1,8 +1,8 @@
 class MediaInfo < Formula
   desc "Unified display of technical and tag data for audio/video"
   homepage "https://mediaarea.net/"
-  url "https://mediaarea.net/download/binary/mediainfo/24.06/MediaInfo_CLI_24.06_GNU_FromSource.tar.bz2"
-  sha256 "4001264380c5f4ed224b542de2b6f6c517aa64b9364b194e2ab2939f355fbbfc"
+  url "https://mediaarea.net/download/binary/mediainfo/25.07/MediaInfo_CLI_25.07_GNU_FromSource.tar.xz"
+  sha256 "d810a56b84a8f6c009958312459e1d7353b3722db8f18c2bc87da512ebd51482"
   license "BSD-2-Clause"
   head "https://github.com/MediaArea/MediaInfo.git", branch: "master"
 
@@ -12,17 +12,16 @@ class MediaInfo < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "fcfba4e54a79ed67933ee1adffc2ec21edbfb341895d11a95497a75cff31db28"
-    sha256 cellar: :any,                 arm64_sonoma:   "24ab01c2d04ff3dfef9140f7fb1c4c08a40f11f83a2d073cb6d0d2a9299e3947"
-    sha256 cellar: :any,                 arm64_ventura:  "e6bb4bf566a600f98b90ffbd502baff4e4612b762225bfe54d0e747058caade4"
-    sha256 cellar: :any,                 arm64_monterey: "0de46f4d1f87a446d0564bf44c4ecd1c04304053c0b2481c7f4ee84ab04648ba"
-    sha256 cellar: :any,                 sonoma:         "c3a1f44a8369d15d65ba73097f43086eac1acdc487f4cb23324d0f96540ca136"
-    sha256 cellar: :any,                 ventura:        "984d8dc333983a7fe824a0af5a6e70ddd094fa800e5af63e50fe03204fd81657"
-    sha256 cellar: :any,                 monterey:       "e8eabd1e4388f0ab62f33accfac14840a66087449e738380efc26611cf9f05aa"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "5113125409dbbbf87d710bfe56592ff9593cde08412e220757e4ee9de3fdcefb"
+    sha256 cellar: :any,                 arm64_sequoia: "2a7f41d3c3f534c273dc79a0983ee30e01acebbd86331837030dbab641269130"
+    sha256 cellar: :any,                 arm64_sonoma:  "4f09c007fab3aba0c0862c2a10f93e3b36d1af8b2d47cd323d8d9b02e356ec59"
+    sha256 cellar: :any,                 arm64_ventura: "577eca29681abdc343d85bac2c4ccf8e99dda4c2d95e49eb0ff13b2aa73beb65"
+    sha256 cellar: :any,                 sonoma:        "f66eff8e3999a7da57b8a70270cb1a330ab9f30451bdb093a592e85cae95fa69"
+    sha256 cellar: :any,                 ventura:       "185782a3449f4b8192091dfb4c6f53523eaa998f40fa746435c5eceebff945f0"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "f95ac55e58e4e262f301b99882aabc2aa494c662c8ef5458240c0bd39c5bd82d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "71f8a5e4c2dd42bf62fde4d09494995feb0a7cd8dd830c4f7d2621e1d9615dd2"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "libmediainfo"
   depends_on "libzen"
 

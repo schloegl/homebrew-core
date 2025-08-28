@@ -1,16 +1,12 @@
 class Pidof < Formula
   desc "Display the PID number for a given process name"
-  homepage "http://www.nightproductions.net/cli.htm"
-  url "http://www.nightproductions.net/downloads/pidof_source.tar.gz"
+  # `nightproductions.net` is no longer accessible, use internet archive urls instead.
+  homepage "https://web.archive.org/web/20240808152721/http://www.nightproductions.net/cli.htm"
+  url "https://web.archive.org/web/20240808152721/http://www.nightproductions.net/downloads/pidof_source.tar.gz"
   mirror "https://distfiles.macports.org/pidof/pidof_source.tar.gz"
   version "0.1.4"
   sha256 "2a2cd618c7b9130e1a1d9be0210e786b85cbc9849c9b6f0cad9cbde31541e1b8"
   license :cannot_represent
-
-  livecheck do
-    url :homepage
-    regex(/href=.*?pidof[^>]+>\s*Download \(v?(\d+(?:\.\d+)+)\)</i)
-  end
 
   bottle do
     rebuild 2
@@ -30,6 +26,9 @@ class Pidof < Formula
     sha256 cellar: :any_skip_relocation, el_capitan:     "d02c826db5564d7750c0e309a771b164f7764250507955d0b87d09837c3c2ba6"
   end
 
+  # `nightproductions.net` is no longer accessible
+  deprecate! date: "2025-01-12", because: :repo_removed
+
   # Hard dependency on sys/proc.h, which isn't available on Linux
   depends_on :macos
 
@@ -46,8 +45,8 @@ class Pidof < Formula
   end
 
   test do
-    assert_match "pidof version #{version}", shell_output(bin/"pidof -v")
-    (testpath/"homebrew_testing.c").write <<~EOS
+    assert_match "pidof version #{version}", shell_output("#{bin}/pidof -v")
+    (testpath/"homebrew_testing.c").write <<~C
       #include <unistd.h>
       #include <stdio.h>
 
@@ -57,7 +56,7 @@ class Pidof < Formula
         sleep(10);
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "homebrew_testing.c", "-o", "homebrew_testing"
     (testpath/"homebrew_testing").chmod 0555
 

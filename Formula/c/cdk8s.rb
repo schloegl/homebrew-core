@@ -1,17 +1,12 @@
 class Cdk8s < Formula
   desc "Define k8s native apps and abstractions using object-oriented programming"
   homepage "https://cdk8s.io/"
-  url "https://registry.npmjs.org/cdk8s-cli/-/cdk8s-cli-2.198.233.tgz"
-  sha256 "da971e3504a91c613d12e46dbcc4a1bd60d41d18614e955cabe381bae27435e3"
+  url "https://registry.npmjs.org/cdk8s-cli/-/cdk8s-cli-2.201.8.tgz"
+  sha256 "ac10ef1ff66547fa026f8e15ff5f11103c51b5b961a9d903546f4225c386d933"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "b5b297f88a2ef2e5f83993fa2ba163dd48819898f204611629eedf389221c9b5"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "b5b297f88a2ef2e5f83993fa2ba163dd48819898f204611629eedf389221c9b5"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "b5b297f88a2ef2e5f83993fa2ba163dd48819898f204611629eedf389221c9b5"
-    sha256 cellar: :any_skip_relocation, sonoma:        "6ce69e459a0a646d8561cac151b3b1cfd4c71b4ae9e28d29184f033612970054"
-    sha256 cellar: :any_skip_relocation, ventura:       "6ce69e459a0a646d8561cac151b3b1cfd4c71b4ae9e28d29184f033612970054"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b5b297f88a2ef2e5f83993fa2ba163dd48819898f204611629eedf389221c9b5"
+    sha256 cellar: :any_skip_relocation, all: "14c14b7acf908ce28a558b401d7be2f3af7e7867b7aa5870571a17d7321b3bcd"
   end
 
   depends_on "node"

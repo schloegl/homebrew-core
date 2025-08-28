@@ -2,8 +2,8 @@ class Mimirtool < Formula
   desc "CLI for interacting with Grafana Mimir"
   homepage "https://grafana.com/docs/mimir/latest/operators-guide/tools/mimirtool/"
   url "https://github.com/grafana/mimir.git",
-        tag:      "mimir-2.13.0",
-        revision: "4775ec156855ba1eb498e564f09abad35053a44f"
+        tag:      "mimir-2.17.0",
+        revision: "e150acbc8f6061b1995bff5105f786843c6a5277"
   license "AGPL-3.0-only"
   head "https://github.com/grafana/mimir.git", branch: "main"
 
@@ -17,18 +17,16 @@ class Mimirtool < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "714e9bf96fe0595298dc5471cab264c9052019f86ea697e0c6685d55b4fb1dac"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "42f2396e85628e925fb8c4b85139e2eefb48098d1033b48bebcc84f41299718d"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "e687ecd64eb4bd6e96a51f346dfe9b4d5f3c32f8dc103a4217392ad611c5a3ea"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "04eccdf0d86f5542a09d161b0131d39620d5e046be8f8f007b395dfc9b0da119"
-    sha256 cellar: :any_skip_relocation, sonoma:         "4c11711a318ae7785eae435d754456ea4393e8b17b9a35e2970324c1882af05b"
-    sha256 cellar: :any_skip_relocation, ventura:        "703a71770894c0c6b94a748f8cef0064a1b5c46c47cc5b2c90f6c0e2db10a57f"
-    sha256 cellar: :any_skip_relocation, monterey:       "4a39332303a17db3d6974ce817feaea3effe4fdfa9cd81186b28132bf078c702"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "e4c4acf4e18e856ea816e8b4c01e2b7af0a29eb263e5c04b2e636f83e120f955"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "37219e8d50cbff831cbb1b4c97f21dfff43c661d031504e559278b8e50c6f402"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "08a154e0679266efc6489fa618a65461221e9a864d4761505e3ede54fd322a1f"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "6d8886f806322bf80db2f98665af9e2b2594db1f8602b159ebba7c60c9018d9c"
+    sha256 cellar: :any_skip_relocation, sonoma:        "9ed26e5f42b1b45157246b09185dfba967e07a732126b0446313712d748bec05"
+    sha256 cellar: :any_skip_relocation, ventura:       "c751ea1d9de7b0a23c44a2e1e28c8b3f183c25f7ebc11b9a1fb6c7d6655dbbcb"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "dc13ee45da03358b998238c9e119acf02d6fbdb34fb57d54c9fca6148f1b13de"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "13bca41d815bc264391ec21606414860f2f996978171165b5fb00724e7581e5c"
   end
 
-  # use "go" again after https://github.com/grafana/mimir/issues/9033 is fixed and released
-  depends_on "go@1.22" => :build
+  depends_on "go" => :build
 
   def install
     system "make", "BUILD_IN_CONTAINER=false", "GENERATE_FILES=false", "cmd/mimirtool/mimirtool"
@@ -40,7 +38,7 @@ class Mimirtool < Formula
     assert_match version.to_s, shell_output("#{bin}/mimirtool version")
 
     # Check that the binary runs as expected by testing the 'rules check' command
-    test_rule = <<~EOF
+    test_rule = <<~YAML
       namespace: my_namespace
       groups:
         - name: example
@@ -48,7 +46,7 @@ class Mimirtool < Formula
           rules:
             - record: job_http_inprogress_requests_sum
               expr: sum by (job) (http_inprogress_requests)
-    EOF
+    YAML
 
     (testpath/"rule.yaml").write(test_rule)
 

@@ -1,10 +1,9 @@
 class Tdb < Formula
   desc "Trivial DataBase, by the Samba project"
   homepage "https://tdb.samba.org/"
-  url "https://www.samba.org/ftp/tdb/tdb-1.4.12.tar.gz"
-  sha256 "6ce4b27498812d09237ece65a0d6dfac0941610e709848ecb822aa241084cd7a"
+  url "https://www.samba.org/ftp/tdb/tdb-1.4.14.tar.gz"
+  sha256 "144f407d42ed7a0ec1470a40ef17ad41133fe910bce865dd9fe084d49c907526"
   license "GPL-3.0-or-later"
-  revision 1
 
   livecheck do
     url "https://www.samba.org/ftp/tdb/"
@@ -12,14 +11,13 @@ class Tdb < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "a2511841a9090a5d083c4c61dbbda8d378f2237a5638d3c1d2805eec5c08f313"
-    sha256 cellar: :any,                 arm64_sonoma:   "087ce2cb58a14fbf681d9fa4fdabef760b2cb59720c10afde568f9924f519542"
-    sha256 cellar: :any,                 arm64_ventura:  "636099e08034e97b5d496a621b9d0962dbf98a992f1f925e1d021215d23b64d3"
-    sha256 cellar: :any,                 arm64_monterey: "aa58b35c7f2dea471aef80a78fbc1e90361cc6c783fb321ee8781be87a35ee6f"
-    sha256 cellar: :any,                 sonoma:         "f83228b9d5dee8e140c701f797644c98d411c5f2196a4ee14f644c3a8a42871f"
-    sha256 cellar: :any,                 ventura:        "75ce6baff37c0039b05829dcac010deb642ab420f366e3181615f11092323881"
-    sha256 cellar: :any,                 monterey:       "d3b9ac9dfeea91cd2683935359481954544dee063c41e0af0ea6f5b7d06e723f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3757f7a8141b9c77fa03aed41f6718cc5e3ee694d4728cecb467bd21e2453848"
+    sha256 cellar: :any,                 arm64_sequoia: "867552b59be50ba8f9acab7d343dfb13ddf5fc01cdb5dad9b65514e126f1be9e"
+    sha256 cellar: :any,                 arm64_sonoma:  "2bc5ca7cdcdb65b9a9742315da84853eb713aa703f083777e7bcdb85ae85ab37"
+    sha256 cellar: :any,                 arm64_ventura: "ceac8c5018279b2d32ce36c6b8a2e935bcb5021cb35cb7b36990dde903025224"
+    sha256 cellar: :any,                 sonoma:        "e57ec266ee5dbe513c5d218f99c366493871569433a3a383565876833fb95807"
+    sha256 cellar: :any,                 ventura:       "f8c8fb3c9a322a0473aee4d9dfa4d2cbab77fff71cf529106583a88401f718c8"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "16ca3025453f3622fe6f49a74b3f4eb4f7f6b2612392a0819ca89799aacc0bc9"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "6a312fe0c0bb79b98ce580dab59fd56fcc8306b1adcda8cc7cb34bf2525986bc"
   end
 
   uses_from_macos "python" => :build
@@ -39,7 +37,7 @@ class Tdb < Formula
 
     # database creation
     pipe_output("#{bin}/tdbtool", "create #{testdb}\ninsert foo bar\n", 0)
-    assert_predicate testpath/testdb, :exist?
+    assert_path_exists testpath/testdb
     assert_match "Database integrity is OK and has 1 records.", pipe_output("#{bin}/tdbtool #{testdb}", "check\n")
     assert_match "key 3 bytes: foo", pipe_output("#{bin}/tdbtool #{testdb}", "keys\n")
   end

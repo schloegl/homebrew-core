@@ -1,8 +1,8 @@
 class Dust < Formula
   desc "More intuitive version of du in rust"
   homepage "https://github.com/bootandy/dust"
-  url "https://github.com/bootandy/dust/archive/refs/tags/v1.1.1.tar.gz"
-  sha256 "98cae3e4b32514e51fcc1ed07fdbe6929d4b80942925348cc6e57b308d9c4cb0"
+  url "https://github.com/bootandy/dust/archive/refs/tags/v1.2.3.tar.gz"
+  sha256 "424b26adfbafeac31da269ecb3f189eca09803e60fad90b3ff692cf52e0aeeee"
   license "Apache-2.0"
   head "https://github.com/bootandy/dust.git", branch: "master"
 
@@ -12,14 +12,13 @@ class Dust < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "00f415d936d1e3311e0bce04b8173d981acd4e81df7b71df95c9c8dc4f0feaa0"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "34754de221680f27966d1f9144384f16309344bbcbbdfd4a5abaaecfeda21ce7"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "1e7f5ad55de4ecaf061118e300993278ec4d86effc7907f1c3371914c9ffc80d"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "b095326b2ae7fe89d4cef623c0ee606059a2d43fbc98d89a956cc41bc86ac0f3"
-    sha256 cellar: :any_skip_relocation, sonoma:         "3f70304285ff4bfd98e4a4eea86b63aa31b7cd131f17e40ae6c60e78b577d64b"
-    sha256 cellar: :any_skip_relocation, ventura:        "e34c0a5399f84cfe5129300f51bbc2f0da6bb7610d87c1272fae14900bc50c66"
-    sha256 cellar: :any_skip_relocation, monterey:       "1171134bc2953b1b9b4dddeec80dc5d373d53565aa82443fcfcc1ecbfe27c71a"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "61c98c2c3b31a1be9febaf4bdc3eadf64ac8876c1b26403bf384a092954b116c"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "13d106cde2640253e23c18c035490d070f493ec1857e5d3accbe990f0884bcff"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "0e60f1cdcd20231549cc68c1aef4a45cc952cef13f32fcd78799d6d9f9becbbf"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "58e0a6dc31b4535da9aa1f2051f71d6b60c28df37ef82385a95b7a72089fe60c"
+    sha256 cellar: :any_skip_relocation, sonoma:        "aa1cd3f1e018cd69676f469d4a2bda21c63bbba4f9af975c07e6df2d85e28279"
+    sha256 cellar: :any_skip_relocation, ventura:       "1c89bb6736dcbc915b7b9b03d4bf8e421b6e0d93c0e725b43876d321a0074ceb"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "95b52f20a5ebb1c86f159965b2df71fff01c376964f8d88e1e68cc99bcc1ef83"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f1929bf6d09aad67060840c5a1cd466ef5fddb0c9d4a0674d11b1cd516ff027b"
   end
 
   depends_on "rust" => :build
@@ -27,7 +26,7 @@ class Dust < Formula
   def install
     system "cargo", "install", *std_cargo_args
 
-    bash_completion.install "completions/dust.bash"
+    bash_completion.install "completions/dust.bash" => "dust"
     fish_completion.install "completions/dust.fish"
     zsh_completion.install "completions/_dust"
 

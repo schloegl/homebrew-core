@@ -1,21 +1,21 @@
 class TerraformProviderLibvirt < Formula
   desc "Terraform provisioning with Linux KVM using libvirt"
   homepage "https://github.com/dmacvicar/terraform-provider-libvirt"
-  url "https://github.com/dmacvicar/terraform-provider-libvirt/archive/refs/tags/v0.8.0.tar.gz"
-  sha256 "a200169400d0a7d8a181f756f7c3a7504107829d228de29ae101260249b322aa"
+  url "https://github.com/dmacvicar/terraform-provider-libvirt/archive/refs/tags/v0.8.3.tar.gz"
+  sha256 "9d04ca75d7cb3db511ea251369890d1bdf2a6b7d77c4d4ce5d3cb0d2c0214252"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "8c7d51ae333cb9afbe6148142916d4b0f373f7738413c1ae7fdf4d09feddef57"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "8c7d51ae333cb9afbe6148142916d4b0f373f7738413c1ae7fdf4d09feddef57"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "8c7d51ae333cb9afbe6148142916d4b0f373f7738413c1ae7fdf4d09feddef57"
-    sha256 cellar: :any_skip_relocation, sonoma:        "d0aa5766be44a043eecef11b3a409d2e55a823bb72fddc82e5c79e3b257bc791"
-    sha256 cellar: :any_skip_relocation, ventura:       "d0aa5766be44a043eecef11b3a409d2e55a823bb72fddc82e5c79e3b257bc791"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "cbf450b3d09a1c6e7a7afabf5eefef2e03b292ae2ea2a0f597f342735d4efb26"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "b4965933e5ec39c5f04ae18a08828df9e0dbbda8f7d80d1278c4951493fe9d15"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "b4965933e5ec39c5f04ae18a08828df9e0dbbda8f7d80d1278c4951493fe9d15"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "b4965933e5ec39c5f04ae18a08828df9e0dbbda8f7d80d1278c4951493fe9d15"
+    sha256 cellar: :any_skip_relocation, sonoma:        "15e9fab3f999c737143ad9c66ff18fb3861f17035636179d3ffe752fbb120933"
+    sha256 cellar: :any_skip_relocation, ventura:       "15e9fab3f999c737143ad9c66ff18fb3861f17035636179d3ffe752fbb120933"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "42969edbf2abbbba627cf3bd855e749aba8a2cbf570e5da9fa1a45a912444374"
   end
 
   depends_on "go" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "libvirt"
 

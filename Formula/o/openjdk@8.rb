@@ -1,9 +1,10 @@
 class OpenjdkAT8 < Formula
   desc "Development kit for the Java programming language"
   homepage "https://openjdk.java.net/"
-  url "https://github.com/openjdk/jdk8u/archive/refs/tags/jdk8u422-ga.tar.gz"
-  version "1.8.0-422"
-  sha256 "3931898b4336f0e583a5e97df7e5c339d859d53afaff6dafe20124107e836ebe"
+  url "https://github.com/openjdk/jdk8u/archive/refs/tags/jdk8u462-ga.tar.gz"
+  version "1.8.0-462"
+  BUILD_NUMBER = "b08".freeze # Please update when a new GA release is available: https://wiki.openjdk.org/display/jdk8u.
+  sha256 "5341fe5275046100d9795078a1d6e1a9cabdf3e7df334592a35c91c66976168b"
   license "GPL-2.0-only"
 
   livecheck do
@@ -15,23 +16,26 @@ class OpenjdkAT8 < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 sonoma:       "cb987dc52503fcabc91b10c4700fc5c46d10f32c36caf3698d850a6d57124026"
-    sha256 cellar: :any,                 ventura:      "25366b96f7324d1499663cb679cacd0d826d174e05d9f69b4c2e4f9e5fe44507"
-    sha256 cellar: :any,                 monterey:     "4f75d93506ba05e827ab68b1e6e415584bed506eb881c7088f3f27b621e4aac3"
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "1bc71861ff5e8041f23f12b299f45b6bcf4b47cfba392500f800add2b7693d50"
+    sha256 cellar: :any,                 sonoma:       "07d5be31a5d93d91474b0d6aa2e5e3f39811540bb85eb3d352b5003d82181dc6"
+    sha256 cellar: :any,                 ventura:      "342f4fda7b3b716296c3912a468b39d19692464a17ae92e817de1fe22234f707"
+    sha256 cellar: :any_skip_relocation, arm64_linux:  "7ebcac0a651a5e634ce34801361cfaf8e8a8abcf3cb27cf82565e32028b84621"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "f756f0290bdee4fb9b512d9d710bbc0c7e0de38f6a77b792003eb15950b7f7b6"
   end
 
   keg_only :versioned_formula
 
   depends_on "autoconf" => :build
-  depends_on "pkg-config" => :build
-  depends_on arch: :x86_64
+  depends_on "pkgconf" => :build
   depends_on "freetype"
   depends_on "giflib"
 
   uses_from_macos "cups"
   uses_from_macos "unzip"
   uses_from_macos "zip"
+
+  on_macos do
+    depends_on arch: :x86_64
+  end
 
   on_monterey :or_newer do
     depends_on "gawk" => :build
@@ -49,20 +53,35 @@ class OpenjdkAT8 < Formula
     depends_on "libxtst"
   end
 
-  # Oracle doesn't serve JDK 7 downloads anymore, so we use Zulu JDK 7 for bootstrapping.
-  # https://www.azul.com/downloads/?version=java-7-lts&package=jdk
+  # NOTE: Oracle doesn't serve JDK 7 downloads anymore, so we use Zulu JDK 7 for bootstrapping.
+  # https://www.azul.com/downloads/?version=java-7-lts&package=jdk&show-old-builds=true#zulu
   resource "boot-jdk" do
     on_macos do
       url "https://cdn.azul.com/zulu/bin/zulu7.56.0.11-ca-jdk7.0.352-macosx_x64.tar.gz"
       sha256 "31909aa6233289f8f1d015586825587e95658ef59b632665e1e49fc33a2cdf06"
     end
     on_linux do
-      url "https://cdn.azul.com/zulu/bin/zulu7.56.0.11-ca-jdk7.0.352-linux_x64.tar.gz"
-      sha256 "8a7387c1ed151474301b6553c6046f865dc6c1e1890bcf106acc2780c55727c8"
+      on_arm do
+        url "https://cdn.azul.com/zulu/bin/zulu8.82.0.21-ca-jdk8.0.432-linux_aarch64.tar.gz"
+        sha256 "b400f65b63243e41851f20b64374def6ae687de8d15bfb37ef876c2d77548bf5"
+      end
+      on_intel do
+        url "https://cdn.azul.com/zulu/bin/zulu7.56.0.11-ca-jdk7.0.352-linux_x64.tar.gz"
+        sha256 "8a7387c1ed151474301b6553c6046f865dc6c1e1890bcf106acc2780c55727c8"
+      end
     end
   end
 
-  # Fix `clang++ -std=gnu++11` compile failure issue on MacOS.
+  # NOTE: Since macOS Sonoma or newer don't include the required headers for JNF (JavaNativeFoundation.framework),
+  # we will use the headers provided at https://github.com/apple/openjdk.
+  resource "JavaNativeFoundation" do
+    on_sonoma :or_newer do
+      url "https://github.com/apple/openjdk/archive/refs/tags/iTunesOpenJDK-1014.0.2.12.1.tar.gz"
+      sha256 "e8556a73ea36c75953078dfc1bafc9960e64593bc01e733bc772d2e6b519fd4a"
+    end
+  end
+
+  # Fix `clang++ -std=gnu++11` compile failure issue on macOS.
   patch :p0 do
     url "https://raw.githubusercontent.com/macports/macports-ports/04ad4a17332e391cd359271965d4c6dac87a7eb2/java/openjdk8/files/0001-8181503-Can-t-compile-hotspot-with-c-11.patch"
     sha256 "a02e0ea7c70390796e46b8b6565f986fedc17a08aa039ee3306438a39a60538a"
@@ -79,8 +98,7 @@ class OpenjdkAT8 < Formula
     resource("boot-jdk").stage boot_jdk
     java_options = ENV.delete("_JAVA_OPTIONS")
 
-    # Work around clashing -I/usr/include and -isystem headers,
-    # as superenv already handles this detail for us.
+    # Work around clashing -I/usr/include and -isystem headers, as superenv already handles this detail for us.
     inreplace "common/autoconf/flags.m4",
               '-isysroot \"$SYSROOT\"', ""
     inreplace "common/autoconf/toolchain.m4",
@@ -96,7 +114,7 @@ class OpenjdkAT8 < Formula
         s.gsub! "MACOSX_VERSION_MIN=10.7.0", "MACOSX_VERSION_MIN=#{MacOS.version}"
       end
     else
-      # Fix linker errors on brewed GCC
+      # Fix linker errors on brewed GCC.
       inreplace "common/autoconf/flags.m4", "-Xlinker -O1", ""
       inreplace "hotspot/make/linux/makefiles/gcc.make", "-Xlinker -O1", ""
     end
@@ -110,6 +128,7 @@ class OpenjdkAT8 < Formula
       --with-milestone=fcs
       --with-native-debug-symbols=none
       --with-update-version=#{update}
+      --with-build-number=#{BUILD_NUMBER}
       --with-vendor-bug-url=#{tap.issues_url}
       --with-vendor-name=#{tap.user}
       --with-vendor-url=#{tap.issues_url}
@@ -124,25 +143,27 @@ class OpenjdkAT8 < Formula
         --with-zlib=system
       ]
 
-      # Work around SDK issues with JavaVM framework.
-      if MacOS.version <= :catalina
-        sdk_path = MacOS::CLT.sdk_path(MacOS.version)
-        ENV["SDKPATH"] = ENV["SDKROOT"] = sdk_path
-        javavm_framework_path = sdk_path/"System/Library/Frameworks/JavaVM.framework/Frameworks"
-        args += %W[
-          --with-extra-cflags=-F#{javavm_framework_path}
-          --with-extra-cxxflags=-F#{javavm_framework_path}
-        ]
-        ldflags << "-F#{javavm_framework_path}"
-      # Fix "'JavaNativeFoundation/JavaNativeFoundation.h' file not found" issue on MacOS Sonoma.
-      elsif MacOS.version == :sonoma
-        javavm_framework_path = "/Library/Developer/CommandLineTools/SDKs/MacOSX13.sdk/System/Library/Frameworks"
-        args += %W[
-          --with-extra-cflags=-F#{javavm_framework_path}
-          --with-extra-cxxflags=-F#{javavm_framework_path}
-        ]
-        ldflags << "-F#{javavm_framework_path}"
+      extra_cflags = []
+      extra_cxxflags = []
+
+      # On macOS Sonoma or newer, we provide the missing JNF headers from an external resource.
+      if MacOS.version >= :sonoma
+        resource("JavaNativeFoundation").stage do
+          jnf_headers = buildpath/"jnf-headers"
+          jnf_headers.install Pathname.pwd/"apple/JavaNativeFoundation/JavaNativeFoundation"
+          # Work around for missing 'JavaNativeFoundation/JavaNativeFoundation.h' in MacosxDebuggerLocal.m.
+          (buildpath/"hotspot/agent/src/os/bsd").install_symlink jnf_headers
+          # Add JNF headers to extra flags.
+          extra_cflags << "-I#{jnf_headers}"
+          extra_cxxflags << "-I#{jnf_headers}"
+        end
       end
+
+      # Work around Xcode 16 bug: https://bugs.openjdk.org/browse/JDK-8340341.
+      extra_cflags << "-mllvm -enable-constraint-elimination=0" if DevelopmentTools.clang_build_version == 1600
+
+      args << "--with-extra-cflags=#{extra_cflags.join(" ")}" unless extra_cflags.empty?
+      args << "--with-extra-cxxflags=#{extra_cxxflags.join(" ")}" unless extra_cxxflags.empty?
     else
       args += %W[
         --with-toolchain-type=gcc
@@ -152,7 +173,8 @@ class OpenjdkAT8 < Formula
         --with-fontconfig=#{HOMEBREW_PREFIX}
         --with-stdc++lib=dynamic
       ]
-      extra_rpath = rpath(source: libexec/"lib/amd64", target: libexec/"jre/lib/amd64")
+      arch = Hardware::CPU.arm? ? "aarch64" : "amd64"
+      extra_rpath = rpath(source: libexec/"lib"/arch, target: libexec/"jre/lib"/arch)
       ldflags << "-Wl,-rpath,#{extra_rpath.gsub("$", "\\$$$$")}"
     end
     args << "--with-extra-ldflags=#{ldflags.join(" ")}"
@@ -190,13 +212,13 @@ class OpenjdkAT8 < Formula
   end
 
   test do
-    (testpath/"HelloWorld.java").write <<~EOS
+    (testpath/"HelloWorld.java").write <<~JAVA
       class HelloWorld {
         public static void main(String args[]) {
           System.out.println("Hello, world!");
         }
       }
-    EOS
+    JAVA
 
     system bin/"javac", "HelloWorld.java"
 

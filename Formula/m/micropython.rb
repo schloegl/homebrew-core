@@ -1,22 +1,22 @@
 class Micropython < Formula
   desc "Python implementation for microcontrollers and constrained systems"
   homepage "https://www.micropython.org/"
-  url "https://github.com/micropython/micropython/releases/download/v1.23.0/micropython-1.23.0.tar.xz"
-  sha256 "0ab283c2fc98d466c1ff26692bee46abaeeab55d488a36fc3cb6372cb8fb390d"
+  url "https://github.com/micropython/micropython/releases/download/v1.26.0/micropython-1.26.0.tar.xz"
+  sha256 "a1b8e0f6bf7a8a78b55ac865c46c4c45f9623a86a1785d2063ff1cb3b6e661d7"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "1c369cfa8cc0ff68f03cc20bcaed1dceaf707516887fe119d3a6d066f673ae1d"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "f033be5a444507e39018097ca119d79c5f558e7131f4edf9aa779c7f2c927aed"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "0008a2980b28e2d667e0c117af60d98a0cce95143682e77409148c1b05a3f120"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "926a24badb2f366052f71c65ac5e137ee7073b379585290aff5f704f974a2312"
-    sha256 cellar: :any_skip_relocation, sonoma:         "4e302bf2b99a2686d2fa5a0ce3847b7ea7bff83952c19b719c65dff582469f99"
-    sha256 cellar: :any_skip_relocation, ventura:        "b27a137fc0838dc99f989bb76d133bc0796457b1f94df3f153ac93971df35b44"
-    sha256 cellar: :any_skip_relocation, monterey:       "798cf0293bc2177715e7712b702b7dafab132ebc09602ea133404c9422bc4b0c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "8b5eee660350ffe515a12a0f440cc311226227da4b69071ba3be38fb09eed9fb"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "df6fc28eb7c271612a7ae06a929efa487c5cbda642f1b0802210153f56a4a6f8"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "2c53b91a15b1ce1984c668da550c849616a8e2924af26e5e2fc1689cb540268b"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "19e2d9b648b60081b66e6f2a3ba99d4c034f71b456d5e669bd3a9594b8656ecb"
+    sha256 cellar: :any_skip_relocation, sequoia:       "a33b0b1e4d7f464185db49ddd1d58746c303a5f645b5a1c716854928138ed95c"
+    sha256 cellar: :any_skip_relocation, sonoma:        "0b6a6a6686514b773787871eab3306dcc31342d6a5fc15bf47206a56c3385a23"
+    sha256 cellar: :any_skip_relocation, ventura:       "d203f50da1f48cf6be08ab09fdb66f6f36ccf896bdecf00f475bb8c9e6bb62f0"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "e11a276d98b7cbb529a82a6c143a564b70e3050f12bdd17ef3f5bb7277683c26"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "768d71065f1b0fcd878b73d3eedb759a850aaa1f99b1b8beddc510fa84e2417b"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   uses_from_macos "libffi", since: :catalina
   uses_from_macos "python" # Requires libffi v3 closure API
 
@@ -29,13 +29,13 @@ class Micropython < Formula
     lib_version = "6" if OS.linux?
 
     # Test the FFI module
-    (testpath/"ffi-hello.py").write <<~EOS
+    (testpath/"ffi-hello.py").write <<~PYTHON
       import ffi
 
       libc = ffi.open("#{shared_library("libc", lib_version)}")
       printf = libc.func("v", "printf", "s")
       printf("Hello!\\n")
-    EOS
+    PYTHON
 
     system bin/"mpy-cross", "ffi-hello.py"
     system bin/"micropython", "ffi-hello.py"

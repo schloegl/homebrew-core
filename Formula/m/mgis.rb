@@ -1,43 +1,34 @@
 class Mgis < Formula
   desc "Provide tools to handle MFront generic interface behaviours"
   homepage "https://thelfer.github.io/mgis/web/index.html"
-  url "https://github.com/thelfer/MFrontGenericInterfaceSupport/archive/refs/tags/MFrontGenericInterfaceSupport-2.2.tar.gz"
-  sha256 "b3776d7b3a534ca626525a42b97665f7660ae2b28ea57b3f53fd7e8538da1ceb"
+  url "https://github.com/thelfer/MFrontGenericInterfaceSupport/archive/refs/tags/MFrontGenericInterfaceSupport-3.0.tar.gz"
+  sha256 "dae915201fd20848b69745dabda1a334eb242d823af600825b8b010ddc597640"
   license any_of: ["LGPL-3.0-only", "CECILL-1.0"]
-  revision 3
+  revision 2
   head "https://github.com/thelfer/MFrontGenericInterfaceSupport.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "b7779b3b5c38db9f720dfe50cf812955434ff9fa6eb9b42edb47583bcce28c45"
-    sha256 cellar: :any,                 arm64_sonoma:   "73c148a736218658862b6627cd7c2864bc74f01afeaa7f948f4af7e0bc991c1f"
-    sha256 cellar: :any,                 arm64_ventura:  "488f7e70c16abb8b4c6845717cda7df904f2d1d757614dfdd63bf80dc6d1beb5"
-    sha256 cellar: :any,                 arm64_monterey: "51acb9671ffeacc21b644d28e0fc5f7f9b874b1b928e06f8d93de061d013043b"
-    sha256 cellar: :any,                 sonoma:         "edd070e94b3729e3fb0313846ed723cfe12c8e9139dd63f2e52ace7c1c82a3e4"
-    sha256 cellar: :any,                 ventura:        "ec42419ee95dddba6b674c1f73687543d51dd07f938696cb6830d1ce2187c515"
-    sha256 cellar: :any,                 monterey:       "a4ae2c41254776a40b86c3a224369c5dacf2c8bc4515ff45f769e3957d27a24e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "16ffae790702d03708dde3d9465844e67f576d50f92b9e8e0d25c88815678797"
+    sha256 cellar: :any,                 arm64_sequoia: "eeb9d97eba82219d9aa871c357ad729b38897f62654db238d0b8aacfec4f8af6"
+    sha256 cellar: :any,                 arm64_sonoma:  "825e6a2ea310053a15dacc280a00cd1c14aa200985a588375fb37eeedd808096"
+    sha256 cellar: :any,                 arm64_ventura: "2c95f087b9a89026c345477fce004a13ad88376804c7222da9310f5637b86aad"
+    sha256 cellar: :any,                 sonoma:        "2a270fb617d534331a5d15b27c4ac77edf5921456d3eb5cd6cab5e56a1bbd5e2"
+    sha256 cellar: :any,                 ventura:       "adb7eefc819507ef06028d0075d17f2f1919570dd3eac0be42187cf3c3348e39"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "12bedcbecfb86831e8e5457debb9fc6abd14d75cb562cc48fb1fbf3a1a8508a4"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d7d57981d82eb7676b31402f7d3fac080a52f5252adfb838cf026a517f1e247e"
   end
 
   depends_on "cmake" => :build
-  depends_on "llvm" => :build
 
   depends_on "boost-python3"
+  depends_on "gcc" # for gfortran
   depends_on "numpy"
-  depends_on "python@3.12"
-
-  on_macos do
-    depends_on "gcc"
-  end
+  depends_on "python@3.13"
 
   def python3
-    which("python3.12")
+    which("python3.13")
   end
 
   def install
-    # Work around an Xcode 15 linker issue which causes linkage against LLVM's
-    # libunwind due to it being present in a library search path.
-    ENV.remove "HOMEBREW_LIBRARY_PATHS", Formula["llvm"].opt_lib if DevelopmentTools.clang_build_version >= 1500
-
     args = [
       "-Denable-portable-build=ON",
       "-Denable-website=OFF",
@@ -50,7 +41,20 @@ class Mgis < Formula
       "-Denable-enable-static=OFF",
       "-Ddisable_python_library_linking=ON",
       "-DCMAKE_INSTALL_RPATH=#{rpath}",
+      "-DCMAKE_POLICY_VERSION_MINIMUM=3.5",
+      "-DPython_ADDITIONAL_VERSIONS=#{Language::Python.major_minor_version python3}",
     ]
+
+    if OS.mac?
+      # Use -dead_strip_dylibs to avoid linkage to boost container and graph modules
+      # Issue ref: https://github.com/boostorg/boost/issues/985
+      linker_flags = %W[
+        -Wl,-dead_strip_dylibs
+        -Wl,-rpath,#{rpath(source: prefix/Language::Python.site_packages(python3)/"mgis")}
+      ]
+      args << "-DCMAKE_MODULE_LINKER_FLAGS=#{linker_flags.join(" ")}"
+    end
+
     system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"

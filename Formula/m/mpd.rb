@@ -1,56 +1,40 @@
 class Mpd < Formula
   desc "Music Player Daemon"
-  homepage "https://github.com/MusicPlayerDaemon/MPD"
+  homepage "https://www.musicpd.org/"
+  url "https://github.com/MusicPlayerDaemon/MPD/archive/refs/tags/v0.24.5.tar.gz"
+  sha256 "ab7f9a2315eff97cc47dff5da9b9c675b1764cd50f161dc295b8a0d1956a6244"
   license "GPL-2.0-or-later"
-  revision 3
+  revision 1
   head "https://github.com/MusicPlayerDaemon/MPD.git", branch: "master"
 
-  stable do
-    url "https://github.com/MusicPlayerDaemon/MPD/archive/refs/tags/v0.23.15.tar.gz"
-    sha256 "d2865d8f8ea79aa509b1465b99a2b8f3f449fe894521c97feadc2dca85a6ecd2"
-
-    # Compatibility with fmt 11
-    patch do
-      url "https://github.com/MusicPlayerDaemon/MPD/commit/3648475f871c33daa9e598c102a16e5a1a4d4dfc.patch?full_index=1"
-      sha256 "5733f66678b3842c8721c75501f6c25085808efc42881847af11696cc545848e"
-    end
-
-    # Fix missing include
-    patch do
-      url "https://github.com/MusicPlayerDaemon/MPD/commit/e380ae90ebb6325d1820b6f34e10bf3474710899.patch?full_index=1"
-      sha256 "661492a420adc11a3d8ca0c4bf15e771f56e2dcf1fd0042eb6ee4fb3a736bd12"
-    end
-  end
-
   bottle do
-    sha256 cellar: :any, arm64_sequoia:  "1477a629f78d3a59ec276c2ed76fcee30fab741a21c3afa05fef1f26c1f4c336"
-    sha256 cellar: :any, arm64_sonoma:   "a0c5ec95e9166169ff6f6cde2f41d7c5af4aba7f96f69c09843706f811c18b02"
-    sha256 cellar: :any, arm64_ventura:  "a53881cb62b2a4a5ffb73c3ada4d68ae81d7b83fdd3bddbcdb0f621289e2ca45"
-    sha256 cellar: :any, arm64_monterey: "79e0919e8c4439882903acb722454e7b90ccf83b3c53c1343db1d2c37eba7484"
-    sha256 cellar: :any, sonoma:         "8e89240bcd8df2bdf4b1c77365f8bde9234b23196ca5886d511e62a4a6202637"
-    sha256 cellar: :any, ventura:        "eecfcd3df5af3e08b03eb11308b95a81188f886f8fd770847254351ba7c3defc"
-    sha256 cellar: :any, monterey:       "89927c46ef03920991d68708b95d4449a2772797e2e88e689b15d915fbcfd169"
-    sha256               x86_64_linux:   "75d0d90d316c773424592fec34f88647029259f8f71b7b3547481bfa0250c2b3"
+    sha256 cellar: :any, arm64_sequoia: "5809f895e4f36df7dfe9cd6115ced215066d18e24146bc1646da8d884c82e384"
+    sha256 cellar: :any, arm64_sonoma:  "e200e95bd457b777fbfb98763ee865a1318132062e451b9cb91ed8d8b91cb89f"
+    sha256 cellar: :any, arm64_ventura: "6af46c4708518c8a1ebc16aa47616078fa8a8bc884f2873ca6c72f65e3310149"
+    sha256 cellar: :any, sonoma:        "0d0a91a3835a7e94a7670acc0aa0d4b9f7b98e8124677a44249409f54aa82a88"
+    sha256 cellar: :any, ventura:       "e169a7a312e55ed9d4fa4ba8fa6d263b49fc84d37f9967269664e928d27dc14e"
+    sha256               arm64_linux:   "db5bed42c87c198cd094d7f2af25ac771ba3e24ff921a7bf0e9a8e251759f562"
+    sha256               x86_64_linux:  "79eb6b625c1a3428a72a5d237162793d58caac56edf6d3adb42af7d26c2eb05e"
   end
 
-  depends_on "boost" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "nlohmann-json" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "chromaprint"
   depends_on "expat"
   depends_on "faad2"
-  depends_on "ffmpeg"
+  depends_on "ffmpeg@7"
   depends_on "flac"
   depends_on "fluid-synth"
   depends_on "fmt"
-  depends_on "glib"
-  depends_on "icu4c"
+  depends_on "game-music-emu"
+  depends_on "icu4c@77"
   depends_on "lame"
   depends_on "libao"
-  depends_on "libgcrypt"
   depends_on "libid3tag"
+  depends_on "libmikmod"
   depends_on "libmpdclient"
   depends_on "libnfs"
   depends_on "libogg"
@@ -71,6 +55,14 @@ class Mpd < Formula
   uses_from_macos "curl"
   uses_from_macos "zlib"
 
+  on_ventura :or_older do
+    depends_on "llvm"
+
+    fails_with :clang do
+      cause "Needs C++20 std::make_unique_for_overwrite"
+    end
+  end
+
   on_linux do
     depends_on "systemd" => :build
     depends_on "alsa-lib"
@@ -80,19 +72,19 @@ class Mpd < Formula
     depends_on "systemd"
   end
 
-  fails_with gcc: "5"
-
   def install
-    # mpd specifies -std=gnu++0x, but clang appears to try to build
-    # that against libstdc++ anyway, which won't work.
-    # The build is fine with G++.
-    ENV.libcxx
+    if OS.mac? && MacOS.version <= :ventura
+      ENV.llvm_clang
+      ENV.append "LDFLAGS", "-L#{Formula["llvm"].opt_lib}/unwind -lunwind"
+      # When using Homebrew's superenv shims, we need to use HOMEBREW_LIBRARY_PATHS
+      # rather than LDFLAGS for libc++ in order to correctly link to LLVM's libc++.
+      ENV.prepend_path "HOMEBREW_LIBRARY_PATHS", Formula["llvm"].opt_lib/"c++"
+    end
 
     args = %W[
       --sysconfdir=#{etc}
       -Dmad=disabled
       -Dmpcdec=disabled
-      -Dsoundcloud=disabled
       -Dao=enabled
       -Dbzip2=enabled
       -Dchromaprint=enabled
@@ -104,6 +96,9 @@ class Mpd < Formula
       -Dupnp=pupnp
       -Dvorbisenc=enabled
       -Dwavpack=enabled
+      -Dgme=enabled
+      -Dmikmod=enabled
+      -Dnlohmann_json=enabled
       -Dsystemd_system_unit_dir=#{lib}/systemd/system
       -Dsystemd_user_unit_dir=#{lib}/systemd/user
     ]

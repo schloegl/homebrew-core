@@ -1,17 +1,18 @@
 class Mdless < Formula
   desc "Provides a formatted and highlighted view of Markdown files in Terminal"
   homepage "https://github.com/ttscoff/mdless"
-  url "https://github.com/ttscoff/mdless/archive/refs/tags/2.1.48.tar.gz"
-  sha256 "e19e9396c88a345e5599465a24ccedf4f0a45a09d96b4f32ebe9376d8a1a73d6"
+  url "https://github.com/ttscoff/mdless/archive/refs/tags/2.1.62.tar.gz"
+  sha256 "1819b0b082b6cea95be542e39828b3ced344334bcfe62a318df71386518d07a6"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "1451017f727c91e915545eea5cfc801e0bcd35acbaaab9f1449053cae61c7dbb"
-    sha256 cellar: :any,                 arm64_sonoma:  "1f5f17c23bbf67aa0c65b7dd21628ba8453f9b09c0957cd23471f8eede9482f8"
-    sha256 cellar: :any,                 arm64_ventura: "96726ed0918b680495010aa154320415f7476f62017cc89fc5d28f9c9a8f0636"
-    sha256 cellar: :any,                 sonoma:        "48d7d51fdf66617debfa9b9e6763323ebd3ebe2dab6b35dbef39a3e1be219c96"
-    sha256 cellar: :any,                 ventura:       "30f9b25c1c1c4851a809d940bd4d9a7bef6b224f6a43fd4196b4da2e926cba56"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4543136bc75d1293d70fd9e4756c25c67efb4296fd67e5c5f82b44c1aee0bb99"
+    sha256 cellar: :any,                 arm64_sequoia: "2f685489abc329323095d92133a0dcd31441d10307f0474bbb4413b53d2274b7"
+    sha256 cellar: :any,                 arm64_sonoma:  "0592587133ab75b44b46fbf957856c047ba3e1ee2109c1b26053c87d6f64ff29"
+    sha256 cellar: :any,                 arm64_ventura: "fa86f8095663d1c7d4a8f925133a5ef316fd37dc9137c7a1de6095fe9ebc0a1d"
+    sha256 cellar: :any,                 sonoma:        "8f1f01fbd37167238a0ea1619d6adf3ba541a2284a9922939d74364bec043da0"
+    sha256 cellar: :any,                 ventura:       "5664722266afd9637e16601f148ed0b02a4bb8340d5c6a70a1ca1e004b558d34"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "6dd44adf15bc57b0f13d299b49282f0cf9aa3ca90c58e14db93598d3fb7243af"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "851c4c16ebee885c363fd057e77d06e88dbea21ff49bf59a573d29b47ec1a0bf"
   end
 
   # Requires Ruby >= 2.7
@@ -27,10 +28,10 @@ class Mdless < Formula
 
   test do
     assert_match "mdless #{version}", shell_output("#{bin}/mdless --version")
-    (testpath/"test.md").write <<~EOS
+    (testpath/"test.md").write <<~MARKDOWN
       # title first level
       ## title second level
-    EOS
+    MARKDOWN
     out = shell_output("#{bin}/mdless --no-color -P test.md")
     assert_match(/^title first level =+$/, out)
     assert_match(/^title second level -+$/, out)

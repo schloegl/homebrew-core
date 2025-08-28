@@ -13,25 +13,33 @@ class Ldns < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "1ab882f529bbd6505a781395684a45e9fe251ddc3ec1cf771f2e467c6e2f735f"
-    sha256 cellar: :any,                 arm64_sonoma:   "7dfc3b636d9b41f1697678de47415fee711f497f9e837708027b8e401435e006"
-    sha256 cellar: :any,                 arm64_ventura:  "741fa5c80857655f1df62a4016591b17ec8d6cbff9aac4bdf28d4ffc6e0c8d93"
-    sha256 cellar: :any,                 arm64_monterey: "dc37a2cbf234ba5d639dd7bde6fba7768a8cd27dca2e7e253706fef90df732e4"
-    sha256 cellar: :any,                 sonoma:         "c14da9be67894ff294e802e10415237300b92f970afcd223113c9e066a27c155"
-    sha256 cellar: :any,                 ventura:        "e51669bed782dd848c7f66af9c13ce1b580b33b0dea3797fa42721bb28ca871d"
-    sha256 cellar: :any,                 monterey:       "6541a7aeae1dc75afe6a9a7e41e63a57b8eb13713e13c2f97b203f1d44d85a0a"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "18e17dee3c78315e4b42f3aa15d8cb2b1f2efbc21b3fb444f373e3afa119ff84"
+    rebuild 2
+    sha256 cellar: :any,                 arm64_sequoia: "2707eaadad1873f87ee5f9daf71f7710aee3be3ca4116768c2f1514f59704d65"
+    sha256 cellar: :any,                 arm64_sonoma:  "3006f0623486121db7991757fa52fc933f285aa0d98439ffe75a053dc4c7dcc7"
+    sha256 cellar: :any,                 arm64_ventura: "eb53602f7be7e1ba9d42c2a1dcb3f70e926a85007d1338dceebb43b81f65598c"
+    sha256 cellar: :any,                 sonoma:        "40cbf3faab35cbab0f7b832df080aa47f972131042eb0be3ec5fc6ac44d5f4ab"
+    sha256 cellar: :any,                 ventura:       "2d2f7f630d32e895bf745396161bdfbb24b6cca7d0bf9e9528f461376c19ddfc"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "8e068612edda67b9d8024855a41b7133e4af0003173e741f80e2f45abdaaab7c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0677ecaba9460fa437cc99fe78a048ec2acceb109f9ccc6e414bcb5ded94cdac"
   end
 
-  depends_on "python-setuptools" => :build
   depends_on "swig" => :build
   depends_on "openssl@3"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   conflicts_with "drill", because: "both install a `drill` binary"
 
+  # build patch to work with swig 4.3.0, upstream pr ref, https://github.com/NLnetLabs/ldns/pull/257
+  patch do
+    url "https://github.com/NLnetLabs/ldns/commit/49b2e4a938d263bb8c532e64f33690551e43ca0c.patch?full_index=1"
+    sha256 "e7dd20b06cf1b0728d0822118a8ae231405579a9f35b0d66ac6422249c2be518"
+  end
+
+  def python3
+    "python3.13"
+  end
+
   def install
-    python3 = "python3.12"
     args = %W[
       --with-drill
       --with-examples

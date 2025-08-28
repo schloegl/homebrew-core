@@ -1,10 +1,10 @@
 class F3d < Formula
   desc "Fast and minimalist 3D viewer"
   homepage "https://f3d-app.github.io/f3d/"
-  url "https://github.com/f3d-app/f3d/archive/refs/tags/v2.5.0.tar.gz"
-  sha256 "d7f6dd7d9e4465c1f44d168c3a38aad24569a25907673180c8791a783e73f02f"
+  url "https://github.com/f3d-app/f3d/archive/refs/tags/v3.2.0.tar.gz"
+  sha256 "2a3cff123821be41d99489e080a7153812e58a86598fa9f4988099660bf6a947"
   license "BSD-3-Clause"
-  revision 2
+  revision 1
 
   # Upstream creates releases that use a stable tag (e.g., `v1.2.3`) but are
   # labeled as "pre-release" on GitHub before the version is released, so it's
@@ -15,19 +15,22 @@ class F3d < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:  "1a68d410824cc006cd3cf9680be8a666866a0545aa584315b87c479cd1e97603"
-    sha256 cellar: :any,                 arm64_ventura: "e3146c04da9452ce86f5a3a760b8decc7d860cd82789f1705a9d002e6f79ac90"
-    sha256 cellar: :any,                 sonoma:        "9951f6caaee5baf1acc8af3611f56145323ed2b052bd5fe61f5c1e877e1a0b31"
-    sha256 cellar: :any,                 ventura:       "2af6df34acb758afab52877b765bcfaf423c7a7b98978b9aed3f457a50963262"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e163716cc6d6fab4e93e10e718791b2eb3c653ce0cbbd42d18e07d1eefa3cb89"
+    sha256 cellar: :any,                 arm64_sonoma:  "fa73b612a321285ce86719635d65e663c3c3670fd8350f4995f9cea307be4af0"
+    sha256 cellar: :any,                 arm64_ventura: "1862dc61d98c3f0aedbb4ab24766a0b69997033ab58a8d9f12d07096259cfb8d"
+    sha256 cellar: :any,                 sonoma:        "75702595f0c7de99da89389274dff831a13223d5131a1393e5587e2e9ffe6454"
+    sha256 cellar: :any,                 ventura:       "326558254996b510d4a9c0cd9c00ce2c166ec73d639cdb9299d4231a74ec8119"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fe22206e260acebdfbf02190ca957c1055aba1bfce9e35f2da098ce85bd20144"
   end
 
   depends_on "cmake" => :build
   depends_on "alembic"
   depends_on "assimp"
   depends_on "glew"
+  depends_on "jsoncpp"
   depends_on "opencascade"
   depends_on "vtk"
+
+  uses_from_macos "zlib"
 
   on_macos do
     depends_on "freeimage"
@@ -35,27 +38,26 @@ class F3d < Formula
     depends_on "glew"
     depends_on "hdf5"
     depends_on "imath"
-    depends_on "jsoncpp"
     depends_on "libaec"
     depends_on "netcdf"
     depends_on "tbb"
-    depends_on "tcl-tk"
+    depends_on "tcl-tk@8"
     depends_on "zstd"
   end
 
   on_linux do
+    depends_on "libx11"
     depends_on "mesa"
   end
 
   def install
     args = %W[
-      -DBUILD_SHARED_LIBS:BOOL=ON
-      -DBUILD_TESTING:BOOL=OFF
-      -DCMAKE_INSTALL_RPATH:STRING=#{rpath}
-      -DF3D_MACOS_BUNDLE:BOOL=OFF
-      -DF3D_PLUGIN_BUILD_ALEMBIC:BOOL=ON
-      -DF3D_PLUGIN_BUILD_ASSIMP:BOOL=ON
-      -DF3D_PLUGIN_BUILD_OCCT:BOOL=ON
+      -DBUILD_SHARED_LIBS=ON
+      -DCMAKE_INSTALL_RPATH=#{rpath}
+      -DF3D_MACOS_BUNDLE=OFF
+      -DF3D_PLUGIN_BUILD_ALEMBIC=ON
+      -DF3D_PLUGIN_BUILD_ASSIMP=ON
+      -DF3D_PLUGIN_BUILD_OCCT=ON
     ]
 
     system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
@@ -66,6 +68,8 @@ class F3d < Formula
   end
 
   test do
+    assert_match version.to_s, shell_output("#{bin}/f3d --version")
+
     # create a simple OBJ file with 3 points and 1 triangle
     (testpath/"test.obj").write <<~EOS
       v 0 0 0
@@ -74,9 +78,8 @@ class F3d < Formula
       f 1 2 3
     EOS
 
-    f3d_out = shell_output("#{bin}/f3d --verbose --no-render --geometry-only #{testpath}/test.obj 2>&1").strip
-    assert_match(/Loading.+obj/, f3d_out)
-    assert_match "Number of points: 3", f3d_out
-    assert_match "Number of polygons: 1", f3d_out
+    f3d_out = shell_output("#{bin}/f3d --verbose --no-render #{testpath}/test.obj 2>&1").strip
+    assert_match(/Loading files:.+\n.+obj/, f3d_out)
+    assert_match "Camera focal point: 0.5,0.5,0", f3d_out
   end
 end

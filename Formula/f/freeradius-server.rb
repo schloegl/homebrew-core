@@ -1,40 +1,32 @@
 class FreeradiusServer < Formula
   desc "High-performance and highly configurable RADIUS server"
   homepage "https://freeradius.org/"
+  url "https://github.com/FreeRADIUS/freeradius-server/archive/refs/tags/release_3_2_8.tar.gz"
+  sha256 "7a42562d4c1b0dfd67783b995b33df6ea0983573b2a3b2b99c368dda647e562c"
   license all_of: ["GPL-2.0-or-later", "LGPL-2.1-or-later"]
   head "https://github.com/FreeRADIUS/freeradius-server.git", branch: "master"
-
-  stable do
-    url "https://github.com/FreeRADIUS/freeradius-server/archive/refs/tags/release_3_2_6.tar.gz"
-    sha256 "65e099edf5d72ac2f9f7198c800cf0199544f974aae13c93908ab739815b9625"
-
-    # Fix -flat_namespace being used
-    patch do
-      url "https://github.com/FreeRADIUS/freeradius-server/commit/6c1cdb0e75ce36f6fadb8ade1a69ba5e16283689.patch?full_index=1"
-      sha256 "7e7d055d72736880ca8e1be70b81271dd02f2467156404280a117cb5dc8dccdc"
-    end
-  end
 
   livecheck do
     url :stable
     regex(/^release[._-](\d+(?:[._]\d+)+)$/i)
   end
 
+  no_autobump! because: :incompatible_version_format
+
   bottle do
-    sha256 arm64_sequoia:  "b57698488a0307b2f51fe141e52c4da6126901ce43516cc0bbf66bff100907d1"
-    sha256 arm64_sonoma:   "03ac0c2ee9d93ae9bc4b7f28b35d67eeba3b699078eaa782155a5c7355424dc4"
-    sha256 arm64_ventura:  "42af2bf53bd21966d2a2048881f5b6773c935d1db77227f2d42d96c074b93734"
-    sha256 arm64_monterey: "baf53a6faa43f12e55bdd0ad39ad7b1bd00e90db782bab615c261c165ea764f9"
-    sha256 sonoma:         "1c647250256f77554efdd419b2757e959ad0123ca8ac7ca342f26384c70ae88e"
-    sha256 ventura:        "da61e1b705d1af4903ce70f2d94e85b7abcc34ca4db039eaccdde4d0ba72e7d8"
-    sha256 monterey:       "677823159554422189b154388db1ac27c4300a911220e6135a8e9eb06b9571c5"
-    sha256 x86_64_linux:   "b2a0d3866dfdb56a732021856ce0dd4250f32adf595dc0353905eab037143877"
+    sha256 arm64_sequoia: "6063a6adaebb53d19c4677da34e9fbb92682875047d17ec465394d7bd3018a03"
+    sha256 arm64_sonoma:  "8a80dda119bb5a5a1d3a0f3494699185751383275f0bfcfad217c32bcc5601f1"
+    sha256 arm64_ventura: "ab409f75783ba2740ac66a4caaae1b2dfcc325cf24d982b1b7b3aa35a1e1afca"
+    sha256 sonoma:        "0efd2ad25501001b530f1373a684881b02c7ad06c8829be91b3427a57e40bf72"
+    sha256 ventura:       "f4f9bef36f34e50e16a086913cdd0c0d82b9b6bec9436ad99d7d2467861ef7c5"
+    sha256 arm64_linux:   "df9ea57c317949304f50d7c3811556b7819fbd68cc67b2656f2d69cfd671bf14"
+    sha256 x86_64_linux:  "cdc657b0560a0a8e1cf68496c5104bff301daa10cb5150953cbcbd515034d326"
   end
 
   depends_on "collectd"
   depends_on "json-c"
   depends_on "openssl@3"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "talloc"
 
   uses_from_macos "krb5"

@@ -1,18 +1,18 @@
 class Falco < Formula
   desc "VCL parser and linter optimized for Fastly"
   homepage "https://github.com/ysugimoto/falco"
-  url "https://github.com/ysugimoto/falco/archive/refs/tags/v1.10.0.tar.gz"
-  sha256 "2e30a930d26284a4cdfd1b27b5ef3eb4ef0451fea0d0c4065312ada217d53332"
+  url "https://github.com/ysugimoto/falco/archive/refs/tags/v1.20.0.tar.gz"
+  sha256 "1b92d86ff014fca05e56d3522362ec4947ed3743f4efcd7041d4fdda69d0703b"
   license "MIT"
   head "https://github.com/ysugimoto/falco.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "2cf8c285491831399db4fff01be149f3b249a55191b46052f7a65d168a27b6a3"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "2cf8c285491831399db4fff01be149f3b249a55191b46052f7a65d168a27b6a3"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "2cf8c285491831399db4fff01be149f3b249a55191b46052f7a65d168a27b6a3"
-    sha256 cellar: :any_skip_relocation, sonoma:        "d97bb6310301b3a8a6c6f0aac25faf370a0adcdb13a304d47730cb9f2bba3501"
-    sha256 cellar: :any_skip_relocation, ventura:       "d97bb6310301b3a8a6c6f0aac25faf370a0adcdb13a304d47730cb9f2bba3501"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "673dc71e66e63edccc4e4aaf3fc6ad544a9305867f404205dfedacfe1b59fc02"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "2121dc08b2cc2e6c793eba15ee0a2f5c47738ffe5868a46f81375a8cd51ceff4"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "2121dc08b2cc2e6c793eba15ee0a2f5c47738ffe5868a46f81375a8cd51ceff4"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "2121dc08b2cc2e6c793eba15ee0a2f5c47738ffe5868a46f81375a8cd51ceff4"
+    sha256 cellar: :any_skip_relocation, sonoma:        "36e7f914791e3c758460a2f4c42460205e0b139c66923deade23828e04a4da11"
+    sha256 cellar: :any_skip_relocation, ventura:       "36e7f914791e3c758460a2f4c42460205e0b139c66923deade23828e04a4da11"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e23061f82fc96e1c79362b91044a743e4f965fe51d52ef8ff82610a9631c1864"
   end
 
   depends_on "go" => :build
@@ -23,7 +23,7 @@ class Falco < Formula
   end
 
   test do
-    assert_match version.to_s, shell_output("#{bin}/falco -V 2>&1", 1)
+    assert_match version.to_s, shell_output("#{bin}/falco -V 2>&1")
 
     pass_vcl = testpath/"pass.vcl"
     pass_vcl.write <<~EOS

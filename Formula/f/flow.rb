@@ -1,18 +1,21 @@
 class Flow < Formula
   desc "Static type checker for JavaScript"
   homepage "https://flow.org/"
-  url "https://github.com/facebook/flow/archive/refs/tags/v0.247.1.tar.gz"
-  sha256 "2874cd8f609cc2e1bd526d3e9b34cb493715c3eb612d1113e41440454561e85c"
+  url "https://github.com/facebook/flow/archive/refs/tags/v0.280.0.tar.gz"
+  sha256 "bc7f7f19945f128f3560111387adf86825e097d401931f4e6126ea2dd361b1cf"
   license "MIT"
   head "https://github.com/facebook/flow.git", branch: "main"
 
+  no_autobump! because: :bumped_by_upstream
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "e4dff5c4683ad71104cfe37f33d4f6992a79904ff9fe78f166f9accad667b406"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "cde190878a5a77f356c06d80599046d5333f0c1544011d6c29afce2f50cac7da"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "26c1b8e6101a52f8e91d83323f73efd0f715c2c04a0a218c8038558218ccbbe2"
-    sha256 cellar: :any_skip_relocation, sonoma:        "e5c49771640596d956640347aff6d90efebcf274f04406920b0dda4e1d26f490"
-    sha256 cellar: :any_skip_relocation, ventura:       "73629924cd981a09af9524a25e423fa0702b6dc700ca128ab43dd717c503d65e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "75bb4229c88a3c2592094da86b044bd24b02039931422c703e2b8d2ff951d706"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "2fc892687f4a9ab89d1245b818f193f67d08fbef65ad82014480e16d6aff9991"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "77f336989cf3928f77c3ba2ef1ae79ef29558bbdc0a7ba3abf88642362870597"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "e5c4dc188c182e35e5f9d11785d5b74d983c038f434b349156c869ee84001058"
+    sha256 cellar: :any_skip_relocation, sonoma:        "9be59bf5e2ce7efda1b4c7bdbfb043e467415a8f405c703f5737e5a4190810bc"
+    sha256 cellar: :any_skip_relocation, ventura:       "18b844a40d5449ef61a7d81169600e8458213667787b12d76ed06833f44dc33c"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "317e92c4b89be81b27e5d1401a98e6974e192bcdbbdbf115d0dea8ee0271d791"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1470c7c653eb1c7ea9da8483dfbbf2bfd3accdbab7dd3a38c5790f5522d3a7a5"
   end
 
   depends_on "ocaml" => :build
@@ -35,10 +38,10 @@ class Flow < Formula
 
   test do
     system bin/"flow", "init", testpath
-    (testpath/"test.js").write <<~EOS
+    (testpath/"test.js").write <<~JS
       /* @flow */
       var x: string = 123;
-    EOS
+    JS
     expected = /Found 1 error/
     assert_match expected, shell_output("#{bin}/flow check #{testpath}", 2)
   end

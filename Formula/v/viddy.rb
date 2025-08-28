@@ -1,18 +1,19 @@
 class Viddy < Formula
   desc "Modern watch command"
   homepage "https://github.com/sachaos/viddy"
-  url "https://github.com/sachaos/viddy/archive/refs/tags/v1.1.5.tar.gz"
-  sha256 "abc01bc4eae92f6fbf11ea220f1ef8ee88e48f80b090e09d0c5d5e4cf23d9065"
+  url "https://github.com/sachaos/viddy/archive/refs/tags/v1.3.0.tar.gz"
+  sha256 "59d5be862cf6b522ed069e276c28f927e5d2cea13525513959e1577a5ad6afd5"
   license "MIT"
   head "https://github.com/sachaos/viddy.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "43015ce049479dbf069f0bbf6aa194748dfd853cce65457c9f239d58db591cd3"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "98dd8b7044e558011fca0bc95f3633871f6c0f67d01233184b69f3512e546e8b"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "76104110cc4785febdb44a2dd3862ce63e257180ffe3279f8b9994360e169eae"
-    sha256 cellar: :any_skip_relocation, sonoma:        "793b688972baa4cfc8ffc97574eaaca452ec103358bfa93e374b348920545946"
-    sha256 cellar: :any_skip_relocation, ventura:       "0595711bf25f8a4fd4f992beafe0e945c0b8a4b2a18b0d11312f98bbd0fdf96b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "057f9ffa5ba094fc9c2e75ba4de808eabc9a6e24a9292919c28a57cd505185fc"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "618af16f6d99f7f2309e65cc33b60eea874f15ae8a0965b873c1a8ef1f9bda41"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "a9475b43a3238107af27cd6d6f14621af0e5e0fd0504a3fddad1e33277f3b7af"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "5132a22bfe77049378f62158a9c2fb9e52ab6f04c426e9cfdff4e7c78a0de06f"
+    sha256 cellar: :any_skip_relocation, sonoma:        "a635acfdd97d4fb6f785a0164db30c399430f156b8012b85ad82a3872f39b869"
+    sha256 cellar: :any_skip_relocation, ventura:       "81a7bf5985de9f5702b68665dfa75f562819d363b5d6a4c882c5ef9b778ed18d"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "3f3f38348b9fd1683ec0e625e899e8254fd6a7d1f54d2f0e7d3b09dd887aca16"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2936c3ac0cc4092280d63ccc8ef986cfaad49c117fc763266ae435edaa1626e2"
   end
 
   depends_on "rust" => :build

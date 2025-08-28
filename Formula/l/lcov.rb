@@ -1,24 +1,19 @@
-require "language/perl"
-
 class Lcov < Formula
-  include Language::Perl::Shebang
-
   desc "Graphical front-end for GCC's coverage testing tool (gcov)"
   homepage "https://github.com/linux-test-project/lcov"
-  url "https://github.com/linux-test-project/lcov/releases/download/v2.1/lcov-2.1.tar.gz"
-  sha256 "4d01d9f551a3f0e868ce84742fb60aac4407e3fc1622635a07e29d70e38f1faf"
+  url "https://github.com/linux-test-project/lcov/releases/download/v2.3.2/lcov-2.3.2.tar.gz"
+  sha256 "6fed6cf48757d5083202be3356dfa6d64afa12d96d691745fad7e4c9ebe90bfa"
   license "GPL-2.0-or-later"
   head "https://github.com/linux-test-project/lcov.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "7a5765f99a9a61a1f836eae369ab504e9c3672c5e3f1aaa755c13e21997406d3"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "c5227fd780afbeb63d61e7646e43473c15157d84840f71e397240f38adba9ca0"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "fea977607a4b92fa0edd2075ddc3ec1b76ea2278f18d377fe815cd15f59e3a4c"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "91761101ce9137775227f043e3872a44679bd2146a5afdba847d2aeafb8b1f86"
-    sha256 cellar: :any_skip_relocation, sonoma:         "2fcbef5018279b40b1dc3439b46591123184230a7d50803ff1a6031c13849213"
-    sha256 cellar: :any_skip_relocation, ventura:        "037f9b16970269251708dc5d82567199f9c4f9ee5981ed7087252d10d7f4ed57"
-    sha256 cellar: :any_skip_relocation, monterey:       "1ff5a2c4f189e4aa8f67af85f9d95e6c2cab9f4aab493bbdb93e9b25d2e0224f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "1300ff4721e5dc4659694fc040ae89069098c14c2ba2a2a1c2dba7e4946e0a63"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "4498b08e44efa8648daf15f0cf0b19790243ca95b2958c319e1d5d5cea472b9a"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "2830097b2e32ed6836147688e10d9655905ce720145b8b3bc36708cd0d7eefcb"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "a1434db23ab5fd0a229137fdef631311f201470ca04b42c546590ec572221117"
+    sha256 cellar: :any_skip_relocation, sonoma:        "2aefa08cb92d2a5b0435e63613c2bb5974aee5c66c5c13226705369cccb98afb"
+    sha256 cellar: :any_skip_relocation, ventura:       "d8efeaa69d83f287c1576f2dced7a0ef9064676f967026c43fba97ea7376a18b"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "fda628e98a0f0b0ae575073a9c1c4320dd6bf3c77574c0fed002c7e831d18574"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2bb1f24ba2f1590f3ac1335fed49ec403fc23212dee7a513738c63e6efba95c3"
   end
 
   uses_from_macos "perl"
@@ -177,7 +172,7 @@ class Lcov < Formula
   end
 
   def install
-    ENV.prepend_create_path "PERL5LIB", libexec+"lib/perl5"
+    ENV.prepend_create_path "PERL5LIB", libexec/"lib/perl5"
 
     resources.each do |r|
       r.stage do
@@ -193,34 +188,24 @@ class Lcov < Formula
       end
     end
 
-    system "make", "PREFIX=#{prefix}", "BIN_DIR=#{bin}", "MAN_DIR=#{man}", "install"
-
-    # Disable dynamic selection of perl which may cause segfault when an
-    # incompatible perl is picked up.
-    # https://github.com/Homebrew/homebrew-core/issues/4936
-    rewrite_shebang detected_perl_shebang, *bin.children
-
+    system "make", "PREFIX=#{prefix}", "install"
     bin.env_script_all_files(libexec/"bin", PERL5LIB: ENV["PERL5LIB"])
   end
 
   test do
-    gcc = ENV.cc
-    gcov = "gcov"
-
-    (testpath/"hello.c").write <<~EOS
+    (testpath/"hello.c").write <<~C
       #include <stdio.h>
-      int main(void)
-      {
-          puts("hello world");
-          return 0;
+      int main() {
+        puts("hello world");
+        return 0;
       }
-    EOS
+    C
 
-    system gcc, "-g", "-O2", "--coverage", "-o", "hello", "hello.c"
+    system ENV.cc, "-g", "-O2", "--coverage", "-o", "hello", "hello.c"
     system "./hello"
-    system bin/"lcov", "--gcov-tool", gcov, "--directory", ".", "--capture", "--output-file", "all_coverage.info"
+    system bin/"lcov", "--gcov-tool", "gcov", "--directory", ".", "--capture", "--output-file", "all_coverage.info"
 
-    assert_predicate testpath/"all_coverage.info", :exist?
+    assert_path_exists testpath/"all_coverage.info"
     assert_includes (testpath/"all_coverage.info").read, testpath/"hello.c"
   end
 end

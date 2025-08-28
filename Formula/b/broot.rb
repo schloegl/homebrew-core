@@ -1,20 +1,19 @@
 class Broot < Formula
   desc "New way to see and navigate directory trees"
   homepage "https://dystroy.org/broot/"
-  url "https://github.com/Canop/broot/archive/refs/tags/v1.44.0.tar.gz"
-  sha256 "a235f9e326d39416b484ea5e677642194f726b7683bd2d5dcd1520ba37afb34d"
+  url "https://github.com/Canop/broot/archive/refs/tags/v1.47.0.tar.gz"
+  sha256 "25aa9eaefe1ae7b2853325d726cd97d5eeca1a24df35b01b92ee462d88c6a0f1"
   license "MIT"
   head "https://github.com/Canop/broot.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "28b4df80cc3bbc17bcc37209a8a6244bb262c8a6684245b919e4ae160262ac97"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "bfd9e8ce40bba6628a8e927a0fa5f15c94caf8bf5301fbfc3363a9dea7e16c2c"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "6828c9677283a9b9e261d6cfed4136e58333152274180fa54efd2acc0fa0ab2d"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "78f64820619d6260b07ac016aae26766f21059048224033cf435bdd7ea75dd6d"
-    sha256 cellar: :any_skip_relocation, sonoma:         "22e422df1ed9511c8bdcb7ce79851ef1ee19e2867767f9cb2474fa9244a7bccd"
-    sha256 cellar: :any_skip_relocation, ventura:        "91c748c42eab51ff77bbb45e8cd624606e91fb5b3fe4be3d79ac8fe33e4832fd"
-    sha256 cellar: :any_skip_relocation, monterey:       "bcb1ba8dc609296d60b3813377f552dc92146b8e71bcd6e1e1e4d0d62c2a50d0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "7790acbdade308c9bb60619749b8c84b594b6a7b1ef39244073af1345ff7e974"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "ed0a15c89810d2eb5d79a8698d1d5ad0b2401e6db88b9896739e12fea30ff91a"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "bcb12ee6194f60b867809caeb7cb3a8ae1e18163d65fbfafc65a555f786385a3"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "d1c0edd26ab9e0493a075f87b0f9c1f8fe7f59d3896ec1886e1d352eb01df8e2"
+    sha256 cellar: :any_skip_relocation, sonoma:        "421ea37b19c3eed9b27a5f8de5534dfa80c3a90de1a7ac46587050ee4530ff1a"
+    sha256 cellar: :any_skip_relocation, ventura:       "5fed4c612bfb9a7fa81cf484ef42dd03494775d95ae7b848c95dcd034672f33f"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "6076d4079b899b405df90427c8294675511fb22c825473726820512b6e7c9494"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a938c83af92cc3f003fe9e66c55b0eaebd7d36b243e4577b1437918eccb2f1fc"
   end
 
   depends_on "rust" => :build
@@ -40,30 +39,28 @@ class Broot < Formula
     fish_completion.install "#{out_dir}/br.fish"
     zsh_completion.install "#{out_dir}/_broot"
     zsh_completion.install "#{out_dir}/_br"
-    # Bash completions are not compatible with Bash 3 so don't use v1 directory.
-    # bash: complete: nosort: invalid option name
-    # Issue ref: https://github.com/clap-rs/clap/issues/5190
-    (share/"bash-completion/completions").install "#{out_dir}/broot.bash" => "broot"
-    (share/"bash-completion/completions").install "#{out_dir}/br.bash" => "br"
+    bash_completion.install "#{out_dir}/broot.bash" => "broot"
+    bash_completion.install "#{out_dir}/br.bash" => "br"
   end
 
   test do
-    return if OS.linux? && ENV["HOMEBREW_GITHUB_ACTIONS"]
-
     output = shell_output("#{bin}/broot --help")
     assert_match "lets you explore file hierarchies with a tree-like view", output
-
     assert_match version.to_s, shell_output("#{bin}/broot --version")
 
     require "pty"
     require "io/console"
-    PTY.spawn(bin/"broot", "-c", ":print_tree", "--color", "no", "--outcmd", testpath/"output.txt",
-                err: :out) do |r, w, pid|
+    PTY.spawn(bin/"broot", "-c", ":print_tree", "--color", "no", "--outcmd", testpath/"output.txt") do |r, w, pid|
       r.winsize = [20, 80] # broot dependency terminal requires width > 2
-      w.write "n\r"
-      assert_match "New Configuration files written in", r.read
-      Process.wait(pid)
+      w.write "n\r\n"
+      output = ""
+      begin
+        r.each { |line| output += line }
+      rescue Errno::EIO
+        # GNU/Linux raises EIO when read is done on closed pty
+      end
+      assert_match "New Configuration files written in", output
+      assert_predicate Process::Status.wait(pid), :success?
     end
-    assert_equal 0, $CHILD_STATUS.exitstatus
   end
 end

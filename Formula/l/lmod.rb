@@ -1,23 +1,22 @@
 class Lmod < Formula
   desc "Lua-based environment modules system to modify PATH variable"
   homepage "https://lmod.readthedocs.io"
-  url "https://github.com/TACC/Lmod/archive/refs/tags/8.7.49.tar.gz"
-  sha256 "f27877fd73926bb08cab923306d86609e6aaf525fb75842b8035f18ae3e18c5e"
+  url "https://github.com/TACC/Lmod/archive/refs/tags/8.7.65.tar.gz"
+  sha256 "f4650e013dc69183b4990a26f0ab1fdda44ffc787dcd610c7552303103b1a153"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "416ec241b257f9d019c840b3bdd36ed86b89467ffcd882740d6510b85add2620"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "3f42150b9e6671690a5f7ecc86e1abc1fba7947253763737223499d4455c3c40"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "fb9b9e4f5a8dacf3d96450ca0eaab4e2fe62ef9455803f5aacb3df0a7a74b8f2"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "2f2c95e326c0026f5572000bece08d1173cb125c032b46a979a318993ad2325c"
-    sha256 cellar: :any_skip_relocation, sonoma:         "91d3e637c6b6c323bc02d451c7d50b17d47a919e947cce7d039d4c6a9466c799"
-    sha256 cellar: :any_skip_relocation, ventura:        "dcc5f1eafb33bb9508519bc0284f0211c9af9f604ed969f840474a94f3dc25f2"
-    sha256 cellar: :any_skip_relocation, monterey:       "85eb34f4d7fddeb97269a8ac8c193981e6f9382734114d10e93a27695cc9587e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "722d2962220364888f7406212ca734c1d112aa6dfa39d5ccf73b2e6f6461d2f7"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "9b164d43ee500e18db4a6825c4fda3afcec4a2f4853c86b297c7194682060453"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "8a9c22f9aed882d9afe5c908ce9e470816b53c196fb9f540120dcffad65f7acf"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "03d9898710ed5f2b0685e3af511a8cd34096c184ee6e186f0c71386954daf764"
+    sha256 cellar: :any_skip_relocation, sonoma:        "3a5c1a0da19418f9ebb35ab2f0ebd16e540159049d3cb65e04e899e3467f184d"
+    sha256 cellar: :any_skip_relocation, ventura:       "5daf6eedb6fb9d6a9bbb38b748a89804a5d2ae240f52b4653d3ede867e740339"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "4dcc3fdada7572417c6af563f9ed6c59a98d505f15c1e573d0435e6470fc5966"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ae7591aac670b9ea9e60e47aa0b663f63dd35378298f41753b4fe46e57f0dd35"
   end
 
   depends_on "luarocks" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "lua"
 
   uses_from_macos "bc" => :build
@@ -28,14 +27,19 @@ class Lmod < Formula
     depends_on "gnu-sed" => :build
   end
 
+  resource "lua-term" do
+    url "https://github.com/hoelzro/lua-term/archive/refs/tags/0.8.tar.gz"
+    sha256 "0cb270be22dfc262beec2f4ffc66b878ccaf236f537d693fa36c8f578fc51aa6"
+  end
+
   resource "luafilesystem" do
-    url "https://github.com/keplerproject/luafilesystem/archive/refs/tags/v1_8_0.tar.gz"
+    url "https://github.com/lunarmodules/luafilesystem/archive/refs/tags/v1_8_0.tar.gz"
     sha256 "16d17c788b8093f2047325343f5e9b74cccb1ea96001e45914a58bbae8932495"
   end
 
   resource "luaposix" do
-    url "https://github.com/luaposix/luaposix/archive/refs/tags/v36.2.1.tar.gz"
-    sha256 "44e5087cd3c47058f9934b90c0017e4cf870b71619f99707dd433074622debb1"
+    url "https://github.com/luaposix/luaposix/archive/refs/tags/v36.3.tar.gz"
+    sha256 "82cd9a96c41a4a3205c050206f0564ff4456f773a8f9ffc9235ff8f1907ca5e6"
   end
 
   def install
@@ -52,10 +56,20 @@ class Lmod < Formula
       end
     end
 
-    # We install `tcl-tk` headers in a subdirectory to avoid conflicts with other formulae.
-    ENV.append_to_cflags "-I#{Formula["tcl-tk"].opt_include}/tcl-tk" if OS.linux?
+    # pkgconf cannot find tcl-tk on Linux correctly, so we manually set the include and libs
+    if OS.linux?
+      tcltk_version = Formula["tcl-tk"].version.major_minor
+      ENV["TCL_INCLUDE"] = "-I#{Formula["tcl-tk"].opt_include}/tcl-tk"
+      ENV["TCL_LIBS"] = "-L#{Formula["tcl-tk"].opt_lib} -ltcl#{tcltk_version} -ltclstub"
+      # Homebrew installed tcl-tk library has major_minor version suffix
+      inreplace "configure", "'' tcl tcl8.8 tcl8.7 tcl8.6 tcl8.5", "'' tcl#{tcltk_version}"
+    end
+
     system "./configure", "--with-siteControlPrefix=yes", "--prefix=#{prefix}"
     system "make", "install"
+
+    # Remove man page which conflicts with `modules` formula
+    rm man1/"module.1"
   end
 
   def caveats
@@ -73,11 +87,11 @@ class Lmod < Formula
   test do
     sh_init = "#{prefix}/init/sh"
 
-    (testpath/"lmodtest.sh").write <<~EOS
+    (testpath/"lmodtest.sh").write <<~SHELL
       #!/bin/sh
       . #{sh_init}
       module list
-    EOS
+    SHELL
 
     assert_match "No modules loaded", shell_output("sh #{testpath}/lmodtest.sh 2>&1")
 

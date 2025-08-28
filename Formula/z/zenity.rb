@@ -1,19 +1,18 @@
 class Zenity < Formula
   desc "GTK+ dialog boxes for the command-line"
   homepage "https://wiki.gnome.org/Projects/Zenity"
-  url "https://download.gnome.org/sources/zenity/4.0/zenity-4.0.2.tar.xz"
-  sha256 "c16dcae46e29e22c2fa0b95e80e06c96b2aec93840161369c95c85ed9f093153"
+  url "https://download.gnome.org/sources/zenity/4.0/zenity-4.0.5.tar.xz"
+  sha256 "8a3ffe7751bed497a758229ece07be9114ad4e46a066abae4e5f31d6da4c0e9e"
   license "LGPL-2.1-or-later"
 
   bottle do
-    sha256 arm64_sequoia:  "236de42b38e56b0c28c42735ea43e13e407967fb1e0b35c230d2c5bb78b86fbe"
-    sha256 arm64_sonoma:   "324af3731f3817b139c002ff323090fc082a0fd98d62bf7111301a9bf6b6315f"
-    sha256 arm64_ventura:  "ced590fb6362f41d1ceb9783aa9ed4355991119d7775e13b5c7ca3a9ebc528b2"
-    sha256 arm64_monterey: "f8f09e214c8a87f2b4b123047657e12d355a14d2c95def2b9f52f9dd5fecc04e"
-    sha256 sonoma:         "90746002a9d277c8a59657a992f207cc3de2930ec3ad348883d1fc9d7f2f5bfb"
-    sha256 ventura:        "df30edd6cadf89bad689859f1109f3a600631ee7ddbbf1c897ddae880e01e6ac"
-    sha256 monterey:       "fb144d3c4bb1933b812a71e17a61f042c590134fe751f7be878e89187d540543"
-    sha256 x86_64_linux:   "3b1e00581cd9fb4b0fa0506018c864ba34cb5a4a5db6fd67dcd06b60c7ea88d0"
+    sha256 arm64_sequoia: "e3959aa7b0410e54ec42687ce2a267f325127e4df4d481443c8698c7b953597f"
+    sha256 arm64_sonoma:  "06acbffe1ce25cdb54a3714c6070ffdd0ef0001ad7df3368a5b5a42a746ba676"
+    sha256 arm64_ventura: "11d64f18431ced3cfb4f78931fedc625e0466482232ef3f56694c01b8fdd1642"
+    sha256 sonoma:        "33696f8b90ab2a67e2c60b8bc7d0b721898d83dff290435bc00f8ca6752a2b51"
+    sha256 ventura:       "19762a7234eeed23c97d15ab8e6fdc9c87e1685f08140711b71208c1d4ccc113"
+    sha256 arm64_linux:   "138458db0aa0ad29953535b8ca9d5695851002c335c70bca7e3694d9b7ee2db7"
+    sha256 x86_64_linux:  "f9aa253c650051ee899f78c3bd4c616677e9e14945f893c408c73c5258b8f1b0"
   end
 
   depends_on "gettext" => :build
@@ -21,7 +20,7 @@ class Zenity < Formula
   depends_on "itstool" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "glib"
   depends_on "gtk4"

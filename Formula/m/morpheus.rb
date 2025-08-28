@@ -1,9 +1,10 @@
 class Morpheus < Formula
   desc "Modeling environment for multi-cellular systems biology"
   homepage "https://morpheus.gitlab.io/"
-  url "https://gitlab.com/morpheus.lab/morpheus/-/archive/v2.3.8/morpheus-v2.3.8.tar.gz"
-  sha256 "d4f4d3434fadbb149a52da2840d248176fe216a515f50a7ef904e22623f2e85c"
+  url "https://gitlab.com/morpheus.lab/morpheus/-/archive/v2.3.9/morpheus-v2.3.9.tar.gz"
+  sha256 "d27b7c2b5ecf503fd11777b3a75d4658a6926bfd9ae78ef97abf5e9540a6fb29"
   license "BSD-3-Clause"
+  revision 1
 
   livecheck do
     url :stable
@@ -11,23 +12,21 @@ class Morpheus < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "fed9b4e1881854ccb426eb5d08509765e3c449f3bfbe6aacece88157ff754686"
-    sha256 cellar: :any,                 arm64_sonoma:   "62411dd8e6cd7ad86d4e20468224c0b2c07d4156b0985d868ef29549f916447c"
-    sha256 cellar: :any,                 arm64_ventura:  "7a9e5a6470fb2c847cf7ea02ea7684a02b0bb1a964696f8dc7d9fd8423805a05"
-    sha256 cellar: :any,                 arm64_monterey: "9a4bee42a65cb59f1706e24174927a7fca699eaa4fe6d766fbdd5e924c5218da"
-    sha256 cellar: :any,                 sonoma:         "35891458eaa826d5a06d5be21756cb552e829ce16a53c7c292a022a05fdb5dbd"
-    sha256 cellar: :any,                 ventura:        "ac28538de739b8825d66e3042aa27d3a8d740708b2ab9502b1f5d717e1d45ede"
-    sha256 cellar: :any,                 monterey:       "65b7e005a0575c0e1729d658bef5767ec721b2b8cf9bb7dac4627dc574d11a66"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "03b034c07167ea28a82d43f8893f5f82c7213d91d68db687409480cf274b94d2"
+    rebuild 1
+    sha256                               arm64_sequoia: "4020aba25f72c7c1994268abd7a51d625b3c4d03bba900d58bad3fb7c41f18ff"
+    sha256                               arm64_sonoma:  "6d7ecede2635239fcc44cc2e6db21d8d819f1b4855898115548916fdbefc6010"
+    sha256                               arm64_ventura: "e30b659545e485356790d7938d5a4af5570584315b9272ca03b7aee3b4219160"
+    sha256 cellar: :any,                 sonoma:        "256731739687f46cf2509eb9a3e5f0c7139dea775ce5f8e450b855ef910ac703"
+    sha256 cellar: :any,                 ventura:       "00fdbd8f0594d9daca951726618c1275396758a60aac129dc85451af78a7657e"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0d216e4cd5fcec17db0a326688795f2ee4e3517379b79b3f94ef0f53a0f56ee3"
   end
 
-  depends_on "boost" => :build
   depends_on "cmake" => :build
   depends_on "doxygen" => :build
   depends_on "ninja" => :build
+  depends_on "boost"
   depends_on "ffmpeg"
   depends_on "graphviz"
-  depends_on "libomp"
   depends_on "libtiff"
   depends_on "qt@5"
 
@@ -35,9 +34,35 @@ class Morpheus < Formula
   uses_from_macos "libxml2"
   uses_from_macos "zlib"
 
+  on_macos do
+    depends_on "libomp"
+  end
+
+  # Backport support for CMake 4
+  patch do
+    url "https://gitlab.com/morpheus.lab/morpheus/-/commit/74aa906b9c2bd9144776118e61ffef3220a70878.diff"
+    sha256 "7d186bcd41b640e770f592053f25a4216c57ae56e5ecee68f271e8d00fbfa4a1"
+  end
+  patch do
+    url "https://gitlab.com/morpheus.lab/morpheus/-/commit/aac15ea4e196083a00c0634d1aaa6d49875721c7.diff"
+    sha256 "2e6f40b7acf4b81643b5af411f1e6bb8d7bc01282a638488c8be41fbdbb68675"
+  end
+  patch do
+    url "https://gitlab.com/morpheus.lab/morpheus/-/commit/8c5035ef693068a1ddcfdc710f45bd4f4663ee8b.diff"
+    sha256 "e0916157e4c32c7370f3b0a140b43c4a30c2173c9a65e73c2dd6a817011920ed"
+  end
+
   def install
+    # Avoid statically linking to Boost libraries when `-DBUILD_TESTING=OFF`
+    cmakelists = ["CMakeLists.txt", "morpheus/CMakeLists.txt"]
+    inreplace cmakelists, "set(Boost_USE_STATIC_LIBS ON)", "set(Boost_USE_STATIC_LIBS OFF)"
+
+    # Workaround for newer Clang
+    # error: a template argument list is expected after a name prefixed by the template keyword
+    ENV.append_to_cflags "-Wno-missing-template-arg-list-after-template-kw" if OS.mac?
+
     # has to build with Ninja until: https://gitlab.kitware.com/cmake/cmake/-/issues/25142
-    args = ["-G Ninja"]
+    args = ["-G", "Ninja"]
 
     if OS.mac?
       args << "-DMORPHEUS_RELEASE_BUNDLE=ON"
@@ -58,8 +83,13 @@ class Morpheus < Formula
     inreplace "#{prefix}/Morpheus.app/Contents/Info.plist", "HOMEBREW_BIN_PATH", "#{HOMEBREW_PREFIX}/bin"
   end
 
+  def post_install
+    # Sign to ensure proper execution of the app bundle
+    system "/usr/bin/codesign", "-f", "-s", "-", "#{prefix}/Morpheus.app" if OS.mac? && Hardware::CPU.arm?
+  end
+
   test do
-    (testpath/"test.xml").write <<~EOF
+    (testpath/"test.xml").write <<~XML
       <?xml version='1.0' encoding='UTF-8'?>
       <MorpheusModel version="4">
           <Description>
@@ -69,9 +99,9 @@ class Morpheus < Formula
           <Space>
               <Lattice class="linear">
                   <Neighborhood>
-                      <Order>1</Order>
+                      <Order>optimal</Order>
                   </Neighborhood>
-                  <Size value="100,  0.0,  0.0" symbol="size"/>
+                  <Size symbol="size" value="1.0, 1.0, 0.0"/>
               </Lattice>
               <SpaceSymbol symbol="space"/>
           </Space>
@@ -81,10 +111,10 @@ class Morpheus < Formula
               <TimeSymbol symbol="time"/>
           </Time>
           <Analysis>
-              <ModelGraph include-tags="#untagged" format="dot" reduced="false"/>
+              <ModelGraph format="dot" reduced="false" include-tags="#untagged"/>
           </Analysis>
       </MorpheusModel>
-    EOF
+    XML
 
     assert_match "Simulation finished", shell_output("#{bin}/morpheus --file test.xml")
   end

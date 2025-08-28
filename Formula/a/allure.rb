@@ -1,8 +1,8 @@
 class Allure < Formula
   desc "Flexible lightweight test report tool"
   homepage "https://github.com/allure-framework/allure2"
-  url "https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/2.30.0/allure-commandline-2.30.0.zip"
-  sha256 "2e3e9af0772796862da17d95007abd8d3df1176c13aca89ee2c79118fe4dd2f7"
+  url "https://repo.maven.apache.org/maven2/io/qameta/allure/allure-commandline/2.34.1/allure-commandline-2.34.1.zip"
+  sha256 "6eb2e037604744d4ba1f9cad3676cf286974aca48f7839d9b2f7688e1efd79f2"
   license "Apache-2.0"
 
   livecheck do
@@ -11,8 +11,7 @@ class Allure < Formula
   end
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any_skip_relocation, all: "0b1f05a1263f29783b3ff0b9e48f9c8b97f4653f48ae2b33003307effa462d22"
+    sha256 cellar: :any_skip_relocation, all: "8671464d1f75b3438591d2668848c61d47272eda34f851ada9b3e10e89d550ac"
   end
 
   depends_on "openjdk"
@@ -27,7 +26,7 @@ class Allure < Formula
   end
 
   test do
-    (testpath/"allure-results/allure-result.json").write <<~EOS
+    (testpath/"allure-results/allure-result.json").write <<~JSON
       {
         "uuid": "allure",
         "name": "testReportGeneration",
@@ -51,7 +50,7 @@ class Allure < Formula
           }
         ]
       }
-    EOS
+    JSON
     system bin/"allure", "generate", "#{testpath}/allure-results", "-o", "#{testpath}/allure-report"
   end
 end

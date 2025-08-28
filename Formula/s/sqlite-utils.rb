@@ -3,22 +3,22 @@ class SqliteUtils < Formula
 
   desc "CLI utility for manipulating SQLite databases"
   homepage "https://sqlite-utils.datasette.io/"
-  url "https://files.pythonhosted.org/packages/65/c5/a16a5d3f5f64e700a77de3df427ce1fcf5029e38db3352e12a0696448569/sqlite_utils-3.37.tar.gz"
-  sha256 "542a71033d4e7936fe909230ac9794d3e200021838ab63dbaf3ce8f5bc2273a4"
+  url "https://files.pythonhosted.org/packages/51/43/ce9183a21911e0b73248c8fb83f8b8038515cb80053912c2a009e9765564/sqlite_utils-3.38.tar.gz"
+  sha256 "1ae77b931384052205a15478d429464f6c67a3ac3b4eafd3c674ac900f623aab"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "ceac300ac185b339a8c01da78b7343e69e71c1682d3444e8e6aacb266f6c558a"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "df686f55d3c00995ff179cc24d3bc6df092113b874bae8f6425d9e4647ea6225"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "df686f55d3c00995ff179cc24d3bc6df092113b874bae8f6425d9e4647ea6225"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "df686f55d3c00995ff179cc24d3bc6df092113b874bae8f6425d9e4647ea6225"
-    sha256 cellar: :any_skip_relocation, sonoma:         "d2cbbd0b404f9e8b8b7e40a0ebf95256ee6ae41ca4926fc88c08b0fd82112869"
-    sha256 cellar: :any_skip_relocation, ventura:        "d2cbbd0b404f9e8b8b7e40a0ebf95256ee6ae41ca4926fc88c08b0fd82112869"
-    sha256 cellar: :any_skip_relocation, monterey:       "d2cbbd0b404f9e8b8b7e40a0ebf95256ee6ae41ca4926fc88c08b0fd82112869"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "1422cbdfe26b640d56e033e82fd28e4ad8e00b0e692c5cdfe744e4d627f064a7"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "6bae85f5cf6afe2f60ac7c154d7a364a635b65628de948dc9709e23c0af9bbde"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "6bae85f5cf6afe2f60ac7c154d7a364a635b65628de948dc9709e23c0af9bbde"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "6bae85f5cf6afe2f60ac7c154d7a364a635b65628de948dc9709e23c0af9bbde"
+    sha256 cellar: :any_skip_relocation, sonoma:        "a2b1742ba548f5fe04a5781292cb27ab85f520f5bb6046ce0996b0ab31609e41"
+    sha256 cellar: :any_skip_relocation, ventura:       "a2b1742ba548f5fe04a5781292cb27ab85f520f5bb6046ce0996b0ab31609e41"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "80976f079353627f3923086d276cf5707b4e482e148531a34adf0f8d141fb8fe"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "80976f079353627f3923086d276cf5707b4e482e148531a34adf0f8d141fb8fe"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "click" do
     url "https://files.pythonhosted.org/packages/96/d3/f04c7bfcf5c1862a2a5b845c6b2b360488cf47af55dfa79c98f6a6bf98b5/click-8.1.7.tar.gz"
@@ -58,7 +58,7 @@ class SqliteUtils < Formula
   def install
     virtualenv_install_with_resources
 
-    generate_completions_from_executable(bin/"sqlite-utils", shells: [:fish, :zsh], shell_parameter_format: :click)
+    generate_completions_from_executable(bin/"sqlite-utils", shell_parameter_format: :click)
   end
 
   test do

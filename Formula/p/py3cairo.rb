@@ -1,26 +1,25 @@
 class Py3cairo < Formula
   desc "Python 3 bindings for the Cairo graphics library"
   homepage "https://cairographics.org/pycairo/"
-  url "https://github.com/pygobject/pycairo/releases/download/v1.27.0/pycairo-1.27.0.tar.gz"
-  sha256 "5cb21e7a00a2afcafea7f14390235be33497a2cce53a98a19389492a60628430"
+  url "https://github.com/pygobject/pycairo/releases/download/v1.28.0/pycairo-1.28.0.tar.gz"
+  sha256 "26ec5c6126781eb167089a123919f87baa2740da2cca9098be8b3a6b91cc5fbc"
   license any_of: ["LGPL-2.1-only", "MPL-1.1"]
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "be4c2db3569519aa7ca3520843c329b7c99d410d01ea1ae1fc2347efe71638df"
-    sha256 cellar: :any,                 arm64_sonoma:   "b284138413f9e2b04c52b8fd18bc692fdfe04216658cd6ec310329ff63962331"
-    sha256 cellar: :any,                 arm64_ventura:  "01ca0d75478aff40159ac72ed356774ea1a1ad54ca66872e709394b8b8a809af"
-    sha256 cellar: :any,                 arm64_monterey: "7e31aa454d6657f749a03618ae068374d00ad072cd31bbc577ecbef0e82aa645"
-    sha256 cellar: :any,                 sonoma:         "0bc26c13732313108821e0d311f72aed1f0c00b4ae12628478c42c10878fa701"
-    sha256 cellar: :any,                 ventura:        "7fbf1d90015cb8fbd343c560640cfc7eb5b3df75703583e576819125a6017d6b"
-    sha256 cellar: :any,                 monterey:       "7398ebaada254c54a241be654cc6d30f84b428b847d26f9ea30f7ef742dc0a1f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "7edf63afb34c7e2289e393891509a701c644b81a396aa77093f263534978564c"
+    sha256 cellar: :any, arm64_sequoia: "a3215f667bbecd5f84bd93fe29455894e9b051c088f69199224477652882f412"
+    sha256 cellar: :any, arm64_sonoma:  "98f74d9de2ff0b9da6a0f3752725925cd946dc007620beca4b8670933fdcccb3"
+    sha256 cellar: :any, arm64_ventura: "923bd6b36c154365fedc3d8cbc3f89f367749ea3c95852533db49d8d80907ee7"
+    sha256 cellar: :any, sonoma:        "5f0839825ff8083f998042f7bbd37c368e75afa03d011d2c3d6df14978493459"
+    sha256 cellar: :any, ventura:       "3ffe657d6f48d2ff7fcec7fb705de41c1c3eb4b64cdf539936fd4bd323f80233"
+    sha256               arm64_linux:   "e7b6f3f1a4edcd963b16352778e82f8cd65f31c47b130ecdf5301ae8a77b3510"
+    sha256               x86_64_linux:  "087eee4fa2c8b32998d1a57b09fd8b5256fe6b9deec5cef3c4593e715b10f988"
   end
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
-  depends_on "python@3.11" => [:build, :test]
+  depends_on "pkgconf" => :build
   depends_on "python@3.12" => [:build, :test]
+  depends_on "python@3.13" => [:build, :test]
   depends_on "cairo"
 
   def pythons

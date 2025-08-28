@@ -5,15 +5,17 @@ class Libgccjit < Formula
   head "https://gcc.gnu.org/git/gcc.git", branch: "master"
 
   stable do
-    url "https://ftp.gnu.org/gnu/gcc/gcc-14.2.0/gcc-14.2.0.tar.xz"
-    mirror "https://ftpmirror.gnu.org/gcc/gcc-14.2.0/gcc-14.2.0.tar.xz"
-    sha256 "a7b39bc69cbf9e25826c5a60ab26477001f7c08d85cec04bc0e29cabed6f3cc9"
+    url "https://ftpmirror.gnu.org/gnu/gcc/gcc-15.1.0/gcc-15.1.0.tar.xz"
+    mirror "https://ftp.gnu.org/gnu/gcc/gcc-15.1.0/gcc-15.1.0.tar.xz"
+    sha256 "e2b09ec21660f01fecffb715e0120265216943f038d0e48a9868713e54f06cea"
 
     # Branch from the Darwin maintainer of GCC, with a few generic fixes and
     # Apple Silicon support, located at https://github.com/iains/gcc-14-branch
     patch do
-      url "https://raw.githubusercontent.com/Homebrew/formula-patches/d5dcb918a951b2dcf2d7702db75eb29ef144f614/gcc/gcc-14.2.0.diff"
-      sha256 "70a994d2c7861f844dbfc8ca2700f6c1ce9881f51c45bb6fda2fd212ccb1ff03"
+      on_macos do
+        url "https://raw.githubusercontent.com/Homebrew/formula-patches/575ffcaed6d3112916fed77d271dd3799a7255c4/gcc/gcc-15.1.0.diff"
+        sha256 "360fba75cd3ab840c2cd3b04207f745c418df44502298ab156db81d41edf3594"
+      end
     end
   end
 
@@ -21,15 +23,17 @@ class Libgccjit < Formula
     formula "gcc"
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 arm64_sequoia:  "fff0020242ea84f9eb7c320035410213d831968cdffd746c0fb02460d13b8625"
-    sha256 arm64_sonoma:   "1f863f51416d857e367f12accc84a6163742d77eec8f3c5644c6c79c334f4fd6"
-    sha256 arm64_ventura:  "7605dcefda1dc4cdfa7b14303551dcade61408d4592e0eeb4b85aaa3d93dfc62"
-    sha256 arm64_monterey: "d21962af68ea264a5b6a90265e6d1c7247377d5d41f5d021488380c15e804ed7"
-    sha256 sonoma:         "e96b8c6f27911ddf6b66e20998eb678592b58906451a02e38e6a0256d7974603"
-    sha256 ventura:        "bffe3af90300b16b02a98d00bfd95417141429abbcb53887ee1a1a177ffe3a35"
-    sha256 monterey:       "baed769c2a3c93ace46dc2c01a585249f2f4ac4c941361b40c750c78b5bc25aa"
-    sha256 x86_64_linux:   "809473f17318e15fe6ecf18d6ad50a80e2f03487bf4045e765833584ae6d4cec"
+    sha256 arm64_sequoia: "76bcb930ece20a2661c706bac2f2ce4faf790b3af0554b86a8967677fcab03ce"
+    sha256 arm64_sonoma:  "cb3db229fd88a28d6583fffd1ee487b0351851b377900d8976c5b70b37585c56"
+    sha256 arm64_ventura: "95f990b545ceae9a01f1e012ab2d7950dc5207d06cefe7796cf783b19a177b92"
+    sha256 sequoia:       "0a212155fa554028b11389062636c750a7b08d37d2c84b3ff739f6dedff476db"
+    sha256 sonoma:        "09cd9fe841f73b81e91e3bd36a911737f5eb07dddf0111eee53bb513113e4eb2"
+    sha256 ventura:       "71229a70381ea76eeb9af7d146332b44329d85d631ca20d3935f49a348700fc5"
+    sha256 arm64_linux:   "952b111d72702f44b432646b02f6ccdfb6d5c3deffa38cdb0d718b5b2d07d4d6"
+    sha256 x86_64_linux:  "aa9f48a7a846126612a53530b7ec91bc0089d56049b59ed8c9055ee379ad9082"
   end
 
   # The bottles are built on systems with the CLT installed, and do not work
@@ -85,7 +89,10 @@ class Libgccjit < Formula
       sdk = MacOS.sdk_path_if_needed
       args << "--with-sysroot=#{sdk}" if sdk
 
-      []
+      # Avoid this semi-random failure:
+      # "Error: Failed changing install name"
+      # "Updated load commands do not fit in the header"
+      %w[BOOT_LDFLAGS=-Wl,-headerpad_max_install_names]
     else
       # Fix cc1: error while loading shared libraries: libisl.so.15
       args << "--with-boot-ldflags=-static-libstdc++ -static-libgcc #{ENV.ldflags}"
@@ -130,7 +137,7 @@ class Libgccjit < Formula
   end
 
   test do
-    (testpath/"test-libgccjit.c").write <<~EOS
+    (testpath/"test-libgccjit.c").write <<~C
       #include <libgccjit.h>
       #include <stdlib.h>
       #include <stdio.h>
@@ -179,7 +186,7 @@ class Libgccjit < Formula
           gcc_jit_result_release (result);
           return 0;
       }
-    EOS
+    C
 
     gcc_major_ver = Formula["gcc"].any_installed_version.major
     gcc = Formula["gcc"].opt_bin/"gcc-#{gcc_major_ver}"

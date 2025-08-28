@@ -1,28 +1,32 @@
 class StellarCli < Formula
   desc "Stellar command-line tool for interacting with the Stellar network"
   homepage "https://developers.stellar.org"
-  url "https://github.com/stellar/stellar-cli/archive/refs/tags/v21.5.0.tar.gz"
-  sha256 "9d9209f6bde7ed5a68422ef3ff5cd37f16a2209c9c5b5676224a7132ccdfd5ec"
+  url "https://github.com/stellar/stellar-cli/archive/refs/tags/v23.0.1.tar.gz"
+  sha256 "1ea322bd7ae7fa69140c2c80d40f8d7fcf86655878f80f3396d9e45cac1d8fa1"
   license "Apache-2.0"
   head "https://github.com/stellar/stellar-cli.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "9a8618fb36df2ac69a77a3884359eba0a14fb737267631649f6f09e5a295d9fc"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "64cc11be0010a21ca59f850f740ada377701fccf5a22e2cec671edb75ce269ce"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "4e218a5a89acae8caab9cd0610db20911b1e602e272dcefcb03ddd0209c6377a"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "a9f5147f447727a36d6e86cfd727cf681669b0213f1ed21da2cb16e0f9cf2508"
-    sha256 cellar: :any_skip_relocation, sonoma:         "67e8e90667233e0d6cc55b1481d02bcb4c8c78a1cd9f60f66e21b6a092d0fd95"
-    sha256 cellar: :any_skip_relocation, ventura:        "e49d8af8a90c4ecc1b0a72ad2728e7871a66d3ee37f0a3aad1b4e9822bf7b04b"
-    sha256 cellar: :any_skip_relocation, monterey:       "9d6d7dfeabcc520ee2b255a6d2d818e82ffefeaa12ddeb36e495f954e3aa72df"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "8eaec424f808bc95bef66c9abd1ce88475493ac8ccb4080b415c4da57da15406"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "7bcdd9fba100fbe55629ea2669a680a8dab89dfdabf9357276b884dedc9daa67"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "78d5c91ed8aa4d66767bb340cd31ddf4eccb07a6fdbc3c1523d13270608ea734"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "5c7aed54d9c8b9d8c6704e7e4154c84e1fb89c2c271cb048ffee645b77da2434"
+    sha256 cellar: :any_skip_relocation, sonoma:        "4ff399676b97a7aa2c4cb44d61548ba2eda350c1947d6767cbba8b8af01d720d"
+    sha256 cellar: :any_skip_relocation, ventura:       "5ff957fe189aebcaa3f9fc648ae22b5e2a842d4fff59b6e335fd519154a5181c"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "7d0ecd57c6799720fa9e8931d980a62d1624c2668b8ebffcd7bf7d816cd361c7"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3dc23093c2f2717da275a19f751812ae49a334ad9a980eef89f74f10fc158648"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
   depends_on "openssl@3"
 
+  on_linux do
+    depends_on "dbus"
+    depends_on "systemd" # for libudev
+  end
+
   def install
-    system "cargo", "install", "--bin=stellar", "--features=opt", *std_cargo_args(path: "cmd/stellar-cli")
+    system "cargo", "install", "--bin=stellar", *std_cargo_args(path: "cmd/stellar-cli")
   end
 
   test do

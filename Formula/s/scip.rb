@@ -1,9 +1,10 @@
 class Scip < Formula
   desc "Solver for mixed integer programming and mixed integer nonlinear programming"
   homepage "https://scipopt.org"
-  url "https://scipopt.org/download/release/scip-9.1.1.tgz"
-  sha256 "fd68a7ecc3c9086a68ef7ed0421381e811130f4c7dcb2c13ae69744577abd5cf"
+  url "https://scipopt.org/download/release/scip-9.2.3.tgz"
+  sha256 "6f5e81a643bba22d9b4e43cd97583529587c64eafe83b93bb864b07f9f16fab7"
   license "Apache-2.0"
+  revision 1
 
   livecheck do
     url "https://scipopt.org/scipdata.js"
@@ -11,15 +12,17 @@ class Scip < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "c423a30bee48e5284391a79873d16b96ca882db083453fb6447c580fc43b56d5"
-    sha256 cellar: :any,                 arm64_sonoma:  "8266df90b7d371ff4c19e22e86889bc1077557c2614321a519df874da2e8d3e2"
-    sha256 cellar: :any,                 arm64_ventura: "d9110e241635f0f7931bcc420a2609a986f2dc75b047bed89d38410de169f781"
-    sha256 cellar: :any,                 sonoma:        "d5c77cc3b140064843a11d9b46a8eafdc632f442faac6ba9949ec4d3531d2906"
-    sha256 cellar: :any,                 ventura:       "041816294d0ef034027386f9e7f947c60fb3d5714b7499350af605750ef8c71e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fe8b303f263ba6898325423fdd354a00d4d565652f2b51b4a84eea7f3ecee0be"
+    sha256 cellar: :any,                 arm64_sequoia: "f8ff14375bbf116866a6f8d0917cd52845e5a37b5ec41c3304d0a8ceb04fcfc7"
+    sha256 cellar: :any,                 arm64_sonoma:  "33d49db404f5b31e9b60f3cd5b2f8982499067d966971734e93088a9fbf67a05"
+    sha256 cellar: :any,                 arm64_ventura: "89796a2888b7b4b4f7a0f2cd63ff585b4e99c040b6905f3c8c50e6cf26070542"
+    sha256 cellar: :any,                 sonoma:        "512b6afc37693f78532bee21a11873c461d290e0b532c3194d1a4154596515ab"
+    sha256 cellar: :any,                 ventura:       "ac57d89d437b828546d91953d235375a1c3d597e12e103b0ba8b858e2a009db5"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "ae33e30f8a3e9f20cd5b9f86cf1ab15685d75a554487d3e1d071dab8bcc7539d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "473db25229bdb50611591dc03167ded5483485df70348d77c3870a09a1251292"
   end
 
   depends_on "cmake" => :build
+  depends_on "boost"
   depends_on "cppad"
   depends_on "gmp"
   depends_on "ipopt"

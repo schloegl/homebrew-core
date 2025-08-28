@@ -1,19 +1,17 @@
 class Gammaray < Formula
   desc "Examine and manipulate Qt application internals at runtime"
-  homepage "https://www.kdab.com/gammaray"
-  url "https://github.com/KDAB/GammaRay/releases/download/v3.1.0/gammaray-3.1.0.tar.gz"
-  sha256 "93b52d5318374896621e1d8b5dd03379c53e0458b1633b539d18737fe8c300cf"
+  homepage "https://www.kdab.com/software-technologies/developer-tools/gammaray/"
+  url "https://github.com/KDAB/GammaRay/releases/download/v3.2.2/gammaray-3.2.2.tar.gz"
+  sha256 "18830a83ca8ba8e6e07d78a88d933c2666eda4b26d3cbdc97e06914f5e92388c"
   license "GPL-2.0-or-later"
   head "https://github.com/KDAB/GammaRay.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "27b11ab0fe6bbecfd521f137e55db9dbc981f1f36baed3059fb97b1836056def"
-    sha256 cellar: :any,                 arm64_ventura:  "248e616d7cd507ed84bf5f4650b2cb419ba81b00bcace44dde18714b92585ca6"
-    sha256 cellar: :any,                 arm64_monterey: "d524a2b8c87cae2a3f15f81761fc9bb2586861314b252b2f83a0420d8c59d789"
-    sha256 cellar: :any,                 sonoma:         "e577a7147b5fe61916eea610c6fe288ff8748195c1a20efd9d507fbae2789658"
-    sha256 cellar: :any,                 ventura:        "80354ec89605d4ddf345593bb2bcc8b05cde79cbc7ccf972eb5302859e484163"
-    sha256 cellar: :any,                 monterey:       "bcf7529613e3f65821f3709780aa2e36621aa62c4833cccda703c49f3f4fb8ca"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "c9ef430a3fe1d565cf9cd3c129fec0477a3562e862058ffd6caf3cb92e44f14a"
+    sha256 cellar: :any,                 arm64_sonoma:  "188e05f535d2dcb85a2530a3c7743eab2c6b1afd3fbb2ff2f958b62ee81c3ea8"
+    sha256 cellar: :any,                 arm64_ventura: "67bef150eeaa9f64e616cdfc242958016ba65b45981a939a63721206cd56157e"
+    sha256 cellar: :any,                 sonoma:        "5d49a25721d07658ed17e45396b5edd694f4f8d9f93219938dcdc0904c1f093a"
+    sha256 cellar: :any,                 ventura:       "92727212855dd82a000851db16e91f824971aa3185ef4653475037c1462f11bb"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "cce7a248ef5b4009c51846317295552e6e2c105ec9d12b28f6294c9133ee9024"
   end
 
   depends_on "cmake" => :build
@@ -24,8 +22,6 @@ class Gammaray < Formula
     depends_on "elfutils"
     depends_on "wayland"
   end
-
-  fails_with gcc: "5"
 
   def install
     system "cmake", "-S", ".", "-B", "build",

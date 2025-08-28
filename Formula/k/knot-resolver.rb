@@ -1,8 +1,8 @@
 class KnotResolver < Formula
   desc "Minimalistic, caching, DNSSEC-validating DNS resolver"
   homepage "https://www.knot-resolver.cz"
-  url "https://secure.nic.cz/files/knot-resolver/knot-resolver-5.7.4.tar.xz"
-  sha256 "6b6da6ecf06828041afad44dfa227781f0ae34ad183a667008509355d18bd9c8"
+  url "https://secure.nic.cz/files/knot-resolver/knot-resolver-5.7.6.tar.xz"
+  sha256 "500ccd3a560300e547b8dc5aaff322f7c8e2e7d6f0d7ef5f36e59cb60504d674"
   license all_of: ["CC0-1.0", "GPL-3.0-or-later", "LGPL-2.1-or-later", "MIT"]
   head "https://gitlab.labs.nic.cz/knot/knot-resolver.git", branch: "master"
 
@@ -12,17 +12,18 @@ class KnotResolver < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia: "08dd88e8e9fc10ef7494116e727723828e3e7d4f17e3fd96a204c828a5628945"
-    sha256 arm64_sonoma:  "8d442104e77ea8cff29c84fdb5a7e4604ebc8e81c32d9a9e070138eb5cb6e22b"
-    sha256 arm64_ventura: "f036e8ce8f5cf29c9996441ad4a479ac53534d6c83255c812526ac1c4831c790"
-    sha256 sonoma:        "bfb3e2c794ec64de04cb3bffb98c77cd525b628e84e0333fc17b9f67bfb5daf8"
-    sha256 ventura:       "acf867ac9bc8bea1f5095221acf661185c72523b288a1b3085057af455353aef"
-    sha256 x86_64_linux:  "b357e992fd8676db35a50c6e93abed1008f7f16b79e72450093631d1e83576d1"
+    sha256 arm64_sequoia: "f842973a4b59ecfd29b822af797c426fc3d3fd6f460148a00d7fd297fcbd0a5c"
+    sha256 arm64_sonoma:  "668a2e770862f3f7cbc480447752230034442bc1125b1baeebebe5617fcc5301"
+    sha256 arm64_ventura: "5a8af2813cffb869b80e9295e7a7d6a6b215868d52dd531458d40b5d0fd22bc4"
+    sha256 sonoma:        "e88a09cdb2d3fcf92bf4af7b48a4ab4a4c0076f8dbaa63ed5b0f424c23007e89"
+    sha256 ventura:       "e98d27346d5199cfb6b0cf2cc33734f19b6e08cbdcbe4afddd59c52492022818"
+    sha256 arm64_linux:   "6fe63f84fd4982b1d710b3453e6a6b9672df1fff80a808ee0bed1acec3ae8839"
+    sha256 x86_64_linux:  "ad052ae5a64e60bfcd6c7a3e359588360e705387546f7eedc8ef7c8bed6872f8"
   end
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "fstrm"
   depends_on "gnutls"
   depends_on "knot"
@@ -55,8 +56,8 @@ class KnotResolver < Formula
     run [opt_sbin/"kresd", "-c", etc/"knot-resolver/kresd.conf", "-n"]
     require_root true
     working_dir var/"knot-resolver"
-    input_path "/dev/null"
-    log_path "/dev/null"
+    input_path File::NULL
+    log_path File::NULL
     error_log_path var/"log/knot-resolver.log"
   end
 

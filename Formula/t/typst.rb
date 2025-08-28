@@ -1,38 +1,28 @@
 class Typst < Formula
   desc "Markup-based typesetting system"
   homepage "https://typst.app/"
+  url "https://github.com/typst/typst/archive/refs/tags/v0.13.1.tar.gz"
+  sha256 "2ffd8443668bc0adb59e9893f7904fd9f64dce8799a1930569f56a91305e8b71"
   license "Apache-2.0"
   version_scheme 1
   head "https://github.com/typst/typst.git", branch: "main"
 
-  stable do
-    url "https://github.com/typst/typst/archive/refs/tags/v0.11.1.tar.gz"
-    sha256 "b1ba054e821073daafd90675c4822bcd8166f33fe2e3acba87ba1451a0d1fc56"
-
-    # Backport time dependency update to fix build with newer Rust
-    patch do
-      url "https://github.com/typst/typst/commit/b75f0a82d458dcb355db0f39089e8d177c14bc16.patch?full_index=1"
-      sha256 "2ab73602757d2da5568c9cbafb768e6e7ce86694a29f707a055f9e263fc538a5"
-    end
-  end
-
   livecheck do
     url :stable
-    regex(/^v?(\d+(?:\.\d+)+)$/i)
+    strategy :github_latest
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "b47609c5150403d41dae2cb2ee155bcbc4cb96e1277748bdb983dd50b9309d5d"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "92ec9b163870fd93f3213b539dc86729e07da6f800f8c44edf2f92c3a0125728"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "3d17576221fdda8bc479f5c1928ba13806baf8b9709ba1a34f644cb4c5c94633"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "a9b6a41c438b285bea0cfba3389860594be937c729a9bb61af7fa678be1b19a0"
-    sha256 cellar: :any_skip_relocation, sonoma:         "3bcb460ff6726db1826a83cc5cbbaad2d692b9c86575517237e44e09cc496536"
-    sha256 cellar: :any_skip_relocation, ventura:        "a200cfc59d146e27899b298125bc2a9f4774c849e9c1a0baeead2184d07592c9"
-    sha256 cellar: :any_skip_relocation, monterey:       "fc1de5571975b792578574ffa84cabfefc25e0d546987d8c8fe67012e2b509ac"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "303863d810a8b122e14d934ce5f14ba1e4bcee72e604228caec09f2027030257"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "c187e0b7e86411fb7925307d34c2e63429103cee0da30bac01479d1abb7b0160"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "808d9896ed7680fbb788182c8de04914229f1fe36b4e8d48a826ce7f9a78d471"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "9d7fded4d1f467a78524ec9aeb9cb81ed08f5c0da380f0e81f91b7dc28772ac1"
+    sha256 cellar: :any_skip_relocation, sonoma:        "a4af1021420e590f933035c3f996e70ec27131c0d12e7404d3abc7a0f68320b6"
+    sha256 cellar: :any_skip_relocation, ventura:       "39ce285d7af6080b660db41590acf877b3be5f51327e4e4914b7c324a65e5be0"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "24d7ad7e8d31a809d124f49cd4d07c84c9b8e8b68f8b006d8092edd7b3e371b0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c411beb9f7379cbec800b101ded8249d3f02ea469a5a312b328c81806f7924db"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
 
   on_linux do
@@ -53,7 +43,7 @@ class Typst < Formula
   test do
     (testpath/"Hello.typ").write("Hello World!")
     system bin/"typst", "compile", "Hello.typ", "Hello.pdf"
-    assert_predicate testpath/"Hello.pdf", :exist?
+    assert_path_exists testpath/"Hello.pdf"
 
     assert_match version.to_s, shell_output("#{bin}/typst --version")
   end

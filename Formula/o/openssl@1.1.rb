@@ -26,7 +26,7 @@ class OpensslAT11 < Formula
   keg_only :versioned_formula
 
   # See: https://www.openssl.org/policies/releasestrat.html
-  deprecate! date: "2023-10-24", because: :unsupported
+  disable! date: "2024-10-24", because: :unsupported
 
   depends_on "ca-certificates"
 
@@ -133,8 +133,7 @@ class OpensslAT11 < Formula
 
   test do
     # Make sure the necessary .cnf file exists, otherwise OpenSSL gets moody.
-    assert_predicate pkgetc/"openssl.cnf", :exist?,
-            "OpenSSL requires the .cnf file for some functionality"
+    assert_path_exists pkgetc/"openssl.cnf", "OpenSSL requires the .cnf file for some functionality"
 
     # Check OpenSSL itself functions as expected.
     (testpath/"testfile.txt").write("This is a test file")

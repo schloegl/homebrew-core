@@ -1,8 +1,8 @@
 class Tlsx < Formula
   desc "Fast and configurable TLS grabber focused on TLS based data collection"
   homepage "https://github.com/projectdiscovery/tlsx"
-  url "https://github.com/projectdiscovery/tlsx/archive/refs/tags/v1.1.7.tar.gz"
-  sha256 "2fdf4a46bed59595566a532f3bc30c758a892668a0409e7f5b54320d6235c68d"
+  url "https://github.com/projectdiscovery/tlsx/archive/refs/tags/v1.2.0.tar.gz"
+  sha256 "0aefac187dfe49f1c30b52736915c81b5c1fa215bd76a2417fff9d3006acc98a"
   license "MIT"
   head "https://github.com/projectdiscovery/tlsx.git", branch: "main"
 
@@ -12,14 +12,12 @@ class Tlsx < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "76b6131cde70f08b85e1a9c300bc3d0b9bd9aa4ef68fda288f6be15a72097a0d"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "899ec8d2cbdee003aaaf48c44bec9c8ddf292027db7c9351175e7fa097421361"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "7fb848d9bb9f69030a44d87e47c405b6d9149bb2114bc7fd9b52f3324f34a307"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "fe2d08ac1c24cd5428c658ab41e0f011b363a1f1c608750c3d81e635151d1e5f"
-    sha256 cellar: :any_skip_relocation, sonoma:         "ba270a761df567a4e6f72acc9479addc6f896082163f6387cf5cbf34d33b66be"
-    sha256 cellar: :any_skip_relocation, ventura:        "e9692a8b5e124d27245f0bea51aaa99bdfb76dab6147b08d1be49a814569a4d2"
-    sha256 cellar: :any_skip_relocation, monterey:       "f19ba71eb1721adddb9f1e7bf99cfa3b044f4a4356462bb9a78cdc6b08814bda"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "842ceebc51ae3d728164e2ac3aa278abf71121c71bbacc37375e785c90d6bb33"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "c29373fe2ba4c44c3178666a20b73349d907320ba837a22dd2da355e5667dd93"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "fed350b33cac09ec4fc18bbd9297c627dbf0874c369b37729521e844a1e7061e"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "7d24577463b54435632dbd5957eff82160c00ca4141e4fce3eb3798aec162d66"
+    sha256 cellar: :any_skip_relocation, sonoma:        "1accac8de524a65392d52081552d5865f00055f2ec88fac7198f5f2ed1a58da3"
+    sha256 cellar: :any_skip_relocation, ventura:       "d01b982b1d8d8254f2334c2f0aa1a52d6e63276c613037ee6a8cb339e32b5486"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "80cf98c7a3e327debe032d86cab507baef07a5d3af790cc7874adede8d4b1d74"
   end
 
   depends_on "go" => :build

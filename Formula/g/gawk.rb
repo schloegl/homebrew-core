@@ -1,8 +1,8 @@
 class Gawk < Formula
   desc "GNU awk utility"
   homepage "https://www.gnu.org/software/gawk/"
-  url "https://ftp.gnu.org/gnu/gawk/gawk-5.3.1.tar.xz"
-  mirror "https://ftpmirror.gnu.org/gawk/gawk-5.3.1.tar.xz"
+  url "https://ftpmirror.gnu.org/gnu/gawk/gawk-5.3.1.tar.xz"
+  mirror "https://ftp.gnu.org/gnu/gawk/gawk-5.3.1.tar.xz"
   sha256 "694db764812a6236423d4ff40ceb7b6c4c441301b72ad502bb5c27e00cd56f78"
   license "GPL-3.0-or-later"
   head "https://git.savannah.gnu.org/git/gawk.git", branch: "master"
@@ -13,6 +13,7 @@ class Gawk < Formula
     sha256 arm64_ventura: "c8c30a7f85b8cd20113553af345316cea62fcb3c3f138b624b4dba985aad7275"
     sha256 sonoma:        "60b126aaed8aa96bad8d7a0f487331c6abbfabcbeeddb503fefc5c95526c2547"
     sha256 ventura:       "83b3a81e89196364ceadf92485d06a5184b37529b5627b4fbe6ae87594be5181"
+    sha256 arm64_linux:   "f7cae3224ad92248271e79d6ece078fef89f4b0092171024764e625a1a62be90"
     sha256 x86_64_linux:  "4fbe2760d1ce897fdf6726b2af2ecdaebbaa25d348e93e2dd2b4c270da71cee5"
   end
 

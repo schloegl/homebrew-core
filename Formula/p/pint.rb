@@ -1,19 +1,17 @@
 class Pint < Formula
   desc "Prometheus rule linter/validator"
   homepage "https://cloudflare.github.io/pint/"
-  url "https://github.com/cloudflare/pint/archive/refs/tags/v0.65.1.tar.gz"
-  sha256 "e893e2601044f223090f62e86af0cebb94a365ae178f6b2162b0ccdc42a5d48a"
+  url "https://github.com/cloudflare/pint/archive/refs/tags/v0.74.6.tar.gz"
+  sha256 "bc240b3540c721bd5fa3ad71a623bd0bfe5f58b513a70a6866942d3baa7dfeb6"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "10e3d8411b0450e307e0e07b64e9e7b30a4546e77ab8b77c2ec974caaee23262"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "fb78b4a58af4330542f3578e0dc2566640de4773f63d393f506fb0cfcef056db"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "fb78b4a58af4330542f3578e0dc2566640de4773f63d393f506fb0cfcef056db"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "fb78b4a58af4330542f3578e0dc2566640de4773f63d393f506fb0cfcef056db"
-    sha256 cellar: :any_skip_relocation, sonoma:         "8a377ab40d6897bbb62c7a5591dfd74a478019753aeb988a0ff301cc7f06815e"
-    sha256 cellar: :any_skip_relocation, ventura:        "8a377ab40d6897bbb62c7a5591dfd74a478019753aeb988a0ff301cc7f06815e"
-    sha256 cellar: :any_skip_relocation, monterey:       "8a377ab40d6897bbb62c7a5591dfd74a478019753aeb988a0ff301cc7f06815e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "22969557d702cff59f9fb94519e239e5b592ba23612399ff5490adf2f0d9a62a"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "775a680177914ba85a74148658b7a371565427c6df77b55f47af712a97399440"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "ca219285a3efeb90b7efd6d19c6efaa3d6e82acf92f248cc7a6e4e811a6981b4"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "7435bd3af92d0e92abbd0650a00609a0f4ff2486105a22914bbae191832a9429"
+    sha256 cellar: :any_skip_relocation, sonoma:        "a8e4806f9b07bfa9019ec2bb71ee4a252b4dbccd9e1eb322af6baf830f7637b7"
+    sha256 cellar: :any_skip_relocation, ventura:       "9f9969824d1e57d2646cd49e5098ab3f3d610ddb3585b708f0159b1338a2a0ea"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "00b1178ff54883beb9bea10720927128bd39e532ddb9dac76199f3ac1d194e93"
   end
 
   depends_on "go" => :build
@@ -30,7 +28,7 @@ class Pint < Formula
   end
 
   test do
-    (testpath/"test.yaml").write <<~EOS
+    (testpath/"test.yaml").write <<~YAML
       groups:
       - name: example
         rules:
@@ -41,7 +39,7 @@ class Pint < Formula
             severity: page
           annotations:
             summary: High request latency
-    EOS
+    YAML
 
     cp pkgshare/"examples/simple.hcl", testpath/".pint.hcl"
 

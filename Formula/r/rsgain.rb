@@ -1,22 +1,24 @@
 class Rsgain < Formula
   desc "ReplayGain 2.0 tagging utility"
   homepage "https://github.com/complexlogic/rsgain"
-  url "https://github.com/complexlogic/rsgain/archive/refs/tags/v3.5.2.tar.gz"
-  sha256 "c76ba0dfaafcaa3ceb71a3e5a1de128200d92f7895d8c2ad45360adefe5a103b"
+  url "https://github.com/complexlogic/rsgain/archive/refs/tags/v3.6.tar.gz"
+  sha256 "26f7acd1ba0851929dc756c93b3b1a6d66d7f2f36b31f744c8181f14d7b5c8a7"
   license "BSD-2-Clause"
+  revision 2
   head "https://github.com/complexlogic/rsgain.git", branch: "master"
 
   bottle do
-    sha256 arm64_sequoia: "e4c203a6c7ab07d27b3dcdf8466d296bb155be0b38c12eb429d0e1a79e0097e9"
-    sha256 arm64_sonoma:  "66ee5294b464d968abc2847838f7da21175aa2fc3bd785fcf4f647457af14ebb"
-    sha256 arm64_ventura: "85fc8c0aeb7b824e7c7b85b0b956a549b5d5498d247377d2d8e98f55842a41e5"
-    sha256 sonoma:        "4db25f5d6f21d0ba16d4ba9efe9bac22f648959b7ee3ba8b7a515f1a392c512b"
-    sha256 ventura:       "5a233790765bd76e9f5d9f2029c43045ee81a9921d3d67fa4f6c57f747943424"
-    sha256 x86_64_linux:  "373aa6793709cb1d1ea760e08e56f80a8d2ced8d952d0e2aefedf53c40519c41"
+    sha256 arm64_sequoia: "55489cd56bf55d3a29a6f77c03457067f277e0c9558d26d77f893edee99f3b40"
+    sha256 arm64_sonoma:  "c4e28904289af858e3e94c4e35afb4ef50bb346c2653e1d8242458bf59a88bb7"
+    sha256 arm64_ventura: "55edda0ef4956e33ebfe076646857955637e20acb263f64c856d6825d68f5107"
+    sha256 sonoma:        "201e665906b0b6dc438c501c0563bf36420d0f1d3ee54448171e47151d47912a"
+    sha256 ventura:       "daa35290fc3a0df807859616ab512541f3586553f2e2142f0c10ce374c29f284"
+    sha256 arm64_linux:   "bf6720904216103d47b92220321417062d94dd51d786deb73441698aaba9ce08"
+    sha256 x86_64_linux:  "35c290b9f586cf607396625322e6ed6415b07472e98f2135d191763b79acf95b"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "ffmpeg"
   depends_on "fmt"
   depends_on "inih"

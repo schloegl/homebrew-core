@@ -1,20 +1,19 @@
 class Nebula < Formula
   desc "Scalable overlay networking tool for connecting computers anywhere"
   homepage "https://github.com/slackhq/nebula"
-  url "https://github.com/slackhq/nebula/archive/refs/tags/v1.9.4.tar.gz"
-  sha256 "7feb8337a8ce791bb97211a70fddfc9cb936e2a9bfbb3bc8ac714c868da3fc86"
+  url "https://github.com/slackhq/nebula/archive/refs/tags/v1.9.6.tar.gz"
+  sha256 "cb0246ee02e03d84237f0a8e0daf6236ea65d299c275bcd4f2d324a66d1d738b"
   license "MIT"
   head "https://github.com/slackhq/nebula.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "02628b6ec323eeaa31833f3561af8eba7679d57c082b8ab644f48e2937d2c28e"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "02628b6ec323eeaa31833f3561af8eba7679d57c082b8ab644f48e2937d2c28e"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "02628b6ec323eeaa31833f3561af8eba7679d57c082b8ab644f48e2937d2c28e"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "02628b6ec323eeaa31833f3561af8eba7679d57c082b8ab644f48e2937d2c28e"
-    sha256 cellar: :any_skip_relocation, sonoma:         "768c505ba1596f1973144647d81b7a4185315ec26fd1b00da632944d81580ced"
-    sha256 cellar: :any_skip_relocation, ventura:        "768c505ba1596f1973144647d81b7a4185315ec26fd1b00da632944d81580ced"
-    sha256 cellar: :any_skip_relocation, monterey:       "768c505ba1596f1973144647d81b7a4185315ec26fd1b00da632944d81580ced"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "901dc2cb116c094a96a28a2711da1791f9b2367365cfd7358464a79f2ae1ba24"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "e6f59a4f872d1473f2f7cf18926ab14b7d8bbccb5bb892e6c872c11a6b43ec21"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "e6f59a4f872d1473f2f7cf18926ab14b7d8bbccb5bb892e6c872c11a6b43ec21"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "e6f59a4f872d1473f2f7cf18926ab14b7d8bbccb5bb892e6c872c11a6b43ec21"
+    sha256 cellar: :any_skip_relocation, sonoma:        "24965ddda6baddc380d6adf41afa33988b5114723016f1af555f822f5bd4d08d"
+    sha256 cellar: :any_skip_relocation, ventura:       "24965ddda6baddc380d6adf41afa33988b5114723016f1af555f822f5bd4d08d"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "55c9c2784a48e6e192efd609244aea588ae89c142ca68ddfc93b2c3b43c38025"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "06cc496be659b9958ef4368e2773e270a91a8be32ba41f9054471eba7b503be4"
   end
 
   depends_on "go" => :build
@@ -37,12 +36,12 @@ class Nebula < Formula
   test do
     system bin/"nebula-cert", "ca", "-name", "testorg"
     system bin/"nebula-cert", "sign", "-name", "host", "-ip", "192.168.100.1/24"
-    (testpath/"config.yml").write <<~EOS
+    (testpath/"config.yml").write <<~YAML
       pki:
         ca: #{testpath}/ca.crt
         cert: #{testpath}/host.crt
         key: #{testpath}/host.key
-    EOS
+    YAML
     system bin/"nebula", "-test", "-config", "config.yml"
   end
 end

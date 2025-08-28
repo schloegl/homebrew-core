@@ -1,26 +1,26 @@
 class HelmLs < Formula
   desc "Language server for Helm"
   homepage "https://github.com/mrjosh/helm-ls"
-  url "https://github.com/mrjosh/helm-ls/archive/refs/tags/v0.1.0.tar.gz"
-  sha256 "6cbbe74114e6a4b8cd0821e372190f67743bb0528ea364a969524c754ba00c22"
+  url "https://github.com/mrjosh/helm-ls/archive/refs/tags/v0.5.0.tar.gz"
+  sha256 "75da2b8c3397de3361c5e93d256b0d6d1666a83b4039ed5febf3df6ea9f73bc1"
   license "MIT"
   head "https://github.com/mrjosh/helm-ls.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "8036353a79e05dbf8cf9575683e8ebfe01f061c03d47494d9a8843c949ca297b"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "fedd5ab71b9056b1e72dea7cf14793a3f031749abac67ceb8ea82562a14316ef"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "6b97bb39daac8453d8f743d3d2157788c2a98d975c0eaa4f8d4bee296583b436"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "cff77a1eb4bfba6811d7c0874a48a12282f22ae041ae45030654b1b36dd1b2b9"
-    sha256 cellar: :any_skip_relocation, sonoma:         "18ec922131749e79ead6a293f7f24e46c40381843a6569bba092ccb392176652"
-    sha256 cellar: :any_skip_relocation, ventura:        "0a7c8137569c772d25e34d98f723519db292329706a8cb9042893a9888c6b8d9"
-    sha256 cellar: :any_skip_relocation, monterey:       "db62edea9ffe0fcfb5572030a136d163d3b8b8c2233da4bb1b8b9eb1a7c800f7"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "f4b8c65835838e2509815cba6b3895e940354df97ac376516b809d7dc1d01710"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "fd280e902cd6bee83a50efd9e84847ee06a012d32caf43524054470ff2e06e26"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "34c82928b7f9333c372ee3d3b2ab35ca9b310d1c9154bd009d03fcd58c3f5574"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "fef517a2220c34cf4d38249448c0d41e062d31d3ea821fe4b254eae4f94ba453"
+    sha256 cellar: :any_skip_relocation, sonoma:        "26749a6dc3cec30e9d37033b409df7346661cbba8bf7867f0d00cab22979f3a0"
+    sha256 cellar: :any_skip_relocation, ventura:       "2128dcf4e463a3298b29c3b4bf23651540354067626c2842507d5debcfaf010a"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "2f8937a909f09051e33acf1f282c9da9faaabc657be936244170710fe08aca90"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "09504a5a5102786ea3efdbeffceb14446b859bed5e3979d0e33a07ae0d9898ac"
   end
 
   depends_on "go" => :build
 
   def install
     ldflags = %W[
+      -s -w
       -X main.Version=#{version}
       -X main.CompiledBy=#{tap.user}
       -X main.GitCommit=#{tap.user}
@@ -34,7 +34,7 @@ class HelmLs < Formula
   test do
     require "open3"
 
-    assert_match version.to_s, shell_output(bin/"helm_ls version")
+    assert_match version.to_s, shell_output("#{bin}/helm_ls version")
 
     json = <<~JSON
       {

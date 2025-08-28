@@ -1,8 +1,8 @@
 class PostgresqlAT15 < Formula
   desc "Object-relational database system"
   homepage "https://www.postgresql.org/"
-  url "https://ftp.postgresql.org/pub/source/v15.8/postgresql-15.8.tar.bz2"
-  sha256 "4403515f9a69eeb3efebc98f30b8c696122bfdf895e92b3b23f5b8e769edcb6a"
+  url "https://ftp.postgresql.org/pub/source/v15.14/postgresql-15.14.tar.bz2"
+  sha256 "06dd75d305cd3870ee62b3932e661c624543eaf9ae2ba37cdec0a4f8edd051d2"
   license "PostgreSQL"
 
   livecheck do
@@ -11,13 +11,13 @@ class PostgresqlAT15 < Formula
   end
 
   bottle do
-    rebuild 1
-    sha256 arm64_sequoia: "f62ead6c7e2a1a98e568387c93d00739381e3c146fd74b0a08653c501f88f4c6"
-    sha256 arm64_sonoma:  "3faba25b019841450c38dc20fbb0e2df2f80773e8bc078dda91aaee9d3cbc6cd"
-    sha256 arm64_ventura: "121d933b4a1d366d80e59154c7fbb95c35771206a427683d6ffd53ca7243951f"
-    sha256 sonoma:        "738d98a146abb1e78053b8e75f278806d436ba511e0ff54b06c4a9fd5aa70ced"
-    sha256 ventura:       "47b1673010e4d1a799ff10adcc6b271bb2402706ce30147366f34609312aed08"
-    sha256 x86_64_linux:  "ef2abb463fad512ec48ed6328fd1e8c66becf9c160edbaed619fead1791159a9"
+    sha256 arm64_sequoia: "f3dcce97af544e535fbc7427ddda57a35a01c15451e892d382e76b27c03fc784"
+    sha256 arm64_sonoma:  "42b6e60b01971c13c8493371afa72180988156ce2cf5869038c619424d5837b1"
+    sha256 arm64_ventura: "da02b1aa70bc27707385596d4a1c282f05bb5e7d61df1c43a9f5b001e0f2ae55"
+    sha256 sonoma:        "e7121f3ef609e9563d5b9bccbd6cd04bb915ee369e119ac228228dc7b760f46c"
+    sha256 ventura:       "fb28e3f132cdd43d1133a6008fd6d9b6b7b962bc8275d5ce1637bd272fe40aef"
+    sha256 arm64_linux:   "6daebb526118fbfa8f6b8a2524c0b4b2e639566d2067e17f48b83f2151e270ae"
+    sha256 x86_64_linux:  "53dd03e6dd41d7947d82c36a10da2b8d04b2a5e3d79c10e39e3a6bacdad2205a"
   end
 
   keg_only :versioned_formula
@@ -26,8 +26,8 @@ class PostgresqlAT15 < Formula
   deprecate! date: "2027-11-11", because: :unsupported
 
   depends_on "gettext" => :build
-  depends_on "pkg-config" => :build
-  depends_on "icu4c"
+  depends_on "pkgconf" => :build
+  depends_on "icu4c@77"
 
   # GSSAPI provided by Kerberos.framework crashes when forked.
   # See https://github.com/Homebrew/homebrew-core/issues/47494.
@@ -54,6 +54,7 @@ class PostgresqlAT15 < Formula
   end
 
   def install
+    ENV.runtime_cpu_detection
     ENV.delete "PKG_CONFIG_LIBDIR"
     ENV.prepend "LDFLAGS", "-L#{Formula["openssl@3"].opt_lib} -L#{Formula["readline"].opt_lib}"
     ENV.prepend "CPPFLAGS", "-I#{Formula["openssl@3"].opt_include} -I#{Formula["readline"].opt_include}"

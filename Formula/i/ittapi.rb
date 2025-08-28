@@ -1,20 +1,19 @@
 class Ittapi < Formula
   desc "Intel Instrumentation and Tracing Technology (ITT) and Just-In-Time (JIT) API"
   homepage "https://github.com/intel/ittapi"
-  url "https://github.com/intel/ittapi/archive/refs/tags/v3.25.3.tar.gz"
-  sha256 "1b46fb4cb264a2acd1a553eeea0e055b3cf1d7962decfa78d2b49febdcb03032"
+  url "https://github.com/intel/ittapi/archive/refs/tags/v3.26.3.tar.gz"
+  sha256 "435bfd99a8d9a7b7b2b4fde33132d7aea125e612decc9138bff6895ed0144e95"
   license "GPL-2.0-only"
   head "https://github.com/intel/ittapi.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "0eb47aac43b90656715526826788302f478fefd2cd9b022a71c9ca224ad624e5"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "864d3f828eb1ae959585364d3c31937c951668f4a8d93c43b859da1b829b7a44"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "dd02e6e759e5a65863acb20f3f21ea4643e30f762f4673a5305d324183ab148e"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "32a4854bf00d45a310a511ff1686cf1a356dc2563ce7999baa90465b285295b1"
-    sha256 cellar: :any_skip_relocation, sonoma:         "8d8b9ae4f59e2160df13d155e416f476e24050e79875199b77471a74f6e5b6dc"
-    sha256 cellar: :any_skip_relocation, ventura:        "8da07bcc001f2cabf65e8e53c79fd518bedfb688a95babefd3e9371cfcc4863c"
-    sha256 cellar: :any_skip_relocation, monterey:       "687d2971980df9809b556895bb31b77f01a255128b0efcaff918c60c5194c5d4"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "0b68352be50966560ebde0f6b9287da348168aae0cc1669a60793ba9eb9057e6"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "7c4dada7487facbca9422319c2b14ad67d09a600a4f7bbf2ba26d50a2025f895"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "17ebdc3b13a6647f2d9493125a04f0f16caf67bc5b50e801c70be20fddb55d52"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "ffbc0035e634120ef59964b3330caf70c0556d4fa91197c1059f2bbf8ea1dea9"
+    sha256 cellar: :any_skip_relocation, sonoma:        "63e7f0d2fbe1986331239e5f6d690202b2d788d9e04a01a31c80e7bdc99a5bf2"
+    sha256 cellar: :any_skip_relocation, ventura:       "abcef156a4ca5023e07784e8d0f34fc36f87baf687d4ef3f362e2b7fd143bb35"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "3de370c06e120d8bfb4fa1e3b174bea2626c2ee3854a6116f340c92c9566b5f9"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4568bd0746da1285215b21f6e7631b5145dfa698d1f4a1b5b9f2188d0921088e"
   end
 
   depends_on "cmake" => :build
@@ -26,7 +25,7 @@ class Ittapi < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <ittnotify.h>
 
       __itt_domain* domain = __itt_domain_create("Example.Domain.Global");
@@ -38,7 +37,7 @@ class Ittapi < Formula
         __itt_task_end(domain);
         return 0;
       }
-    EOS
+    CPP
     system ENV.cxx, "test.cpp", "-o", "test",
                     "-I#{include}",
                     "-L#{lib}", "-littnotify"

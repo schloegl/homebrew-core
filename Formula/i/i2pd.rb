@@ -1,20 +1,19 @@
 class I2pd < Formula
   desc "Full-featured C++ implementation of I2P client"
   homepage "https://i2pd.website/"
-  url "https://github.com/PurpleI2P/i2pd/archive/refs/tags/2.53.1.tar.gz"
-  sha256 "c6863d853905e7594ea661595ea591055f8f2f018b9b90507d5a43a6456188ea"
+  url "https://github.com/PurpleI2P/i2pd/archive/refs/tags/2.57.0.tar.gz"
+  sha256 "e2327f816d92a369eaaf9fd1661bc8b350495199e2f2cb4bfd4680107cd1d4b4"
   license "BSD-3-Clause"
-  revision 2
+  revision 1
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "3167c59ad43eae832f2453a7341bca45ac4436611a558c7fe591f5622ab0e3e9"
-    sha256 cellar: :any,                 arm64_sonoma:   "a4e7d4d4cbd93bee7bd27ca808684ec9568c14b1be7090c62fe6bc689985acad"
-    sha256 cellar: :any,                 arm64_ventura:  "a58c579c861e964a648cad9eb2d593f866cc5d2cfbad9049b42b08a5830ed4be"
-    sha256 cellar: :any,                 arm64_monterey: "ee32381a4a7c9ac7176dbb51e0a74f18e2f06eb59690c12527dceb74df1c6968"
-    sha256 cellar: :any,                 sonoma:         "0e6a92be437ff23d7bee284230e20b8da857f1b62048a73b213e366002482493"
-    sha256 cellar: :any,                 ventura:        "bb945682a876206475efe7e3ca26bfa5d670f76c3778a6fcab6a9338abe7a634"
-    sha256 cellar: :any,                 monterey:       "edc0f028fd5f951512fd5b33f1ce8b1cd6c41a208367ac17c1629d8da42f438f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "ebfae0bea6e262521b9f2fd1d57adac740c4f94bf610959ce501010c2e3f802c"
+    sha256 cellar: :any,                 arm64_sequoia: "dd5dbe37c54e64f03f2579dc2fdd873936ca4b2ce226d5f434c0c5a948b5749c"
+    sha256 cellar: :any,                 arm64_sonoma:  "76d75af4900ea1f1012e7952047e960732c0c49dde9a0fdc93231061288766c8"
+    sha256 cellar: :any,                 arm64_ventura: "c5f34119bf93d6795cdd02fd0de0fa05cbf17c1751f6d5a8c48f5219d7022adb"
+    sha256 cellar: :any,                 sonoma:        "073711b48e78a6831294d2cbc4f2858f06f64b55c3f80d711cebd8cf1009d225"
+    sha256 cellar: :any,                 ventura:       "a9e95f28d0e53c8ee3d0282b4c30d497a501d95d05da7deccfc46272ff4d5e64"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "f01280177ad65a820661628927d8168ad9ed660340fbab43ee082c1dbbf14acf"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "96d2090470bd78d7f4868228b981a2c444ffa7236ffd94cebddf50a77799a488"
   end
 
   depends_on "boost"
@@ -22,6 +21,12 @@ class I2pd < Formula
   depends_on "openssl@3"
 
   uses_from_macos "zlib"
+
+  # Backport fix for Boost 1.89.0
+  patch do
+    url "https://github.com/PurpleI2P/i2pd/commit/27f2c5285da9bec537caeba9f7df6920b9f21c87.patch?full_index=1"
+    sha256 "008a59b2a78659b1eae746eeb3bf8635e8f12907741a9d951aebe552decc4a35"
+  end
 
   def install
     args = %W[
@@ -70,8 +75,12 @@ class I2pd < Formula
     pidfile = testpath/"i2pd.pid"
     system bin/"i2pd", "--datadir=#{testpath}", "--pidfile=#{pidfile}", "--daemon"
     sleep 5
-    assert_predicate testpath/"router.keys", :exist?, "Failed to start i2pd"
+    assert_path_exists testpath/"router.keys", "Failed to start i2pd"
     pid = pidfile.read.chomp.to_i
-    Process.kill "TERM", pid
+    begin
+      Process.kill("TERM", pid)
+    rescue Errno::ESRCH
+      # Process already terminated
+    end
   end
 end

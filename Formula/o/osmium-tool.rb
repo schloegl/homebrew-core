@@ -1,25 +1,27 @@
 class OsmiumTool < Formula
   desc "Libosmium-based command-line tool for processing OpenStreetMap data"
   homepage "https://osmcode.org/osmium-tool/"
-  url "https://github.com/osmcode/osmium-tool/archive/refs/tags/v1.16.0.tar.gz"
-  sha256 "f98454d9f901be42e0b6751aef40106d734887ee35190c224b174c2f27ef1c0f"
+  url "https://github.com/osmcode/osmium-tool/archive/refs/tags/v1.18.0.tar.gz"
+  sha256 "5438f57043c9df05137ca4bd1b1e4a5fb1c9c8c49cb4bec43a5f1ef30ed68fb5"
   license "GPL-3.0-or-later"
-  revision 4
+  revision 2
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "ebda02a23a3f1cfa0275f71e2c5445e5f3127bc3597db4b16e1fa4b9972500de"
-    sha256 cellar: :any,                 arm64_sonoma:   "f8c2f5614625cafdf9e42a325d1565e25281f9cab2f89ddbc717a05f6a768fff"
-    sha256 cellar: :any,                 arm64_ventura:  "189ab4022fc116085d637ccd93ea248972a9873b5b37d6df3e26c417aee5cbef"
-    sha256 cellar: :any,                 arm64_monterey: "1a168fb4ababa8829f1720b5759ffe48e620d93ebd82b713e6070bcad5e08274"
-    sha256 cellar: :any,                 sonoma:         "4f3cb5053fa0d24861c5fccfdcc15b010c07af138cb6ff2b9d49d9f3b9753185"
-    sha256 cellar: :any,                 ventura:        "6921c1baafe13854f684136de7cbf3ca0e7122291e3e66588464230db67432c0"
-    sha256 cellar: :any,                 monterey:       "9c64fe9a05a00af2ba891e35dcb2bb0afcb4584a1312431015486bbf77f990d0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "30655a9d970ee905e12ba22f874947ca8d6847c8641e8ba00750f542dbe3ae91"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia: "b886fcf15d6f433f85d93af8b7b5e50d28ab7d65ebf0db6fa25988fad440c248"
+    sha256 cellar: :any,                 arm64_sonoma:  "5b609383ae13cdd88a464a02f49edd29eccc95dd1fa7cdb3f1f3eb217e80c259"
+    sha256 cellar: :any,                 arm64_ventura: "e91c59db15ddbd9abd1a82d3245e8673e405ee9bb4294a94802bd93785e13dd1"
+    sha256 cellar: :any,                 sonoma:        "834c9965363b4920ae4d7ff2b53dafd9a9707cd489a56e5fe0b9212c8407ec24"
+    sha256 cellar: :any,                 ventura:       "af40e84b8362633d1e8b37e74b89c61bddac06254ee548fed4d53d535f989043"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "f1d278d2df1034fbdb2e72a6fefa9e6cb7c2fe6e885040782d5179302f167b84"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9866803a6ed76ff8ea79186e180b44fe9c81d3c8fbc904bbbffe5e32a90cab20"
   end
 
   depends_on "cmake" => :build
   depends_on "libosmium" => :build
+  depends_on "nlohmann-json" => :build
   depends_on "pandoc" => :build
+  depends_on "protozero" => :build
   depends_on "boost"
   depends_on "lz4"
 
@@ -28,13 +30,15 @@ class OsmiumTool < Formula
   uses_from_macos "zlib"
 
   def install
-    protozero = Formula["libosmium"].opt_libexec/"include"
-    system "cmake", ".", "-DPROTOZERO_INCLUDE_DIR=#{protozero}", *std_cmake_args
-    system "make", "install"
+    protozero = Formula["protozero"].opt_include
+
+    system "cmake", "-S", ".", "-B", "build", "-DPROTOZERO_INCLUDE_DIR=#{protozero}", *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"test.osm").write <<~EOS
+    (testpath/"test.osm").write <<~XML
       <?xml version="1.0" encoding="UTF-8"?>
       <osm version="0.6" generator="handwritten">
         <node id="1" lat="0.001" lon="0.001" user="Dummy User" uid="1" version="1" changeset="1" timestamp="2015-11-01T19:00:00Z"></node>
@@ -49,7 +53,8 @@ class OsmiumTool < Formula
           <member type="way" ref="1" role=""/>
         </relation>
       </osm>
-    EOS
+    XML
+
     output = shell_output("#{bin}/osmium fileinfo test.osm")
     assert_match(/Compression.+generator=handwritten/m, output)
     system bin/"osmium", "tags-filter", "test.osm", "w/name=line", "-f", "osm"

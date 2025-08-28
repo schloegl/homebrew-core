@@ -3,25 +3,26 @@ class Badkeys < Formula
 
   desc "Tool to find common vulnerabilities in cryptographic public keys"
   homepage "https://badkeys.info"
-  url "https://files.pythonhosted.org/packages/3f/51/e1acca1ebddf0dc44937e340690364051e2e79e6d4bd628aba9f30f56115/badkeys-0.0.12.tar.gz"
-  sha256 "2c80bbb84a39d0428082ee8f2990a91a6f30f6df85e9a75091c4a862c08611e1"
+  url "https://files.pythonhosted.org/packages/8b/fe/01e4617b44bbb352023bc1ee7e2eef4358d59d0bab9677f52698dbff44b1/badkeys-0.0.13.tar.gz"
+  sha256 "6013a2496221993d726ab624170108b82ed188bf2b03eb032cfaaee17354530e"
   license "MIT"
   head "https://github.com/badkeys/badkeys.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "495481caa2debdf89862b19893af1a4462b08dec6b36b23c4051014db5b8935e"
-    sha256 cellar: :any,                 arm64_sonoma:  "c4a8709ae44d82257dd0b602374649c1f536aa5be1a9878f6103055df920f22e"
-    sha256 cellar: :any,                 arm64_ventura: "a3c5815c227230de6adf15626b51008ccbd91c715bdb576c6ea22d7a8b98df0d"
-    sha256 cellar: :any,                 sonoma:        "426d2bd679a81a323ee8e3ec5093365f205e2ff01a7cc9dddac72c4f0d67f8dd"
-    sha256 cellar: :any,                 ventura:       "e350e6b5366ad217226580150b624d7eb859015fe47124e77acebb1d2bd82c0a"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ac37d3762c9eb6e6da7eaa5e0e62f2a22aeb7c2a8958b77d4ef3203da8bc8067"
+    sha256 cellar: :any,                 arm64_sequoia: "091903ae93eaf73bcd25d6af039458e5df16e2802638fdf8d40179f0b993a4ff"
+    sha256 cellar: :any,                 arm64_sonoma:  "f4d06958f60fdf734839d289015e378324dd38668446312437244db26db0e570"
+    sha256 cellar: :any,                 arm64_ventura: "b3e77db1e77edb273e6022bea8440e651fa300263c47b2f8d4045114ad658bfd"
+    sha256 cellar: :any,                 sonoma:        "4b23d32e958d853a341359f6c2627387e1628cbf72abf3f8edfe749976db58e8"
+    sha256 cellar: :any,                 ventura:       "71564d54d9739f33b60db86b68761a7f0414a2837df84f2ec8b62f1258701cf4"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "4bc3a6bf8c1a8cedf53f5725d98e84de9987494b1503f69f2fe18174458b2a1a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "336a1ff4d2f198153a7c2ebaea51bc0dc33cb651fff3cf60a36b235477990645"
   end
 
   depends_on "cryptography"
   depends_on "gmp"
   depends_on "libmpc"
   depends_on "mpfr"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "gmpy2" do
     url "https://files.pythonhosted.org/packages/07/bd/c6c154ce734a3e6187871b323297d8e5f3bdf9feaafc5212381538bc19e4/gmpy2-2.2.1.tar.gz"

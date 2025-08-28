@@ -1,8 +1,8 @@
 class Cdi < Formula
   desc "C and Fortran Interface to access Climate and NWP model Data"
   homepage "https://code.mpimet.mpg.de/projects/cdi"
-  url "https://code.mpimet.mpg.de/attachments/download/29658/cdi-2.4.3.tar.gz"
-  sha256 "7bf3df83968e15d718857a4823c0bae7d9c16ea17ca95524e1e5b68ab73d2c0d"
+  url "https://code.mpimet.mpg.de/attachments/download/30033/cdi-2.5.3.tar.gz"
+  sha256 "1ebf6098b195c0bb13614015b62a63efd2ef3d4ee94f4c69cadcf236854b2303"
   license "GPL-2.0-only"
 
   livecheck do
@@ -10,13 +10,16 @@ class Cdi < Formula
     regex(/href=.*?cdi[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
+  no_autobump! because: :incompatible_version_format
+
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "40afb9a4266c870e3b8a6cc4eedab7c3911fe3b72ae520c3fff92fabe00b6b66"
-    sha256 cellar: :any,                 arm64_sonoma:  "bdf7e3284f561677b004b52473f13894a406ecd49fe60f1e1577aa2623950baf"
-    sha256 cellar: :any,                 arm64_ventura: "ec51ac120f66ba071d6f16067730974b41bb5326ec9e21f827d93943a0f4e956"
-    sha256 cellar: :any,                 sonoma:        "4652de47f7701dd0ddaae4905bd0e9ce6fed470c92bbc5beb3676c0ec10c4d46"
-    sha256 cellar: :any,                 ventura:       "a6523b754420a7653b26e08e8180c24a412b393194ffc1a2a4ff915a97de8d04"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7977e0ed395f88c6aa0d80b9a0e8765bf1a147baa70fc6a08244a1271a8c1c7e"
+    sha256 cellar: :any,                 arm64_sequoia: "cfc00e9f19ee18c4fd3db9f33e71a3312d28857a8a5911756d17bb36cf3047db"
+    sha256 cellar: :any,                 arm64_sonoma:  "be8fbcfc9050ffe9e353d9b0fc31df5fea966babd9625fe014a82724c46f26ab"
+    sha256 cellar: :any,                 arm64_ventura: "95ecbbe3065c0a09587de975457e992a2c881844acb54303c4de76e62da81ce4"
+    sha256 cellar: :any,                 sonoma:        "c39d215b041512c361686a609de5d5af7994a791bb0d9b163408f29e4dd3a352"
+    sha256 cellar: :any,                 ventura:       "1441d2209aa2d2d8f7a373fe47e6eda539fdeb0ba9b4899c911baefe9770ae06"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "6e5351f6875be7fe43b7dd1075999ea63de9c4728c7bb70acf55d50bf27e61af"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ac2b729c7c93b160f854c4b4d0966f0926b7a32c5685780f24aa080a526146cb"
   end
 
   depends_on "eccodes"
@@ -45,7 +48,7 @@ class Cdi < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOF
+    (testpath/"test.c").write <<~C
       #include <stdio.h>
       #include <cdi.h>
       int main() {
@@ -54,7 +57,7 @@ class Cdi < Formula
 
         return 0;
       }
-    EOF
+    C
 
     system ENV.cc, "test.c", "-I#{include}", "-L#{lib}", "-lcdi", "-o", "test"
     assert_match "CDI library version : #{version}", shell_output("./test")

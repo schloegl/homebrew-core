@@ -1,8 +1,8 @@
 class BareosClient < Formula
   desc "Client for Bareos (Backup Archiving REcovery Open Sourced)"
-  homepage "https://www.bareos.org/"
-  url "https://github.com/bareos/bareos/archive/refs/tags/Release/23.0.4.tar.gz"
-  sha256 "55fc4d2de3f4a5ca9d728da98acf348a9f6a0c29c719d526029bff50f65d2c55"
+  homepage "https://www.bareos.com/"
+  url "https://github.com/bareos/bareos/archive/refs/tags/Release/24.0.4.tar.gz"
+  sha256 "0151d978b3db86db49abd216224ab150a48fab1278c812a255740d0b4e3a80ab"
   license "AGPL-3.0-only"
 
   livecheck do
@@ -11,21 +11,25 @@ class BareosClient < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "14f1f91ca6e2ddc36d1e967850b06a6af6acbd6d706fb0fb6852eb18c48382b1"
-    sha256 arm64_sonoma:   "e7260d9b636ea8b344f824533cd1cc38e4ec5b69b36de9aa1a41283233fafe5a"
-    sha256 arm64_ventura:  "bf51da611653906758bd92f978ba8ca5dd8e74a9c730e7b1888fb71ef2392a19"
-    sha256 arm64_monterey: "9cc06db6fb7ca760ba16bf89d1ee71f94f86487132bf8cab3a9723b76db1d368"
-    sha256 sonoma:         "c0241c91796e79d616c1fbd486078beb77575515aaf1c9de34ffebdf2921540d"
-    sha256 ventura:        "a6db2e0b30c312785c1d173fc53bf8d597e6c244b5b496fc9df0faa82d38ba83"
-    sha256 monterey:       "a86fc0dc354205902e11a967ca70ad124a6d14455662cee9a5b4f33ac4cee686"
-    sha256 x86_64_linux:   "0972bd1a75de56ee7605f0ad5a7af94e57c4de2d83ec371f9ddf345a71414e91"
+    sha256 arm64_sequoia: "4d364de83ca4995fe14b7f77d10b60a528f460d4333eff9bc83448e3e57b0237"
+    sha256 arm64_sonoma:  "b600ec264b906a2ccf889135b0f4ac5b9d9f61b83cec9b0bc54dc2461146cea8"
+    sha256 arm64_ventura: "7ad4d1c547798be74d5a779a64ed33894dd0d8632c1e0afcd95a535eb147c38d"
+    sha256 sonoma:        "b3e9c9f87cb84bbb4f3e130db6c38c724cbf8b8889bce489978114d6c4072866"
+    sha256 ventura:       "7a418e0e4e5fe69ac0cdbc2947de50fc42bb6f4bc2c4514d8e21c24b9f989192"
+    sha256 arm64_linux:   "2d861b8c2ccb63ef0ebf43e317ec38d7a15dc5263fb1f149f5b98f38e69f5ca9"
+    sha256 x86_64_linux:  "e46917c3723b9ac9971365d17832de7937ef980dbe35a56b35a086dba729d536"
   end
 
+  depends_on "cli11" => :build
   depends_on "cmake" => :build
+  depends_on "cpp-gsl" => :build
+  depends_on "fmt" => :build
+  depends_on "utf8cpp" => :build
   depends_on "jansson"
   depends_on "lzo"
   depends_on "openssl@3"
   depends_on "readline"
+  depends_on "xxhash"
 
   uses_from_macos "zlib"
 
@@ -58,6 +62,10 @@ class BareosClient < Formula
     inreplace "core/cmake/FindReadline.cmake",
               "${HOMEBREW_PREFIX}/opt/readline/lib/libreadline.a",
               Formula["readline"].opt_lib/shared_library("libreadline")
+
+    inreplace "core/src/filed/CMakeLists.txt",
+              "bareos-fd PROPERTIES INSTALL_RPATH \"@loader_path/../${libdir}\"",
+              "bareos-fd PROPERTIES INSTALL_RPATH \"${libdir}\""
 
     system "cmake", "-S", ".", "-B", "build", *std_cmake_args,
                     "-DENABLE_PYTHON=OFF",

@@ -2,7 +2,7 @@ class Tectonic < Formula
   desc "Modernized, complete, self-contained TeX/LaTeX engine"
   homepage "https://tectonic-typesetting.github.io/"
   license "MIT"
-  revision 1
+  revision 4
   head "https://github.com/tectonic-typesetting/tectonic.git", branch: "master"
 
   stable do
@@ -13,6 +13,12 @@ class Tectonic < Formula
     patch do
       url "https://github.com/tectonic-typesetting/tectonic/commit/6b49ca8db40aaca29cb375ce75add3e575558375.patch?full_index=1"
       sha256 "86e5343d1ce3e725a7dab0227003dddd09dcdd5913eb9e5866612cb77962affb"
+    end
+
+    # Backport fix for icu4c 75
+    patch do
+      url "https://github.com/tectonic-typesetting/tectonic/commit/d260961426b01f7643ba0f35f493bdb671eeaf3f.patch?full_index=1"
+      sha256 "7d2014a1208569a63fca044b8957e2d2256fa169ea2ebe562aed6f490eec17d1"
     end
   end
 
@@ -25,29 +31,31 @@ class Tectonic < Formula
   end
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any,                 arm64_sequoia:  "ccdfb46e10306ea5e546e5b4ab88cb743226dd7dc72c338aeed07c14579e9630"
-    sha256 cellar: :any,                 arm64_sonoma:   "85647768c6b32b1cceebac4c541e5efbb99fdc566924fe4559f6533d161eb06a"
-    sha256 cellar: :any,                 arm64_ventura:  "39804b39b3a365a653c64bd7c38ed9f8f8375b7295b4b488d65a9a0ea45fe465"
-    sha256 cellar: :any,                 arm64_monterey: "88d39d53987fbe343aecb1dba5b388bd87981bcef6f378ce16be169732f93d16"
-    sha256 cellar: :any,                 sonoma:         "eecc9938bf7b89cdb57054f9f098ebc619a284fa6f6fe077f984ff8497c35a35"
-    sha256 cellar: :any,                 ventura:        "aa1b9a3cca1c889ac3140030b3b940d18de821a75e7b10211cf20940add18c04"
-    sha256 cellar: :any,                 monterey:       "29b6de4cf2fa8ea3de5f209fe3cfd3608cca115954989eb674679d1dd9651b45"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "8d15114dca090265bdd487b79a65295ff695ee1c928c5471fd1ad633fccfebc0"
+    sha256 cellar: :any,                 arm64_sequoia: "ffc8602e1b2f1a67000d75005c1cbaae38bdd947e553c9f0b2691b808c37b485"
+    sha256 cellar: :any,                 arm64_sonoma:  "d285d2e6edecf5aa4eff882adfc33da8b77f42e5c38e830f71f4df3bfeaa51f2"
+    sha256 cellar: :any,                 arm64_ventura: "f32891c5831052e3bb42bc8fb0e16b03bd9c4d7589c352f5aaf44d75f025b23c"
+    sha256 cellar: :any,                 sonoma:        "fa701da13aceb845275ab33d2be416e8e920de049200aa24f3b59f0ece64e7df"
+    sha256 cellar: :any,                 ventura:       "56ce8b708073b61d53ad803ac2b7977023b3361db901051e314387d15f1ed766"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "9503c0b5a4f9746927ca7d4773284b0880289a9197d4512034bd0b7516d313b5"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "729380f2cf1ff68094a032dc5c4dc21fcbfc70dba58bbf2c597b1b2d675fcbc3"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
   depends_on "freetype"
   depends_on "graphite2"
   depends_on "harfbuzz"
-  depends_on "icu4c"
+  depends_on "icu4c@77"
   depends_on "libpng"
   depends_on "openssl@3"
 
-  def install
-    ENV.cxx11
+  uses_from_macos "zlib"
 
+  on_linux do
+    depends_on "fontconfig"
+  end
+
+  def install
     if OS.mac?
       ENV["MACOSX_DEPLOYMENT_TARGET"] = MacOS.version.to_s # needed for CLT-only builds
       ENV.delete("HOMEBREW_SDKROOT") if MacOS.version == :high_sierra
@@ -64,11 +72,11 @@ class Tectonic < Formula
   test do
     (testpath/"test.tex").write 'Hello, World!\bye'
     system bin/"tectonic", "-o", testpath, "--format", "plain", testpath/"test.tex"
-    assert_predicate testpath/"test.pdf", :exist?, "Failed to create test.pdf"
+    assert_path_exists testpath/"test.pdf", "Failed to create test.pdf"
     assert_match "PDF document", shell_output("file test.pdf")
 
     system bin/"nextonic", "new", "."
     system bin/"nextonic", "build"
-    assert_predicate testpath/"build/default/default.pdf", :exist?, "Failed to create default.pdf"
+    assert_path_exists testpath/"build/default/default.pdf", "Failed to create default.pdf"
   end
 end

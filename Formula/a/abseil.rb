@@ -1,46 +1,31 @@
 class Abseil < Formula
   desc "C++ Common Libraries"
   homepage "https://abseil.io"
-  url "https://github.com/abseil/abseil-cpp/archive/refs/tags/20240722.0.tar.gz"
-  sha256 "f50e5ac311a81382da7fa75b97310e4b9006474f9560ac46f54a9967f07d4ae3"
+  url "https://github.com/abseil/abseil-cpp/archive/refs/tags/20250814.0.tar.gz"
+  sha256 "9b2b72d4e8367c0b843fa2bcfa2b08debbe3cee34f7aaa27de55a6cbb3e843db"
   license "Apache-2.0"
   head "https://github.com/abseil/abseil-cpp.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "280f470ee5ae12531a5528850dd90010acb872699064ee273598e4bbc46e304b"
-    sha256 cellar: :any,                 arm64_sonoma:   "922c5d7b256fed577b3f7c84ec7a8ce67dddfc7670726e417eaed71bb6878fc6"
-    sha256 cellar: :any,                 arm64_ventura:  "0e81f268b9e514694f0dbe17a2cf6fecf1537ed680206e6ef88671345482f7e9"
-    sha256 cellar: :any,                 arm64_monterey: "e10b87de708e6731f27a22e3585884749dbcf967a3bd2486ddcae0f410951c3f"
-    sha256 cellar: :any,                 sonoma:         "e669331fc89560e725f40f61ad5ef970eeb3f883586f482ac45d45bc21124b82"
-    sha256 cellar: :any,                 ventura:        "5d72497268f8335b3955ea9408e33f6235ae1c13dcfb67b14b6a58a0600e4908"
-    sha256 cellar: :any,                 monterey:       "68b478c629ee72fd66bca1b4c3944c29e053d9d85315ffc8cd4fe225daefa9a3"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "847b8ef8ec4bb017c0e43121225b03f742d74d570a560d411db7408d0385e9bd"
+    sha256                               arm64_sequoia: "46c63da34f7ff761501842d4068f9bfaabbadf12568424c87491b19065d3b17f"
+    sha256                               arm64_sonoma:  "19df247e567459110a43ff1bd216af37d626e8ee2d2ad69e74d8c34e765f0dad"
+    sha256                               arm64_ventura: "f59c0c62a921b35d5690c72b2440a532e927ad4f46825d9e3834db13af5794b1"
+    sha256 cellar: :any,                 sonoma:        "f62bab7dc820937f2086e0b9a5d9635f5d0348ea810e24b2f4a5747ed0e7979a"
+    sha256 cellar: :any,                 ventura:       "c011eeeccd1dfb6c2804163ef4619304e5821be64651d44b71c7112794ee9f77"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "ef3e9a33b4ab2fc9659dae39ad3d71dda4e7e3fc29dd84a379ff4d19b9556a06"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7d58b90b49e1a35f2a67eb462aea9ad2a5be1c463e86808d9a1df6e7e504bb98"
   end
 
   depends_on "cmake" => [:build, :test]
-
-  on_macos do
-    depends_on "googletest" => :build # For test helpers
-  end
-
-  fails_with gcc: "5" # C++17
-
-  # Fix shell option group handling in pkgconfig files
-  # https://github.com/abseil/abseil-cpp/pull/1738
-  patch do
-    url "https://github.com/abseil/abseil-cpp/commit/9dfde0e30a2ce41077758e9c0bb3ff736d7c4e00.patch?full_index=1"
-    sha256 "94a9b4dc980794b3fba0a5e4ae88ef52261240da59a787e35b207102ba4ebfcd"
-  end
+  depends_on "googletest" => :build # For test helpers
 
   def install
     ENV.runtime_cpu_detection
 
-    # Install test helpers. Doing this on Linux requires rebuilding `googltest` with `-fPIC`.
-    extra_cmake_args = if OS.mac?
-      %w[ABSL_BUILD_TEST_HELPERS ABSL_USE_EXTERNAL_GOOGLETEST ABSL_FIND_GOOGLETEST].map do |arg|
-        "-D#{arg}=ON"
-      end
-    end.to_a
+    # Install test helpers.
+    extra_cmake_args = %w[ABSL_BUILD_TEST_HELPERS ABSL_USE_EXTERNAL_GOOGLETEST ABSL_FIND_GOOGLETEST].map do |arg|
+      "-D#{arg}=ON"
+    end
 
     system "cmake", "-S", ".", "-B", "build",
                     "-DCMAKE_INSTALL_RPATH=#{rpath}",
@@ -54,7 +39,7 @@ class Abseil < Formula
   end
 
   test do
-    (testpath/"hello_world.cc").write <<~EOS
+    (testpath/"hello_world.cc").write <<~CPP
       #include <iostream>
       #include <string>
       #include <vector>
@@ -66,8 +51,8 @@ class Abseil < Formula
 
         std::cout << "Joined string: " << s << "\\n";
       }
-    EOS
-    (testpath/"CMakeLists.txt").write <<~EOS
+    CPP
+    (testpath/"CMakeLists.txt").write <<~CMAKE
       cmake_minimum_required(VERSION 3.16)
 
       project(my_project)
@@ -81,7 +66,7 @@ class Abseil < Formula
 
       # Declare dependency on the absl::strings library
       target_link_libraries(hello_world absl::strings)
-    EOS
+    CMAKE
     system "cmake", testpath
     system "cmake", "--build", testpath, "--target", "hello_world"
     assert_equal "Joined string: foo-bar-baz\n", shell_output("#{testpath}/hello_world")

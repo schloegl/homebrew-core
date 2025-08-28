@@ -1,8 +1,8 @@
 class Sysprof < Formula
   desc "Statistical, system-wide profiler"
   homepage "https://gitlab.gnome.org/GNOME/sysprof"
-  url "https://download.gnome.org/sources/sysprof/47/sysprof-47.0.tar.xz"
-  sha256 "7424c629434660654288c04248998c357d1ce87ee1559fd44df1980992ef5df5"
+  url "https://download.gnome.org/sources/sysprof/48/sysprof-48.1.tar.xz"
+  sha256 "54f157fdfef1edf1e2f22e542c462d90e1c21fca8c30eba4127cee739039bbe2"
   # See Debian's Copyright File. https://metadata.ftp-master.debian.org/changelogs//main/s/sysprof/sysprof_47.0-2_copyright
   license all_of: [
     "GPL-2.0-or-later",
@@ -16,15 +16,17 @@ class Sysprof < Formula
   head "https://gitlab.gnome.org/GNOME/sysprof.git", branch: "master"
 
   bottle do
-    sha256 x86_64_linux: "2640702271a9aa00a8e9040b742c6ae7b129e8b4c6ec8b6a3d6ad9571014dea4"
+    sha256 arm64_linux:  "b4078e143492f5ec05d382cd96eeb15450ca065bffbaf51d4b8eafae9097d0ec"
+    sha256 x86_64_linux: "25953a9b376a7e7a7fd216fa53c97ecf6011d32c060769dbe07b94fb72669aae"
   end
 
   depends_on "desktop-file-utils" => :build
   depends_on "gettext" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => [:build, :test]
+  depends_on "pkgconf" => [:build, :test]
   depends_on "cairo"
+  depends_on "elfutils"
   depends_on "glib"
   depends_on "graphene"
   depends_on "gtk4"
@@ -61,7 +63,7 @@ class Sysprof < Formula
 
   test do
     cp pkgshare/"examples/app.c", "."
-    flags = shell_output("pkg-config --cflags --libs glib-2.0 sysprof-capture-4").chomp.split
+    flags = shell_output("pkgconf --cflags --libs glib-2.0 sysprof-capture-4").chomp.split
     system ENV.cc, "app.c", "-o", "app", *flags
     assert_equal "SYSPROF_TRACE_FD not found, exiting.", shell_output("./app 2>&1", 1).chomp
   end

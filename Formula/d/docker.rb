@@ -2,8 +2,8 @@ class Docker < Formula
   desc "Pack, ship and run any application as a lightweight container"
   homepage "https://www.docker.com/"
   url "https://github.com/docker/cli.git",
-      tag:      "v27.3.1",
-      revision: "ce1223035ac3ab8922717092e63a184cf67b493d"
+      tag:      "v28.3.3",
+      revision: "980b85681696fbd95927fd8ded8f6d91bdca95b0"
   license "Apache-2.0"
   head "https://github.com/docker/cli.git", branch: "master"
 
@@ -13,17 +13,19 @@ class Docker < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "dcd25100f823e80d665ce0bed51fe5016a4839669cb8bbfbb2e5be0e26dcc545"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "dcd25100f823e80d665ce0bed51fe5016a4839669cb8bbfbb2e5be0e26dcc545"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "dcd25100f823e80d665ce0bed51fe5016a4839669cb8bbfbb2e5be0e26dcc545"
-    sha256 cellar: :any_skip_relocation, sonoma:        "d1ce47ef4f6ad9f17ac563ff39524beee77ad1b2baab58a4d4cac62b56367ce6"
-    sha256 cellar: :any_skip_relocation, ventura:       "d1ce47ef4f6ad9f17ac563ff39524beee77ad1b2baab58a4d4cac62b56367ce6"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4f9af7f20c3d2b82d2146ffa6e1a524edfe8afc28251e4ed2dcbee01fe13f855"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "4556f02e4a6768d151f6e4c63dc44ecef119bb46d1a982d471cdf0f87db5ba5b"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "115483cd3eb1d4d020ff5888b055894dd04923d9f049e1331c21fa4650ae914a"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "30caf140e39b337144ea14420fdbc4c420d603825ddeff32c662fb1fd28e02df"
+    sha256 cellar: :any_skip_relocation, sonoma:        "bfe557328fa37ccdd53fefb64cebff6bb4499eb746c73f6453d6beb489468efa"
+    sha256 cellar: :any_skip_relocation, ventura:       "ce4db52fcc9a721ddd98425cd265ebd90ed2b746ec0534e09b9e3ba9b40d747f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fa01d71b4a5dbc82addedea0b79836a315200a3bd7b061a5ceb395a4db37e571"
   end
 
   depends_on "go" => :build
   depends_on "go-md2man" => :build
   depends_on "docker-completion"
+
+  conflicts_with cask: "docker-desktop"
 
   def install
     # TODO: Drop GOPATH when merged/released: https://github.com/docker/cli/pull/4116
@@ -38,6 +40,9 @@ class Docker < Formula
       -X github.com/docker/cli/cli/version.Version=#{version}
       -X "github.com/docker/cli/cli/version.PlatformName=Docker Engine - Community"
     ]
+
+    # FIXME: we shouldn't need this, but patchelf.rb does not seem to work well with the layout of Aarch64 ELF files
+    ldflags += ["-extld", ENV.cc] if OS.linux? && Hardware::CPU.arm?
 
     system "go", "build", *std_go_args(ldflags:), "github.com/docker/cli/cmd/docker"
 

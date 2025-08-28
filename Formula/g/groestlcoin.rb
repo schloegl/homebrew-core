@@ -1,38 +1,25 @@
 class Groestlcoin < Formula
   desc "Decentralized, peer to peer payment network"
-  homepage "https://groestlcoin.org/groestlcoin-core-wallet/"
+  homepage "https://www.groestlcoin.org/groestlcoin-core-wallet/"
+  url "https://github.com/Groestlcoin/groestlcoin/releases/download/v29.0/groestlcoin-29.0.tar.gz"
+  sha256 "48298150c83e38ca0b9b449c99fd1c18118849397e09261312a052517f504746"
   license "MIT"
-  revision 1
   head "https://github.com/groestlcoin/groestlcoin.git", branch: "master"
 
-  stable do
-    url "https://github.com/Groestlcoin/groestlcoin/releases/download/v27.0/groestlcoin-27.0.tar.gz"
-    sha256 "cf8de03ef104e67aa7c0c1f69fd78e19ea6fa3e8187d890d7916c1c72a3be530"
-
-    # miniupnpc 2.2.8 compatibility patch
-    patch do
-      url "https://github.com/Groestlcoin/groestlcoin/commit/8acdf66540834b9f9cf28f16d389e8b6a48516d5.patch?full_index=1"
-      sha256 "08ddebda702cf654f1b0cef22fb0b71ee2d97d0373e382a6ccf878738aade96a"
-    end
-  end
-
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "dd2ee1fee9bfc8c3bde45ade57652d3433c701c4b9462783d790c125f7523e89"
-    sha256 cellar: :any,                 arm64_sonoma:   "a26c116d48f076dab3cdc4d2306a1dec7dc7acfd3f094b0f4d5fd2e7e45a4e92"
-    sha256 cellar: :any,                 arm64_ventura:  "cc1f2364ca6e1301cee3cd9af5be8aff13175a171be85fba6f82443afa93f244"
-    sha256 cellar: :any,                 arm64_monterey: "b687ce36c1ffb7951bee1f790b8a43ade4e19a9b03e1f72748a5518510f0537f"
-    sha256 cellar: :any,                 sonoma:         "0d10371f28791f79dfe2ce798d079bb476ac5abb3f868b8dff57688e325739ae"
-    sha256 cellar: :any,                 ventura:        "37f91f29b4cbcad10c84edbf305af228e2a0fc3a6f564a8f3cf0620369208d86"
-    sha256 cellar: :any,                 monterey:       "5f1d9e9d9b8ff30cdf0984abfebe6ce999d8cf14f2b27b7ef0aaf652f7b30da4"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "2f9e5dc18d597189cee362ce0e5ea09028e3d463ab17bfe531a24e3136e95c8e"
+    sha256 cellar: :any, arm64_sequoia: "d92c1efe5b438c2356e7745b77ae3ebff9744f7ed1648e02d451f2461f40b1ab"
+    sha256 cellar: :any, arm64_sonoma:  "12d1897dd611a2e0aa1bfec5eda253f83b6d30596e4043cb851b34c45d5d245e"
+    sha256 cellar: :any, arm64_ventura: "02ef7614ec36e639fd496e025406afc07f69ccb03ac6ce08405610613552c294"
+    sha256 cellar: :any, sonoma:        "6f7e45dd7b0e76124fcf9474e14f21697fc101671077cadf0bf49102a517f7c7"
+    sha256 cellar: :any, ventura:       "dd046071e97a46de8e018c131c5b25df2ed84ca5d9b4187bbfffc536614e4bc8"
+    sha256               arm64_linux:   "39ade609f64538c50e5198695a39713a3a0f959117047f311ed92c62aaa50c17"
+    sha256               x86_64_linux:  "aad63fcebed9b80267c3e5525a7ebfb0a9c4ff7529239bf51502da9396ac0a6a"
   end
 
-  depends_on "autoconf" => :build
-  depends_on "automake" => :build
-  depends_on "libtool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "boost" => :build
+  depends_on "cmake" => :build
+  depends_on "pkgconf" => :build
   depends_on "berkeley-db@5"
-  depends_on "boost"
   depends_on "libevent"
   depends_on macos: :big_sur
   depends_on "miniupnpc"
@@ -50,11 +37,9 @@ class Groestlcoin < Formula
   end
 
   def install
-    system "./autogen.sh"
-    system "./configure", *std_configure_args,
-           "--disable-silent-rules",
-           "--with-boost-libdir=#{Formula["boost"].opt_lib}"
-    system "make", "install"
+    system "cmake", "-S", ".", "-B", "build", *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
     pkgshare.install "share/rpcauth"
   end
 

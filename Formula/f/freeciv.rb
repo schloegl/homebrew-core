@@ -1,8 +1,8 @@
 class Freeciv < Formula
   desc "Free and Open Source empire-building strategy game"
   homepage "https://freeciv.org/"
-  url "https://downloads.sourceforge.net/project/freeciv/Freeciv%203.1/3.1.2/freeciv-3.1.2.tar.xz"
-  sha256 "7ab19d218a023306091a34e5c3bc3fd70981d8ebc4b9542c1646827dede55828"
+  url "https://downloads.sourceforge.net/project/freeciv/Freeciv%203.2/3.2.0/freeciv-3.2.0.tar.xz"
+  sha256 "828e831b672a46b316f6fdb23e670230b2ec9c05b6fe8c66fc9f7e1c0679fcde"
   license "GPL-2.0-or-later"
 
   livecheck do
@@ -11,14 +11,13 @@ class Freeciv < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "9078c0121c5fd6813ef0fdb67beb07bc9f23e01d5b8f13de55e92c7806082762"
-    sha256 arm64_sonoma:   "b7162ce0379dfbe1e2ec91c12522440eb1be2683c8b174f870fcebc20bf8a68d"
-    sha256 arm64_ventura:  "8c7b90207942264128cd60c0a374a0ae72c953da6be2e3f205a4aab8a431b76c"
-    sha256 arm64_monterey: "ad9ef0dc1940fa154c346c487a120fa37a2590ce0e91f9947cb1a8d6eaea60c8"
-    sha256 sonoma:         "c35ba1e4befb8609e2a0b1ad111a9e4308582a68c3b6b08732d4120caed44fab"
-    sha256 ventura:        "ed923f2a702eb2ba87e801339b03bc30387d0e9bd60ada5a014584686c642a72"
-    sha256 monterey:       "6f7c5e1a7b041322c559d1aae0e40a77d09f70e3e93125ce941d9fc1d3e17b31"
-    sha256 x86_64_linux:   "32b2b6cab1b82d3863f0db79617dcb41519604e6f8e0dbb4ca81fe74e224ca64"
+    sha256 arm64_sequoia: "fb2c867eb030fbbc439cbb4dccc2acf235bf0460b03cd578dbe7514d54f4731c"
+    sha256 arm64_sonoma:  "4ac90c21f7a924ab576a1219cceb5243bc9e0c4310f94842ed5be18b2f09d7e7"
+    sha256 arm64_ventura: "643274522efcd8b67fea947163b7a60e67bc5884d3f3783710bc4fa7254d9f9f"
+    sha256 sonoma:        "96dca83d48963577b8e1dd30d11e2e6e28dfe547c7c67c17d7c7caf5433d98bd"
+    sha256 ventura:       "2af8397bb9e90755f7e83a4741e5c3a5ea68f4e382aa642bb6b231906baf6886"
+    sha256 arm64_linux:   "9ef1b6004f65398a5dc89f8171953074b403989199b5c689155f4cdd492b9710"
+    sha256 x86_64_linux:  "e5495fecadc9fd988768f140897468e6456f083d3e9580908e210217f33226aa"
   end
 
   head do
@@ -30,7 +29,7 @@ class Freeciv < Formula
     depends_on "libtool" => :build
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "adwaita-icon-theme"
   depends_on "at-spi2-core"
   depends_on "cairo"
@@ -40,7 +39,7 @@ class Freeciv < Formula
   depends_on "glib"
   depends_on "gtk+3"
   depends_on "harfbuzz"
-  depends_on "icu4c"
+  depends_on "icu4c@77"
   depends_on "pango"
   depends_on "readline"
   depends_on "sdl2"
@@ -90,13 +89,11 @@ class Freeciv < Formula
       civ2civ37.html
       civ2civ38.html
     ].each do |file|
-      assert_predicate testpath/file, :exist?
+      assert_path_exists testpath/file
     end
 
-    fork do
-      system bin/"freeciv-server", "-l", testpath/"test.log"
-    end
+    spawn bin/"freeciv-server", "-l", testpath/"test.log"
     sleep 5
-    assert_predicate testpath/"test.log", :exist?
+    assert_path_exists testpath/"test.log"
   end
 end

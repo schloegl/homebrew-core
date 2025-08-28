@@ -1,28 +1,45 @@
 class Gnutls < Formula
   desc "GNU Transport Layer Security (TLS) Library"
   homepage "https://gnutls.org/"
-  url "https://www.gnupg.org/ftp/gcrypt/gnutls/v3.8/gnutls-3.8.4.tar.xz"
-  mirror "https://www.mirrorservice.org/sites/ftp.gnupg.org/gcrypt/gnutls/v3.8/gnutls-3.8.4.tar.xz"
-  sha256 "2bea4e154794f3f00180fa2a5c51fe8b005ac7a31cd58bd44cdfa7f36ebc3a9b"
+  url "https://www.gnupg.org/ftp/gcrypt/gnutls/v3.8/gnutls-3.8.10.tar.xz"
+  mirror "https://www.mirrorservice.org/sites/ftp.gnupg.org/gcrypt/gnutls/v3.8/gnutls-3.8.10.tar.xz"
+  sha256 "db7fab7cce791e7727ebbef2334301c821d79a550ec55c9ef096b610b03eb6b7"
   license all_of: ["LGPL-2.1-or-later", "GPL-3.0-only"]
 
+  # The download page links to the directory listing pages for the "Next" and
+  # "Current stable" versions. We use the "Next" version in the formula, so we
+  # match versions from the tarball links on that directory listing page.
   livecheck do
-    url "https://www.gnutls.org/news.html"
-    regex(/>\s*GnuTLS\s*v?(\d+(?:\.\d+)+)\s*</i)
+    url "https://www.gnutls.org/download.html"
+    regex(/href=.*?gnutls[._-]v?(\d+(?:\.\d+)+)\.t/i)
+    strategy :page_match do |page, regex|
+      # Find the higher version from the directory listing page URLs
+      highest_version = page.scan(%r{href=.*?/gnutls/v?(\d+(?:\.\d+)+)/?["' >]}i)
+                            .map { |match| match[0] }
+                            .max_by { |v| Version.new(v) }
+      next unless highest_version
+
+      # Fetch the related directory listing page
+      files_page = Homebrew::Livecheck::Strategy.page_content(
+        "https://www.gnupg.org/ftp/gcrypt/gnutls/v#{highest_version}",
+      )
+      next if (files_page_content = files_page[:content]).blank?
+
+      files_page_content.scan(regex).map { |match| match[0] }
+    end
   end
 
   bottle do
-    sha256 arm64_sequoia:  "e927eab61e775a8b65079c2163fb29b9f03c90caf68cc13788dfea249ed6201e"
-    sha256 arm64_sonoma:   "46373a7206cc70289bfef2081508c62cc74a2589060b21ce26c44c4c86fbda41"
-    sha256 arm64_ventura:  "7b18d9403f8cc6a5e2e3fd427a07e32ccb1d7969715fbf5b72cfb4b5a01d8a3c"
-    sha256 arm64_monterey: "2a6bb19c341be5dcc2e351e68380b05f246407bd57b2dc7e94743d14e473cde8"
-    sha256 sonoma:         "7136ceb68e1bf94ad28db2990cc10da909b742390be65963b78e8b115f97b51d"
-    sha256 ventura:        "08b8fc7ded2a17510ab505965c754bccf3cf21ae690d76af744f96d800223de2"
-    sha256 monterey:       "80f7875ba4d2409f85851a3c61bf8c178415e863528357bc587578e8d0536c10"
-    sha256 x86_64_linux:   "9bedb5b302e02e32c64bf75c488216dd644bc205d9e99d2b26edfdf7f3d81b93"
+    sha256 arm64_sequoia: "62b817f56075b97caddec5777728d0851de6d126a12458914e4a90f6f79a1312"
+    sha256 arm64_sonoma:  "d43ad0fa7a031d4448e9069b7292ab06c31b80fb87ce399b7a93e4e6e045b2c4"
+    sha256 arm64_ventura: "27dd9084ba8330e173ffd31d42d1dbb8df358c5f624a6b0cc4cccf077515d2a3"
+    sha256 sonoma:        "c51042eeda15d908411b453fa586237f046c2f4fb7f4083b43f454df95440291"
+    sha256 ventura:       "3391918b37750fc4b77247355c1caad1d1e67adcf0879301d70c4949b42eb4d1"
+    sha256 arm64_linux:   "23512f82143b660e68c0c00bd70e37a9dfc35a43d293492dd687b3f4a8194633"
+    sha256 x86_64_linux:  "6dc643f51d58c12c025c77234c6498b944c30bcd1bd22134df11fa4f6ac2dade"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "ca-certificates"
   depends_on "gmp"
@@ -49,7 +66,7 @@ class Gnutls < Formula
       --with-p11-kit
     ]
 
-    system "./configure", *args, *std_configure_args.reject { |s| s["--disable-debug"] }
+    system "./configure", *args, *std_configure_args
     system "make", "install"
 
     # certtool shadows the macOS certtool utility

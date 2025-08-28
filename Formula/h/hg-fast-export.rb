@@ -3,24 +3,16 @@ class HgFastExport < Formula
 
   desc "Fast Mercurial to Git converter"
   homepage "https://repo.or.cz/fast-export.git"
-  url "https://github.com/frej/fast-export/archive/refs/tags/v231118.tar.gz"
-  sha256 "2173c8cb2649c05affe6ef1137bc6a06913f06e285bcd710277478a04a3a937f"
+  url "https://github.com/frej/fast-export/archive/refs/tags/v250330.tar.gz"
+  sha256 "1c4785f1e9e63e0ada87e0be5a7236d6889eea98975800671e3c3805b54bf801"
   license "GPL-2.0-or-later"
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any_skip_relocation, all: "6a644292119def3bf821f4426f610d0c489caa77dc269a0d2160c642c3c22347"
+    sha256 cellar: :any_skip_relocation, all: "b1030f2a360f970ad4d58c661adb4793be8e4abcf4f602e0d0e217a601542e0b"
   end
 
   depends_on "mercurial"
-  depends_on "python@3.12"
-
-  # Fix compatibility with Python 3.12 using open PR.
-  # PR ref: https://github.com/frej/fast-export/pull/311
-  patch do
-    url "https://github.com/frej/fast-export/commit/a3d0562737e1e711659e03264e45cb47a5a2f46d.patch?full_index=1"
-    sha256 "8d9d5a41939506110204ae00607061f85362467affd376387230e074bcae2667"
-  end
+  depends_on "python@3.13"
 
   def install
     # The Python executable is tested from PATH
@@ -28,7 +20,7 @@ class HgFastExport < Formula
     # See https://github.com/Homebrew/homebrew-core/pull/90709#issuecomment-988548657
     %w[hg-fast-export.sh hg-reset.sh].each do |f|
       inreplace f, "for python_cmd in ",
-                   "for python_cmd in '#{which("python3.12")}' "
+                   "for python_cmd in '#{which("python3.13")}' "
     end
 
     libexec.install Dir["*"]
@@ -55,7 +47,7 @@ class HgFastExport < Formula
       system "git", "checkout", "HEAD"
     end
 
-    assert_predicate testpath/"git-repo/test.txt", :exist?
+    assert_path_exists testpath/"git-repo/test.txt"
     assert_equal "Hello", (testpath/"git-repo/test.txt").read
   end
 end

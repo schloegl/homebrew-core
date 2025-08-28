@@ -1,9 +1,10 @@
 class Fakeroot < Formula
   desc "Provide a fake root environment"
   homepage "https://tracker.debian.org/pkg/fakeroot"
-  url "https://deb.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.36.orig.tar.gz"
-  sha256 "7fe3cf3daf95ee93b47e568e85f4d341a1f9ae91766b4f9a9cdc29737dea4988"
+  url "https://deb.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.37.1.2.orig.tar.gz"
+  sha256 "959496928c8a676ec8377f665ff6a19a707bfad693325f9cc4a4126642f53224"
   license "GPL-3.0-or-later"
+  revision 1
 
   livecheck do
     url "https://deb.debian.org/debian/pool/main/f/fakeroot/"
@@ -11,14 +12,13 @@ class Fakeroot < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "c875e03e0332a8388aa7c7e3cc65f02e86b5201901a9ead41dd3cb2673e4926f"
-    sha256 cellar: :any,                 arm64_sonoma:   "80043e6984e18e1b11a6b02c417ca6610e3d26048527d6a26cac067a41dc9931"
-    sha256 cellar: :any,                 arm64_ventura:  "abb4abee538f323c11edf2c9fcdbc76fcef2c801acec80c8b4c57337ab382552"
-    sha256 cellar: :any,                 arm64_monterey: "220f73a57d671e1b8c5f2d0af59994262ae2ac4675d4963e268c478ae9e83cf9"
-    sha256 cellar: :any,                 sonoma:         "de7d02b93ec6cdb0cd7f261f389439cb8e2c1d985ba1fa79a4a1e4bbf4645c35"
-    sha256 cellar: :any,                 ventura:        "1314a7bf8e17fd301a06a6553eb6cc2a29378d7ea89f0f6252119d1f748ff7a5"
-    sha256 cellar: :any,                 monterey:       "90d9a9307beb5dd403fa6d3b86df350895342380d1d5304c9c54434a26d792ad"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "73c47dd5b846fa6f73ebc8197d1b3d6a0ce8d6028f23ff0c2c1c733360171803"
+    sha256 cellar: :any,                 arm64_sequoia: "ab29a59c3530a716bfa3151bed5458ece1bb6b136dd2a316f54f88ff031e1f52"
+    sha256 cellar: :any,                 arm64_sonoma:  "1aadc43f4ce3f17a1a609750a139f412205a71b1abc068b06874e83e40fcd7f3"
+    sha256 cellar: :any,                 arm64_ventura: "1c11f5d0a36d1d27fb51c32f3989802f4c385796b56959da1472c3a97a42c687"
+    sha256 cellar: :any,                 sonoma:        "2c240e8fb51287a6e2304c2aca7dc0e0c0bf7103f72b3f36872abaa23d62c0d0"
+    sha256 cellar: :any,                 ventura:       "f67ebe96d1e957f934e9de9cb936671f7fef7780e6e12011828265ec2547ccb1"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "7f239b1a7a44fed02417a5230512a0a1f06d3c84bd27aff90db9c9a1a5704dc9"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "41acec3bc608043a4a49fcca0008b90bbc45abc655d9b1c13b74577df13297a2"
   end
 
   # Needed to apply patches below. Remove when no longer needed.
@@ -30,11 +30,11 @@ class Fakeroot < Formula
     depends_on "libcap" => :build
   end
 
-  # https://salsa.debian.org/clint/fakeroot/-/merge_requests/17
-  patch :p0 do
-    # The MR has a typo, so we use MacPorts' version.
-    url "https://raw.githubusercontent.com/macports/macports-ports/0ffd857cab7b021f9dbf2cbc876d8025b6aefeff/sysutils/fakeroot/files/patch-message.h.diff"
-    sha256 "6540eef1c31ffb4ed636c1f4750ee668d2effdfe308d975d835aa518731c72dc"
+  # https://salsa.debian.org/clint/fakeroot/-/merge_requests/34/
+  patch :p1 do
+    # Fix for macOS
+    url "https://salsa.debian.org/clint/fakeroot/-/merge_requests/34/diffs.diff"
+    sha256 "0517ce18112d08cec2268dd2a5d78f033917454c68882665125d9e70c26983fc"
   end
 
   def install

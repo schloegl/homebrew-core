@@ -1,9 +1,10 @@
 class Geeqie < Formula
   desc "Lightweight Gtk+ based image viewer"
   homepage "https://www.geeqie.org/"
-  url "https://github.com/BestImageViewer/geeqie/releases/download/v2.5/geeqie-2.5.tar.xz"
-  sha256 "cc991c9d4c78c58668105a15f7ece953bfc21b6b78cedc26ccbaaee6a12b8952"
+  url "https://github.com/BestImageViewer/geeqie/releases/download/v2.6.1/geeqie-2.6.1.tar.xz"
+  sha256 "164b768b8a387edf654112428adb8fd88c265c76b7bc84a490158e6923da3a55"
   license "GPL-2.0-or-later"
+  revision 1
 
   livecheck do
     url :stable
@@ -11,19 +12,18 @@ class Geeqie < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_sequoia: "2ba6af24f586147bdcae30c0cbb338faba1a80c904f78314afa76c2d944ceb04"
-    sha256 cellar: :any, arm64_sonoma:  "9215bb9a5e1e2c6acba36a122821ca28edb43521a901407fb81947f3857de00e"
-    sha256 cellar: :any, arm64_ventura: "96f1a9e5afdceb7cd6528fa0219aef930e31414ba6b887aa04a06b93dd0d5dea"
-    sha256 cellar: :any, sonoma:        "fdbf605a9b19a52011a500a07978cc468648939622de22f0c4416b9b38e21542"
-    sha256 cellar: :any, ventura:       "580834b9d461fba3a84bb36c4fa854139de828c4ff46d544b14661dd8b32fd12"
-    sha256               x86_64_linux:  "a8a49ff2e1f2662ade21392ba02e296cffb0b5cee6b7f8906446701323031824"
+    sha256 cellar: :any, arm64_sequoia: "39d7bc32802d042aedc21a65c1833a7c3fe66f180fc5f38fcee6023307b286b9"
+    sha256 cellar: :any, arm64_sonoma:  "ae50fa9d777727bca0a14724b922ec47d3c8bb5fa3e1e3dee7d37525df2346bc"
+    sha256 cellar: :any, arm64_ventura: "fea47463b39098bd175e7e4af069a503ed8910e466bcafaf394bcc29ab344a0a"
+    sha256 cellar: :any, sonoma:        "bee342e5c020e966a1e71450b529c5ef7754a2240d0d3aa475437406ffc126d9"
+    sha256 cellar: :any, ventura:       "ee00dfc1881b56dea8e624d2931927f0e37e5bf4be22299312c4e1ac9b8f04ab"
+    sha256               arm64_linux:   "3957be41b1507e3f0ce3ae6155ba51a942871e872737ab59baafffa7c5aebc64"
+    sha256               x86_64_linux:  "7c00d683de1fd5126f9230618ad5b65292983124f77475b023857c485b567ca3"
   end
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pandoc" => :build # for README.html
-  depends_on "pkg-config" => :build
-  depends_on "yelp-tools" => :build # for help files
+  depends_on "pkgconf" => :build
 
   depends_on "adwaita-icon-theme"
   depends_on "at-spi2-core"
@@ -38,6 +38,7 @@ class Geeqie < Formula
   depends_on "gspell" # for spell checks support
   depends_on "gtk+3"
   depends_on "imagemagick"
+  depends_on "imath"
   depends_on "jpeg-turbo"
   depends_on "jpeg-xl"
   depends_on "libarchive"
@@ -46,12 +47,14 @@ class Geeqie < Formula
   depends_on "libtiff"
   depends_on "libx11"
   depends_on "little-cms2"
+  depends_on "openexr"
   depends_on "openjpeg"
   depends_on "pango"
   depends_on "poppler" # for pdf support # for video thumbnails support
   depends_on "webp"
   depends_on "webp-pixbuf-loader" # for webp support
 
+  uses_from_macos "libxslt" => :build # for xsltproc
   uses_from_macos "python" => :build
   uses_from_macos "vim" => :build # for xxd
 
@@ -61,7 +64,8 @@ class Geeqie < Formula
   end
 
   def install
-    system "meson", "setup", "build", "-Dlua=disabled", *std_meson_args
+    args = %w[-Dlua=disabled -Dyelp-build=disabled]
+    system "meson", "setup", "build", *args, *std_meson_args
     system "meson", "compile", "-C", "build", "--verbose"
     system "meson", "install", "-C", "build"
   end

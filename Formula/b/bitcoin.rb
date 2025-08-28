@@ -1,15 +1,14 @@
 class Bitcoin < Formula
   desc "Decentralized, peer to peer payment network"
   homepage "https://bitcoincore.org/"
-  url "https://bitcoincore.org/bin/bitcoin-core-27.1/bitcoin-27.1.tar.gz"
-  sha256 "0c1051fd921b8fae912f5c2dfd86b085ab45baa05cd7be4585b10b4d1818f3da"
+  url "https://bitcoincore.org/bin/bitcoin-core-29.0/bitcoin-29.0.tar.gz"
+  sha256 "882c782c34a3bf2eacd1fae5cdc58b35b869883512f197f7d6dc8f195decfdaa"
   license all_of: [
     "MIT",
     "BSD-3-Clause", # src/crc32c, src/leveldb
     "BSL-1.0", # src/tinyformat.h
     "Sleepycat", # resource("bdb")
   ]
-  revision 1
   head "https://github.com/bitcoin/bitcoin.git", branch: "master"
 
   livecheck do
@@ -18,34 +17,26 @@ class Bitcoin < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "406c2cd86948bf394c4a740d7a731dbdae72cc50bc52d36ca7a758520e238b5a"
-    sha256 cellar: :any,                 arm64_sonoma:   "545ca96eca61db3e8ba5abe1c8a21d5ca3895be3c23696037023b8fecfb71431"
-    sha256 cellar: :any,                 arm64_ventura:  "74596218beec67cfd41f822c1d27962a9a497031fff5001e600dc4667adf19fd"
-    sha256 cellar: :any,                 arm64_monterey: "8154c69f0f380b5ac3d278c84ff890fbf1ff6f849d93ad4395c81385c57b2d9d"
-    sha256 cellar: :any,                 sonoma:         "b3eaca532c4eaf757883c785556c2a1f66939d757d56e471a031d934bcb2ae58"
-    sha256 cellar: :any,                 ventura:        "adda2c14c11260796f49e28237ed474888c85ab2e7077fa6f1bb912526195a8d"
-    sha256 cellar: :any,                 monterey:       "19581b4780b46bfbbc50fb9f33bf3a46a1afbd36e3c1dade5ac11c10a13c5efd"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3f3434a672c3702b6558c90d74a9b7a4a43bf80a43ad9efb268c7c7b7b1f8c87"
+    sha256 cellar: :any, arm64_sequoia: "8fa8fcf7ccb91a577436dcacdc6ff4140b960518466de5c6086788c5b705e737"
+    sha256 cellar: :any, arm64_sonoma:  "dc06414451b6958961bbb761c30596111a1108b90553990b2c23e4583c59cced"
+    sha256 cellar: :any, arm64_ventura: "b44e261cc593181a6d7911747ceb9fcac26ef45e2c464539133291032226a050"
+    sha256 cellar: :any, sonoma:        "060611cfbfba123b4c61cb4622d292ba56995184581a466d7967eb6263dce0c3"
+    sha256 cellar: :any, ventura:       "4ad32aea3bf5f4f2f0cab5e1d25a2a6ae8e7cdec9322fa8f3942f0968cd2bfa8"
+    sha256               arm64_linux:   "70752d59e92fe46e0942521e9d05c02ae73e0003258c7ec0da481e30fd8a6c09"
+    sha256               x86_64_linux:  "a1dfba272b3381616eec1ea655b2cf320070b48985272517fb36277917188efe"
   end
 
-  depends_on "autoconf" => :build
-  depends_on "automake" => :build
   depends_on "boost" => :build
-  depends_on "libtool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "cmake" => :build
+  depends_on "pkgconf" => :build
   depends_on "libevent"
   depends_on macos: :big_sur
-  depends_on "miniupnpc"
   depends_on "zeromq"
 
   uses_from_macos "sqlite"
 
-  on_linux do
-    depends_on "util-linux" => :build # for `hexdump`
-  end
-
   fails_with :gcc do
-    version "9"
+    version "10"
     cause "Requires C++ 20"
   end
 
@@ -69,18 +60,6 @@ class Bitcoin < Formula
     end
   end
 
-  # Skip two tests that currently fail in the brew CI
-  patch do
-    url "https://github.com/fanquake/bitcoin/commit/9b03fb7603709395faaf0fac409465660bbd7d81.patch?full_index=1"
-    sha256 "1d56308672024260e127fbb77f630b54a0509c145e397ff708956188c96bbfb3"
-  end
-
-  # miniupnpc 2.2.8 compatibility build patch
-  patch do
-    url "https://github.com/bitcoin/bitcoin/commit/6338f92260523eaf7cd9c89300f4f088f9319b0d.patch?full_index=1"
-    sha256 "3544c7a1ea5c5b4e1c196fbd9fc871800b97728eec893d3980a4488e9fd1e2a8"
-  end
-
   def install
     # https://github.com/bitcoin/bitcoin/blob/master/doc/build-unix.md#berkeley-db
     # https://github.com/bitcoin/bitcoin/blob/master/depends/packages/bdb.mk
@@ -88,25 +67,30 @@ class Bitcoin < Formula
       with_env(CFLAGS: ENV.cflags) do
         # Fix compile with newer Clang
         ENV.append "CFLAGS", "-Wno-implicit-function-declaration" if DevelopmentTools.clang_build_version >= 1200
+        # Fix linking with static libdb
+        ENV.append "CFLAGS", "-fPIC" if OS.linux?
+
+        args = ["--disable-replication", "--disable-shared", "--enable-cxx"]
+        args << "--build=aarch64-unknown-linux-gnu" if OS.linux? && Hardware::CPU.arm? && Hardware::CPU.is_64_bit?
+
         # BerkeleyDB requires you to build everything from the build_unix subdirectory
         cd "build_unix" do
-          system "../dist/configure", "--disable-replication",
-                                      "--disable-shared",
-                                      "--enable-cxx",
-                                      *std_configure_args(prefix: buildpath/"bdb")
+          system "../dist/configure", *args, *std_configure_args(prefix: buildpath/"bdb")
           system "make", "libdb_cxx-4.8.a", "libdb-4.8.a"
           system "make", "install_lib", "install_include"
         end
       end
     end
 
-    system "./autogen.sh"
-    system "./configure", "--disable-silent-rules",
-                          "--with-boost-libdir=#{Formula["boost"].opt_lib}",
-                          "BDB_LIBS=-L#{buildpath}/bdb/lib -ldb_cxx-4.8",
-                          "BDB_CFLAGS=-I#{buildpath}/bdb/include",
-                          *std_configure_args
-    system "make", "install"
+    ENV.runtime_cpu_detection
+    args = %W[
+      -DWITH_BDB=ON
+      -DBerkeleyDB_INCLUDE_DIR:PATH=#{buildpath}/bdb/include
+      -DWITH_ZMQ=ON
+    ]
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
     pkgshare.install "share/rpcauth"
   end
 

@@ -1,8 +1,8 @@
 class Liboqs < Formula
   desc "Library for quantum-safe cryptography"
   homepage "https://openquantumsafe.org/"
-  url "https://github.com/open-quantum-safe/liboqs/archive/refs/tags/0.11.0.tar.gz"
-  sha256 "f77b3eff7dcd77c84a7cd4663ef9636c5c870f30fd0a5b432ad72f7b9516b199"
+  url "https://github.com/open-quantum-safe/liboqs/archive/refs/tags/0.14.0.tar.gz"
+  sha256 "5b0df6138763b3fc4e385d58dbb2ee7c7c508a64a413d76a917529e3a9a207ea"
   license "MIT"
 
   livecheck do
@@ -11,20 +11,19 @@ class Liboqs < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "3413f642debe3a66586c5efaf3aa4f3bc1697f5d17aaff31a375e3a24bcb2927"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "0af54fca5fabc83ae77bf2b40de3457997f6e2cf0ce1f21315f8ed8c30561650"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "a84bd5c84045fb9291f768921e4c8e97c9535c5470af7b2fbcadea42078a8ce0"
-    sha256 cellar: :any_skip_relocation, sonoma:        "3a547a9194e28c4f61ee05ea2ee62da6dc2de31d0eb226f98e04821b36d1aa6b"
-    sha256 cellar: :any_skip_relocation, ventura:       "af949e09fbfa8a5e140c7e58a0ca2568ebe5d0c68b5c08840d13f4e897931123"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "44c1f17f44095ba8bea83d380eebd8c62bf5a56333b0747bc6fe9402cc7d37b4"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "b94f528e2e60970064a39baa077b224410a2524e9a2a42492fdf83e16bbee44c"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "770374d15fd6f8942b4d22b53c85b61e6253a3abbeff4888309984fc82237962"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "3eb84deb64a79bc06abc48ecbfd387cb5e28ad14e1ee0be7639348a0e6ad44f0"
+    sha256 cellar: :any_skip_relocation, sonoma:        "67e3d5156d1b65e8b4546b00670963c45777018a0cd6681230dfd19f101debb3"
+    sha256 cellar: :any_skip_relocation, ventura:       "b4ee69d66ac1c770db1e744e01f847b0bbcb38e29dc1050880611b7c2eacfc8d"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "fe6581485e6fdf52df28a913643e88dd3bdc89f0f5b69a29f331004903571f99"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "dead3635b08843df33e8b4c34acefdbb589e9b32dad87e8455bd329c6f567e0a"
   end
 
   depends_on "cmake" => :build
   depends_on "doxygen" => :build
   depends_on "ninja" => :build
   depends_on "openssl@3"
-
-  fails_with gcc: "5"
 
   def install
     args = %W[

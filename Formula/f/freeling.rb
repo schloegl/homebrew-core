@@ -4,31 +4,40 @@ class Freeling < Formula
   url "https://github.com/TALP-UPC/FreeLing/releases/download/4.2/FreeLing-src-4.2.1.tar.gz"
   sha256 "c672a6379142ac2e872741e7662f17eccd8230bffc680564d2843d87480f1600"
   license "AGPL-3.0-only"
-  revision 5
+  revision 11
+
+  no_autobump! because: :requires_manual_review
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "247d7a29b0f294b2907de43d169bc1a248675b87b7981c211b8283a0e4fe72a5"
-    sha256 cellar: :any,                 arm64_sonoma:   "ecfc8921a5a1ce53c49dc24850bca48bb1c8877cf1784e03b5cff1e3bf2de19c"
-    sha256 cellar: :any,                 arm64_ventura:  "801f54dc1051a01623a9503d4785d163125c46dfa1922fc08223d1aeeda4b4e7"
-    sha256 cellar: :any,                 arm64_monterey: "75f5cd437c1988cec1a7c596b372929cdefe083cfd30bfaa9a27afa8c0cd943c"
-    sha256 cellar: :any,                 sonoma:         "bc98a94ec428215d2a86dc80f8be616f6982293fab0ef530253607bbf32945fb"
-    sha256 cellar: :any,                 ventura:        "7bbf13e7ba9759332834e77f7f993788becb51b2a770969c444d6b76d235f41d"
-    sha256 cellar: :any,                 monterey:       "03fdbde545042f81bf8c7a4f18bd7d49bdf405e3625fa2a2c9598e6c72d12812"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "c7d86da0c4348eaa3a2bd082920138234bbe0ef76fc238384a96144c67f3ef2d"
+    sha256 cellar: :any,                 arm64_sequoia: "4d03e05512e15205712905c6fcce7f8c60eab88d1aa5d25416d0efa7a7c11e15"
+    sha256 cellar: :any,                 arm64_sonoma:  "e42599bb112cad791a8b2da21fe4dbd84d0783b5fb9f21106c9bbf2a786c256f"
+    sha256 cellar: :any,                 arm64_ventura: "9914627e7c0754f65831e135913ceac39a906076aea1f1ce89067efcc23a67f4"
+    sha256 cellar: :any,                 sonoma:        "c07d45a1ba0dc3f160792207222ed4283298bbadbbe1701d5749b1c5eea1ff06"
+    sha256 cellar: :any,                 ventura:       "707b36583e45938822b0d02cdc5d1485530c1c1692780e07bc2e8eb3fe6be2b9"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "eef0f2dba68b9d9f25fad1aa0b795717424838b825291fce5427d386def0d427"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4268db05446a7752caffc6e796dceacad945556c9220b930ea21b220a34473d4"
   end
 
   depends_on "cmake" => :build
   depends_on "boost"
-  depends_on "icu4c"
+  depends_on "dynet"
+  depends_on "icu4c@77"
 
-  conflicts_with "dynet", because: "freeling ships its own copy of dynet"
-  conflicts_with "eigen", because: "freeling ships its own copy of eigen"
+  uses_from_macos "zlib"
+
   conflicts_with "foma", because: "freeling ships its own copy of foma"
   conflicts_with "hunspell", because: "both install 'analyze' binary"
-
   conflicts_with "crfsuite", because: "both install `crfsuite` binaries"
 
   def install
+    # Unbundle `dynet` and its dependency `eigen`
+    rm_r(["src/eigen3", "src/libdynet"])
+    (buildpath/"src/eigen3").mkpath
+    (buildpath/"src/libdynet/CMakeLists.txt").write ""
+
+    # icu4c 75+ needs C++17
+    inreplace "CMakeLists.txt", "set(CMAKE_CXX_STANDARD 11)", "set(CMAKE_CXX_STANDARD 17)"
+
     system "cmake", "-S", ".", "-B", "build", *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"

@@ -1,25 +1,24 @@
 class Sdb < Formula
   desc "Ondisk/memory hashtable based on CDB"
-  homepage "https://github.com/radareorg/sdb"
-  url "https://github.com/radareorg/sdb/archive/refs/tags/2.0.1.tar.gz"
-  sha256 "053dd19eb642135d5726fa2b9cbeb394befe95e9fe607bed823de501cca34365"
+  homepage "https://www.radare.org/"
+  url "https://github.com/radareorg/sdb/archive/refs/tags/2.2.0.tar.gz"
+  sha256 "05b6fda41727e2d634bc0cdea0bccdc186b48cc9136b2367ab2a7358145fa8b4"
   license "MIT"
   head "https://github.com/radareorg/sdb.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "36e0f0e49588d3ea3b588335bd7d7afd72218e517332c1aae818d8acb8f3bef1"
-    sha256 cellar: :any,                 arm64_sonoma:   "93290582465ed3ba9fb67a8e9a609da68038bb657490a4735b8ddb75859f30ba"
-    sha256 cellar: :any,                 arm64_ventura:  "97e8c8df5c36921224815910ccd8aa3fdce8f66f7b51ab2658404b16d026c659"
-    sha256 cellar: :any,                 arm64_monterey: "930c20bd65468d75d7ad9c56573e19c11faf811e94300cde2aea8c14b77f7987"
-    sha256 cellar: :any,                 sonoma:         "e0aff0b588c6e3366646183995697338c5802536b7974f454d6454dd4f050001"
-    sha256 cellar: :any,                 ventura:        "85b9a8dcd0ad7e465c2dcdec26b62691bbd3be8458e7fcc87c4b0b46807c5d08"
-    sha256 cellar: :any,                 monterey:       "ea2dc0465223cc6149eb74bf30ebe01874dacb484b40a2a74169bf629cdc8bc0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "755428c13355b296d6bea89f02587b1252f29c05a73f1cdf2d88f71af73177d8"
+    sha256 cellar: :any,                 arm64_sequoia: "41695d0cc3526175b99ce5850cd4246af15e374e32b30bb20d5fee4a534fe1de"
+    sha256 cellar: :any,                 arm64_sonoma:  "6391d94f5571c5c19fd0865bb3bc6793bb9596fc2a49a5af39e1910712899858"
+    sha256 cellar: :any,                 arm64_ventura: "63004949cd084e74ced59cb3ce84fe63bc7095da5602f01e58a5d1b0026b2b84"
+    sha256 cellar: :any,                 sonoma:        "3b8395df7ab426e250cc8e26a1b06e8699d78724f8becacdad1f14881336c784"
+    sha256 cellar: :any,                 ventura:       "77e283d412b4183d9d842562b617e7598113e9e2a9f3f40acc4ca2876355776a"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "f729bde1f426097c7d2cea72103b12bf8ef0874f4b62ae0f2ed3ee04431a366d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "47575b7d7a3b8e9e40369e40f783370d8ce9f91394b5f6ead66d1bab140b0fbc"
   end
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "vala" => :build
   depends_on "glib"
 

@@ -1,9 +1,9 @@
 class X8664LinuxGnuBinutils < Formula
   desc "GNU Binutils for x86_64-linux-gnu cross development"
   homepage "https://www.gnu.org/software/binutils/binutils.html"
-  url "https://ftp.gnu.org/gnu/binutils/binutils-2.43.1.tar.bz2"
-  mirror "https://ftpmirror.gnu.org/binutils/binutils-2.43.1.tar.bz2"
-  sha256 "becaac5d295e037587b63a42fad57fe3d9d7b83f478eb24b67f9eec5d0f1872f"
+  url "https://ftpmirror.gnu.org/gnu/binutils/binutils-2.45.tar.bz2"
+  mirror "https://ftp.gnu.org/gnu/binutils/binutils-2.45.tar.bz2"
+  sha256 "1393f90db70c2ebd785fb434d6127f8888c559d5eeb9c006c354b203bab3473e"
   license "GPL-3.0-or-later"
 
   livecheck do
@@ -11,20 +11,22 @@ class X8664LinuxGnuBinutils < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia: "bed40fd4b54c0a3cac51aa71585f5cef24d464ea3c38afa01babbd1f05df11a3"
-    sha256 arm64_sonoma:  "60cafd9e4c28e6224c899a455dd892910b4c24a46e6d64a9d53f876a054d8a24"
-    sha256 arm64_ventura: "7d075d3cf521e48d0480327318070e3de414fecfff5bce1637ad47ef9dac3404"
-    sha256 sonoma:        "9e63513d5d2a0b82a1cde53be02aee5a14214897a184db0af6fbde6c904bed94"
-    sha256 ventura:       "2d5d7f1330758c0a0d9a3a3580bb265f0db51390c1f27a815ccbcf55bb548927"
-    sha256 x86_64_linux:  "28b05e9d5c0673be09dedcca3f2f9664b65a59d4c65a2aa9dff2fb6c8e9a4712"
+    sha256 arm64_sequoia: "268ee37eba6e05f6be4f51f5e95920bf3cea41523c1cab284ab09f52ac6c3f74"
+    sha256 arm64_sonoma:  "a9b8aa0c3caa2151731989630391b53720210e91ff44bee17d5037b597e2dd6e"
+    sha256 arm64_ventura: "fa11644983812158c2e314b59cf7dec333b535e8172f0e9d917fee8ba65e46b1"
+    sha256 sonoma:        "28f9353635715f839ae5868f1dab58ff6cc374877090fe5ef3f6ce8787d12774"
+    sha256 ventura:       "d352c4509d7f504679a887f289214a13b1e22c78790d817f99a409fec24de610"
+    sha256 arm64_linux:   "046752ea89c86cf164c16c62f98c0b4c7244e41351f0bb0d968dd02e68ad87de"
+    sha256 x86_64_linux:  "cbd3db60259e28fe23d0682e5d0d6424be817a214e9b745c06676d4bfa0ca790"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   # Requires the <uchar.h> header
   # https://sourceware.org/bugzilla/show_bug.cgi?id=31320
   depends_on macos: :ventura
   depends_on "zstd"
 
+  uses_from_macos "llvm" => :test
   uses_from_macos "zlib"
 
   on_system :linux, macos: :ventura_or_newer do
@@ -32,7 +34,9 @@ class X8664LinuxGnuBinutils < Formula
   end
 
   on_linux do
-    keg_only "it conflicts with `binutils`"
+    on_intel do
+      keg_only "it conflicts with `binutils`"
+    end
   end
 
   def install
@@ -68,21 +72,23 @@ class X8664LinuxGnuBinutils < Formula
     end
 
     assert_match "f()", shell_output("#{bin}/x86_64-linux-gnu-c++filt _Z1fv")
-    return if OS.linux?
 
     (testpath/"sysroot").install resource("homebrew-sysroot")
-    (testpath/"hello.c").write <<~EOS
+    (testpath/"hello.c").write <<~C
       #include <stdio.h>
       int main() { printf("hello!\\n"); }
-    EOS
+    C
 
-    ENV.remove_macosxsdk
+    ENV.clang
+    ENV.remove_macosxsdk if OS.mac?
     system ENV.cc, "-v", "--target=x86_64-pc-linux-gnu", "--sysroot=#{testpath}/sysroot", "-c", "hello.c"
     assert_match "main", shell_output("#{bin}/x86_64-linux-gnu-nm hello.o")
 
     system ENV.cc, "-v", "--target=x86_64-pc-linux-gnu", "--sysroot=#{testpath}/sysroot",
                    "-fuse-ld=#{bin}/x86_64-linux-gnu-ld", "hello.o", "-o", "hello"
-    assert_match "ELF", shell_output("file ./hello")
+    file_output = shell_output("file ./hello")
+    assert_match "ELF", file_output
+    assert_match "x86-64", file_output
     assert_match "libc.so", shell_output("#{bin}/x86_64-linux-gnu-readelf -d ./hello")
     system bin/"x86_64-linux-gnu-strip", "./hello"
   end

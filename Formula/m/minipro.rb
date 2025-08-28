@@ -1,23 +1,26 @@
 class Minipro < Formula
   desc "Open controller for the MiniPRO TL866xx series of chip programmers"
   homepage "https://gitlab.com/DavidGriffith/minipro/"
-  url "https://gitlab.com/DavidGriffith/minipro/-/archive/0.7.2/minipro-0.7.2.tar.gz"
-  sha256 "77961e24da3fd14844768102893b291c55b379e49938b3665a9033622def8cbb"
+  url "https://gitlab.com/DavidGriffith/minipro/-/archive/0.7.4/minipro-0.7.4.tar.gz"
+  sha256 "dce22dade7fe4a5ad8435b12789144b00c6084e66573b6741402be9f08a53331"
   license "GPL-3.0-or-later"
   head "https://gitlab.com/DavidGriffith/minipro.git", branch: "master"
 
   bottle do
-    sha256 arm64_sequoia: "49928d7fc034b02531e4c7cced9ebc7475f8aaa22119fe80a5e991ad393b9626"
-    sha256 arm64_sonoma:  "9516b8133d1301aa662a9b6fe7be10ecdf2516399da38fef7ab1277d36cec240"
-    sha256 arm64_ventura: "615be8caf35c15d4b0c8446545dd812c2993ff6dd97191bdf975a06b959902c9"
-    sha256 sonoma:        "b6db0de40d57c21ab00d71bb28c979c81c17746ce881ca1c8552634eb6fea1c6"
-    sha256 ventura:       "f6b63ad0e8201c67ae3812ac40543837a428a663bad1398fd4a5f8d9ef42d55e"
-    sha256 x86_64_linux:  "7c0587d281ee52203b8346e78d4d42631fc008e47f60298e2559524122515413"
+    sha256 arm64_sequoia: "93bad4be0c8bb39e8707ebef6f8fc43c176fa07c573dc5a971134fdfcc697675"
+    sha256 arm64_sonoma:  "553ab778520a770ff7df88c2c0d323f043eb9241dcddbd05fdb06375aa58bf00"
+    sha256 arm64_ventura: "f27c290ca12621d5962e05d0397e311593bc871aaf8b48f5dabcbf8c57192103"
+    sha256 sonoma:        "93eb653bcc554d74f65f4371450426697d60e633c4a94d8b3a253154b708b088"
+    sha256 ventura:       "228ae433c60a5e5526e28c3c8b3bb0a5f2cd2a52bf90dec81dcbd020e7e91c27"
+    sha256 arm64_linux:   "4cf366ab146403086b8084de6e4efdba7fba0e241242753b07d0b54cb0e9b218"
+    sha256 x86_64_linux:  "c87438811f0d2e3a65ddf525a813aa72d1744bcbbfa983bb6b19361997bbceb7"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "libusb"
   depends_on "srecord"
+
+  uses_from_macos "zlib"
 
   def install
     system "make", "CC=#{ENV.cc}", "PREFIX=#{prefix}"

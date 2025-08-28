@@ -1,56 +1,35 @@
 class Jj < Formula
   desc "Git-compatible distributed version control system"
-  homepage "https://github.com/martinvonz/jj"
-  url "https://github.com/martinvonz/jj/archive/refs/tags/v0.21.0.tar.gz"
-  sha256 "c38d98d7db42f08b799f5c51f33cd8454867bc4862a15aa0897b72f2d32eea0a"
+  homepage "https://github.com/jj-vcs/jj"
+  url "https://github.com/jj-vcs/jj/archive/refs/tags/v0.32.0.tar.gz"
+  sha256 "12b8e65b7950b189d1df7e20cc55e20ff9cc2bd8d520847323b80daa1cddb27b"
   license "Apache-2.0"
-  head "https://github.com/martinvonz/jj.git", branch: "main"
+  head "https://github.com/jj-vcs/jj.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "a624ce835eea8ce00f6e24610daddb3dcd6a1f2ba7922394d3580df5dd889b5f"
-    sha256 cellar: :any,                 arm64_sonoma:   "480e79febb201bce9489537676ee8a1bcae7b9e6eb2aa2b56466f14bf19d2c8b"
-    sha256 cellar: :any,                 arm64_ventura:  "3d3b0fe905ecf1b01e99d66fc81fbeb4bb5f09dad59e58ee87a17d60d64bddee"
-    sha256 cellar: :any,                 arm64_monterey: "d2384491e0b6d77154408cdc00a07aa66c2e15a515dd23360f65e2a60802e588"
-    sha256 cellar: :any,                 sonoma:         "91a9c7edcd860d5fa2a1bb99c0c7ae13b3dcc550eca6d2caab8436749426bd4b"
-    sha256 cellar: :any,                 ventura:        "ac373ee6f9c8d3a877d528849de2134d29ac57b62912f4b8d17be35e65ee6664"
-    sha256 cellar: :any,                 monterey:       "44f7e8fcbefab6f8f700be5ef56af71a163d0dd6cd908a1a8f49c16e8abecd18"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "7e940ba6143588d61d6339d8601888c8dde9fe887f21a5463c29448fdbfeacbc"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "499242ea9c88e299d1fcd4e47a30e142cec49f03a8b22eb05e482bbb95fe66b1"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "5e151245bfebaa3018ec7cbd6332726007984412690afe26e71a18e8afbd944e"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "055df210752d0fb37b3dfac6602f41fcf5d0cbde55368077c338b85598585d6d"
+    sha256 cellar: :any_skip_relocation, sonoma:        "471e2dd0f97794565495af40929618bcbb57967d1eb75963a5f5b19fac170976"
+    sha256 cellar: :any_skip_relocation, ventura:       "005ee9c7e91b7168f27bd5924932805f579107c1bd7edd5541ff1d56391192d0"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "dedbab1683b4c4351d05d943b7b7e9f24c3006f467039282a7555da65061eb92"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fe730371688479bab330af0d03fc04bbc122fd0314bf413cc58b4d15f2b43181"
   end
 
-  depends_on "pkg-config" => :build
   depends_on "rust" => :build
-  depends_on "libgit2"
-  depends_on "openssl@3"
-  uses_from_macos "zlib"
 
   def install
-    ENV["LIBGIT2_NO_VENDOR"] = "1"
-
     system "cargo", "install", *std_cargo_args(path: "cli")
 
-    generate_completions_from_executable(bin/"jj", "util", "completion", shell_parameter_format: :flag)
-    (man1/"jj.1").write Utils.safe_popen_read(bin/"jj", "util", "mangen")
-  end
-
-  def check_binary_linkage(binary, library)
-    binary.dynamically_linked_libraries.any? do |dll|
-      next false unless dll.start_with?(HOMEBREW_PREFIX.to_s)
-
-      File.realpath(dll) == File.realpath(library)
-    end
+    generate_completions_from_executable(bin/"jj", shell_parameter_format: :clap)
+    system bin/"jj", "util", "install-man-pages", man
   end
 
   test do
-    system bin/"jj", "init", "--git"
-    assert_predicate testpath/".jj", :exist?
-
-    [
-      Formula["libgit2"].opt_lib/shared_library("libgit2"),
-      Formula["openssl@3"].opt_lib/shared_library("libcrypto"),
-      Formula["openssl@3"].opt_lib/shared_library("libssl"),
-    ].each do |library|
-      assert check_binary_linkage(bin/"jj", library),
-             "No linkage with #{library.basename}! Cargo is likely using a vendored version."
-    end
+    touch testpath/"README.md"
+    system bin/"jj", "git", "init"
+    system bin/"jj", "describe", "-m", "initial commit"
+    assert_match "README.md", shell_output("#{bin}/jj file list")
+    assert_match "initial commit", shell_output("#{bin}/jj log")
   end
 end

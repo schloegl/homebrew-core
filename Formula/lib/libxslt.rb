@@ -1,8 +1,8 @@
 class Libxslt < Formula
   desc "C XSLT library for GNOME"
   homepage "http://xmlsoft.org/XSLT/"
-  url "https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.42.tar.xz"
-  sha256 "85ca62cac0d41fc77d3f6033da9df6fd73d20ea2fc18b0a3609ffb4110e1baeb"
+  url "https://download.gnome.org/sources/libxslt/1.1/libxslt-1.1.43.tar.xz"
+  sha256 "5a3d6b383ca5afc235b171118e90f5ff6aa27e9fea3303065231a6d403f0183a"
   license "X11"
 
   # We use a common regex because libxslt doesn't use GNOME's "even-numbered
@@ -13,14 +13,13 @@ class Libxslt < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "bf13c5f7c1e76a199ed494c88c24eee4ba697acba83248566eb4e017cc9226c6"
-    sha256 cellar: :any,                 arm64_sonoma:   "3c3a336b56c8384b9c2956202cc78e28271db8b627a65227f77f049d387b8c05"
-    sha256 cellar: :any,                 arm64_ventura:  "fd6b363128cde585e7086df6d54c8473475a568842b6aa04add1947dae8b9135"
-    sha256 cellar: :any,                 arm64_monterey: "27c8a5e233ab19a82557b33c99f4e226610859832b27c18276a49c1a3765621d"
-    sha256 cellar: :any,                 sonoma:         "33fbe4982e16be91957f9eeb77f35f70385831d479a15b87908389a1077a475c"
-    sha256 cellar: :any,                 ventura:        "82e7425e4331d0024a053434efbd3e6035721a3f792b3fb5b8b8d72fce88cc73"
-    sha256 cellar: :any,                 monterey:       "1609668b445f07134b3f6fafa6cc0307d0659466f2d4aa708e0787bf3a064a6b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "222f19398d1b8f2d1efb196b2336d9b6a8b805abd6b3ab3f1d002112dc7fa67c"
+    sha256 cellar: :any,                 arm64_sequoia: "882f9071165800a694e3dc146e614c984b70d80cf8fa284cc78dd0f35f096a2f"
+    sha256 cellar: :any,                 arm64_sonoma:  "ba204e6736fe30b763bc9372a464f050daa8c5d66aebbff6c8659abbc796d4ae"
+    sha256 cellar: :any,                 arm64_ventura: "68fbcc1a39a1af56dda4c550816f0a4796ed8b70608518b184331f1e13a1ff1b"
+    sha256 cellar: :any,                 sonoma:        "c2432ea083f92c5d6ffd4968f7a0e3d675f7c2098f27e2742b607a9ba68d1f6d"
+    sha256 cellar: :any,                 ventura:       "96311a902a7c1ce991bfb90a01b11442d5ede675238afd8ed22980f7d91b415f"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "847d260b760e00468ab47ce7b72514ef3381622fdb396512926ef4c82d54d1cc"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "595b354dd8c9dc086224701709d5a471f7a916693ebf52e5d68eea1f454bd98d"
   end
 
   head do
@@ -33,7 +32,7 @@ class Libxslt < Formula
 
   keg_only :provided_by_macos
 
-  depends_on "icu4c"
+  depends_on "pkgconf" => :build
   depends_on "libgcrypt"
   depends_on "libxml2"
 
@@ -41,22 +40,16 @@ class Libxslt < Formula
     depends_on "libgpg-error"
   end
 
-  on_linux do
-    depends_on "pkg-config" => :build
-  end
-
   def install
     libxml2 = Formula["libxml2"]
     system "autoreconf", "--force", "--install", "--verbose" if build.head?
-    system "./configure", "--disable-dependency-tracking",
-                          "--disable-silent-rules",
-                          "--prefix=#{prefix}",
+    system "./configure", "--disable-silent-rules",
                           "--without-python",
                           "--with-crypto",
-                          "--with-libxml-prefix=#{libxml2.opt_prefix}"
+                          "--with-libxml-prefix=#{libxml2.opt_prefix}",
+                          *std_configure_args
     system "make"
     system "make", "install"
-    inreplace [bin/"xslt-config", lib/"xsltConf.sh"], libxml2.prefix.realpath, libxml2.opt_prefix
   end
 
   def caveats
@@ -68,13 +61,13 @@ class Libxslt < Formula
 
   test do
     assert_match version.to_s, shell_output("#{bin}/xslt-config --version")
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <libexslt/exslt.h>
       int main(int argc, char *argv[]) {
         exsltCryptoRegister();
         return 0;
       }
-    EOS
+    C
     flags = shell_output("#{bin}/xslt-config --cflags --libs").chomp.split
     system ENV.cc, "test.c", "-o", "test", *flags, "-lexslt"
     system "./test"

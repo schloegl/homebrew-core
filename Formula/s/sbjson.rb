@@ -6,6 +6,8 @@ class Sbjson < Formula
   license "BSD-3-Clause"
   head "https://github.com/SBJson/SBJson.git", branch: "trunk"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_sequoia:  "217c356def1ddd0b9d9bc1d6bc12966315a41e7a10a029b39460b5becfd1521b"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "2a4df626840987db1cc6e63599b28909887644147ecb2c76cff994a9cc2d26cd"
@@ -37,18 +39,18 @@ class Sbjson < Formula
   end
 
   test do
-    (testpath/"in.json").write <<~EOS
+    (testpath/"in.json").write <<~JSON
       [true,false,"string",42.001e3,[],{}]
-    EOS
+    JSON
 
-    (testpath/"unwrapped.json").write <<~EOS
+    (testpath/"unwrapped.json").write <<~JSON
       true
       false
       "string"
       42001
       []
       {}
-    EOS
+    JSON
 
     assert_equal shell_output("cat unwrapped.json"),
                  shell_output("#{bin}/sbjson --unwrap-root in.json")

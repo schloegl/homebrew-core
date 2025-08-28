@@ -1,8 +1,8 @@
 class Libunwind < Formula
   desc "C API for determining the call-chain of a program"
   homepage "https://www.nongnu.org/libunwind/"
-  url "https://github.com/libunwind/libunwind/releases/download/v1.8.1/libunwind-1.8.1.tar.gz"
-  sha256 "ddf0e32dd5fafe5283198d37e4bf9decf7ba1770b6e7e006c33e6df79e6a6157"
+  url "https://github.com/libunwind/libunwind/releases/download/v1.8.2/libunwind-1.8.2.tar.gz"
+  sha256 "7f262f1a1224f437ede0f96a6932b582c8f5421ff207c04e3d9504dfa04c8b82"
   license "MIT"
 
   livecheck do
@@ -11,10 +11,11 @@ class Libunwind < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "81f89b76defac2b351bfb10864fcb7a9169b126f6e62a0c37c235873034fea7d"
+    sha256 cellar: :any_skip_relocation, arm64_linux:  "a6651b2269e4f2ff7f099b6974ea3815dc7825022be179640973f692559e5cf4"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "cbb66984b0bb438330bf35650c0039dce1db45a16110dccad8169e0b8add0dfe"
   end
 
-  keg_only "libunwind conflicts with LLVM"
+  keg_only "it conflicts with LLVM"
 
   depends_on :linux
   depends_on "xz"
@@ -27,14 +28,14 @@ class Libunwind < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <libunwind.h>
       int main() {
         unw_context_t uc;
         unw_getcontext(&uc);
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "-I#{include}", "test.c", "-L#{lib}", "-lunwind", "-o", "test"
     system "./test"
   end

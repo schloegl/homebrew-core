@@ -1,9 +1,8 @@
 class Zeek < Formula
   desc "Network security monitor"
-  homepage "https://www.zeek.org"
-  url "https://github.com/zeek/zeek.git",
-      tag:      "v7.0.2",
-      revision: "270429bfeacbcc21eabe1a73f26707e68d418abf"
+  homepage "https://zeek.org/"
+  url "https://github.com/zeek/zeek/releases/download/v8.0.1/zeek-8.0.1.tar.gz"
+  sha256 "ee916387e762345a6ffa84514cc3b66761f110d845a08b88e4a8da48db97ce8a"
   license "BSD-3-Clause"
   head "https://github.com/zeek/zeek.git", branch: "master"
 
@@ -13,12 +12,13 @@ class Zeek < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia: "e9238f9f37be30fcfa92dc11ed7259d3ab1287b88e7e177fcf1802011a0d9a7b"
-    sha256 arm64_sonoma:  "c8a307ef512be74896e10127dd59c7fa83da759e687316aaf157325fade2e39e"
-    sha256 arm64_ventura: "8936cc5158c3ef75c98ff2ca44c717b76efd7a440792c3e8fc825a4ffc62ef13"
-    sha256 sonoma:        "a22bff21c931d4ee13d7602ac2aff19069883fb6a8aab4e734849b01916d95fc"
-    sha256 ventura:       "1c9a68e484f45d61c602f9aaf37f409a553e22c4d1a42a5d98de532012f75e93"
-    sha256 x86_64_linux:  "178d0ba515a540139f8b8d8f253600ebb1532b0fe10be27063a224e8e63b72c2"
+    sha256 arm64_sequoia: "61285c35ac040f8a5707e22b9276582d05f08c7cfc61c63326e51162a9dd7dd4"
+    sha256 arm64_sonoma:  "560df0f425c87cbe002c81bf3785417bd6da70e38a499acd4d140c726ab7b66d"
+    sha256 arm64_ventura: "b2cc15f7c6ea28ed0d8f706b74cf8dbae755939201f693e6415f5638d49a08b8"
+    sha256 sonoma:        "a1d43e5c37abf02f5ac0b68c89dfbb642745bf0a6bda0ddcb63ba9f50c694d34"
+    sha256 ventura:       "adaecd62acee9d5835adb99c88b6f0bb4d52bb58d578f6f4b2fd177d5b9af6b6"
+    sha256 arm64_linux:   "ba60ac1095bca371354b39554b05b6a44d3a615e584bed45d55f8bf97ec4bae3"
+    sha256 x86_64_linux:  "65ffa5d8ec5a743ccd3786eb536dbde0541d591591d71bea3f7c5520e2307d46"
   end
 
   depends_on "bison" => :build
@@ -29,14 +29,13 @@ class Zeek < Formula
   depends_on "libmaxminddb"
   depends_on macos: :mojave
   depends_on "openssl@3"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
+  depends_on "zeromq"
 
   uses_from_macos "krb5"
   uses_from_macos "libpcap"
   uses_from_macos "libxcrypt"
   uses_from_macos "zlib"
-
-  fails_with gcc: "5"
 
   def install
     # Remove SDK paths from zeek-config. This breaks usage with other SDKs.
@@ -58,7 +57,7 @@ class Zeek < Formula
                     "-DCARES_LIBRARIES=#{Formula["c-ares"].opt_lib/shared_library("libcares")}",
                     "-DLibMMDB_LIBRARY=#{Formula["libmaxminddb"].opt_lib/shared_library("libmaxminddb")}",
                     "-DOPENSSL_ROOT_DIR=#{Formula["openssl@3"].opt_prefix}",
-                    "-DPYTHON_EXECUTABLE=#{which("python3.12")}",
+                    "-DPYTHON_EXECUTABLE=#{which("python3.13")}",
                     "-DZEEK_ETC_INSTALL_DIR=#{etc}",
                     "-DZEEK_LOCAL_STATE_DIR=#{var}",
                     *std_cmake_args
@@ -70,10 +69,10 @@ class Zeek < Formula
     assert_match "version #{version}", shell_output("#{bin}/zeek --version")
     assert_match "ARP packet analyzer", shell_output("#{bin}/zeek --print-plugins")
     system bin/"zeek", "-C", "-r", test_fixtures("test.pcap")
-    assert_predicate testpath/"conn.log", :exist?
-    refute_predicate testpath/"conn.log", :empty?
-    assert_predicate testpath/"http.log", :exist?
-    refute_predicate testpath/"http.log", :empty?
+    assert_path_exists testpath/"conn.log"
+    refute_empty (testpath/"conn.log").read
+    assert_path_exists testpath/"http.log"
+    refute_empty (testpath/"http.log").read
     # For bottling MacOS SDK paths must not be part of the public include directories, see zeek/zeek#1468.
     refute_includes shell_output("#{bin}/zeek-config --include_dir").chomp, "MacOSX"
   end

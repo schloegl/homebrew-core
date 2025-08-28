@@ -1,8 +1,8 @@
 class HapiFhirCli < Formula
   desc "Command-line interface for the HAPI FHIR library"
   homepage "https://hapifhir.io/"
-  url "https://github.com/hapifhir/hapi-fhir/releases/download/v7.4.3/hapi-fhir-7.4.3-cli.zip"
-  sha256 "03ad9ccc90609d1d1cea3c9a275f8fa0537dfe042a8ba0d814e6f746e6be2776"
+  url "https://github.com/hapifhir/hapi-fhir/releases/download/v8.4.0/hapi-fhir-8.4.0-cli.zip"
+  sha256 "12a162f8b3b580a0dfd6201508fc5d750de80e290df17ae1fd4a953830035894"
   license "Apache-2.0"
 
   # The "latest" release on GitHub is sometimes for an older major/minor, so we
@@ -16,15 +16,10 @@ class HapiFhirCli < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "65dcb89ee05498d13b4d1e8bd78a454399357f42a95b4b14855918045b94f398"
+    sha256 cellar: :any_skip_relocation, all: "e9295a4733ee51ed0d1bd66973ee391e15f6cc12b004364d6dcb9bb051902320"
   end
 
   depends_on "openjdk"
-
-  resource "homebrew-test_resource" do
-    url "https://github.com/hapifhir/hapi-fhir/raw/v5.4.0/hapi-fhir-structures-dstu3/src/test/resources/specimen-example.json"
-    sha256 "4eacf47eccec800ffd2ca23b704c70d71bc840aeb755912ffb8596562a0a0f5e"
-  end
 
   def install
     inreplace "hapi-fhir-cli", /SCRIPTDIR=(.*)/, "SCRIPTDIR=#{libexec}"
@@ -34,6 +29,11 @@ class HapiFhirCli < Formula
   end
 
   test do
+    resource "homebrew-test_resource" do
+      url "https://github.com/hapifhir/hapi-fhir/raw/v5.4.0/hapi-fhir-structures-dstu3/src/test/resources/specimen-example.json"
+      sha256 "4eacf47eccec800ffd2ca23b704c70d71bc840aeb755912ffb8596562a0a0f5e"
+    end
+
     testpath.install resource("homebrew-test_resource")
     system bin/"hapi-fhir-cli", "validate", "--file", "specimen-example.json",
            "--fhir-version", "dstu3"

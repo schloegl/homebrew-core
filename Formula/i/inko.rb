@@ -1,51 +1,60 @@
 class Inko < Formula
   desc "Safe and concurrent object-oriented programming language"
   homepage "https://inko-lang.org/"
-  url "https://releases.inko-lang.org/0.16.0.tar.gz"
-  sha256 "7850dc9b0f6e544977a6eb3854022131f30e49e43b99f47cc5aefb77e0b97c32"
   license "MPL-2.0"
-  revision 1
-  head "https://github.com/inko-lang/inko.git", branch: "main"
+
+  stable do
+    url "https://releases.inko-lang.org/0.18.1.tar.gz"
+    sha256 "498d7062ab2689850f56f5a85f5331115a8d1bee147e87c0fdfe97894bc94d80"
+    depends_on "llvm@17" # TODO: update LLVM version on next release
+  end
+
+  # The upstream website doesn't provide easily accessible version information
+  # or link to release tarballs, so we check the release manifest file that
+  # the Inko version manager (`ivm`) uses.
+  livecheck do
+    url "https://releases.inko-lang.org/manifest.txt"
+    regex(/^v?(\d+(?:\.\d+)+)$/im)
+  end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "dfe49ede4263ebeb9337104cc3c70e97d2348a4c9dadc57b6595f0b066f02000"
-    sha256 cellar: :any,                 arm64_sonoma:  "ebbc0a383ee4e2bcbb0c0628a89bfd08338296935327e129eb3d34e53e68ca94"
-    sha256 cellar: :any,                 arm64_ventura: "be38b32949b5f9e0f291c910cfa193604b93056f1498004723f1d16af038da02"
-    sha256 cellar: :any,                 sonoma:        "b4fd1b5448f2284f943a7c3fcd0c01df2d81341e6f10e253b08acb22a62f013c"
-    sha256 cellar: :any,                 ventura:       "90f90e0d1d5719c6fbd26502f4b3d0c87e08f1f857c4af151971fd061fc8fb8d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "10cacd5af2ce222ed3f5610f52f59516f0b9847d8b10d0761d60e4f00d7037fc"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia: "ee26a0c11c1c527151fde51739a7f4fe5ac5f721805deb98e1a5f2bd3024d038"
+    sha256 cellar: :any,                 arm64_sonoma:  "44fc95eba234a04e7cfe132a17874892a86fdcf0b198a07de3ca5807fdead3be"
+    sha256 cellar: :any,                 arm64_ventura: "e61d4dd6bacfdb7d01a885493de960998271cf10f6bf4931a2deecef27a59eec"
+    sha256 cellar: :any,                 sonoma:        "487151f34bc632c5d5618cb65d06efd23afd8f8dac3becf13f2b2597e18aa4e5"
+    sha256 cellar: :any,                 ventura:       "f4b935a853326a2422c5f2bb826c765d9cfa27dd32ebf8005e1d1f7bdbdd58f9"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "578ff3eacb96844be7e983fd7c8bf8c7481138ea12425cbdd9cf2c95e317060a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7af46ba20d2d34d8d5ec23574d97caa98a50278eca21fd9e1573856cf58ee24f"
   end
 
-  depends_on "coreutils" => :build
+  head do
+    url "https://github.com/inko-lang/inko.git", branch: "main"
+    depends_on "llvm"
+  end
+
   depends_on "rust" => :build
-  depends_on "llvm"
-  depends_on "zstd"
 
   uses_from_macos "libffi", since: :catalina
-  uses_from_macos "ncurses"
-  uses_from_macos "ruby", since: :sierra
-  uses_from_macos "zlib"
-
-  on_macos do
-    depends_on "z3"
-  end
 
   def install
-    ENV.prepend_path "PATH", Formula["coreutils"].opt_libexec/"gnubin"
+    # Avoid statically linking to LLVM
+    inreplace "compiler/Cargo.toml", 'prefer-static"]', 'force-dynamic"]'
+
     system "make", "build", "PREFIX=#{prefix}"
     system "make", "install", "PREFIX=#{prefix}"
   end
 
   test do
-    (testpath/"hello.inko").write <<~EOS
-      import std.stdio (STDOUT)
+    (testpath/"hello.inko").write <<~INKO
+      import std.stdio (Stdout)
 
-      class async Main {
+      type async Main {
         fn async main {
-          STDOUT.new.print('Hello, world!')
+          Stdout.new.print('Hello, world!')
         }
       }
-    EOS
+    INKO
     assert_equal "Hello, world!\n", shell_output("#{bin}/inko run hello.inko")
   end
 end

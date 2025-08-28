@@ -1,33 +1,33 @@
 class Smartdns < Formula
   desc "Rule-based DNS server for fast IP resolution, DoT/DoQ/DoH/DoH3 supported"
   homepage "https://github.com/mokeyish/smartdns-rs"
-  url "https://github.com/mokeyish/smartdns-rs/archive/refs/tags/v0.8.7.tar.gz"
-  sha256 "ac40d99ae81b56d1a6823c2032e00ccece531160cdd8a1c4918625d11875ad26"
+  url "https://github.com/mokeyish/smartdns-rs/archive/refs/tags/v0.12.2.tar.gz"
+  sha256 "79f1692d5ee588fb3bfdb7d4af51e4fa3a65f115d1102493e9aa788b3225ca97"
   license "GPL-3.0-only"
   head "https://github.com/mokeyish/smartdns-rs.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "c4345d2aeda6e22f7094c19dd7e70991ab2780ecf29a25beb0c7872379f4d6f3"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "bc3bdc930ce66ab7ccf651edebbbc96bee5d5b2388b6726e7e7a45a985a65b03"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "23138d4afecb99e116ff825ed003ebe6aadd3af2db6350aedcbae024226722be"
-    sha256 cellar: :any_skip_relocation, sonoma:        "3f87fdd551ca26287b878acef6442d790cc12993d7179784fad912034d3f2224"
-    sha256 cellar: :any_skip_relocation, ventura:       "b0a5ce653f6f4014ab975fa8331b5ec7d0b33eeefce788d2ca493cd70d87b8ba"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fc81a10b94e0c9d949ea16e6432127092f6e8c5aa84b986620ee8a0af2f0181c"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "45d7493797a71e04c7e08ea549f9727cb61830e4dda87545e24d25f049127bbc"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "32da3a1bc6da7621d1e63da5f3cb4c62d6da0e85d25dbec8f51f9155717c3d66"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "4793307c69ff0a43d277c2f952c536699ce1bba6479b9bdecfb49a4ed4814943"
+    sha256 cellar: :any_skip_relocation, sonoma:        "6f1fb508390347136f31bcf86698f41d3f17ace1c8de346961638ed2e3908e03"
+    sha256 cellar: :any_skip_relocation, ventura:       "a553a10ab6698defdf5d8dce0c9817f381cae11ced8c95dff2bc7b9422e7f944"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "7672b026043c6876eab7addd25a323139e15b007421286618482e48501138f49"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "80392e5f5fc08199e1ec8fc51ba619ed0f62ceb4d9f764851af6c4e868a5dc29"
   end
 
-  depends_on "just" => :build
   depends_on "rust" => :build
 
   uses_from_macos "llvm" # for libclang
 
   on_linux do
-    depends_on "openssl@3" =>  :build # cargo patch
-    depends_on "pkg-config" => :build # cargo patch
+    depends_on "openssl@3" => :build # cargo patch
+    depends_on "pkgconf" => :build # cargo patch
     depends_on "bind" => :test # for `dig`
   end
 
   def install
-    system "just", "install", "--no-default-features", "--features", "homebrew", *std_cargo_args
+    system "cargo", "install", "--no-default-features", "--features", "homebrew", *std_cargo_args
     sbin.install bin/"smartdns"
     pkgetc.install "etc/smartdns/smartdns.conf"
   end
@@ -47,10 +47,8 @@ class Smartdns < Formula
       local-ttl 3
       address /example.com/1.2.3.4
     EOS
-    fork do
-      exec sbin/"smartdns", "run", "-c", testpath/"smartdns.conf"
-    end
-    sleep(2)
+    spawn sbin/"smartdns", "run", "-c", testpath/"smartdns.conf"
+    sleep 2
     output = shell_output("dig @127.0.0.1 -p #{port} example.com.")
     assert_match("example.com.\t\t3\tIN\tA\t1.2.3.4", output)
   end

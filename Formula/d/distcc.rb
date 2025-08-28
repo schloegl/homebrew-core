@@ -6,36 +6,29 @@ class Distcc < Formula
   url "https://github.com/distcc/distcc/releases/download/v3.4/distcc-3.4.tar.gz"
   sha256 "2b99edda9dad9dbf283933a02eace6de7423fe5650daa4a728c950e5cd37bd7d"
   license "GPL-2.0-or-later"
-  revision 2
+  revision 3
   head "https://github.com/distcc/distcc.git", branch: "master"
 
-  livecheck do
-    url :stable
-    strategy :github_latest
-  end
-
   bottle do
-    rebuild 2
-    sha256 arm64_sequoia:  "a5141ba809a4b59ef06fb630123b18de8fae0f2fc00d82897d81903927fe73e4"
-    sha256 arm64_sonoma:   "86f9db8cf49b2761bed7f067435d5e44a7e6d766f926d889b07feff6f0faf606"
-    sha256 arm64_ventura:  "2e5d348a1fadf36a192c384d570935d3207c4328b56989429ccba71009218a65"
-    sha256 arm64_monterey: "fbab64f137d740df58d38572b657f223ee7ac9b9b0bae4831a6a1d15b614a5c3"
-    sha256 sonoma:         "622db90f14bcdefda607c55b5ac3591a851ee10b2a5824f1a847117839f4486b"
-    sha256 ventura:        "1f1403908514f997b9adb2c7533c95d327e59af14d77debb6735020301cfaade"
-    sha256 monterey:       "f45fc0328cf2e97468b13f407ac8dd594df7d456c55f24a7d077ace92777bd55"
-    sha256 x86_64_linux:   "e8044112f0fb9eead14311e10e8ca49e8ff4d5eab6bd58c7ffb0a4bbd00aba42"
+    sha256 arm64_sequoia: "b98395e66b59e15e749f8653a24a7cdb21ed924ab38789987937b424087db48c"
+    sha256 arm64_sonoma:  "3f7592cb46c1103e012aa5321bc042a422cf4feff63f741df469ac0b360048dd"
+    sha256 arm64_ventura: "4e2d0d3d71ff226b128e3449b7ef1117dd6f27c46345fc29a293ae246f562dd4"
+    sha256 sonoma:        "80254e2dd3cb658907364565ee40c9f60a8aa303cbc9bcc20cf7e7a8c6024a94"
+    sha256 ventura:       "50459c98419e4b2d87f529ae4a058f90f011836cd157af010f81137e9468e531"
+    sha256 arm64_linux:   "938461a356c88827ebb319494279a8a41959be010e7102adbfe17e79f6da9b61"
+    sha256 x86_64_linux:  "92bb7674804a00828013b7a43534c3875624168e13934e3b099afcc8b50698a8"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "libiberty" do
-    url "https://ftp.debian.org/debian/pool/main/libi/libiberty/libiberty_20210106.orig.tar.xz"
-    sha256 "9df153d69914c0f5a9145e0abbb248e72feebab6777c712a30f1c3b8c19047d4"
+    url "https://ftp.debian.org/debian/pool/main/libi/libiberty/libiberty_20250315.orig.tar.xz"
+    sha256 "5b510b5e0918dcb00a748900103365a00411855f202089ff81dc5ef99d8beeaa"
   end
 
   resource "setuptools" do
-    url "https://files.pythonhosted.org/packages/d6/4f/b10f707e14ef7de524fe1f8988a294fb262a29c9b5b12275c7e188864aed/setuptools-69.5.1.tar.gz"
-    sha256 "6c1fccdac05a97e598fb0ae3bbed5904ccb317337a51139dcd51453611bbb987"
+    url "https://files.pythonhosted.org/packages/18/5d/3bf57dcd21979b887f014ea83c24ae194cfcd12b9e0fda66b957c69d1fca/setuptools-80.9.0.tar.gz"
+    sha256 "f36b47402ecde768dbfafc46e8e4207b4360c654f1f3bb84475f0a28628fb19c"
   end
 
   # Python 3.10+ compatibility
@@ -51,7 +44,7 @@ class Distcc < Formula
   end
 
   def install
-    ENV["PYTHON"] = python3 = which("python3.12")
+    ENV["PYTHON"] = python3 = which("python3.13")
     site_packages = prefix/Language::Python.site_packages(python3)
 
     build_venv = virtualenv_create(buildpath/"venv", python3)
@@ -85,10 +78,10 @@ class Distcc < Formula
   test do
     system bin/"distcc", "--version"
 
-    (testpath/"Makefile").write <<~EOS
+    (testpath/"Makefile").write <<~MAKE
       default:
-      \t@echo Homebrew
-    EOS
+      	@echo Homebrew
+    MAKE
     assert_match "distcc hosts list does not contain any hosts", shell_output("#{bin}/pump make 2>&1", 1)
 
     # `pump make` timeout on linux runner and is not reproducible, so only run this test for macOS runners

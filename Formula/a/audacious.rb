@@ -2,14 +2,19 @@ class Audacious < Formula
   desc "Lightweight and versatile audio player"
   homepage "https://audacious-media-player.org/"
   license "BSD-2-Clause"
+  revision 1
 
   stable do
-    url "https://distfiles.audacious-media-player.org/audacious-4.4.1.tar.bz2"
-    sha256 "260d988d168e558f041bbb56692e24c535a96437878d60dfd01efdf6b1226416"
+    url "https://distfiles.audacious-media-player.org/audacious-4.5.tar.bz2"
+    sha256 "1ea5e0f871c6a8b2318e09a9d58fc573fe3f117ae0d8d163b60cc05b2ce7c405"
 
     resource "plugins" do
-      url "https://distfiles.audacious-media-player.org/audacious-plugins-4.4.1.tar.bz2"
-      sha256 "484ed416b1cf1569ce2cc54208e674b9c516118485b94ce577d7bc5426d05976"
+      url "https://distfiles.audacious-media-player.org/audacious-plugins-4.5.tar.bz2"
+      sha256 "36c19940ee7227f67df4f0c7fd98a5f60c60257a1a47ecd014c9e2a26d7846dd"
+
+      livecheck do
+        formula :parent
+      end
     end
   end
 
@@ -19,11 +24,11 @@ class Audacious < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:  "53552087050d5e1c91c16c2d0fc98b7ebe9c8123b20f259245c0531b64de5609"
-    sha256 arm64_ventura: "0d943a692b27de31f4f0d2c01525727c9e9fe02865967bb2feec03ee71b3449a"
-    sha256 sonoma:        "d32510bb7caedfd26aa795b4e87d539579f19eafe8215acfa859dbef355f50f3"
-    sha256 ventura:       "a07ddaf905410b17e0cb40b534bfd18fb8cb2bd325a304fbf5359cda479fefc9"
-    sha256 x86_64_linux:  "3c5a0928cf6878761717b747d932b04a62d31924560ae973b0c8983d881cd1fb"
+    sha256 arm64_sonoma:  "a22ac4daf6c2fd62c97aca4d7b1663d0b2d927fc0197ebf0c368eacf95ed2f7a"
+    sha256 arm64_ventura: "bbac9b3a6b48026c8b2d1d53d98192067c504f03394e5feb119dbc1a06aff964"
+    sha256 sonoma:        "98953e475f6d647204c512a7d6c8a63f9c1d7413d0748d695d89164f454feb52"
+    sha256 ventura:       "530f6c0a4263fbd644e75c007c1762d582f2652a64a0037bcea2f735ecfdd1b3"
+    sha256 x86_64_linux:  "d7351794505a034f7b1287602f4f6430bbddf5f04fd0f44c4ccd5f7889000b81"
   end
 
   head do
@@ -37,7 +42,7 @@ class Audacious < Formula
   depends_on "gettext" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "faad2"
   depends_on "ffmpeg"
   depends_on "flac"
@@ -52,6 +57,7 @@ class Audacious < Formula
   depends_on "libogg"
   depends_on "libopenmpt"
   depends_on "libsamplerate"
+  depends_on "libsidplayfp"
   depends_on "libsndfile"
   depends_on "libsoxr"
   depends_on "libvorbis"
@@ -78,8 +84,6 @@ class Audacious < Formula
     depends_on "pulseaudio"
   end
 
-  fails_with gcc: "5"
-
   def install
     odie "plugins resource needs to be updated" if build.stable? && version != resource("plugins").version
 
@@ -87,7 +91,7 @@ class Audacious < Formula
       -Dgtk=false
     ]
 
-    system "meson", "setup", "build", *std_meson_args, *args, "-Ddbus=false"
+    system "meson", "setup", "build", "-Ddbus=false", *args, *std_meson_args
     system "meson", "compile", "-C", "build", "--verbose"
     system "meson", "install", "-C", "build"
 
@@ -98,7 +102,7 @@ class Audacious < Formula
       ]
 
       ENV.prepend_path "PKG_CONFIG_PATH", lib/"pkgconfig"
-      system "meson", "setup", "build", *std_meson_args, *args
+      system "meson", "setup", "build", *args, *std_meson_args
       system "meson", "compile", "-C", "build", "--verbose"
       system "meson", "install", "-C", "build"
     end
@@ -107,7 +111,8 @@ class Audacious < Formula
   def caveats
     <<~EOS
       audtool does not work due to a broken dbus implementation on macOS, so it is not built.
-      GTK+ GUI is not built by default as the Qt GUI has better integration with macOS, and the GTK GUI would take precedence if present.
+      GTK+ GUI is not built by default as the Qt GUI has better integration with macOS,
+      and the GTK GUI would take precedence if present.
     EOS
   end
 

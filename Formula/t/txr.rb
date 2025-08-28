@@ -1,8 +1,8 @@
 class Txr < Formula
   desc "Lisp-like programming language for convenient data munging"
   homepage "https://www.nongnu.org/txr/"
-  url "https://www.kylheku.com/cgit/txr/snapshot/txr-296.tar.bz2"
-  sha256 "753e74c1f11c109a5235856b5e5800912b8267e08257a1a26f17e74efd5c2917"
+  url "https://www.kylheku.com/cgit/txr/snapshot/txr-302.tar.bz2"
+  sha256 "f0de012ed62218e049d09a39ae6a9387598d8eac12a7c2d7d9d906c27c36ef54"
   license "BSD-2-Clause"
 
   livecheck do
@@ -11,24 +11,37 @@ class Txr < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "72d459dc8256ecee224775d80decadcf71580c292f0450622ebf7b02364c9b00"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "665ae564cfe95691bf0c3d0be2efa808f6c84b9025d0cbebd5cc4d7900c09126"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "4a0333a9d183f4b37c476abd38a40271e64cff8cf85131470d854c939ae7193e"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "c18f7d0d82dcf758371083137178c7c6bab011ee78d1655e5d7a830f77be6fba"
-    sha256 cellar: :any_skip_relocation, sonoma:         "ff27d67de08045b34d41ee6089300571ca26bece1c891160b9a4501b1ffa66db"
-    sha256 cellar: :any_skip_relocation, ventura:        "cd5d5b338ad9182a270b841a09e3314a26ff03187093ea3571b10748bdd6bb92"
-    sha256 cellar: :any_skip_relocation, monterey:       "61091144d680585ceeaa4415d161e60e00a356c30d92795b2922fb1b49c3afb8"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "3190a9ee3e9cad9ea15afb5e5950fd15b2547ad06fd78c9dfc972439628cfb11"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "f470ff3b63fc4ca54e373852496d845bd64150a2b092702f1f33cbf7ab257bb1"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "d10ef0d21324ea961c822c61ff44de39177b401c70f08bb89b5e4473df3b6f97"
+    sha256 cellar: :any_skip_relocation, sonoma:        "275b1b90e5d210cbcbf43ca06fb42f7ee4b881af984b554237b959e37d1203bc"
+    sha256 cellar: :any_skip_relocation, ventura:       "c576ede754b86b6672d3e96e16a204eb9b6173ac30438dfff9d179340bef5aa6"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d10f50542ed10a224eb99faddb04ba00250aa2509788b893512b6c7f70a0a759"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
+
   uses_from_macos "bison" => :build
   uses_from_macos "flex" => :build
   uses_from_macos "libffi", since: :catalina
+  uses_from_macos "libxcrypt"
+  uses_from_macos "zlib"
+
+  on_linux do
+    depends_on "gcc" => :build
+  end
+
+  fails_with :gcc do
+    version "11"
+    cause "Segmentation faults running TXR"
+  end
 
   def install
-    system "./configure", "--prefix=#{prefix}", "--inline=static inline"
+    system "./configure", "--prefix=#{prefix}"
     system "make"
+    system "make", "tests" # run tests as upstream has gotten reports of broken TXR in Homebrew
     system "make", "install"
+    (share/"vim/vimfiles/syntax").install Dir["*.vim"]
   end
 
   test do

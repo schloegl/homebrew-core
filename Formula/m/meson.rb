@@ -1,20 +1,20 @@
 class Meson < Formula
   desc "Fast and user friendly build system"
   homepage "https://mesonbuild.com/"
-  url "https://github.com/mesonbuild/meson/releases/download/1.5.2/meson-1.5.2.tar.gz"
-  sha256 "f955e09ab0d71ef180ae85df65991d58ed8430323de7d77a37e11c9ea630910b"
+  url "https://github.com/mesonbuild/meson/releases/download/1.9.0/meson-1.9.0.tar.gz"
+  sha256 "cd27277649b5ed50d19875031de516e270b22e890d9db65ed9af57d18ebc498d"
   license "Apache-2.0"
   head "https://github.com/mesonbuild/meson.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "46e1bb718943bb802ca3947191ef98b3f9c51e39be47a87f825060741f45e44e"
+    sha256 cellar: :any_skip_relocation, all: "7603a333f12eff159cdc338c6c8a1cfd2c403a8ad628f6c246cf624010dd967c"
   end
 
   depends_on "ninja"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   def install
-    python3 = "python3.12"
+    python3 = "python3.13"
     system python3, "-m", "pip", "install", *std_pip_args(build_isolation: true), "."
 
     bash_completion.install "data/shell-completions/bash/meson"
@@ -26,21 +26,26 @@ class Meson < Formula
     # for fulfilling dependencies rather than just `/usr/local`.
     mesonbuild = prefix/Language::Python.site_packages(python3)/"mesonbuild"
     usr_local_files = %w[
+      compilers/mixins/apple.py
       coredata.py
-      options.py
       dependencies/boost.py
       dependencies/cuda.py
+      dependencies/misc.py
       dependencies/qt.py
+      options.py
       scripts/python_info.py
       utils/universal.py
-      compilers/mixins/apple.py
     ].map { |f| mesonbuild/f }
     usr_local_files << (bash_completion/"meson")
 
     # Passing `build.stable?` ensures a failed `inreplace` won't fail HEAD installs.
     inreplace usr_local_files, "/usr/local", HOMEBREW_PREFIX, audit_result: build.stable?
 
-    opt_homebrew_files = %w[dependencies/boost.py compilers/mixins/apple.py].map { |f| mesonbuild/f }
+    opt_homebrew_files = %w[
+      dependencies/boost.py
+      dependencies/misc.py
+      compilers/mixins/apple.py
+    ].map { |f| mesonbuild/f }
     inreplace opt_homebrew_files, "/opt/homebrew", HOMEBREW_PREFIX, audit_result: build.stable?
 
     # Ensure meson uses our `var` directory.
@@ -48,20 +53,20 @@ class Meson < Formula
   end
 
   test do
-    (testpath/"helloworld.c").write <<~EOS
+    (testpath/"helloworld.c").write <<~C
       #include <stdio.h>
       int main(void) {
         puts("hi");
         return 0;
       }
-    EOS
-    (testpath/"meson.build").write <<~EOS
+    C
+    (testpath/"meson.build").write <<~MESON
       project('hello', 'c')
       executable('hello', 'helloworld.c')
-    EOS
+    MESON
 
     system bin/"meson", "setup", "build"
-    assert_predicate testpath/"build/build.ninja", :exist?
+    assert_path_exists testpath/"build/build.ninja"
 
     system bin/"meson", "compile", "-C", "build", "--verbose"
     assert_equal "hi", shell_output("build/hello").chomp

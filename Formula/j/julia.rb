@@ -1,50 +1,70 @@
 class Julia < Formula
   desc "Fast, Dynamic Programming Language"
   homepage "https://julialang.org/"
-  # Use the `-full` tarball to avoid having to download during the build.
-  url "https://github.com/JuliaLang/julia/releases/download/v1.10.5/julia-1.10.5-full.tar.gz"
-  sha256 "5fc94159b87f34d18bf44a1a940e59f40cbeab931bfdc0c4763203bbb6995260"
   license all_of: ["MIT", "BSD-3-Clause", "Apache-2.0", "BSL-1.0"]
-  head "https://github.com/JuliaLang/julia.git", branch: "master"
 
+  stable do
+    # Use the `-full` tarball to avoid having to download during the build.
+    # TODO: Check if we can unbundle `curl`: https://github.com/JuliaLang/Downloads.jl/issues/260
+    url "https://github.com/JuliaLang/julia/releases/download/v1.11.6/julia-1.11.6-full.tar.gz"
+    sha256 "b268def41adc17496c3e0e7dcb5e27b2cbe6a1c61c78f6463544c5f4c734168a"
+
+    depends_on "libgit2@1.8"
+
+    # Link against libgcc_s.1.1.dylib, not libgcc_s.1.dylib
+    # https://github.com/JuliaLang/julia/pull/56965#event-15826575851
+    # Remove in 1.12
+    patch do
+      url "https://github.com/JuliaLang/julia/commit/75cdffeb0f37b438950534712755a4f7cebbdd8c.patch?full_index=1"
+      sha256 "7b62554131a2627c70570b800c8fea35048e863ba2e11fc6c93d6fe26920cda8"
+    end
+  end
+
+  # Upstream creates GitHub releases for both stable and LTS versions, so the
+  # "latest" release on GitHub may be an LTS version instead of a "stable"
+  # version. This checks the first-party download page, which links to the
+  # `stable` tarballs from the newest releases on GitHub.
   livecheck do
-    url :stable
-    strategy :github_latest
+    url "https://julialang.org/downloads/"
+    regex(/href=.*?julia[._-]v?(\d+(?:\.\d+)+)[._-]full\.t/i)
   end
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any,                 arm64_sonoma:   "5f01f35877de5721c8f174fe5ae627c253e5ea2d45604ae72920f2b0b3b481e9"
-    sha256 cellar: :any,                 arm64_ventura:  "2e234231324e6e0cc9ae47b16e7b1a0bd8b5a9319f44cafb3b337aee3d85209b"
-    sha256 cellar: :any,                 arm64_monterey: "5a3fae7b49784b9405f1f87717619bf8c4fde0439621b64fcd3db1aac4e1173c"
-    sha256 cellar: :any,                 sonoma:         "23f33a6156a3af65691f1428cf54ef7924a9c1537c5ae7dad1d5deee62b57803"
-    sha256 cellar: :any,                 ventura:        "88f0b35e9074d68bea5fc42dcc224539991a963018572716ad22d930da932b75"
-    sha256 cellar: :any,                 monterey:       "9704cb40bea57fed436fd5d81eed710114d81f241c3984b0279e16fc13febcb0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "858a1193f9b765a1992c3680ead5f39501cdaa1e75df81da8b2916b6ace57b03"
+    sha256 cellar: :any,                 arm64_sequoia: "0b0383a975eb655862d9ce049595e3e0862f0def36f985f219f72256c72d9d11"
+    sha256 cellar: :any,                 arm64_sonoma:  "b254d61d5a1cb1ee5388c8efe2f98c29cc2baafa19fc9d3e5c9d1286e269a88c"
+    sha256                               arm64_ventura: "1e1ff07e37ff59d0a35201bf34302a7276839f149004fea472f9c63739c20f81"
+    sha256 cellar: :any,                 sonoma:        "df8d978b084838485e24e5fd0894ee8968f3ab04dc964c39f7d81722758ab425"
+    sha256 cellar: :any,                 ventura:       "ba39de3ea6e7eb95ccccf3d3148e09f2f8af9f299f8321bc933e2e0151f98e88"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "afaf2efaa803943c6fc2fe79a419f69a91310d6b38a4367688784ac72ac27884"
+  end
+
+  head do
+    url "https://github.com/JuliaLang/julia.git", branch: "master"
+
+    depends_on "curl"
+    depends_on "libgit2"
+    depends_on "openssl@3"
   end
 
   depends_on "cmake" => :build # Needed to build LLVM
   depends_on "gcc" => :build # for gfortran
-  # TODO: Use system `suite-sparse` when `julia` supports v7.3+.
-  # PR ref: https://github.com/JuliaLang/julia/pull/52577
-  depends_on "suite-sparse" => :test # Check bundled copy is used
   depends_on "ca-certificates"
-  depends_on "curl"
   depends_on "gmp"
   depends_on "libblastrampoline"
-  depends_on "libgit2"
   depends_on "libnghttp2"
   depends_on "libssh2"
-  depends_on "mbedtls@2"
   depends_on "mpfr"
   depends_on "openblas"
   depends_on "openlibm"
   depends_on "p7zip"
   depends_on "pcre2"
+  depends_on "suite-sparse"
   depends_on "utf8proc"
+  depends_on "zstd"
 
   uses_from_macos "perl" => :build
   uses_from_macos "python" => :build
+  uses_from_macos "ncurses" # for terminfo
   uses_from_macos "zlib"
 
   on_linux do
@@ -52,15 +72,6 @@ class Julia < Formula
   end
 
   conflicts_with "juliaup", because: "both install `julia` binaries"
-
-  fails_with gcc: "5"
-
-  # Link against libgcc_s.1.1.dylib, not libgcc_s.1.dylib
-  # https://github.com/JuliaLang/julia/issues/48056
-  patch do
-    url "https://raw.githubusercontent.com/Homebrew/formula-patches/202ccbabd44bd5ab02fbdee2f51f87bb88d74417/julia/libgcc_s-1.8.5.diff"
-    sha256 "1eea77d8024ad8bc9c733a0e0770661bc08228d335b20c4696350ed5dfdab29a"
-  end
 
   def install
     # Build documentation available at
@@ -73,17 +84,16 @@ class Julia < Formula
       USE_BINARYBUILDER=0
       USE_SYSTEM_BLAS=1
       USE_SYSTEM_CSL=1
-      USE_SYSTEM_CURL=1
       USE_SYSTEM_GMP=1
       USE_SYSTEM_LAPACK=1
       USE_SYSTEM_LIBBLASTRAMPOLINE=1
       USE_SYSTEM_LIBGIT2=1
       USE_SYSTEM_LIBSSH2=1
-      USE_SYSTEM_LIBSUITESPARSE=0
-      USE_SYSTEM_MBEDTLS=1
+      USE_SYSTEM_LIBSUITESPARSE=1
       USE_SYSTEM_MPFR=1
       USE_SYSTEM_NGHTTP2=1
       USE_SYSTEM_OPENLIBM=1
+      USE_SYSTEM_OPENSSL=1
       USE_SYSTEM_P7ZIP=1
       USE_SYSTEM_PATCHELF=1
       USE_SYSTEM_PCRE=1
@@ -95,6 +105,7 @@ class Julia < Formula
       LIBLAPACK=-lopenblas
       LIBLAPACKNAME=libopenblas
       USE_BLAS64=0
+      WITH_TERMINFO=0
     ]
 
     args << "MACOSX_VERSION_MIN=#{MacOS.version}" if OS.mac?
@@ -144,17 +155,32 @@ class Julia < Formula
       ENV.append "LDFLAGS", "-Wl,-rpath,#{lib}"
     end
 
-    # Remove library versions from MbedTLS_jll, nghttp2_jll and others
+    # Remove library versions from nghttp2_jll and others
     # https://git.archlinux.org/svntogit/community.git/tree/trunk/julia-hardcoded-libs.patch?h=packages/julia
-    %w[MbedTLS nghttp2 LibGit2 OpenLibm].each do |dep|
-      (buildpath/"stdlib").glob("**/#{dep}_jll.jl") do |jll|
-        inreplace jll, %r{@rpath/lib(\w+)(\.\d+)*\.dylib}, "@rpath/lib\\1.dylib"
-        inreplace jll, /lib(\w+)\.so(\.\d+)*/, "lib\\1.so"
+    stdlib_deps = %w[nghttp2 LibGit2 OpenLibm SuiteSparse]
+    stdlib_deps.each do |dep|
+      inreplace (buildpath/"stdlib").glob("**/#{dep}_jll.jl") do |s|
+        s.gsub!(%r{@rpath/lib(\w+)(\.\d+)*\.dylib}, "@rpath/lib\\1.dylib")
+        s.gsub!(/lib(\w+)\.so(\.\d+)*/, "lib\\1.so")
       end
     end
 
     # Make Julia use a CA cert from `ca-certificates`
     (buildpath/"usr/share/julia").install_symlink Formula["ca-certificates"].pkgetc/"cert.pem"
+
+    if build.head?
+      args << "USE_SYSTEM_CURL=1"
+    else
+      # Fix for cmake version 4 compatibility
+      inreplace "deps/tools/common.mk", "CMAKE_COMMON :=", "CMAKE_COMMON := -DCMAKE_POLICY_VERSION_MINIMUM=3.5"
+      args += ["USE_SYSTEM_CURL=0", "USE_SYSTEM_MBEDTLS=0"]
+      # Julia 1.11 is incompatible with curl >= 8.10
+      # Issue ref: https://github.com/JuliaLang/Downloads.jl/issues/260
+      odie "Try unbundling curl and removing mbedtls references!" if version >= "1.12"
+      # Workaround to install bundled curl without bundling other libs
+      system "make", "-C", "deps", "install-mbedtls", *args
+      system "make", "-C", "deps", "install-curl", *args
+    end
 
     system "make", *args, "install"
 
@@ -197,9 +223,11 @@ class Julia < Formula
 
     assert_equal "4", shell_output("#{bin}/julia #{args.join(" ")} --print '2 + 2'").chomp
 
-    if OS.linux? || Hardware::CPU.arm? || MacOS.version > :monterey
-      # This test times out on 12-x86_64.
-      system bin/"julia", *args, "--eval", 'Base.runtests("core")'
+    if OS.linux? || Hardware::CPU.arm?
+      # Setting up test suite is slow and causes Intel macOS to exceed 5 min limit
+      with_env(CI: nil) do
+        system bin/"julia", *args, "--eval", 'Base.runtests("core")'
+      end
     end
 
     # Check that installing packages works.
@@ -210,7 +238,7 @@ class Julia < Formula
     # Most of these also check that Julia can load Homebrew-provided libraries.
     jlls = %w[
       MPFR_jll SuiteSparse_jll Zlib_jll OpenLibm_jll
-      nghttp2_jll MbedTLS_jll LibGit2_jll GMP_jll
+      nghttp2_jll LibGit2_jll GMP_jll
       OpenBLAS_jll CompilerSupportLibraries_jll dSFMT_jll LibUV_jll
       LibSSH2_jll LibCURL_jll libLLVM_jll PCRE2_jll
     ]
@@ -226,14 +254,14 @@ class Julia < Formula
                           name.start_with?("sys", "libjulia-internal", "libccalltest")
                         end
 
-    (testpath/"library_test.jl").write <<~EOS
+    (testpath/"library_test.jl").write <<~JULIA
       using Libdl
       libraries = #{libs}
       for lib in libraries
         handle = dlopen(lib)
         @assert dlclose(handle) "Unable to close $(lib)!"
       end
-    EOS
+    JULIA
     system bin/"julia", *args, "library_test.jl"
   end
 end

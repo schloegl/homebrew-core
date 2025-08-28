@@ -1,20 +1,21 @@
 class GetIplayer < Formula
   desc "Utility for downloading TV and radio programmes from BBC iPlayer"
   homepage "https://github.com/get-iplayer/get_iplayer"
-  url "https://github.com/get-iplayer/get_iplayer/archive/refs/tags/v3.35.tar.gz"
-  sha256 "048ff5f9bd5c6c0f51a05fd0c97eb137029d1950b594384a920c3c674f121e8c"
+  url "https://github.com/get-iplayer/get_iplayer/archive/refs/tags/v3.36.tar.gz"
+  sha256 "9a70383143b6e3f43ee079f551b7f5719037ada86eb48d9defc66e00e619d996"
   license "GPL-3.0-or-later"
   head "https://github.com/get-iplayer/get_iplayer.git", branch: "develop"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "f1c79e1af002a808fb4f42e10dff6358dfca0838e4a7de585e909a86eb30f82d"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "fa7b3acc3812e519bf72aacdda6cffd84d7f19e07a39a220e4f10d570675d8fe"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "065d0cef0fb0834145ea1b794f540be554de639404a2849f6f62d425349b3fe2"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "065d0cef0fb0834145ea1b794f540be554de639404a2849f6f62d425349b3fe2"
-    sha256 cellar: :any_skip_relocation, sonoma:         "80e39e9e718785e13d5f737f8c0ca86b2f64657307d69f05ee08cccb51ca076f"
-    sha256 cellar: :any_skip_relocation, ventura:        "f88939072c58bc84a1badf03210a4fb1eacfb84540eb7296eb7b40218e8e87df"
-    sha256 cellar: :any_skip_relocation, monterey:       "f88939072c58bc84a1badf03210a4fb1eacfb84540eb7296eb7b40218e8e87df"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3948f275bf3d1142d6136f8ded46abe7601f1bd8300e8a5f01265770b3de350c"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "fe0570e670e29b55c71caff7f76158b197edde3bf04ca4a566ff5134c3505892"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "fe0570e670e29b55c71caff7f76158b197edde3bf04ca4a566ff5134c3505892"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "778f90bf66b84cbc936f725ccbde41f5bb36e0018ccc922cedc8cd0f68331046"
+    sha256 cellar: :any_skip_relocation, sonoma:        "70efc995f75309e52e41cdb02ecaa28c0abee82fdaded3859a73037c30aba2e4"
+    sha256 cellar: :any_skip_relocation, ventura:       "bdb8fe4d4e0251e3eda0d7891544a4567a0303fb75fd1802253b1016ee9add64"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "2980bb4bf82c8b923ca76764b062848dceb99f0d3b9bf9d0df86129240a3b96d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "388dd1be26959b14f608452d34b4b582d49aab98a37c7fc7911e4a704f05137a"
   end
 
   depends_on "atomicparsley"

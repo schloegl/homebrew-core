@@ -1,19 +1,18 @@
 class FuncE < Formula
   desc "Easily run Envoy"
   homepage "https://func-e.io"
-  url "https://github.com/tetratelabs/func-e/archive/refs/tags/v1.1.4.tar.gz"
-  sha256 "f8829bde3201960edbea764002c16ade4d68e0a7ddc453d042cd1fb5bba3f6d5"
+  url "https://github.com/tetratelabs/func-e/archive/refs/tags/v1.2.0.tar.gz"
+  sha256 "e9c0d130d90e4852ee0f7da71438632e9d12bb58f117fc4aff28bcd6e506dbd1"
   license "Apache-2.0"
+  head "https://github.com/tetratelabs/func-e.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "e97dd0ffc4db5a6ea9e1a95397f5166a25ecc99d71c5dd1d72c88de73af87b50"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "2f10e2f358de4c6352aa82ad4e2c67fde677a6463e6cf05bebff2058136da34f"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "83588b07dd168fdf5138e2b55d5388423b8f4c138a18f7de3186fd512f23bdbe"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "c2969bb7e8054052b3736688519486280031fa0224a9d4a9de20394bce7ce514"
-    sha256 cellar: :any_skip_relocation, sonoma:         "8ffd03b70a406cdd742c0d12b183401b13e66d1facb57b613d4dc2474aac0d13"
-    sha256 cellar: :any_skip_relocation, ventura:        "d00c61a8a944fcf6b8aa3338d755a9534f0cf1379ad94d870c93dc7b203f3b46"
-    sha256 cellar: :any_skip_relocation, monterey:       "ecfeb425d1362879536b073f154b3f8957c889288495e5f533a367d1bee3e0e3"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "9271ead514ec571869cb59f8f6eef82935489654b33b25497ce72aa12baff3df"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "586d5eb8312d8cbf3103f596e3b764a163e02c0296ce7002805280230508f4b7"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "586d5eb8312d8cbf3103f596e3b764a163e02c0296ce7002805280230508f4b7"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "586d5eb8312d8cbf3103f596e3b764a163e02c0296ce7002805280230508f4b7"
+    sha256 cellar: :any_skip_relocation, sonoma:        "f3e77d491e192ec02e4a1c4c46e25939e9ae2e2828eaa9e65aadf32780d51899"
+    sha256 cellar: :any_skip_relocation, ventura:       "f3e77d491e192ec02e4a1c4c46e25939e9ae2e2828eaa9e65aadf32780d51899"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8d63fc1d4e59e3ac36ff8b550827115444c2be29436397963cd322fff15150ff"
   end
 
   depends_on "go" => :build
@@ -26,7 +25,7 @@ class FuncE < Formula
       -s -w
       -X main.version=#{version}
     ]
-    system "go", "build", *std_go_args(ldflags:)
+    system "go", "build", *std_go_args(ldflags:), "./cmd/func-e"
   end
 
   test do

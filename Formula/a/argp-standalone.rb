@@ -9,6 +9,8 @@ class ArgpStandalone < Formula
     :public_domain,      # mempcpy.c, strchrnul.c
   ]
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_sequoia:  "b71de47f10a604629ded46675494d28ec5189153afe353425a4f6f52ab879f29"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "ded4333901f512960d2087fd1177a70c82af78f296d858e517b52d94a2585520"
@@ -30,7 +32,7 @@ class ArgpStandalone < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <stdio.h>
       #include <argp.h>
 
@@ -38,7 +40,7 @@ class ArgpStandalone < Formula
       {
         return argp_parse(0, argc, argv, 0, 0, 0);
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-L#{lib}", "-largp", "-o", "test"
     system "./test"
   end

@@ -1,25 +1,25 @@
 class Cmus < Formula
   desc "Music player with an ncurses based interface"
   homepage "https://cmus.github.io/"
-  url "https://github.com/cmus/cmus/archive/refs/tags/v2.11.0.tar.gz"
-  sha256 "2bbdcd6bbbae301d734214eab791e3755baf4d16db24a44626961a489aa5e0f7"
+  url "https://github.com/cmus/cmus/archive/refs/tags/v2.12.0.tar.gz"
+  sha256 "44b96cd5f84b0d84c33097c48454232d5e6a19cd33b9b6503ba9c13b6686bfc7"
   license "GPL-2.0-or-later"
+  revision 3
   head "https://github.com/cmus/cmus.git", branch: "master"
 
   bottle do
-    sha256 arm64_sequoia:  "4d48fd259b20762d9c04a173efbf067aedfc63546c5e2d8b7cb60db0f0580e88"
-    sha256 arm64_sonoma:   "db7240bb997b88208a1d1615eb318a2439c8c5c15bc3dc434f9056d6b0c563a0"
-    sha256 arm64_ventura:  "e3c062549f70169a3ea7aba0785e8d1e77aaa5188e178efba38e6ce1edbfda52"
-    sha256 arm64_monterey: "d83c3974dc01bc46172cf5603a3226a8b1363a1bd37fea7cac54154533254b0e"
-    sha256 sonoma:         "d283fe9e60f2b50ec4335e8c40358b34905bb0cc455932e7d225b1d7ea30edbf"
-    sha256 ventura:        "0faf7db511ed5efb310c9f0dbffea745bce21cf6d2525dfb78ae37f06c28213e"
-    sha256 monterey:       "ca2869a665cec6bc773d848c5b682dd649f71410646bd6b1e88d956519ca6b62"
-    sha256 x86_64_linux:   "c19deeb39b622a6acc22951199a64867b1754463506a62ad1f25e63d7bab3aad"
+    sha256 arm64_sequoia: "e09385ddb5a370d854f4608b76c5a263541547ac91b7cc4a6517e1f3099a19a3"
+    sha256 arm64_sonoma:  "a9d12ff2708a54953541bc5ae8ccb1ef3fd24aeb3365dbc8834337076faebd72"
+    sha256 arm64_ventura: "ae3c328349aeb668ccb369a9aa2a6147e6718aec702cffc145de37a0f3b82e0e"
+    sha256 sonoma:        "f67433b09c4f9f4c52ac189f99277c1698d8869196bf992265784b18ab63c443"
+    sha256 ventura:       "af29c51757aea6aaf9c7aab6758ec590e31f7f5e323a7c682f76496fb8e1599e"
+    sha256 arm64_linux:   "6d9800c3e1c74383aa02badeb42de89294de79afacb0fdeb7e09770e40ef9b4b"
+    sha256 x86_64_linux:  "6fa906d04b003647aec2093fa275eee0d2ca65d1601b6048b76dfa2016e0ba4e"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "faad2"
-  depends_on "ffmpeg"
+  depends_on "ffmpeg@7"
   depends_on "flac"
   depends_on "libao" # See https://github.com/cmus/cmus/issues/1130
   depends_on "libcue"
@@ -49,6 +49,26 @@ class Cmus < Formula
 
   test do
     plugins = shell_output("#{bin}/cmus --plugins")
-    assert_match "ao", plugins
+    expected_plugins = %w[
+      aac
+      cue
+      ffmpeg
+      flac
+      mad
+      mp4
+      opus
+      vorbis
+      wav
+      ao
+    ]
+    expected_plugins += if OS.mac?
+      %w[coreaudio]
+    else
+      %w[alsa pulse]
+    end
+
+    expected_plugins.each do |plugin|
+      assert_match plugin, plugins, "#{plugin} plugin not found!"
+    end
   end
 end

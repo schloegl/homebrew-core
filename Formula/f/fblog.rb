@@ -1,24 +1,27 @@
 class Fblog < Formula
   desc "Small command-line JSON log viewer"
   homepage "https://github.com/brocode/fblog"
-  url "https://github.com/brocode/fblog/archive/refs/tags/v4.12.0.tar.gz"
-  sha256 "7033d56393fc95535839d232ad380c017945210c354f9040150c394c4728bb90"
+  url "https://github.com/brocode/fblog/archive/refs/tags/v4.14.0.tar.gz"
+  sha256 "1474b5fc511e52635d0e95ebd3e139f702794c1570286fd01f6b93ce82282c85"
   license "WTFPL"
   head "https://github.com/brocode/fblog.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "25e770797ed78cfd233776299ba4edd67c9b3fd2e197ac8e2047415df4f857a6"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "c1db408cea0ecad8cabccd49f0f4b7a3d3ae99aec163340e405d57bf963d1d37"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "c98c817c5cd2d995e98a32c55dbeaa3190f71197c19ccd4336b17847839d3585"
-    sha256 cellar: :any_skip_relocation, sonoma:        "1346b8e5793f8e75d257051df1cce8fbbcd0f0628b6009ee6ea09f371e21f601"
-    sha256 cellar: :any_skip_relocation, ventura:       "d5f522e6a1b86ebba7dd5a1bf647e1650e0feaccd2f3db1d7294a56cbb333e4e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "28499b9c4489f9c04ffa1b48b1aebf38355ba27994d8df6dd33349b839b85bee"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "77af4a66983d5cc61175df28e30945db3f70bbaa44cd9afe1c8227e7fa566773"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "7e93f20ea9990b0411fe95e8a59d1fa0ae9bfcb4a7833fdc3b13e34e9c475231"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "c65bde5830c0d0fe471fabe59831f4d1dfea3a8222869cd2e0178e4e0e0e4059"
+    sha256 cellar: :any_skip_relocation, sonoma:        "f27eb1b6ecf7e917e934577cc85c6f1f146fddbe8dd20a791b6e86c25d9fe535"
+    sha256 cellar: :any_skip_relocation, ventura:       "289a02cb2cf5e1780f22a63bcbf6204e97dbf49af04114f440238b02f36a1124"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "b9a69946c769b0909467778c508dc11f7c5b707aacc7ec30e8ae0b2503e7735d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3452d14b068a9a4df39b2f5cc4f45b19b986b3f3e0879b71cb28e2fdcf93f80a"
   end
 
   depends_on "rust" => :build
 
   def install
     system "cargo", "install", *std_cargo_args
+
+    generate_completions_from_executable(bin/"fblog", "--generate-completions")
 
     # Install a sample log for testing purposes
     pkgshare.install "sample.json.log"

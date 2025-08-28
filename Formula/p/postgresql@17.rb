@@ -1,8 +1,8 @@
 class PostgresqlAT17 < Formula
   desc "Object-relational database system"
   homepage "https://www.postgresql.org/"
-  url "https://ftp.postgresql.org/pub/source/v17.0/postgresql-17.0.tar.bz2"
-  sha256 "7e276131c0fdd6b62588dbad9b3bb24b8c3498d5009328dba59af16e819109de"
+  url "https://ftp.postgresql.org/pub/source/v17.6/postgresql-17.6.tar.bz2"
+  sha256 "e0630a3600aea27511715563259ec2111cd5f4353a4b040e0be827f94cd7a8b0"
   license "PostgreSQL"
 
   livecheck do
@@ -11,12 +11,13 @@ class PostgresqlAT17 < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia: "7345b4a703b655b5ef7bcb37a3dbc90b5406e4d06e7c4b8d30f8bd43f8499974"
-    sha256 arm64_sonoma:  "34876e4d4b26909d79f757d60f7cb34c6e2531c03120f103f5063a6cf62facd3"
-    sha256 arm64_ventura: "f2facfda470d494aea051eb64ba54c60171e5866fa032ef7c3fba3b488a69f13"
-    sha256 sonoma:        "a5258e4c8218b8ba6d91bb368581548042dc618e07a788e19d0fdf6b7297d7fd"
-    sha256 ventura:       "e25fa2f7a5dc496172f262913071f1a85ce03711b1edfd41a8e9f4a38d2c0b2e"
-    sha256 x86_64_linux:  "3a5e1daf6f1cef652cb39b869e0d8490c3bf29fcadc1869fbe7c92a7f37d6810"
+    sha256 arm64_sequoia: "09b3aeb56c96af3385c7b639e0e7a3cadd622b6d1c07db312d52f4cc9d12e29c"
+    sha256 arm64_sonoma:  "898d311395029e79fd4521cf3e2cf75b7881566b81dca70a6ae880474b9b99ca"
+    sha256 arm64_ventura: "cdf1081a0c2309937a09442c6f1f2fe98a33561ae0e90ce78eb1a47e595210f1"
+    sha256 sonoma:        "58f787763d7e05afaba56bde579c7a91099601729d5b46666a9b7070e230ef45"
+    sha256 ventura:       "f651b1226eb6069c01aa66fb904d98646b28d077f4aca84d6ac95208a9e231dc"
+    sha256 arm64_linux:   "2c6298826856b52990c5af83440388d65250986f3b127b40f548b24a11e23d55"
+    sha256 x86_64_linux:  "70733721dea61d18cc729e38966720aaef3cd807c25905524d3e51b23d2eba15"
   end
 
   keg_only :versioned_formula
@@ -27,8 +28,8 @@ class PostgresqlAT17 < Formula
   depends_on "docbook" => :build
   depends_on "docbook-xsl" => :build
   depends_on "gettext" => :build
-  depends_on "pkg-config" => :build
-  depends_on "icu4c"
+  depends_on "pkgconf" => :build
+  depends_on "icu4c@77"
   # GSSAPI provided by Kerberos.framework crashes when forked.
   # See https://github.com/Homebrew/homebrew-core/issues/47494.
   depends_on "krb5"
@@ -61,19 +62,20 @@ class PostgresqlAT17 < Formula
     inreplace "src/Makefile.shlib", "-install_name '$(libdir)/", "-install_name '#{lib}/postgresql/"
 
     ENV["XML_CATALOG_FILES"] = etc/"xml/catalog"
+    ENV.runtime_cpu_detection
     ENV.delete "PKG_CONFIG_LIBDIR"
     ENV.prepend "LDFLAGS", "-L#{Formula["openssl@3"].opt_lib} -L#{Formula["readline"].opt_lib}"
     ENV.prepend "CPPFLAGS", "-I#{Formula["openssl@3"].opt_include} -I#{Formula["readline"].opt_include}"
 
     # Fix 'libintl.h' file not found for extensions
+    # Update config to fix `error: could not find function 'gss_store_cred_into' required for GSSAPI`
     if OS.mac?
-      ENV.prepend "LDFLAGS", "-L#{Formula["gettext"].opt_lib}"
-      ENV.prepend "CPPFLAGS", "-I#{Formula["gettext"].opt_include}"
+      ENV.prepend "LDFLAGS", "-L#{Formula["gettext"].opt_lib} -L#{Formula["krb5"].opt_lib}"
+      ENV.prepend "CPPFLAGS", "-I#{Formula["gettext"].opt_include} -I#{Formula["krb5"].opt_include}"
     end
 
-    args = std_configure_args + %W[
+    args = %W[
       --datadir=#{HOMEBREW_PREFIX}/share/#{name}
-      --libdir=#{HOMEBREW_PREFIX}/lib/#{name}
       --includedir=#{HOMEBREW_PREFIX}/include/#{name}
       --sysconfdir=#{etc}
       --docdir=#{doc}
@@ -90,15 +92,15 @@ class PostgresqlAT17 < Formula
       --with-pam
       --with-perl
       --with-uuid=e2fs
-      --with-extra-version=\ (#{tap.user})
     ]
+    args << "--with-extra-version= (#{tap.user})" if tap
     args += %w[--with-bonjour --with-tcl] if OS.mac?
 
     # PostgreSQL by default uses xcodebuild internally to determine this,
     # which does not work on CLT-only installs.
     args << "PG_SYSROOT=#{MacOS.sdk_path}" if OS.mac? && MacOS.sdk_root_needed?
 
-    system "./configure", *args
+    system "./configure", *args, *std_configure_args(libdir: HOMEBREW_PREFIX/"lib/#{name}")
     system "make"
     # We use an unversioned `postgresql` subdirectory rather than `#{name}` so that the
     # post-installed symlinks can use non-conflicting `#{name}` and be retained on `brew unlink`.
@@ -161,8 +163,9 @@ class PostgresqlAT17 < Formula
     <<~EOS
       This formula has created a default database cluster with:
         initdb --locale=C -E UTF-8 #{postgresql_datadir}
-      For more details, read:
-        https://www.postgresql.org/docs/#{version.major}/app-initdb.html
+
+      When uninstalling, some dead symlinks are left behind so you may want to run:
+        brew cleanup --prune-prefix
     EOS
   end
 

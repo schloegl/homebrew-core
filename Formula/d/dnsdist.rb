@@ -1,10 +1,12 @@
 class Dnsdist < Formula
+  include Language::Python::Virtualenv
+
   desc "Highly DNS-, DoS- and abuse-aware loadbalancer"
   homepage "https://www.dnsdist.org/"
-  url "https://downloads.powerdns.com/releases/dnsdist-1.9.6.tar.bz2"
-  sha256 "f6c48d95525693fea6bd9422f3fdf69a77c75b06f02ed14ff0f42072f72082c9"
+  url "https://downloads.powerdns.com/releases/dnsdist-2.0.0.tar.xz"
+  sha256 "da30742f51aac8be7e116677cb07bc49fbea979fc5443e7e1fa8fa7bd0a63fe5"
   license "GPL-2.0-only"
-  revision 1
+  revision 3
 
   livecheck do
     url "https://downloads.powerdns.com/releases/"
@@ -12,18 +14,19 @@ class Dnsdist < Formula
   end
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any,                 arm64_sequoia: "ccb35078f29e90eb19b7fc128861ed883291c38b7f714a1c5c95dae5268d2af3"
-    sha256 cellar: :any,                 arm64_sonoma:  "e893a3ef8e07c8ada4afd24f1e2b456cd70d7fdffcb8f23bafb173e0098f441e"
-    sha256 cellar: :any,                 arm64_ventura: "eaef182437926870e9cf03be54d9c6d59d248d67747e63e3dd69da25a11359b5"
-    sha256 cellar: :any,                 sonoma:        "5bd99ac15d85fcc7927412108ba844c132285c27bc017584a6617b08eff7147c"
-    sha256 cellar: :any,                 ventura:       "6a14fbefe30439b1db6155564f625c939a87cf36ebc0eaa7601367f89d3a282c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "32770e8c9fbbcf3267ccb182dfcce8e99c20cc19afb4c036a048abbfa5f992e4"
+    sha256 arm64_sequoia: "48fc229b93784bbbca86594932782b68c2d39a372c81852554566759c9e4fec4"
+    sha256 arm64_sonoma:  "61ee746d8aa46239aecfd25d29178703a0b3ee0034d1883539b633658f3484ac"
+    sha256 arm64_ventura: "defa6e917b47a72fb8fa70dbb4f0d606d03fe9f6c62c162dcd0d1cc956c653ae"
+    sha256 sonoma:        "a61fd69f6a633ec9238689fb9ee3dc196c9c02d61a87e459943740deba4a8185"
+    sha256 ventura:       "61ee04523f9d06aebcddc60e9478a8fc99a98c1d611091f3765383aebbd5b19f"
+    sha256 arm64_linux:   "ecefdd743e4a38656412481a0d3f70d4bd5af9ca5b06d96cb29a76dd01b94b3b"
+    sha256 x86_64_linux:  "6cfc27b694d6a3557b83c6bbdfe028429aacb3d442e0eac0882bfafaab7c5881"
   end
 
   depends_on "boost" => :build
-  depends_on "pkg-config" => :build
-  depends_on "abseil"
+  depends_on "libyaml" => :build # for PyYaml
+  depends_on "pkgconf" => :build
+  depends_on "python@3.13" => :build
   depends_on "fstrm"
   depends_on "libnghttp2"
   depends_on "libsodium"
@@ -34,15 +37,19 @@ class Dnsdist < Formula
 
   uses_from_macos "libedit"
 
-  fails_with gcc: "5"
-
-  # Fix build with boost 1.86.0. Remove in next release
-  patch :p2 do
-    url "https://github.com/PowerDNS/pdns/commit/a1026f0c6db7b077d1180096a84f48a85a606d59.patch?full_index=1"
-    sha256 "8c8e4dd81af366fdd08182b5f242a054188d46c8ab955ae19843ac64c2f2044f"
+  resource "PyYaml" do
+    url "https://files.pythonhosted.org/packages/54/ed/79a089b6be93607fa5cdaedf301d7dfb23af5f25c398d5ead2525b063e17/pyyaml-6.0.2.tar.gz"
+    sha256 "d584d9ec91ad65861cc08d42e834324ef890a082e591037abe114850ff7bbc3e"
   end
 
   def install
+    venv = virtualenv_create(buildpath/"bootstrap", "python3")
+    venv.pip_install resources
+    ENV.prepend_path "PATH", venv.root/"bin"
+
+    # Avoid over-linkage to `abseil`.
+    ENV.append "LDFLAGS", "-Wl,-dead_strip_dylibs" if OS.mac?
+
     system "./configure", "--disable-silent-rules",
                           "--without-net-snmp",
                           "--enable-dns-over-tls",

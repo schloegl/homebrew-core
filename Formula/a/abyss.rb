@@ -1,8 +1,8 @@
 class Abyss < Formula
   desc "Genome sequence assembler for short reads"
   homepage "https://www.bcgsc.ca/resources/software/abyss"
-  url "https://github.com/bcgsc/abyss/releases/download/2.3.9/abyss-2.3.9.tar.gz"
-  sha256 "55f0b27b67b4486dc6cbe132c0f4c228ee4f9e86c56292a7b50633df87e3212e"
+  url "https://github.com/bcgsc/abyss/releases/download/2.3.10/abyss-2.3.10.tar.gz"
+  sha256 "bbe42e00d1ebb53ec6afaad07779baaaee994aa5c65b9a38cf4ad2011bb93c65"
   license all_of: ["GPL-3.0-only", "LGPL-2.1-or-later", "MIT", "BSD-3-Clause"]
 
   livecheck do
@@ -10,12 +10,14 @@ class Abyss < Formula
     regex(/^v?(\d+(?:\.\d+)+)$/i)
   end
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "eab71545a0ab5f70d930a29ec2df154cd18a6c1deff38cc9aa9baa0e49076821"
-    sha256 cellar: :any,                 arm64_sonoma:  "a1f94fa88a3c8137ab857855d083884a490e41ca9f689e388e3e9ef9c6feba85"
-    sha256 cellar: :any,                 arm64_ventura: "0656d068375b742f0fd8013615429ba6fdfcf519988f368ebfe29182413aa2fe"
-    sha256 cellar: :any,                 sonoma:        "d73c5710bda5819aaba920ed6348750f0bea013ebfcc90c8ef82fbb67e8f07e6"
-    sha256 cellar: :any,                 ventura:       "977e8325243bff9552edd3571da6c386cff159949666426e0c81b54f70277f66"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a75c19295f8d2e58d1aaa762f9948c11513709d0ee85ca838fa41cb87ebae5cf"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia: "e101572d7d3f7ec6a519888e90d8202da080add1d774105b406712a5920b68a8"
+    sha256 cellar: :any,                 arm64_sonoma:  "8568ca8de272baac70ea8233665436f6ba0bd26156f5ae6a9eebc9c9a26df696"
+    sha256 cellar: :any,                 arm64_ventura: "0183a197b480d32b9063da4d7d16bdf9e347f9b3e1417b18577d5c1c3fbdeb95"
+    sha256 cellar: :any,                 sonoma:        "7a18163b240f0cd8b95da2dc9b4df409a4f49f56ce24c9032185237a45de08ea"
+    sha256 cellar: :any,                 ventura:       "f14bb039e937d63c3b856bcb51252ef98faf80f0f972220e753eaefd52645157"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "8f64a28e719e394fcf696127bd2906ab59bcd1d7a5765ae51f36876e533d4389"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "246d74b2ccc4a225327db691de91a9e89731052c2b1443040d4ed1870483c7a7"
   end
 
   head do
@@ -31,37 +33,48 @@ class Abyss < Formula
   depends_on "google-sparsehash" => :build
   depends_on "meson" => :build # For btllib
   depends_on "ninja" => :build # For btllib
-  depends_on "python@3.12" => :build # For btllib
-  depends_on "gcc"
+  depends_on "python@3.13" => :build # For btllib
   depends_on "open-mpi"
 
   uses_from_macos "sqlite"
 
-  fails_with gcc: "5"
-  fails_with :clang # no OpenMP support
+  on_macos do
+    depends_on "libomp"
+  end
 
   resource "btllib" do
     url "https://github.com/bcgsc/btllib/releases/download/v1.7.3/btllib-1.7.3.tar.gz"
     sha256 "31e7124e1cda9eea6f27b654258a7f8d3dea83c828f0b2e8e847faf1c5296aa3"
+
+    # Apply FreeBSD patch to fix build with newer Clang, https://github.com/simongog/sdsl-lite/issues/462
+    patch :p0 do
+      url "https://raw.githubusercontent.com/freebsd/freebsd-ports/af74f60a871e4a5aa7aea787fc235a2cb760e764/devel/sdsl-lite/files/patch-include_sdsl_louds__tree.hpp"
+      sha256 "84aef67058947044c40032ac39d9b6d1b8a285c581f660d565cd23aaa4beade7"
+      directory "subprojects/sdsl-lite"
+    end
   end
 
   def install
-    python3 = "python3.12"
-
-    (buildpath/"btllib").install resource("btllib")
-    cd "btllib" do
-      inreplace "compile", '"python3-config"', "\"#{python3}-config\""
-      system "./compile"
+    resource("btllib").stage do
+      with_env(CMAKE_POLICY_VERSION_MINIMUM: "3.5") do
+        args = %w[-Db_ndebug=true -Db_coverage=false]
+        system "meson", "setup", "build", *args, *std_meson_args.map { |s| s.sub prefix, buildpath/"btllib" }
+        system "meson", "compile", "-C", "build", "--verbose"
+        system "meson", "install", "-C", "build"
+      end
     end
 
+    # Help link to libomp on macOS
+    ENV["ac_cv_prog_cxx_openmp"] = "-Xpreprocessor -fopenmp -lomp" if OS.mac?
+
     system "./autogen.sh" if build.head?
-    system "./configure", *std_configure_args,
+    system "./configure", "--disable-silent-rules",
                           "--enable-maxk=128",
                           "--with-boost=#{Formula["boost"].include}",
-                          "--with-btllib=#{buildpath}/btllib/install",
+                          "--with-btllib=#{buildpath}/btllib",
                           "--with-mpi=#{Formula["open-mpi"].prefix}",
                           "--with-sparsehash=#{Formula["google-sparsehash"].prefix}",
-                          "--disable-silent-rules"
+                          *std_configure_args
     system "make", "install"
   end
 

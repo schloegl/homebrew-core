@@ -2,18 +2,18 @@ class Tygo < Formula
   desc "Generate Typescript types from Golang source code"
   homepage "https://github.com/gzuidhof/tygo"
   url "https://github.com/gzuidhof/tygo.git",
-      tag:      "v0.2.17",
-      revision: "421f048c0ba2528d2cebe50fb8dbf3b0b5e36aac"
+      tag:      "v0.2.19",
+      revision: "39a3193308d2f22ed302f81ef286eb394aecdad0"
   license "MIT"
   head "https://github.com/gzuidhof/tygo.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "ec71365ca25be8b0695248d573b60ed77bc5165d902049bb9842098a9097d562"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "ec71365ca25be8b0695248d573b60ed77bc5165d902049bb9842098a9097d562"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "ec71365ca25be8b0695248d573b60ed77bc5165d902049bb9842098a9097d562"
-    sha256 cellar: :any_skip_relocation, sonoma:        "d931db0194cded9eeb030acc08e037599e99931611082175012c611f70de21f8"
-    sha256 cellar: :any_skip_relocation, ventura:       "d931db0194cded9eeb030acc08e037599e99931611082175012c611f70de21f8"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8a559c9e90fcf6faec5c8603121223975717d3912aa22acc252c9c326201aa89"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "24e755baa5f3a58505d2f3adfb074d623a9d9c7e7fe050bde251db2efbdb3f20"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "24e755baa5f3a58505d2f3adfb074d623a9d9c7e7fe050bde251db2efbdb3f20"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "24e755baa5f3a58505d2f3adfb074d623a9d9c7e7fe050bde251db2efbdb3f20"
+    sha256 cellar: :any_skip_relocation, sonoma:        "aaee779ee95a066318e97f7511e1c469d66d1a3f6d15f0abf74710cf5678ca85"
+    sha256 cellar: :any_skip_relocation, ventura:       "aaee779ee95a066318e97f7511e1c469d66d1a3f6d15f0abf74710cf5678ca85"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b8116df3dbb098c78a642fd54ac52e926a40a083d3418b4e99e33408d08ca5af"
   end
 
   depends_on "go" => [:build, :test]
@@ -33,7 +33,7 @@ class Tygo < Formula
   end
 
   test do
-    (testpath/"tygo.yml").write <<~EOS
+    (testpath/"tygo.yml").write <<~YAML
       packages:
         - path: "simple"
           type_mappings:
@@ -42,7 +42,7 @@ class Tygo < Formula
             null.Bool: "null | boolean"
             uuid.UUID: "string /* uuid */"
             uuid.NullUUID: "null | string /* uuid */"
-    EOS
+    YAML
 
     system "go", "mod", "init", "simple"
     cp pkgshare/"examples/simple/simple.go", testpath

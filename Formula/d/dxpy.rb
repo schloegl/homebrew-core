@@ -3,22 +3,23 @@ class Dxpy < Formula
 
   desc "DNAnexus toolkit utilities and platform API bindings for Python"
   homepage "https://github.com/dnanexus/dx-toolkit"
-  url "https://files.pythonhosted.org/packages/fc/22/74984b062b32a812e86db7c9c6ae1057452557b1a5964ef8f3cc4cb80beb/dxpy-0.383.1.tar.gz"
-  sha256 "377af4014a5f27efd6fe9478d0fa9c30ced245947fbd2e2e5713c8a37db598b0"
+  url "https://files.pythonhosted.org/packages/98/44/f0bd42415231c102ea570809cfa96c8ce95c9eb01b0768445c4e9c62a2f2/dxpy-0.398.0.tar.gz"
+  sha256 "9d4254f9366a2126d8c0d47fc613decde832de13875b6f4bb09e19f14b830fe3"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "9eebd284f9542ed0f50ab74654d66975033c17d16174be4d10a599f3688e29f0"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "18de10c7e7e81d561d0c954cce65e57fd0a0643b18616a7ea272203ffea960be"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "e0bae965a77df14276fa90d48f346658a508cd7fe6e1f5f9e160ac5d8d75dc11"
-    sha256 cellar: :any_skip_relocation, sonoma:        "20553d5c4decd346b93e3bf62fe3310f688842eb0a14cf6639dca3ed420fdddd"
-    sha256 cellar: :any_skip_relocation, ventura:       "736f5a6f35b8a7af98e15082a3239b94bd056cf540fb73de6ea4a12354931ec2"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "bc9340f0b9506c02f67f675f90fd69e274281f62da53a0ff8cdbf6a1f78c23e4"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "c8c0af6fb9090423fb514204e07ce77ce72ee6e537544d8d87962d04ea14c921"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "d035248538b7cf0f64992dc08426d106a2800ba6a3f2d3b95d3190520f88eb61"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "176b311f09f2cbf21d8f5316dc1f32c04040b6bdd249a071f0530a2cc374c304"
+    sha256 cellar: :any_skip_relocation, sonoma:        "6634c3c0ff84dc553b8a8a4ce617b097ff951d0d4cee78b4aeceddd0e4203cfb"
+    sha256 cellar: :any_skip_relocation, ventura:       "2b7f0d3e7926591ce789e1a7248c09f5cd36a3e1abe14b5831f567e7f6e57ded"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "30bc2e8afaf7c9da3787ced580e9f86834508d2199a35f51375adc554ab35f97"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "eddcc46514e1a84054f603d5d88c84de9872ac85f18963ecbd1dd376a69590eb"
   end
 
   depends_on "certifi"
   depends_on "cryptography"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   uses_from_macos "libffi"
 
@@ -27,13 +28,18 @@ class Dxpy < Formula
   end
 
   resource "argcomplete" do
-    url "https://files.pythonhosted.org/packages/75/33/a3d23a2e9ac78f9eaf1fce7490fee430d43ca7d42c65adabbb36a2b28ff6/argcomplete-3.5.0.tar.gz"
-    sha256 "4349400469dccfb7950bb60334a680c58d88699bff6159df61251878dc6bf74b"
+    url "https://files.pythonhosted.org/packages/16/0f/861e168fc813c56a78b35f3c30d91c6757d1fd185af1110f1aec784b35d0/argcomplete-3.6.2.tar.gz"
+    sha256 "d0519b1bc867f5f4f4713c41ad0aba73a4a5f007449716b16f385f2166dc6adf"
+  end
+
+  resource "crc32c" do
+    url "https://files.pythonhosted.org/packages/7f/4c/4e40cc26347ac8254d3f25b9f94710b8e8df24ee4dddc1ba41907a88a94d/crc32c-2.7.1.tar.gz"
+    sha256 "f91b144a21eef834d64178e01982bb9179c354b3e9e5f4c803b0e5096384968c"
   end
 
   resource "psutil" do
-    url "https://files.pythonhosted.org/packages/18/c7/8c6872f7372eb6a6b2e4708b88419fb46b857f7a2e1892966b851cc79fc9/psutil-6.0.0.tar.gz"
-    sha256 "8faae4f310b6d969fa26ca0545338b21f73c6b15db7c4a8d934a5482faa818f2"
+    url "https://files.pythonhosted.org/packages/2a/80/336820c1ad9286a4ded7e845b2eccfcb27851ab8ac6abece774a6ff4d3de/psutil-7.0.0.tar.gz"
+    sha256 "7be9c3eba38beccb6495ea33afd982a44074b78f28c434a1f51cc07fd315c456"
   end
 
   resource "python-dateutil" do
@@ -42,8 +48,8 @@ class Dxpy < Formula
   end
 
   resource "six" do
-    url "https://files.pythonhosted.org/packages/71/39/171f1c67cd00715f190ba0b100d606d440a28c93c7714febeca8b79af85e/six-1.16.0.tar.gz"
-    sha256 "1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"
+    url "https://files.pythonhosted.org/packages/94/e7/b2c673351809dca68a0e064b6af791aa332cf192da575fd474ed7d6f16a2/six-1.17.0.tar.gz"
+    sha256 "ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81"
   end
 
   resource "urllib3" do

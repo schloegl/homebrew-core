@@ -3,46 +3,57 @@ class Esptool < Formula
 
   desc "ESP8266 and ESP32 serial bootloader utility"
   homepage "https://docs.espressif.com/projects/esptool/en/latest/esp32/"
-  url "https://files.pythonhosted.org/packages/5c/6b/3ce9bb7f36bdef3d6ae71646a1d3b7d59826a478f3ed8a783a93a2f8f537/esptool-4.8.1.tar.gz"
-  sha256 "dc4ef26b659e1a8dcb019147c0ea6d94980b34de99fbe09121c7941c8b254531"
+  url "https://files.pythonhosted.org/packages/6c/d1/92d407cffc2d7d0113ba965a1b79bf80c1ccfdb9f86495e31de07669472f/esptool-5.0.2.tar.gz"
+  sha256 "05cc4732eb2a9a7766c9e3531f7943d76ff0ca06dc9cd308d1d3d0b72f74aac2"
   license "GPL-2.0-or-later"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "a6c251c00bcd0db0cf7a24cfc19d019964af4348784c3b6cf68698f8d5f859e9"
-    sha256 cellar: :any,                 arm64_sonoma:  "5c1fbe4c38793bf1cf0e35d5d9346f4022a559e8a6200ce96adc7409e834b148"
-    sha256 cellar: :any,                 arm64_ventura: "5b948b967078deeadf91209ae140128962fb97d30ec2a1c1a83e83dfce58355b"
-    sha256 cellar: :any,                 sonoma:        "189fbee589d3a52bcdea881875a157354051a5c48890698832e917d714e9fb1d"
-    sha256 cellar: :any,                 ventura:       "b46ee19677f2c554294b68c86e235abdc413f157dbd780f2ff98d25ac449f5c7"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f00cc619d59c94294a641f12c44f4079f3e3a6a1cb64655895b0a06a0a850911"
+    sha256 cellar: :any,                 arm64_sequoia: "c4c0b829cb6a40b00ed709a16f672900ea0c78028c5fffaf4362d3c93cb656bc"
+    sha256 cellar: :any,                 arm64_sonoma:  "0620d85ed8f210deb1d517d97a8d5347f34254e5631fd1e9e496051217b0eb9e"
+    sha256 cellar: :any,                 arm64_ventura: "11db7398183d5ee30c8a51a7dec42bbee02d99625c81f7459cdc25ec54eb0da7"
+    sha256 cellar: :any,                 sonoma:        "03eafa96d26f68d1cd86e470a11aaaea025583a419e877a9ccaf2bf95f65f468"
+    sha256 cellar: :any,                 ventura:       "762db54cfd2ae29954ca7c1cbce31c5fdb97c27f881146d641b781059e971b40"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "668dfc6f2393bb32a7eb37e2d1bd53e2375adf81971854a87f2a861939eb99d9"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a96f7744bdd8e4cc7ec11deee625ecd61aac1fa0cfc762fdecced831bf59ff6e"
   end
 
   depends_on "cryptography"
   depends_on "libyaml"
-  depends_on "python@3.12"
-
-  resource "argcomplete" do
-    url "https://files.pythonhosted.org/packages/75/33/a3d23a2e9ac78f9eaf1fce7490fee430d43ca7d42c65adabbb36a2b28ff6/argcomplete-3.5.0.tar.gz"
-    sha256 "4349400469dccfb7950bb60334a680c58d88699bff6159df61251878dc6bf74b"
-  end
+  depends_on "python@3.13"
 
   resource "bitarray" do
-    url "https://files.pythonhosted.org/packages/c7/bf/25cf92a83e1fe4948d7935ae3c02f4c9ff9cb9c13e977fba8af11a5f642c/bitarray-2.9.2.tar.gz"
-    sha256 "a8f286a51a32323715d77755ed959f94bef13972e9a2fe71b609e40e6d27957e"
+    url "https://files.pythonhosted.org/packages/e5/ee/3b2fcbac3a4192e5d079aaa1850dff2f9ac625861c4c644819c2b34292ec/bitarray-3.6.0.tar.gz"
+    sha256 "20febc849a1f858e6a57a7d47b323fe9e727c579ddd526d317ad8831748a66a8"
   end
 
   resource "bitstring" do
-    url "https://files.pythonhosted.org/packages/d8/d0/d6f57409bb50f54fe2894ec5a50b5c04cb41aa814c3bdb8a7eeb4a0f7697/bitstring-4.2.3.tar.gz"
-    sha256 "e0c447af3fda0d114f77b88c2d199f02f97ee7e957e6d719f40f41cf15fbb897"
+    url "https://files.pythonhosted.org/packages/15/a8/a80c890db75d5bdd5314b5de02c4144c7de94fd0cefcae51acaeb14c6a3f/bitstring-4.3.1.tar.gz"
+    sha256 "a08bc09d3857216d4c0f412a1611056f1cc2b64fd254fb1e8a0afba7cfa1a95a"
   end
 
-  resource "ecdsa" do
-    url "https://files.pythonhosted.org/packages/5e/d0/ec8ac1de7accdcf18cfe468653ef00afd2f609faf67c423efbd02491051b/ecdsa-0.19.0.tar.gz"
-    sha256 "60eaad1199659900dd0af521ed462b793bbdf867432b3948e87416ae4caf6bf8"
+  resource "click" do
+    url "https://files.pythonhosted.org/packages/60/6c/8ca2efa64cf75a977a0d7fac081354553ebe483345c734fb6b6515d96bbc/click-8.2.1.tar.gz"
+    sha256 "27c491cc05d968d271d5a1db13e3b5a184636d9d930f148c50b038f0d0646202"
   end
 
   resource "intelhex" do
     url "https://files.pythonhosted.org/packages/66/37/1e7522494557d342a24cb236e2aec5d078fac8ed03ad4b61372586406b01/intelhex-2.3.0.tar.gz"
     sha256 "892b7361a719f4945237da8ccf754e9513db32f5628852785aea108dcd250093"
+  end
+
+  resource "markdown-it-py" do
+    url "https://files.pythonhosted.org/packages/38/71/3b932df36c1a044d397a1f92d1cf91ee0a503d91e470cbd670aa66b07ed0/markdown-it-py-3.0.0.tar.gz"
+    sha256 "e3f60a94fa066dc52ec76661e37c851cb232d92f9886b15cb560aaada2df8feb"
+  end
+
+  resource "mdurl" do
+    url "https://files.pythonhosted.org/packages/d6/54/cfe61301667036ec958cb99bd3efefba235e65cdeb9c84d24a8293ba1d90/mdurl-0.1.2.tar.gz"
+    sha256 "bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba"
+  end
+
+  resource "pygments" do
+    url "https://files.pythonhosted.org/packages/b0/77/a5b8c569bf593b0140bde72ea885a803b82086995367bf2037de0159d924/pygments-2.19.2.tar.gz"
+    sha256 "636cb2477cec7f8952536970bc533bc43743542f70392ae026374600add5b887"
   end
 
   resource "pyserial" do
@@ -60,15 +71,22 @@ class Esptool < Formula
     sha256 "c1359f02742751afe0f1c0de9f0772cc113835aa2855d2db420ea24393c87732"
   end
 
-  resource "six" do
-    url "https://files.pythonhosted.org/packages/71/39/171f1c67cd00715f190ba0b100d606d440a28c93c7714febeca8b79af85e/six-1.16.0.tar.gz"
-    sha256 "1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"
+  resource "rich" do
+    url "https://files.pythonhosted.org/packages/fe/75/af448d8e52bf1d8fa6a9d089ca6c07ff4453d86c65c145d0a300bb073b9b/rich-14.1.0.tar.gz"
+    sha256 "e497a48b844b0320d45007cdebfeaeed8db2a4f4bcf49f15e455cfc4af11eaa8"
+  end
+
+  resource "rich-click" do
+    url "https://files.pythonhosted.org/packages/b7/a8/dcc0a8ec9e91d76ecad9413a84b6d3a3310c6111cfe012d75ed385c78d96/rich_click-1.8.9.tar.gz"
+    sha256 "fd98c0ab9ddc1cf9c0b7463f68daf28b4d0033a74214ceb02f761b3ff2af3136"
+  end
+
+  resource "typing-extensions" do
+    url "https://files.pythonhosted.org/packages/98/5a/da40306b885cc8c09109dc2e1abd358d5684b1425678151cdaed4731c822/typing_extensions-4.14.1.tar.gz"
+    sha256 "38b39f4aeeab64884ce9f74c94263ef78f3c22467c8724005483154c26648d36"
   end
 
   def install
-    # Workaround to avoid creating libexec/bin/__pycache__ which gets linked to bin
-    ENV["PYTHONPYCACHEPREFIX"] = buildpath/"pycache"
-
     virtualenv_install_with_resources
   end
 
@@ -76,7 +94,7 @@ class Esptool < Formula
     require "base64"
 
     assert_match version.to_s, shell_output("#{bin}/esptool.py version")
-    assert_match "usage: espefuse.py", shell_output("#{bin}/espefuse.py --help")
+    assert_match "Usage: espefuse", shell_output("#{bin}/espefuse --help")
     assert_match version.to_s, shell_output("#{bin}/espsecure.py --help")
 
     (testpath/"helloworld-esp8266.bin").write ::Base64.decode64 <<~EOS

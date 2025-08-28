@@ -1,34 +1,35 @@
 class Gitversion < Formula
   desc "Easy semantic versioning for projects using Git"
-  homepage "https://gitversion.net"
-  url "https://github.com/GitTools/GitVersion/archive/refs/tags/6.0.2.tar.gz"
-  sha256 "e18aa3984c057efa6c6afdb223b31c9ea31f7859498ff84c02aaf6fc91d5c3a0"
+  homepage "https://gitversion.net/docs/"
+  url "https://github.com/GitTools/GitVersion/archive/refs/tags/6.4.0.tar.gz"
+  sha256 "d08e58a2b3910d02a3ce245624efd8803557c494e34d457943eb2fd92a651b2a"
   license "MIT"
 
+  no_autobump! because: :bumped_by_upstream
+
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "f78eb7fc7468b5afbb26c4ed3630a81c6b5dc7c61a027cba7047ba9f88619e7d"
-    sha256 cellar: :any,                 arm64_sonoma:   "28d46db8b669808fc430a0b958316e6faff23f150555119c7095cfd100ce334c"
-    sha256 cellar: :any,                 arm64_ventura:  "33fc7543dfcec77c67c4759dd3c59b2d65b02d89df21fc1c2fea2d3646a651a4"
-    sha256 cellar: :any,                 arm64_monterey: "36a19d0a3d5afee24bc6c503cde30201c932694dc8cfa8c29ea547621cea1490"
-    sha256 cellar: :any,                 sonoma:         "eae0f7fff24077a8151ec40d1f23fa8a1033a56c593c8a9a7c0a84ce22382597"
-    sha256 cellar: :any,                 ventura:        "b6d0372f81db453f2252977a07be5471f864697404259f2f231a7874de01b6fe"
-    sha256 cellar: :any,                 monterey:       "d97f8ebb3eb0321f43808ac3814d2e52499d38c0e937491393546ff913e73390"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "26b415bd114e91a473b65740f890722f6edc02b31d25f87547a77fbeaf7701af"
+    sha256 cellar: :any,                 arm64_sequoia: "53454f2d9a42e602926a6800c0fd2ebe166b6cf3d7416277b999ac7b5cb35b81"
+    sha256 cellar: :any,                 arm64_sonoma:  "0b8caee11a1ac7587649a63185d08bd98857f4d77bfd803119ab729e1b601add"
+    sha256 cellar: :any,                 arm64_ventura: "ff3615d7c99b1a300d62936871465f4c097a1e588cd42b2180f3b1c02359b12d"
+    sha256 cellar: :any,                 ventura:       "98683b3e12ff6d7eb25f920b3b8cb9c1558b71058deca0b9b403801fcfa4cb0e"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "784cc729d23fbba5e7c6ac5e20b9303e32efc8307bbbaf1f3f14ca08c1bd8e4d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9f449450749fd275078b502c97472a1b3a7531f1152bde3fc0ab10c95475f541"
   end
 
   depends_on "dotnet"
 
   def install
+    ENV["DOTNET_CLI_TELEMETRY_OPTOUT"] = "1"
+    ENV["DOTNET_SYSTEM_GLOBALIZATION_INVARIANT"] = "1"
+
     dotnet = Formula["dotnet"]
-    os = OS.mac? ? "osx" : OS.kernel_name.downcase
-    arch = Hardware::CPU.intel? ? "x64" : Hardware::CPU.arch.to_s
 
     args = %W[
       --configuration Release
       --framework net#{dotnet.version.major_minor}
       --output #{libexec}
-      --runtime #{os}-#{arch}
       --no-self-contained
+      --use-current-runtime
       -p:PublishSingleFile=true
       -p:Version=#{version}
     ]

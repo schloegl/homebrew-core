@@ -1,32 +1,30 @@
 class Kahip < Formula
   desc "Karlsruhe High Quality Partitioning"
   homepage "https://algo2.iti.kit.edu/documents/kahip/index.html"
-  url "https://github.com/KaHIP/KaHIP/archive/refs/tags/v3.16.tar.gz"
-  sha256 "b0ef72a26968d37d9baa1304f7a113b61e925966a15e86578d44e26786e76c75"
+  url "https://github.com/KaHIP/KaHIP/archive/refs/tags/v3.19.tar.gz"
+  sha256 "ab128104d198061b4dcad76f760aca240b96de781c1b586235ee4f12fd6829c6"
   license "MIT"
   head "https://github.com/KaHIP/KaHIP.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "0821739473246533d6043038f905d07cfd071224b1b201a88f572930895ec64e"
-    sha256 cellar: :any,                 arm64_sonoma:   "970fe2a3d90298de2d44a30bce8a60f9bbcf2e0be59f2035c617d825fd4713e7"
-    sha256 cellar: :any,                 arm64_ventura:  "3ba222ed29cb5e903167de8216be60180d41a0f59d64edcaa00955e7c7670e0b"
-    sha256 cellar: :any,                 arm64_monterey: "ecd60dda8182bfcbd93e030c93d42f7bdca84e36e4bb1a0e0b11f7c64637387e"
-    sha256 cellar: :any,                 sonoma:         "e4eebc7fd9b608923efe1e17d006ffe7fd0a00261e3ee72239f5b744dc042a44"
-    sha256 cellar: :any,                 ventura:        "26def65973de379722881a0a714458586b23bf5e45fb9632252687de0cc49355"
-    sha256 cellar: :any,                 monterey:       "c3c24dfa4c3607db5b3de5a68123606c3883180cbf8436415e180a65d4c58f56"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "438e8df826b458d6401fc3ddc7326b758c281597bace27f9a542a87389a8c60c"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia: "a603683f8c78a70bdb2211982cc1cf3d288b994703e6ef640cbd556d12e9f670"
+    sha256 cellar: :any,                 arm64_sonoma:  "7ccc9c3257e7796e87e8c6b7c7d7ed82a62a2838e328af5bd02ffdf2966dee45"
+    sha256 cellar: :any,                 arm64_ventura: "2d98c8b7c22d731f02b49513390e3fd660861b2f38549bf010790b05173c9ad7"
+    sha256 cellar: :any,                 sonoma:        "4ebe2ffacfa884b848c7e79e8859cb680b5d155cf791735471b346a9052831d5"
+    sha256 cellar: :any,                 ventura:       "55409fad4a79e0e3883a2b3ead8e50ec49d233d5a02791d1a53fce2c061943f3"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "fd117a91536bee09dd4e05a86ca6908a0eb3fa274c409ae192c544bfe177e02f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e35d6e4fa54607415e231985844a7d51404e72bc84fb3b48a51164e3faf16a18"
   end
 
   depends_on "cmake" => :build
   depends_on "open-mpi"
 
   on_macos do
-    depends_on "gcc"
+    depends_on "libomp"
   end
 
-  fails_with :clang do
-    cause "needs OpenMP support"
-  end
+  conflicts_with "mcp-toolbox", because: "both install `toolbox` binaries"
 
   def install
     system "cmake", "-S", ".", "-B", "build", *std_cmake_args

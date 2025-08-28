@@ -1,8 +1,8 @@
 class Erg < Formula
   desc "Statically typed language that can deeply improve the Python ecosystem"
   homepage "https://github.com/erg-lang/erg"
-  url "https://github.com/erg-lang/erg/archive/refs/tags/v0.6.45.tar.gz"
-  sha256 "9903824c41639661c94e312e0d6af3a2b16fa127f9b6afea34d5e85080a9602d"
+  url "https://github.com/erg-lang/erg/archive/refs/tags/v0.6.53.tar.gz"
+  sha256 "1e9c462f255b2438392267281d27fe576f4aeebbe8dd7233b618550709ae1db6"
   license any_of: ["Apache-2.0", "MIT"]
 
   livecheck do
@@ -11,12 +11,13 @@ class Erg < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "1b5566c30429844fec525f2fcb2652ca9a90450441a68055e5e9d4b449fada1e"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "47d2387c388ba4a8ad530defe1e94620acbb680739bdad1587c6fcb44842e5da"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "ad2468ad77b2764320197bbc14c8821213a5e34fcf4d74bd9e355f124ad9692b"
-    sha256 cellar: :any_skip_relocation, sonoma:        "b1cbfff760d8938e5ca145b8503b55688104568fd896052d629e434002ba1806"
-    sha256 cellar: :any_skip_relocation, ventura:       "9b742df9b5fc960e8291b973d06630684a1826cf911834a1dc963e37a28381a4"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5e9b32d7eddc4e15c4a50fd32774f7ae460b8bc0de68cff137c206054cfed96f"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "ede4eb6b4dc1753b90e42e7f9c9e583e81f259eab1c6d651ab673706b79747eb"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "6fed24912d1f97f7e03ea7ed031f337c363d053d28e45b8ef52f831649a2c930"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "4d2dc59c970e2f7c5749a07e1fe8305b01b6f84223d6d44e1fd3b8e01d05ebb7"
+    sha256 cellar: :any_skip_relocation, sonoma:        "516605c356e210661c1ffa58b8820e302786a7abc3b3c54e320e428f80ef6661"
+    sha256 cellar: :any_skip_relocation, ventura:       "d13936f69d0c3af87bf510fc4fb6cb44068cdbf3ea9409f390674145b5347402"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "ebb138f3a99d1ca2d0ee80bbf068198cd920bdd75854f92436fed724fcf79df5"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "788d1c686b0a1dbc909294bc26e6057dc95aaed023fc3058b9674c31a9cdd8bb"
   end
 
   depends_on "rust" => :build

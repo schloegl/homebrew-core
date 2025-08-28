@@ -1,19 +1,18 @@
 class Lsof < Formula
   desc "Utility to list open files"
   homepage "https://github.com/lsof-org/lsof"
-  url "https://github.com/lsof-org/lsof/archive/refs/tags/4.99.3.tar.gz"
-  sha256 "b9c56468b927d9691ab168c0b1e9f8f1f835694a35ff898c549d383bd8d09bd4"
+  url "https://github.com/lsof-org/lsof/archive/refs/tags/4.99.5.tar.gz"
+  sha256 "3c591556c665196e0aada5982ff43c75e248187bad78bb1368d8fb9c1c527e6e"
   license "lsof"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "83cbe3772b52f1671f6f82da0c4aea7aba23b40add373c9d8230e769fc6b9a24"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "16ebd7a5811316080caab9d8c4a78edaca53b03a99cbf5f097374276ec765cad"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "7dfd73c75338d29b2ca1200367012c71ff4c0f60aa209f646f18f37b467928bb"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "b5133599dd0cef604aa86392ce6127abb0a25b27502b6de91df7a194fa5fb7b6"
-    sha256 cellar: :any_skip_relocation, sonoma:         "ea99d238b7d54109b44bb497170ac2b7f137c8a44e93d5b683e1f46013ea707f"
-    sha256 cellar: :any_skip_relocation, ventura:        "da2c7415df80ffc5bed01cb5e89c60018da1ce5723daf110fb0ae08df56df32c"
-    sha256 cellar: :any_skip_relocation, monterey:       "0e9f173fd9e746145c3d9a00c6a233a0c3b17a7c3d079ddf831d739924df99f8"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "9f1de8814554f973dc04ccfde44d4b685b35957984566d4ae82d8f8dce58e22d"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "3ee0274d10c70990a175776c2e81e4994e7e250a507f68c4629134e84841d00a"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "9e16498ba8a8a06aa57619b9dbefec05da361f04d937c103f0ddf906685674fe"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "2ece295b0bd6dcf63cd66d840220ff1c3e8de7d0ac26cf811cc8e698442751ad"
+    sha256 cellar: :any_skip_relocation, sonoma:        "02cffb2a55c80400aebdcc6ec0655b8dcd8392abfa91d128c71ddeae7246a0a6"
+    sha256 cellar: :any_skip_relocation, ventura:       "a57568893d1f9abf6cd8c0b119f7a838d6833786061fcc6c778b48bdca858cdb"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "863b7d80d93ba238f4a77f7f566b1a9171ec8c00407420ddde092cde94f93e49"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4d076f7bc43d2e3dcc899fc979f08873f562ccff1fdad1ceaad9da3a982a14ee"
   end
 
   keg_only :provided_by_macos

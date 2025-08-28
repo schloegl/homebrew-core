@@ -1,8 +1,8 @@
 class Scala < Formula
   desc "JVM-based programming language"
-  homepage "https://www.scala-lang.org/"
-  url "https://github.com/scala/scala3/releases/download/3.5.1/scala3-3.5.1.tar.gz"
-  sha256 "a517e80971559e7121df3c81f476d464adeaad0f781aade25d7d9f5864bf97da"
+  homepage "https://dotty.epfl.ch/"
+  url "https://github.com/scala/scala3/releases/download/3.7.2/scala3-3.7.2.tar.gz"
+  sha256 "256a8e52657b433afe7b5584beea3c209dc53f8298fa8b2611a2d25f53fe62da"
   license "Apache-2.0"
 
   livecheck do
@@ -11,22 +11,20 @@ class Scala < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "4fb2e210f8003f7989a7fba07c6f338717bdc5ae5f60e5b22488d0974fca70f1"
+    sha256 cellar: :any_skip_relocation, all: "89b9f9de9ead4571ae1a0a34f39b8062763e1b4851cca36a1691690de56eae45"
   end
 
-  # Switch back to `openjdk` when supported:
-  # https://docs.scala-lang.org/overviews/jdk-compatibility/overview.html
-  depends_on "openjdk@21"
+  # JDK Compatibility: https://docs.scala-lang.org/overviews/jdk-compatibility/overview.html
+  depends_on "openjdk"
 
   conflicts_with "pwntools", because: "both install `common` binaries"
 
   def install
     rm Dir["bin/*.bat"]
-    libexec.install "lib"
-    libexec.install "maven2"
-    libexec.install "VERSION"
+
+    libexec.install "lib", "maven2", "VERSION", "libexec"
     prefix.install "bin"
-    bin.env_script_all_files libexec/"bin", Language::Java.overridable_java_home_env("21")
+    bin.env_script_all_files libexec/"bin", Language::Java.overridable_java_home_env
 
     # Set up an IntelliJ compatible symlink farm in 'idea'
     idea = prefix/"idea"
@@ -42,13 +40,13 @@ class Scala < Formula
 
   test do
     file = testpath/"Test.scala"
-    file.write <<~EOS
+    file.write <<~SCALA
       object Test {
         def main(args: Array[String]): Unit = {
           println(s"${2 + 2}")
         }
       }
-    EOS
+    SCALA
 
     out = shell_output("#{bin}/scala #{file}").strip
 

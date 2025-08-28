@@ -3,6 +3,10 @@ class Qt < Formula
 
   desc "Cross-platform application and UI framework"
   homepage "https://www.qt.io/"
+  url "https://download.qt.io/official_releases/qt/6.9/6.9.2/single/qt-everywhere-src-6.9.2.tar.xz"
+  mirror "https://qt.mirror.constant.com/archive/qt/6.9/6.9.2/single/qt-everywhere-src-6.9.2.tar.xz"
+  mirror "https://mirrors.ukfast.co.uk/sites/qt.io/archive/qt/6.9/6.9.2/single/qt-everywhere-src-6.9.2.tar.xz"
+  sha256 "643f1fe35a739e2bf5e1a092cfe83dbee61ff6683684e957351c599767ca279c"
   license all_of: [
     "BSD-3-Clause",
     "GFDL-1.3-no-invariants-only",
@@ -12,34 +16,6 @@ class Qt < Formula
   ]
   head "https://code.qt.io/qt/qt5.git", branch: "dev"
 
-  stable do
-    url "https://download.qt.io/official_releases/qt/6.7/6.7.2/single/qt-everywhere-src-6.7.2.tar.xz"
-    mirror "https://qt.mirror.constant.com/archive/qt/6.7/6.7.2/single/qt-everywhere-src-6.7.2.tar.xz"
-    mirror "https://mirrors.ukfast.co.uk/sites/qt.io/archive/qt/6.7/6.7.2/single/qt-everywhere-src-6.7.2.tar.xz"
-    sha256 "0aaea247db870193c260e8453ae692ca12abc1bd841faa1a6e6c99459968ca8a"
-
-    # Backport support for FFMpeg 7.
-    # Ref: https://bugreports.qt.io/browse/QTBUG-125227
-    patch do
-      # Use Fedora's backport of https://github.com/qt/qtwebengine-chromium/commit/b30e3535717e1cb970c6e4095b412a2c5fdbce40
-      url "https://src.fedoraproject.org/rpms/qt6-qtwebengine/raw/864539f2140a11fda9bf3ef878a2e627f04f0b2d/f/qtwebengine-fix-building-with-system-ffmpeg.patch"
-      sha256 "70b8c468be1954b8dad59243069c6369d7c6eae332f154d99e3027b9119eb7c5"
-      directory "qtwebengine"
-    end
-    patch do
-      url "https://github.com/qt/qtwebengine-chromium/commit/65aaac35d040aef90c2e9f41a651b5a23470e457.patch?full_index=1"
-      sha256 "2875e9c534da34902fb113b4171d7a4960e6bc27f6ad45d49929ecf667856d48"
-      directory "qtwebengine/src/3rdparty"
-    end
-    patch do
-      url "https://github.com/qt/qtwebengine-chromium/commit/d9944bcb991c981574a229e5267e535b4eac8e1c.patch?full_index=1"
-      sha256 "11d8c7db91e76ea886dd0f30aedb3bfb33211f6ba39236d684ad63bfe80682ff"
-      directory "qtwebengine/src/3rdparty"
-    end
-    # Backport of https://github.com/qt/qtwebengine-chromium/commit/afcbb2eab7c5b0329ad0045782768dd2805d6a05
-    patch :DATA
-  end
-
   # The first-party website doesn't make version information readily available,
   # so we check the `head` repository tags instead.
   livecheck do
@@ -48,18 +24,19 @@ class Qt < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:  "ee963ae8db1a9aa4e704a8bd7661af582803a62b98ab01ceff7a30faaf84801d"
-    sha256 cellar: :any,                 arm64_ventura: "00211c4cdb53dcacceef31a7b86d1c86ce00a3888764fa8478d60eba0b3b2efd"
-    sha256 cellar: :any,                 sonoma:        "d6ad879c3f896c504c17622c070b4203676694410f7b3b0a34a2c108250002fe"
-    sha256 cellar: :any,                 ventura:       "ef5ef408a3ecb52066f08ec0554f3a771a1fed1efd77da39eb6758532f1892d1"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0700ec3390554ab544a421e2aaa68f35634fafb6714369344e8718837dfba5bc"
+    sha256 cellar: :any, arm64_sonoma:  "fc1ad41a8b0ceb5f6047afd936719fb11ae7e253bba51b2b0335635c85b47737"
+    sha256 cellar: :any, arm64_ventura: "9f859faa1731e2ecc5bbb169b3ed89b01f2b6549c7ce6f3b33c4b75eb0316bba"
+    sha256 cellar: :any, sonoma:        "95950612543fe870bae285a67027609f0bee2fc389cacccd036b5a794f1c4ce2"
+    sha256 cellar: :any, ventura:       "67063fcac412aeeda3ae3a911b109f2ad2b031761f264bbe0fdb9ad76a6d1b48"
+    sha256               x86_64_linux:  "e87e7711c808aa3c97e70c44f122bfdbd3d2ce695deb44282540cd67ed223cfc"
   end
 
   depends_on "cmake" => [:build, :test]
+  depends_on maximum_macos: [:sonoma, :build] # https://bugreports.qt.io/browse/QTBUG-128900
   depends_on "ninja" => :build
   depends_on "node" => :build
-  depends_on "pkg-config" => :build
-  depends_on "python@3.12" => :build
+  depends_on "pkgconf" => [:build, :test]
+  depends_on "python@3.13" => :build
   depends_on "vulkan-headers" => [:build, :test]
   depends_on "vulkan-loader" => [:build, :test]
   depends_on xcode: :build
@@ -72,7 +49,7 @@ class Qt < Formula
   depends_on "glib"
   depends_on "harfbuzz"
   depends_on "hunspell"
-  depends_on "icu4c"
+  depends_on "icu4c@77"
   depends_on "jasper"
   depends_on "jpeg-turbo"
   depends_on "libb2"
@@ -92,7 +69,6 @@ class Qt < Formula
 
   uses_from_macos "cups"
   uses_from_macos "krb5"
-  uses_from_macos "libxslt"
   uses_from_macos "zlib"
 
   on_macos do
@@ -103,28 +79,38 @@ class Qt < Formula
     depends_on "alsa-lib"
     depends_on "at-spi2-core"
     # TODO: depends_on "bluez"
+    depends_on "expat"
     depends_on "ffmpeg"
     depends_on "fontconfig"
+    depends_on "gdk-pixbuf"
     depends_on "gstreamer"
+    depends_on "gtk+3"
     # TODO: depends_on "gypsy"
     depends_on "libdrm"
     depends_on "libevent"
     depends_on "libice"
     depends_on "libsm"
-    depends_on "libvpx"
+    depends_on "libx11"
+    depends_on "libxcb"
     depends_on "libxcomposite"
+    depends_on "libxdamage"
+    depends_on "libxext"
+    depends_on "libxfixes"
     depends_on "libxkbcommon"
     depends_on "libxkbfile"
+    depends_on "libxml2"
     depends_on "libxrandr"
+    depends_on "libxslt"
     depends_on "libxtst"
     depends_on "little-cms2"
     depends_on "mesa"
     depends_on "minizip"
+    depends_on "nspr"
     depends_on "nss"
+    depends_on "openjpeg"
     depends_on "opus"
     depends_on "pango"
     depends_on "pulseaudio"
-    depends_on "sdl2"
     depends_on "snappy"
     depends_on "systemd"
     depends_on "wayland"
@@ -136,16 +122,14 @@ class Qt < Formula
     depends_on "xcb-util-wm"
   end
 
-  fails_with gcc: "5"
-
   resource "html5lib" do
     url "https://files.pythonhosted.org/packages/ac/b6/b55c3f49042f1df3dcd422b7f224f939892ee94f22abcf503a9b7339eaf2/html5lib-1.1.tar.gz"
     sha256 "b2e5b40261e20f354d198eae92afc10d750afb487ed5e50f9c4eaf07c184146f"
   end
 
   resource "six" do
-    url "https://files.pythonhosted.org/packages/71/39/171f1c67cd00715f190ba0b100d606d440a28c93c7714febeca8b79af85e/six-1.16.0.tar.gz"
-    sha256 "1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"
+    url "https://files.pythonhosted.org/packages/94/e7/b2c673351809dca68a0e064b6af791aa332cf192da575fd474ed7d6f16a2/six-1.17.0.tar.gz"
+    sha256 "ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81"
   end
 
   resource "webencodings" do
@@ -153,18 +137,35 @@ class Qt < Formula
     sha256 "b36a1c245f2d304965eb4e0a82848379241dc04b865afcc4aab16748587e1923"
   end
 
-  def install
-    python3 = "python3.12"
+  # Apply Arch Linux patches for assimp 6 support
+  # Issue ref: https://bugreports.qt.io/browse/QTBUG-139028 / https://bugreports.qt.io/browse/QTBUG-139029
+  patch do
+    url "https://gitlab.archlinux.org/archlinux/packaging/packages/qt6-3d/-/raw/811dd8b18b4042f7120722b63953499830b51ddd/assimp-6.patch"
+    sha256 "244589b0a353da757d61ce6b86d4fcf2fc8c11e9c0d9c5b109180cec9273055a"
+    directory "qt3d"
+  end
+  patch do
+    url "https://gitlab.archlinux.org/archlinux/packaging/packages/qt6-quick3d/-/raw/2c6f918ee81adb61290cf56453c2d67e5dce259f/assimp-6.patch"
+    sha256 "573f00cdad90d77786fba80066d61d5ee97fc56a8b11d0896949acd16bda8e91"
+    directory "qtquick3d"
+  end
 
-    # Allow -march options to be passed through, as Qt builds
-    # arch-specific code with runtime detection of capabilities:
-    # https://bugreports.qt.io/browse/QTBUG-113391
-    ENV.runtime_cpu_detection
+  # Backport support for FFmpeg 8.0 from Chromium
+  # https://chromium.googlesource.com/chromium/src/media/+/065e95ae56bbba9b6c8832864c1f0ab89ae777b7
+  patch :DATA
+
+  def install
+    python3 = "python3.13"
 
     # Install python dependencies for QtWebEngine
     venv = virtualenv_create(buildpath/"venv", python3)
     venv.pip_install resources
     ENV.prepend_path "PYTHONPATH", venv.site_packages
+
+    # Allow -march options to be passed through, as Qt builds
+    # arch-specific code with runtime detection of capabilities:
+    # https://bugreports.qt.io/browse/QTBUG-113391
+    ENV.runtime_cpu_detection
 
     # FIXME: GN requires clang in clangBasePath/bin
     inreplace "qtwebengine/src/3rdparty/chromium/build/toolchain/apple/toolchain.gni",
@@ -186,36 +187,26 @@ class Qt < Formula
     ]
     inreplace assistant_files, '"Assistant.app/Contents/MacOS/Assistant"', '"Assistant"'
 
-    # Allow generating unofficial pkg-config files for macOS to be used by other formulae.
-    # Upstream currently does not provide them: https://bugreports.qt.io/browse/QTBUG-86080
-    inreplace "qtbase/cmake/QtPkgConfigHelpers.cmake", "(NOT UNIX OR QT_FEATURE_framework)", "(NOT UNIX)"
-
-    config_args = %W[
-      -release
-
-      -prefix #{HOMEBREW_PREFIX}
-      -extprefix #{prefix}
-
-      -archdatadir share/qt
-      -datadir share/qt
-      -examplesdir share/qt/examples
-      -hostdatadir share/qt/mkspecs
-      -testsdir share/qt/tests
-
-      -no-sql-mysql
-      -no-sql-odbc
-      -no-sql-psql
-    ]
-
     # We prefer CMake `-DQT_FEATURE_system*=ON` arg over configure `-system-*` arg
     # since the latter may be ignored when auto-detection fails.
     #
     # We disable clang feature to avoid linkage to `llvm`. This is how we have always
     # built on macOS and it prevents complicating `llvm` version bumps on Linux.
-    cmake_args = std_cmake_args(install_prefix: HOMEBREW_PREFIX, find_framework: "FIRST") + %w[
-      -DFEATURE_pkg_config=ON
+    cmake_args = std_cmake_args(install_prefix: HOMEBREW_PREFIX, find_framework: "FIRST") + %W[
+      -DCMAKE_STAGING_PREFIX=#{prefix}
+      -DINSTALL_ARCHDATADIR=share/qt
+      -DINSTALL_DATADIR=share/qt
+      -DINSTALL_EXAMPLESDIR=share/qt/examples
+      -DINSTALL_MKSPECSDIR=share/qt/mkspecs
+      -DINSTALL_TESTSDIR=share/qt/tests
+
+      -DFEATURE_sql_mysql=OFF
+      -DFEATURE_sql_odbc=OFF
+      -DFEATURE_sql_psql=OFF
       -DQT_FEATURE_clang=OFF
       -DQT_FEATURE_relocatable=OFF
+
+      -DFEATURE_pkg_config=ON
       -DQT_FEATURE_system_assimp=ON
       -DQT_FEATURE_system_doubleconversion=ON
       -DQT_FEATURE_system_freetype=ON
@@ -235,23 +226,22 @@ class Qt < Formula
     ]
 
     cmake_args += if OS.mac?
-      config_args << "-sysroot" << MacOS.sdk_path.to_s
+      ENV["SDKROOT"] = MacOS.sdk_for_formula(self).path
+
       # NOTE: `chromium` should be built with the latest SDK because it uses
       # `___builtin_available` to ensure compatibility.
-      config_args << "-skip" << "qtwebengine" if DevelopmentTools.clang_build_version <= 1200
+      #
+      # Chromium needs Xcode 15.3+ and using LLVM Clang is not supported on macOS
+      # See https://bugreports.qt.io/browse/QTBUG-130922
+      cmake_args << "-DBUILD_qtwebengine=OFF" if MacOS::Xcode.version < "15.3"
 
-      # FIXME: `-DQT_FEATURE_webengine_vulkan=OFF` is a workaround for
-      # error: use of undeclared identifier 'importMemoryHandleInfo'
-      # Remove once properly handled by Qt.
+      cmake_args << "-DQT_FORCE_WARN_APPLE_SDK_AND_XCODE_CHECK=ON" if MacOS.version <= :monterey
+
       %W[
         -DCMAKE_OSX_DEPLOYMENT_TARGET=#{MacOS.version}.0
         -DQT_FEATURE_ffmpeg=OFF
-        -DQT_FEATURE_webengine_vulkan=OFF
       ]
     else
-      # Explicitly specify QT_BUILD_INTERNALS_RELOCATABLE_INSTALL_PREFIX so
-      # that cmake does not think $HOMEBREW_PREFIX/lib is the install prefix.
-      #
       # For QtWebEngine arguments:
       # * The vendored copy of `libvpx` is used for VA-API hardware acceleration,
       #   see https://codereview.qt-project.org/c/qt/qtwebengine/+/454908
@@ -260,8 +250,7 @@ class Qt < Formula
       # * On macOS Chromium will always use bundled copies and the
       #   -DQT_FEATURE_webengine_system_*=ON arguments are ignored.
       # * As of Qt 6.6.0, webengine_ozone_x11 feature appears to be mandatory for Linux.
-      %W[
-        -DQT_BUILD_INTERNALS_RELOCATABLE_INSTALL_PREFIX=#{prefix}
+      %w[
         -DQT_FEATURE_xcb=ON
         -DQT_FEATURE_system_xcb_xinput=ON
         -DQT_FEATURE_webengine_ozone_x11=ON
@@ -285,9 +274,9 @@ class Qt < Formula
       ]
     end
 
-    system "./configure", *config_args, "--", *cmake_args
-    system "cmake", "--build", "."
-    system "cmake", "--install", "."
+    system "cmake", "-S", ".", "-B", "build", "-G", "Ninja", *cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
 
     inreplace lib/"cmake/Qt6/qt.toolchain.cmake", "#{Superenv.shims_path}/", ""
 
@@ -300,9 +289,7 @@ class Qt < Formula
     # own version.
     # If you read this and you can eliminate it or upstream it: please do!
     # More context in https://github.com/Homebrew/homebrew-core/pull/124923
-    qtversion_xml = share/"qtcreator/QtProject/qtcreator/qtversion.xml"
-    qtversion_xml.dirname.mkpath
-    qtversion_xml.write <<~XML
+    (share/"qtcreator/QtProject/qtcreator/qtversion.xml").write <<~XML
       <?xml version="1.0" encoding="UTF-8"?>
       <!DOCTYPE QtCreatorQtVersions>
       <qtcreator>
@@ -326,33 +313,16 @@ class Qt < Formula
 
     return unless OS.mac?
 
-    # The pkg-config files installed suggest that headers can be found in the
-    # `include` directory. Make this so by creating symlinks from `include` to
-    # the Frameworks' Headers folders.
-    # Tracking issues:
-    # https://bugreports.qt.io/browse/QTBUG-86080
-    # https://gitlab.kitware.com/cmake/cmake/-/merge_requests/6363
     lib.glob("*.framework") do |f|
       # Some config scripts will only find Qt in a "Frameworks" folder
       frameworks.install_symlink f
+      # Some dependents' test use include path (e.g. `gecode` and `qwt`)
       include.install_symlink f/"Headers" => f.stem
     end
 
     bin.glob("*.app") do |app|
       libexec.install app
       bin.write_exec_script libexec/app.basename/"Contents/MacOS"/app.stem
-    end
-
-    # Modify unofficial pkg-config files to fix up paths and use frameworks.
-    # Also move them to `libexec` as they are not guaranteed to work for users,
-    # i.e. there is no upstream or Homebrew support.
-    lib.glob("pkgconfig/*.pc") do |pc|
-      inreplace pc do |s|
-        s.gsub! " -L${libdir}", " -F${libdir}", audit_result: false
-        s.gsub! " -lQt6", " -framework Qt", audit_result: false
-        s.gsub! " -Ilib/", " -I${libdir}/", audit_result: false
-      end
-      (libexec/"lib/pkgconfig").install pc
     end
   end
 
@@ -366,43 +336,36 @@ class Qt < Formula
   end
 
   test do
-    (testpath/"CMakeLists.txt").write <<~EOS
-      cmake_minimum_required(VERSION #{Formula["cmake"].version})
+    webengine_supported = !OS.mac? || MacOS.version > :ventura
+    modules = %w[Core Gui Widgets Sql Concurrent 3DCore Svg Quick3D Network NetworkAuth]
+    modules << "WebEngineCore" if webengine_supported
 
+    (testpath/"CMakeLists.txt").write <<~CMAKE
+      cmake_minimum_required(VERSION #{Formula["cmake"].version})
       project(test VERSION 1.0.0 LANGUAGES CXX)
 
       set(CMAKE_CXX_STANDARD 17)
       set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
       set(CMAKE_AUTOMOC ON)
       set(CMAKE_AUTORCC ON)
       set(CMAKE_AUTOUIC ON)
 
-      find_package(Qt6 COMPONENTS Core Gui Widgets Sql Concurrent
-        3DCore Svg Quick3D Network NetworkAuth WebEngineCore REQUIRED)
-
-      add_executable(test
-        main.cpp
-      )
-
-      target_link_libraries(test PRIVATE Qt6::Core Qt6::Widgets
-        Qt6::Sql Qt6::Concurrent Qt6::3DCore Qt6::Svg Qt6::Quick3D
-        Qt6::Network Qt6::NetworkAuth Qt6::Gui Qt6::WebEngineCore
-      )
-    EOS
+      find_package(Qt6 REQUIRED COMPONENTS #{modules.join(" ")})
+      add_executable(test main.cpp)
+      target_link_libraries(test PRIVATE Qt6::#{modules.join(" Qt6::")})
+    CMAKE
 
     (testpath/"test.pro").write <<~EOS
-      QT       += core svg 3dcore network networkauth quick3d \
-        sql gui widgets webenginecore
+      QT += #{modules.join(" ").downcase}
       TARGET = test
-      CONFIG   += console
-      CONFIG   -= app_bundle
+      CONFIG += console
+      CONFIG -= app_bundle
       TEMPLATE = app
       SOURCES += main.cpp
       INCLUDEPATH += #{Formula["vulkan-headers"].opt_include}
     EOS
 
-    (testpath/"main.cpp").write <<~EOS
+    (testpath/"main.cpp").write <<~CPP
       #undef QT_NO_DEBUG
       #include <QCoreApplication>
       #include <Qt3DCore>
@@ -413,7 +376,7 @@ class Qt < Formula
       #include <QtSvg>
       #include <QDebug>
       #include <QVulkanInstance>
-      #include <QtWebEngineCore>
+      #{"#include <QtWebEngineCore>" if webengine_supported}
       #include <iostream>
 
       int main(int argc, char *argv[])
@@ -441,109 +404,152 @@ class Qt < Formula
         }
         return 0;
       }
-    EOS
+    CPP
 
+    ENV["LC_ALL"] = "en_US.UTF-8"
     ENV["QT_VULKAN_LIB"] = Formula["vulkan-loader"].opt_lib/shared_library("libvulkan")
     ENV["QT_QPA_PLATFORM"] = "minimal" if OS.linux? && ENV["HOMEBREW_GITHUB_ACTIONS"]
 
-    system "cmake", testpath
-    system "make"
-    system "./test"
+    system "cmake", "-S", ".", "-B", "cmake"
+    system "cmake", "--build", "cmake"
+    system "./cmake/test"
 
     ENV.delete "CPATH" if OS.mac? && MacOS.version > :mojave
-    system bin/"qmake", testpath/"test.pro"
-    system "make"
+    mkdir "qmake" do
+      system bin/"qmake", testpath/"test.pro"
+      system "make"
+      system "./test"
+    end
+
+    flags = shell_output("pkgconf --cflags --libs Qt6#{modules.join(" Qt6")}").chomp.split
+    system ENV.cxx, "-std=c++17", "main.cpp", "-o", "test", *flags
     system "./test"
+
+    # Check QT_INSTALL_PREFIX is HOMEBREW_PREFIX to support split `qt-*` formulae
+    assert_equal HOMEBREW_PREFIX.to_s, shell_output("#{bin}/qmake -query QT_INSTALL_PREFIX").chomp
   end
 end
 
 __END__
-diff --git a/qtwebengine/src/3rdparty/chromium/media/filters/ffmpeg_video_decoder.cc b/qtwebengine/src/3rdparty/chromium/media/filters/ffmpeg_video_decoder.cc
-index aaab17bdc3b9c157981f2708c680eea03657f211..737ba737872ca5df4ee9a5efe03d17573a1f2e49 100644
---- a/qtwebengine/src/3rdparty/chromium/media/filters/ffmpeg_video_decoder.cc
-+++ b/qtwebengine/src/3rdparty/chromium/media/filters/ffmpeg_video_decoder.cc
-@@ -142,7 +142,7 @@ bool FFmpegVideoDecoder::IsCodecSupported(VideoCodec codec) {
- }
-
- FFmpegVideoDecoder::FFmpegVideoDecoder(MediaLog* media_log)
--    : media_log_(media_log) {
-+    : media_log_(media_log), timestamp_map_(128) {
-   DVLOG(1) << __func__;
-   DETACH_FROM_SEQUENCE(sequence_checker_);
- }
-@@ -371,8 +371,10 @@ bool FFmpegVideoDecoder::FFmpegDecode(const DecoderBuffer& buffer) {
-     DCHECK(packet->data);
-     DCHECK_GT(packet->size, 0);
-
--    // Let FFmpeg handle presentation timestamp reordering.
--    codec_context_->reordered_opaque = buffer.timestamp().InMicroseconds();
-+    const int64_t timestamp = buffer.timestamp().InMicroseconds();
-+    const TimestampId timestamp_id = timestamp_id_generator_.GenerateNextId();
-+    timestamp_map_.Put(std::make_pair(timestamp_id, timestamp));
-+    packet->opaque = reinterpret_cast<void*>(timestamp_id.GetUnsafeValue());
+--- a/qtwebengine/src/3rdparty/chromium/media/ffmpeg/ffmpeg_common.cc
++++ b/qtwebengine/src/3rdparty/chromium/media/ffmpeg/ffmpeg_common.cc
+@@ -263,22 +263,22 @@
+ static VideoCodecProfile ProfileIDToVideoCodecProfile(int profile) {
+   // Clear out the CONSTRAINED & INTRA flags which are strict subsets of the
+   // corresponding profiles with which they're used.
+-  profile &= ~FF_PROFILE_H264_CONSTRAINED;
+-  profile &= ~FF_PROFILE_H264_INTRA;
++  profile &= ~AV_PROFILE_H264_CONSTRAINED;
++  profile &= ~AV_PROFILE_H264_INTRA;
+   switch (profile) {
+-    case FF_PROFILE_H264_BASELINE:
++    case AV_PROFILE_H264_BASELINE:
+       return H264PROFILE_BASELINE;
+-    case FF_PROFILE_H264_MAIN:
++    case AV_PROFILE_H264_MAIN:
+       return H264PROFILE_MAIN;
+-    case FF_PROFILE_H264_EXTENDED:
++    case AV_PROFILE_H264_EXTENDED:
+       return H264PROFILE_EXTENDED;
+-    case FF_PROFILE_H264_HIGH:
++    case AV_PROFILE_H264_HIGH:
+       return H264PROFILE_HIGH;
+-    case FF_PROFILE_H264_HIGH_10:
++    case AV_PROFILE_H264_HIGH_10:
+       return H264PROFILE_HIGH10PROFILE;
+-    case FF_PROFILE_H264_HIGH_422:
++    case AV_PROFILE_H264_HIGH_422:
+       return H264PROFILE_HIGH422PROFILE;
+-    case FF_PROFILE_H264_HIGH_444_PREDICTIVE:
++    case AV_PROFILE_H264_HIGH_444_PREDICTIVE:
+       return H264PROFILE_HIGH444PREDICTIVEPROFILE;
+     default:
+       DVLOG(1) << "Unknown profile id: " << profile;
+@@ -289,23 +289,23 @@
+ static int VideoCodecProfileToProfileID(VideoCodecProfile profile) {
+   switch (profile) {
+     case H264PROFILE_BASELINE:
+-      return FF_PROFILE_H264_BASELINE;
++      return AV_PROFILE_H264_BASELINE;
+     case H264PROFILE_MAIN:
+-      return FF_PROFILE_H264_MAIN;
++      return AV_PROFILE_H264_MAIN;
+     case H264PROFILE_EXTENDED:
+-      return FF_PROFILE_H264_EXTENDED;
++      return AV_PROFILE_H264_EXTENDED;
+     case H264PROFILE_HIGH:
+-      return FF_PROFILE_H264_HIGH;
++      return AV_PROFILE_H264_HIGH;
+     case H264PROFILE_HIGH10PROFILE:
+-      return FF_PROFILE_H264_HIGH_10;
++      return AV_PROFILE_H264_HIGH_10;
+     case H264PROFILE_HIGH422PROFILE:
+-      return FF_PROFILE_H264_HIGH_422;
++      return AV_PROFILE_H264_HIGH_422;
+     case H264PROFILE_HIGH444PREDICTIVEPROFILE:
+-      return FF_PROFILE_H264_HIGH_444_PREDICTIVE;
++      return AV_PROFILE_H264_HIGH_444_PREDICTIVE;
+     default:
+       DVLOG(1) << "Unknown VideoCodecProfile: " << profile;
    }
-   FFmpegDecodingLoop::DecodeStatus decode_status = decoding_loop_->DecodePacket(
-       packet, base::BindRepeating(&FFmpegVideoDecoder::OnNewFrame,
-@@ -431,7 +433,12 @@ bool FFmpegVideoDecoder::OnNewFrame(AVFrame* frame) {
-   }
-   gfx::Size natural_size = aspect_ratio.GetNaturalSize(visible_rect);
-
--  const auto pts = base::Microseconds(frame->reordered_opaque);
-+  const auto ts_id = TimestampId(reinterpret_cast<size_t>(frame->opaque));
-+  const auto ts_lookup = timestamp_map_.Get(ts_id);
-+  if (ts_lookup == timestamp_map_.end()) {
-+    return false;
-+  }
-+  const auto pts = base::Microseconds(std::get<1>(*ts_lookup));
-   auto video_frame = VideoFrame::WrapExternalDataWithLayout(
-       opaque->layout, visible_rect, natural_size, opaque->data, opaque->size,
-       pts);
-@@ -506,8 +513,10 @@ bool FFmpegVideoDecoder::ConfigureDecoder(const VideoDecoderConfig& config,
-   codec_context_->thread_count = GetFFmpegVideoDecoderThreadCount(config);
-   codec_context_->thread_type =
-       FF_THREAD_SLICE | (low_delay ? 0 : FF_THREAD_FRAME);
-+
-   codec_context_->opaque = this;
-   codec_context_->get_buffer2 = GetVideoBufferImpl;
-+  codec_context_->flags |= AV_CODEC_FLAG_COPY_OPAQUE;
-
-   if (decode_nalus_)
-     codec_context_->flags2 |= AV_CODEC_FLAG2_CHUNKS;
-diff --git a/qtwebengine/src/3rdparty/chromium/media/filters/ffmpeg_video_decoder.h b/qtwebengine/src/3rdparty/chromium/media/filters/ffmpeg_video_decoder.h
-index d02cb89c3ddf7cee0d1a79ee095eae5f52ff5111..0a2de1c623ffff7dc9c5d381344714e9ee3d2f2a 100644
---- a/qtwebengine/src/3rdparty/chromium/media/filters/ffmpeg_video_decoder.h
-+++ b/qtwebengine/src/3rdparty/chromium/media/filters/ffmpeg_video_decoder.h
-@@ -7,10 +7,12 @@
-
- #include <memory>
-
-+#include "base/containers/lru_cache.h"
- #include "base/functional/callback.h"
- #include "base/memory/raw_ptr.h"
- #include "base/memory/scoped_refptr.h"
- #include "base/sequence_checker.h"
-+#include "base/types/id_type.h"
- #include "media/base/supported_video_decoder_config.h"
- #include "media/base/video_decoder.h"
- #include "media/base/video_decoder_config.h"
-@@ -87,6 +89,20 @@ class MEDIA_EXPORT FFmpegVideoDecoder : public VideoDecoder {
-   // FFmpeg structures owned by this object.
-   std::unique_ptr<AVCodecContext, ScopedPtrAVFreeContext> codec_context_;
-
-+  // The gist here is that timestamps need to be 64 bits to store microsecond
-+  // precision. A 32 bit integer would overflow at ~35 minutes at this level of
-+  // precision. We can't cast the timestamp to the void ptr object used by the
-+  // opaque field in ffmpeg then, because it would lose data on a 32 bit build.
-+  // However, we don't actually have 2^31 timestamped frames in a single
-+  // playback, so it's fine to use the 32 bit value as a key in a map which
-+  // contains the actual timestamps. Additionally, we've in the past set 128
-+  // outstanding frames for re-ordering as a limit for cross-thread decoding
-+  // tasks, so we'll do that here too with the LRU cache.
-+  using TimestampId = base::IdType<int64_t, size_t, 0>;
-+
-+  TimestampId::Generator timestamp_id_generator_;
-+  base::LRUCache<TimestampId, int64_t> timestamp_map_;
-+
-   VideoDecoderConfig config_;
-
-   scoped_refptr<FrameBufferPool> frame_pool_;
+-  return FF_PROFILE_UNKNOWN;
++  return AV_PROFILE_UNKNOWN;
+ }
+ 
+ SampleFormat AVSampleFormatToSampleFormat(AVSampleFormat sample_format,
+@@ -443,7 +443,7 @@
+     // TODO(dalecurtis): Just use the profile from the codec context if ffmpeg
+     // ever starts supporting xHE-AAC.
+     // FFmpeg provides the (defined_profile - 1) for AVCodecContext::profile
+-    if (codec_context->profile == FF_PROFILE_UNKNOWN ||
++    if (codec_context->profile == AV_PROFILE_UNKNOWN ||
+         codec_context->profile == mp4::AAC::kXHeAAcType - 1) {
+       // Errors aren't fatal here, so just drop any MediaLog messages.
+       NullMediaLog media_log;
+@@ -661,16 +661,16 @@
+       break;
+     case VideoCodec::kVP9:
+       switch (codec_context->profile) {
+-        case FF_PROFILE_VP9_0:
++        case AV_PROFILE_VP9_0:
+           profile = VP9PROFILE_PROFILE0;
+           break;
+-        case FF_PROFILE_VP9_1:
++        case AV_PROFILE_VP9_1:
+           profile = VP9PROFILE_PROFILE1;
+           break;
+-        case FF_PROFILE_VP9_2:
++        case AV_PROFILE_VP9_2:
+           profile = VP9PROFILE_PROFILE2;
+           break;
+-        case FF_PROFILE_VP9_3:
++        case AV_PROFILE_VP9_3:
+           profile = VP9PROFILE_PROFILE3;
+           break;
+         default:
+--- a/qtwebengine/src/3rdparty/chromium/media/filters/ffmpeg_aac_bitstream_converter.cc
++++ b/qtwebengine/src/3rdparty/chromium/media/filters/ffmpeg_aac_bitstream_converter.cc
+@@ -68,17 +68,17 @@
+   hdr[1] |= 1;
+ 
+   switch (audio_profile) {
+-    case FF_PROFILE_AAC_MAIN:
++    case AV_PROFILE_AAC_MAIN:
+       break;
+-    case FF_PROFILE_AAC_HE:
+-    case FF_PROFILE_AAC_HE_V2:
+-    case FF_PROFILE_AAC_LOW:
++    case AV_PROFILE_AAC_HE:
++    case AV_PROFILE_AAC_HE_V2:
++    case AV_PROFILE_AAC_LOW:
+       hdr[2] |= (1 << 6);
+       break;
+-    case FF_PROFILE_AAC_SSR:
++    case AV_PROFILE_AAC_SSR:
+       hdr[2] |= (2 << 6);
+       break;
+-    case FF_PROFILE_AAC_LTP:
++    case AV_PROFILE_AAC_LTP:
+       hdr[2] |= (3 << 6);
+       break;
+     default:

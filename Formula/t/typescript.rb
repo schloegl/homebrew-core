@@ -1,13 +1,12 @@
 class Typescript < Formula
   desc "Language for application scale JavaScript development"
   homepage "https://www.typescriptlang.org/"
-  url "https://registry.npmjs.org/typescript/-/typescript-5.6.2.tgz"
-  sha256 "6e954963e7689a13573927021cf1fe2d7f85d7808eba49f03f84cb5d77cdd6bf"
+  url "https://registry.npmjs.org/typescript/-/typescript-5.9.2.tgz"
+  sha256 "67a3bc82e822b8f45f653a80fc3a9730d23214d36c83ba85dd7f5abebee82062"
   license "Apache-2.0"
-  head "https://github.com/Microsoft/TypeScript.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "3feac3ae0f700e709d667b2171ec99b05a50064970f0151cdb2762299b0776d4"
+    sha256 cellar: :any_skip_relocation, all: "2dbf6aac24a2603aed04b1fcfa4563a277d2cb60678128d65234df70f7acb8df"
   end
 
   depends_on "node"
@@ -29,6 +28,6 @@ class Typescript < Formula
     EOS
 
     system bin/"tsc", "test.ts"
-    assert_predicate testpath/"test.js", :exist?, "test.js was not generated"
+    assert_path_exists testpath/"test.js", "test.js was not generated"
   end
 end

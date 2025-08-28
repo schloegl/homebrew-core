@@ -1,29 +1,30 @@
 class Starship < Formula
   desc "Cross-shell prompt for astronauts"
-  homepage "https://starship.rs"
-  url "https://github.com/starship/starship/archive/refs/tags/v1.20.1.tar.gz"
-  sha256 "851d84be69f9171f10890e3b58b8c5ec6057dd873dc83bfe0bdf965f9844b5dc"
+  homepage "https://starship.rs/"
+  url "https://github.com/starship/starship/archive/refs/tags/v1.23.0.tar.gz"
+  sha256 "be3ba025a64bd808899dce256e1511145b55cc5eefc5fca82bf5537cd8e09c72"
   license "ISC"
   head "https://github.com/starship/starship.git", branch: "master"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "26bf48ee3cd1377bf1975b130214914f5df26fd3133a067465008e3a773b7704"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "0c4a9a5065b898767b818d6efd9967a8721584b856d2ae50291d93378dd6308d"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "0e45c4772e04bda7e40ea8c87c67665ca60c1bd50ee62a5808ac40422f0506eb"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "c8a3541a380c006638c61de8613a66232f307f7b933e8a8c376bd2986ec74108"
-    sha256 cellar: :any_skip_relocation, sonoma:         "4d29c18c5c58c41bce81e84519650310694db6f26172191bb880253176aecb6a"
-    sha256 cellar: :any_skip_relocation, ventura:        "4da07ebf4ce68ad9c995981099605962721e4b68aa3c2ee75964bea9654c5516"
-    sha256 cellar: :any_skip_relocation, monterey:       "dd431900a3a652d4588ea1c915ee6765d7586c7d68aea8cb17218e8a6e336c0b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "47effdd4cebfc40f3d4518bc941eadda39a423af2980b625f4bde2bbcadee718"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "e0f085c4ec44508be2fda1fd8d89ef9d7cc2207026e7db1da5a9d922d7046498"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "c8a074bbded5edb346475e4bf3c6faecc13b15486cd75ffd7dc102c65369adad"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "75d22389bb70b46e23553898ce23d583a4cfb5a3b6de712952da815f980c5511"
+    sha256 cellar: :any_skip_relocation, sonoma:        "f0df06b16b67cb040c0f139dddd7df3df7985ccd8be93ac31a17e9dbb8a354b2"
+    sha256 cellar: :any_skip_relocation, ventura:       "18594cec9c012f3bc91272d79a5d0edf6143a64122f8c1f99b6b253c12b8483b"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "2eaa4272f26775db67f3ed107e97a4392d96adcfcbdf5141e5ba696987e23051"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "80cfca3624de24391aa69ce0c357a669e793384410cbc3b9facd982c0f1b437d"
   end
 
   depends_on "cmake" => :build
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
 
   uses_from_macos "zlib"
 
   on_linux do
-    depends_on "pkg-config" => :build
     depends_on "dbus"
   end
 

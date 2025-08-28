@@ -3,26 +3,25 @@ class Rpl < Formula
 
   desc "Text replacement utility"
   homepage "https://github.com/rrthomas/rpl"
-  url "https://files.pythonhosted.org/packages/40/ad/840b679493c49e0c4368662e2ddd6296f9bac41e8ee992e0d43d144b4f35/rpl-1.15.7.tar.gz"
-  sha256 "5eadc62dad539d2e27a1b3c71c2905504a3dbe02380c6c98dbf8505ad9303510"
+  url "https://files.pythonhosted.org/packages/f0/85/81cd913d43251f923a56b44586c717f41e8ff5e4ea35d2ced60e9de00bbd/rpl-1.18.tar.gz"
+  sha256 "378d38de283f6682f85e93695396f3461d719778e17a8013f64bd87d7f671d7e"
   license "GPL-3.0-or-later"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "4cf88f41e353e9c2737610c285001eb5eaf0a09f7580d374dc26063f5c454304"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "59015416ba8ad9993261a50d78c24c60aa606b0b39f4777521f55d834c5e5cf4"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "dce5e52f2472bacc14700c111ba5940ac0716123707dcb938f379a8a43df475a"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "397ee7b7b672f1e0d3debe4c36c94bea1185762403503253426743483974029c"
-    sha256 cellar: :any_skip_relocation, sonoma:         "8c5f5b86c9dd8bd32b98488eb679afaad4a06d3f53abcfbc7f0b4422250de3b7"
-    sha256 cellar: :any_skip_relocation, ventura:        "24545f8ce43bfabe8599c7c2df6c488954786b32a3e692aa345889c6afbd7942"
-    sha256 cellar: :any_skip_relocation, monterey:       "d0ec7966aabe42f8bcff6e4e6263f9f4d028161bcfce30bcdcb39299d97281c1"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "f7eb5d986bc69e230e3ba7d3da3f029f624992b96948a82c8b7b976ee441bf9e"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "4f3a92c152aa85e38ecfa5e723ac3976e7c922bad0a11541fe4fffdfbaaac227"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "027eb212bc7e4016600eec213bf22696297124dad33d0c1ac476c6b833677dc8"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "161eab6b8c8144193155d77567883c9ffc7421a2047217c51cfb4766e20ad3fb"
+    sha256 cellar: :any_skip_relocation, sonoma:        "6c8fbc594de8ca5db2fed2073a9b20fa736c2a5a413ccb5037d4ad544e078350"
+    sha256 cellar: :any_skip_relocation, ventura:       "52b0ecfa8e85d9075f871a7de4a4e86c51f31cc8cbc0458ceeea1e3552b5ebec"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "61dd2a865b8b0922685c91436bea042c9b5d52a51b1e301ff6c5c1bc7ba2eed4"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "07d8974cf495884f8d2a663b0e15b9864f05733d0b6e1333567703ff05cbca2c"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "chainstream" do
-    url "https://files.pythonhosted.org/packages/44/fd/ec0c4df1e2b00080826b3e2a9df81c912c8dc7dbab757b55d68af3a51dcf/chainstream-1.0.1.tar.gz"
-    sha256 "df4d8fd418b112690e0e6faa4cb6706962e4b6b95ff5c133890fd32157c8d3b7"
+    url "https://files.pythonhosted.org/packages/a5/cc/93357fd1f53c61fdc6111a6d9ea2cc565b2c1be9227c15bb036a0db0396b/chainstream-1.0.2.tar.gz"
+    sha256 "b32975d3b3d1c030a507ac298044c28fa3ca30d527abdfae281edd53276617b3"
   end
 
   resource "chardet" do
@@ -31,8 +30,8 @@ class Rpl < Formula
   end
 
   resource "regex" do
-    url "https://files.pythonhosted.org/packages/3f/51/64256d0dc72816a4fe3779449627c69ec8fee5a5625fd60ba048f53b3478/regex-2024.7.24.tar.gz"
-    sha256 "9cfd009eed1a46b27c14039ad5bbc5e71b6367c5b2e6d5f5da0ea91600817506"
+    url "https://files.pythonhosted.org/packages/8e/5f/bd69653fbfb76cf8604468d3b4ec4c403197144c7bfe0e6a5fc9e02a07cb/regex-2024.11.6.tar.gz"
+    sha256 "7ab159b063c52a0333c884e4679f8d7a85112ee3078fe3d9004b2dd875585519"
   end
 
   def install

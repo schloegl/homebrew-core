@@ -1,8 +1,8 @@
 class WpebackendFdo < Formula
   desc "Freedesktop.org backend for WPE WebKit"
   homepage "https://wpewebkit.org/"
-  url "https://github.com/Igalia/WPEBackend-fdo/releases/download/1.14.3/wpebackend-fdo-1.14.3.tar.xz"
-  sha256 "10121842595a850291db3e82f3db0b9984df079022d386ce42c2b8508159dc6c"
+  url "https://github.com/Igalia/WPEBackend-fdo/releases/download/1.16.0/wpebackend-fdo-1.16.0.tar.xz"
+  sha256 "beddf321232d5bd08106c179dbc600f8ce88eb3620b4a59a6329063b78f64635"
   license "BSD-2-Clause"
   head "https://github.com/Igalia/WPEBackend-fdo.git", branch: "master"
 
@@ -12,12 +12,13 @@ class WpebackendFdo < Formula
   end
 
   bottle do
-    sha256 x86_64_linux: "2bab7093c2eaba0cde2fec85b7b413585d05fef38ddeb9b69ebef34deff304b3"
+    sha256 arm64_linux:  "3ee140a8b47dcd6cd4e3b108a26efbabe73721258518d8f6725d97e03786a277"
+    sha256 x86_64_linux: "a1a62d1c3651a0e4cc927c5277c6174702776116108f42d6691507e7bdca6e75"
   end
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "glib"
   depends_on "libepoxy"
   depends_on "libwpe"
@@ -32,13 +33,13 @@ class WpebackendFdo < Formula
   end
 
   test do
-    (testpath/"wpe-fdo-test.c").write <<~EOS
+    (testpath/"wpe-fdo-test.c").write <<~C
       #include "wpe/fdo.h"
       #include <stdio.h>
       int main() {
         printf("%u.%u.%u", wpe_fdo_get_major_version(), wpe_fdo_get_minor_version(), wpe_fdo_get_micro_version());
       }
-    EOS
+    C
     ENV.append_to_cflags "-I#{include}/wpe-fdo-1.0 -I#{Formula["libwpe"].opt_include}/wpe-1.0"
     ENV.append "LDFLAGS", "-L#{lib}"
     ENV.append "LDLIBS", "-lWPEBackend-fdo-1.0"

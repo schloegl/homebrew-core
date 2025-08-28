@@ -3,23 +3,22 @@ class Terminator < Formula
 
   desc "Multiple GNOME terminals in one window"
   homepage "https://gnome-terminator.org"
-  url "https://github.com/gnome-terminator/terminator/archive/refs/tags/v2.1.4.tar.gz"
-  sha256 "b6a544426a19829f9e9bb41441a2f4789edc04f1867c84a436822d1af6a36d06"
+  url "https://github.com/gnome-terminator/terminator/archive/refs/tags/v2.1.5.tar.gz"
+  sha256 "df46cb8fbf4bc80289cabbf59e22a03948a65278c637573db3bc5e7acfd1966b"
   license "GPL-2.0-only"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "cd9a4da25659541b070e94573fab3ab65c370ed538f246db565da65fdb4ef53d"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "977d208ffe8ac59d8a5ff0ef577ac0e6e6af388ca5bd637632227ad232a72326"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "6d7be7db387a5e11d7ed9f6f6e08c5638ec484680d923a2486f12f993ff1ded4"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "c059276169ab3dc9d3307fd648252ea3f10ab046cab0c51b3f0fa7cd8a386ff1"
-    sha256 cellar: :any_skip_relocation, sonoma:         "d2e0770ff214ee3b3d0ea6d3674ede07b7a27216f933f1d5bfb7391c5c537dd8"
-    sha256 cellar: :any_skip_relocation, ventura:        "af1cf0b858e2341d6c5686d7eb36c6c277dbf3eb60522cb22fa58e62b5a5031b"
-    sha256 cellar: :any_skip_relocation, monterey:       "d9eebb2a1316d84ea194f18a2b0870c7cb332f3f0a513d656f518f84e48f6b7d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "de5eb10e4a24584a4db44a6f84d7f355dff428f380bed522ed69a44e373f78a9"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "a88c0ac27c2d76bbee8e2fa332e77c53169767e6612a1a10183ffde3ca8d3a5c"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "723e802e3f3f79400d8d5564719425af34680a00fd5746778755ba4614ee4bc5"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "e8ef4ddcb4294e55a9c0e28434ea5da8ff2ec3871d4ff9a01010425c1f28aa26"
+    sha256 cellar: :any_skip_relocation, sonoma:        "cbf4b1433eaadee83312ad705ed311db2ab626b71f4751efa6a6c17383b39712"
+    sha256 cellar: :any_skip_relocation, ventura:       "23c152d460198f9fa45f5f2c3e25a7ceb03eb6126c7527cba78a0f6632153de1"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "9e7181f5ee199d5ab726987d98198938b4af7f960fa77fcd850a62967389b132"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7453996d0c7658caae13ae6dbe0ec99c8d7944f7b5c7b154f21359c4c9a8fc7e"
   end
 
   depends_on "pygobject3"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "vte3"
 
   on_linux do
@@ -27,23 +26,23 @@ class Terminator < Formula
   end
 
   resource "configobj" do
-    url "https://files.pythonhosted.org/packages/cb/87/17d4c6d634c044ab08b11c0cd2a8a136d103713d438f8792d7be2c5148fb/configobj-5.0.8.tar.gz"
-    sha256 "6f704434a07dc4f4dc7c9a745172c1cad449feb548febd9f7fe362629c627a97"
+    url "https://files.pythonhosted.org/packages/f5/c4/c7f9e41bc2e5f8eeae4a08a01c91b2aea3dfab40a3e14b25e87e7db8d501/configobj-5.0.9.tar.gz"
+    sha256 "03c881bbf23aa07bccf1b837005975993c4ab4427ba57f959afdd9d1a2386848"
   end
 
   resource "psutil" do
-    url "https://files.pythonhosted.org/packages/90/c7/6dc0a455d111f68ee43f27793971cf03fe29b6ef972042549db29eec39a2/psutil-5.9.8.tar.gz"
-    sha256 "6be126e3225486dff286a8fb9a06246a5253f4c7c53b475ea5f5ac934e64194c"
+    url "https://files.pythonhosted.org/packages/2a/80/336820c1ad9286a4ded7e845b2eccfcb27851ab8ac6abece774a6ff4d3de/psutil-7.0.0.tar.gz"
+    sha256 "7be9c3eba38beccb6495ea33afd982a44074b78f28c434a1f51cc07fd315c456"
   end
 
   resource "setuptools" do
-    url "https://files.pythonhosted.org/packages/c8/1f/e026746e5885a83e1af99002ae63650b7c577af5c424d4c27edcf729ab44/setuptools-69.1.1.tar.gz"
-    sha256 "5c0806c7d9af348e6dd3777b4f4dbb42c7ad85b190104837488eab9a7c945cf8"
+    url "https://files.pythonhosted.org/packages/8d/d2/ec1acaaff45caed5c2dedb33b67055ba9d4e96b091094df90762e60135fe/setuptools-80.8.0.tar.gz"
+    sha256 "49f7af965996f26d43c8ae34539c8d99c5042fbff34302ea151eaa9c207cd257"
   end
 
   resource "six" do
-    url "https://files.pythonhosted.org/packages/71/39/171f1c67cd00715f190ba0b100d606d440a28c93c7714febeca8b79af85e/six-1.16.0.tar.gz"
-    sha256 "1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"
+    url "https://files.pythonhosted.org/packages/94/e7/b2c673351809dca68a0e064b6af791aa332cf192da575fd474ed7d6f16a2/six-1.17.0.tar.gz"
+    sha256 "ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81"
   end
 
   def install

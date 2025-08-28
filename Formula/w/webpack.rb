@@ -3,25 +3,20 @@ require "json"
 class Webpack < Formula
   desc "Bundler for JavaScript and friends"
   homepage "https://webpack.js.org/"
-  url "https://registry.npmjs.org/webpack/-/webpack-5.95.0.tgz"
-  sha256 "f2af5e3bd812296e13230723c11a8bb9338cb175fc4d852934abf4868569d27e"
+  url "https://registry.npmjs.org/webpack/-/webpack-5.101.3.tgz"
+  sha256 "3521d739b88a4c54eae34984616f75007eaf39b76c325b715ef0e1496bc206d8"
   license "MIT"
   head "https://github.com/webpack/webpack.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "d06566fabf801d582c5631556e09defb51058f5864a4fe861b012f50e58449e8"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "d06566fabf801d582c5631556e09defb51058f5864a4fe861b012f50e58449e8"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "d06566fabf801d582c5631556e09defb51058f5864a4fe861b012f50e58449e8"
-    sha256 cellar: :any_skip_relocation, sonoma:        "ce1453a5aa3752e4776f4a21718a41eb61cf523cebfe752c4a4aa75235a66056"
-    sha256 cellar: :any_skip_relocation, ventura:       "ce1453a5aa3752e4776f4a21718a41eb61cf523cebfe752c4a4aa75235a66056"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d06566fabf801d582c5631556e09defb51058f5864a4fe861b012f50e58449e8"
+    sha256 cellar: :any_skip_relocation, all: "72401062d05a0d2da4ae38fa0bb82df98f4bb48d683a8d204a3732bd7e7931a2"
   end
 
   depends_on "node"
 
   resource "webpack-cli" do
-    url "https://registry.npmjs.org/webpack-cli/-/webpack-cli-5.1.4.tgz"
-    sha256 "0d5484af2d1547607f8cac9133431cc175c702ea9bffdf6eb446cc1f492da2ac"
+    url "https://registry.npmjs.org/webpack-cli/-/webpack-cli-6.0.1.tgz"
+    sha256 "f407788079854b0d48fb750da496c59cf00762dce3731520a4b375a377dec183"
   end
 
   def install
@@ -29,7 +24,7 @@ class Webpack < Formula
     buildpath.install resource("webpack-cli")
 
     cd buildpath/"node_modules/webpack" do
-      system "npm", "install", *std_npm_args(prefix: false), "--legacy-peer-deps"
+      system "npm", "install", *std_npm_args(prefix: false), "--force"
     end
 
     # declare webpack as a bundledDependency of webpack-cli
@@ -40,25 +35,22 @@ class Webpack < Formula
 
     system "npm", "install", *std_npm_args
 
-    bin.install_symlink libexec/"bin/webpack-cli"
+    bin.install_symlink libexec.glob("bin/*")
     bin.install_symlink libexec/"bin/webpack-cli" => "webpack"
-
-    # Replace universal binaries with their native slices
-    deuniversalize_machos
   end
 
   test do
-    (testpath/"index.js").write <<~EOS
+    (testpath/"index.js").write <<~JS
       function component() {
         const element = document.createElement('div');
-        element.innerHTML = 'Hello' + ' ' + 'webpack';
+        element.innerHTML = 'Hello webpack';
         return element;
       }
 
       document.body.appendChild(component());
-    EOS
+    JS
 
-    system bin/"webpack", "bundle", "--mode", "production", "--entry", testpath/"index.js"
-    assert_match "const e=document.createElement(\"div\");", File.read(testpath/"dist/main.js")
+    system bin/"webpack", "bundle", "--mode=production", testpath/"index.js"
+    assert_match 'const e=document.createElement("div");', (testpath/"dist/main.js").read
   end
 end

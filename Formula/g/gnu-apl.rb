@@ -1,8 +1,8 @@
 class GnuApl < Formula
   desc "GNU implementation of the programming language APL"
   homepage "https://www.gnu.org/software/apl/"
-  url "https://ftp.gnu.org/gnu/apl/apl-1.9.tar.gz"
-  mirror "https://ftpmirror.gnu.org/apl/apl-1.9.tar.gz"
+  url "https://ftpmirror.gnu.org/gnu/apl/apl-1.9.tar.gz"
+  mirror "https://ftp.gnu.org/gnu/apl/apl-1.9.tar.gz"
   sha256 "291867f1b1937693abb57be7d9a37618b0376e3e2709574854a7bbe52bb28eb8"
   license "GPL-3.0-or-later"
 
@@ -14,6 +14,7 @@ class GnuApl < Formula
     sha256 sonoma:         "f846d1e2a5d45180aab7b9d70b09b682ee305ece2f115beaddadd9d197f872f9"
     sha256 ventura:        "35fb69870f69ed42993e2917d539e80d4bc34013b767f486921d28bff333e3a4"
     sha256 monterey:       "3c142ba8082510e217dba2c772bcc2f19cf3c2f07fb13e93dd3672adea6e229e"
+    sha256 arm64_linux:    "43a34760fe0949fcb78d83da6b75d899db63a606869ac53431e86644f76a9898"
     sha256 x86_64_linux:   "6e061bdb88a56797f123cdf50083e1065ba79fa1d3542b30ab1225bd4fd37b10"
   end
 
@@ -25,7 +26,7 @@ class GnuApl < Formula
     depends_on "libtool" => :build
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "cairo"
   depends_on "glib"
   depends_on "gtk+3"
@@ -46,7 +47,6 @@ class GnuApl < Formula
 
   def install
     system "autoreconf", "--force", "--install", "--verbose" if build.head?
-
     system "./configure", "--disable-silent-rules", *std_configure_args
     system "make", "install"
   end
@@ -57,13 +57,9 @@ class GnuApl < Formula
       )OFF
     EOS
 
-    pid = fork do
-      exec bin/"APserver"
-    end
-
-    sleep 4
-
+    pid = spawn bin/"APserver"
     begin
+      sleep 4
       assert_match "Hello world", shell_output("#{bin}/apl -s -f hello.apl")
     ensure
       Process.kill("SIGINT", pid)

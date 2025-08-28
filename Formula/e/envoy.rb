@@ -1,8 +1,8 @@
 class Envoy < Formula
   desc "Cloud-native high-performance edge/middle/service proxy"
   homepage "https://www.envoyproxy.io/index.html"
-  url "https://github.com/envoyproxy/envoy/archive/refs/tags/v1.31.0.tar.gz"
-  sha256 "39ba37aed81a9d4988a5736cf558243179f2bf1490843da25687d1aafd9d01c6"
+  url "https://github.com/envoyproxy/envoy/archive/refs/tags/v1.35.1.tar.gz"
+  sha256 "bdd9d646b30a3d048f1ff6b2719f81b9e14c0e187950ea8f4812bf5207f42bfc"
   license "Apache-2.0"
   head "https://github.com/envoyproxy/envoy.git", branch: "main"
 
@@ -12,14 +12,12 @@ class Envoy < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "eafef893f82016ef51251355c42413d7b8a53460793f44222d9845ab7bcfafd3"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "e91a2e11066c3a0c871fa0d94153fe260d71c12ba7db9ea175b19e960e09d002"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "cc2137c9981786830eb65cac9ed6807bfd6a8eebe7764d59a7f621eef4999b9c"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "af3de81847a5dc7704ac8d2e7e9b2a320653f362f7824e34aa631675ba1983a3"
-    sha256 cellar: :any_skip_relocation, sonoma:         "878b3d9a46bba9394b6f2b9b910e83d28ea262bcae3cb5ef4eb6dfb29d7c3c5b"
-    sha256 cellar: :any_skip_relocation, ventura:        "a14f5d3f5fef1b495018c639958ec1a5f1737de63f17034e097c92e3b3db9f7f"
-    sha256 cellar: :any_skip_relocation, monterey:       "cd1124efc8af189735d10f2cc4d0a66230905ad5ba2d4c6b7ac02ea544e260be"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3b255d9a8e2d3a99ca8049bac12ba2a094a5b21d7685f77b69b8435914f97ab4"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "cc4c484d8913a88d5036a25613ef80835e3817a23d5b7458b6532713d259d8c2"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "934778c2d7d7796c3c312ed2163ae97366dd7977054e1a5d31d81dbdcb9fc260"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "7b7e98ccfe84f4373ae3e53a2debd76e12d71cb8db41cbb5264803daf1ffbd75"
+    sha256 cellar: :any_skip_relocation, sonoma:        "bf89b41a6db2dad33020a8e8974fd1c646424667dd6ebde5f9c887ee7b19704d"
+    sha256 cellar: :any_skip_relocation, ventura:       "5193aee05fe54295e29def10d997f9854edcd4455683b011c5ea234a49fa16ec"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f420ac4cca2f1956d3556d74012ced602df25cf1e8cfa6eb0f51366d0e38d132"
   end
 
   depends_on "automake" => :build
@@ -39,6 +37,10 @@ class Envoy < Formula
     depends_on "coreutils" => :build
   end
 
+  on_linux do
+    depends_on "lld" => :build
+  end
+
   # https://github.com/envoyproxy/envoy/tree/main/bazel#supported-compiler-versions
   # GCC/ld.gold had some issues while building envoy 1.29 so use clang/lld instead
   fails_with :gcc
@@ -51,21 +53,27 @@ class Envoy < Formula
       --verbose_failures
       --action_env=PATH=#{env_path}
       --host_action_env=PATH=#{env_path}
+      --define=wasm=wamr
     ]
 
-    # GCC/ld.gold had some issues while building envoy so use clang/lld instead
-    args << "--config=clang" if OS.linux?
+    if OS.linux?
+      # GCC/ld.gold had some issues while building envoy so use clang/lld instead
+      args << "--config=clang-common"
 
-    # clang 18 introduced stricter thread safety analysis
-    # https://github.com/envoyproxy/envoy/issues/34233
-    args << "--copt=-Wno-thread-safety-reference-return" if DevelopmentTools.clang_version >= 18
+      # Workaround to build with Clang 20 until envoy uses newer dd-trace-cpp (with newer nlohmann-json)
+      # https://github.com/DataDog/dd-trace-cpp/commit/a7d71b5e0599125d5957f7b8d3d56f0bcc6ae485
+      args << "--copt=-Wno-deprecated-literal-operator"
+    end
+
+    # Workaround to build with Xcode 16.3 / Clang 19
+    args << "--copt=-Wno-nullability-completeness" if OS.linux? || DevelopmentTools.clang_build_version >= 1700
 
     # Write the current version SOURCE_VERSION.
     system "python3", "tools/github/write_current_source_version.py", "--skip_error_in_git"
 
     system Formula["bazelisk"].opt_bin/"bazelisk", "build", *args, "//source/exe:envoy-static.stripped"
     bin.install "bazel-bin/source/exe/envoy-static.stripped" => "envoy"
-    pkgshare.install "configs", "examples"
+    pkgshare.install "configs"
   end
 
   test do

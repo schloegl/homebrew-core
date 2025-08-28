@@ -1,8 +1,8 @@
 class Algernon < Formula
   desc "Pure Go web server with Lua, Markdown, HTTP/2 and template support"
   homepage "https://github.com/xyproto/algernon"
-  url "https://github.com/xyproto/algernon/archive/refs/tags/v1.17.1.tar.gz"
-  sha256 "6f1459b80d98c2d4ebc3f1bf025b30671fb93b1b0e457d609dc5b718c7ced3e6"
+  url "https://github.com/xyproto/algernon/archive/refs/tags/v1.17.4.tar.gz"
+  sha256 "ac9dab6c1a6111588ce9572ffc46351e8eda86f495efb9f25ed9ad7dc6f5ac82"
   license "BSD-3-Clause"
   version_scheme 1
   head "https://github.com/xyproto/algernon.git", branch: "main"
@@ -13,14 +13,13 @@ class Algernon < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "c45f36e5ea025e82731d853ab05ead81ed7f214e87fefa46c4402a57463efb12"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "7cb38b790c0fbc31648625a19b166089845ddaf8879fe746c3fa70c88d0de8a3"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "8a85309975e505544f0bfd3a80fea817463c3c859bb55610300781267005ca31"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "e0f7fc7e6ab6af42a32ea004e8bd5f735da517364a034b9721a6bc6bc22d7cb4"
-    sha256 cellar: :any_skip_relocation, sonoma:         "ab5fad785965863223212d9c413737bab66c84446a7baa8d7d0a5eb76dcabb72"
-    sha256 cellar: :any_skip_relocation, ventura:        "02fa8dcdf73bcfbfdab1eb7df5cbf488829aab1ead948c359e783026ae1665e2"
-    sha256 cellar: :any_skip_relocation, monterey:       "54cdbb948add4b80d20c94eaa0fcb04a52e2c874583f187feba95fdf668e3ea7"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "e199ab0fdf72ca39fdbae1f83b51dd59d73e77fa011c46746108fcb3cfcf0511"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "373c1718ad869193e8052898edefdafd7f148402c52e40278ba79cb8261638cf"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "ef49ed9df5d3b02e086635c1646da9b6cb091f9de33528e24f05511169ad2435"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "422ad3c58512082f42a176927c5381a4e04389216c213c448974f66c52c7aae6"
+    sha256 cellar: :any_skip_relocation, sonoma:        "269e77f15bb933c7b14dd3ae92df72709e0cea2e91ad4c58ebb8d4e24a247f9d"
+    sha256 cellar: :any_skip_relocation, ventura:       "30736dcbe2a9c3456b019cf2f7d2d4de6a079c5a627d002203a537ad85d8c6ff"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "1022a6ee40a91870ceebccaf02c7ee9993c4466d4ca407420bcf1ac6c4c3cdad"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "03a33b6a3204128cbdd386108af445fa195ba47b8d03ef5166582614af7943f5"
   end
 
   depends_on "go" => :build

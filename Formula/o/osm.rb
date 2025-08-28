@@ -21,12 +21,13 @@ class Osm < Formula
   end
 
   deprecate! date: "2024-03-10", because: :repo_archived
+  disable! date: "2025-03-24", because: :repo_archived
 
   depends_on "go" => :build
   depends_on "helm" => :build
 
   def install
-    ENV["VERSION"] = "v"+version unless build.head?
+    ENV["VERSION"] = "v"+version if build.stable?
     ENV["BUILD_DATE"] = time.strftime("%Y-%m-%d-%H:%M")
     system "make", "build-osm"
     bin.install "bin/osm"

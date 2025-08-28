@@ -1,25 +1,23 @@
 class Rtl433 < Formula
   desc "Program to decode radio transmissions from devices"
   homepage "https://github.com/merbanan/rtl_433"
-  url "https://github.com/merbanan/rtl_433/archive/refs/tags/23.11.tar.gz"
-  sha256 "1260c58400bf35832ac1b76cb3cccf3dc1335ffa2416909c63c7d7060c74663b"
+  url "https://github.com/merbanan/rtl_433/archive/refs/tags/25.02.tar.gz"
+  sha256 "5a409ea10e6d3d7d4aa5ea91d2d6cc92ebb2d730eb229c7b37ade65458223432"
   license "GPL-2.0-or-later"
-  revision 1
   head "https://github.com/merbanan/rtl_433.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "abecb01e4de144058b3db8eac1c0d6fcd16994f43e97ced92ac43cdc47f0a218"
-    sha256 cellar: :any,                 arm64_sonoma:   "71a64b3bc46e45f9544e4b2c764c2cf329f4965b59701e897521aa3b53a117f8"
-    sha256 cellar: :any,                 arm64_ventura:  "12c177662b3019a2f15bacd8819eb3ca3b52c4540824c48536d947ecc0d8ab3b"
-    sha256 cellar: :any,                 arm64_monterey: "f7ea74abe442aef36c1edcb15cd7d4d3ea13b4da8c7cbc48afbb1c997273f430"
-    sha256 cellar: :any,                 sonoma:         "143e9c0e0dcbbb4a7bc71cc40f6e512abc5da84d64e42a5f2fc7fb47c398af05"
-    sha256 cellar: :any,                 ventura:        "a9064756df95ef0d25eb9f568c5f581e35692300aa9c1356af3fd18a5e491863"
-    sha256 cellar: :any,                 monterey:       "c12dacc2821a946d1418483cd3c01c2818535111077357ae7668e9f5ce5c7ce9"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "86592dfc6a02ae7867d13268f978d45ee86a762eeb4673a21dcf4c60fe466929"
+    sha256 cellar: :any,                 arm64_sequoia: "cadc9ac43692b5342a8d9fd305bf36598ce8e8f9cbcf088f3b87e7117f569f4c"
+    sha256 cellar: :any,                 arm64_sonoma:  "6e8b6406520ac6b02a6d5292ed085c377edc6214dd817e27850a91d1216883b0"
+    sha256 cellar: :any,                 arm64_ventura: "ed54be9e72784603e4e6b1b7b1ae679f15ab03cf1ee92efa7c36151b40b81274"
+    sha256 cellar: :any,                 sonoma:        "9ba535a042f8ea9bb058ae0b78ed860f4a3157ff228b68c2b5dbe7bd9eea8d2e"
+    sha256 cellar: :any,                 ventura:       "e5165eebfca6801f1c588fac131f5b054d37974adc912fc6aead1286e60629f1"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "9381d5020fae59f1a79333b3e52429ed1486b105fa8f7fea786c464724006bea"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2bb83d5f1303cc5aa8dd4d79d7609f0fc9c2ec1d530584a7c7e6648fdd4d0a42"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "librtlsdr"
   depends_on "libusb"
   depends_on "openssl@3"

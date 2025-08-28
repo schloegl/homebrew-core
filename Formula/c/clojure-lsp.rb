@@ -1,23 +1,20 @@
 class ClojureLsp < Formula
   desc "Language Server (LSP) for Clojure"
   homepage "https://github.com/clojure-lsp/clojure-lsp"
-  url "https://github.com/clojure-lsp/clojure-lsp/releases/download/2024.04.22-11.50.26/clojure-lsp-standalone.jar"
-  version "20240422T115026"
-  sha256 "741d7adb6e40ecbde75a996faa56a5fb9821a3e2e6aaa5463cdf5d7dab0a68f9"
+  url "https://github.com/clojure-lsp/clojure-lsp/releases/download/2025.08.25-14.21.46/clojure-lsp-standalone.jar"
+  version "2025.08.25-14.21.46"
+  sha256 "27cf511e0c4b24749141f6d22d3d0c857ee40ccb191168caf11186232c7a7629"
   license "MIT"
+  version_scheme 1
   head "https://github.com/clojure-lsp/clojure-lsp.git", branch: "master"
 
   livecheck do
     url :stable
-    regex(%r{^(?:release[._-])?v?(\d+(?:[T/.-]\d+)+)$}i)
-    strategy :git do |tags, regex|
-      # Convert tags like `2021.03.01-19.18.54` to `20210301T191854` format
-      tags.filter_map { |tag| tag[regex, 1]&.delete(".")&.gsub(%r{[/-]}, "T") }
-    end
+    regex(/^v?(\d{4}(?:[.-]\d+)+)$/i)
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "cd750b83619ba9c37e92cb863d10d6c533d1426fc1dc52e92509bfce02ed20fe"
+    sha256 cellar: :any_skip_relocation, all: "f85f25bcac2090ac9f7ac050341e4b34af1a1432d9e4b8d5c53df2a71a012bc8"
   end
 
   depends_on "openjdk"

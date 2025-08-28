@@ -4,21 +4,22 @@ class SimpleTiles < Formula
   url "https://github.com/propublica/simple-tiles/archive/refs/tags/v0.6.2.tar.gz"
   sha256 "343ae52a0b20ee091b14bc145b7c78fed13b7272acd827626283b70f178dfa34"
   license "MIT"
-  revision 4
+  revision 6
   head "https://github.com/propublica/simple-tiles.git", branch: "master"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "00747024c39d6107fda45fcccdee7c3ed84759cf4305a78a8d765b4569ee59bc"
-    sha256 cellar: :any,                 arm64_sonoma:   "0d53eeb5eb82384782741b1a171ae2ed2001c357ef57e4573a190a68a996b194"
-    sha256 cellar: :any,                 arm64_ventura:  "778d36ddc79b72a993ec3d1b78a52b9b0f1e7297cb273036fc194dce7d3073a5"
-    sha256 cellar: :any,                 arm64_monterey: "37d332d4b687b377a122c2fd965d51516cd70ee5b12f38258f14464d235b23a4"
-    sha256 cellar: :any,                 sonoma:         "af5c779f077ea891fdc5dceb00fc182778727140c54f194be4713c81d19b44bb"
-    sha256 cellar: :any,                 ventura:        "3d4a13f85120b05867e3d92e0c92798dac15d3177321aae163b3deadb729abb6"
-    sha256 cellar: :any,                 monterey:       "d218722daedb29891ef3f4edfbc8a922c3bf247a9a7a74300e0616d21b42ce7b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "05a018f496523df7e44f4199d0c85ff42516f6f29401d23a161e5359e1764e62"
+    sha256 cellar: :any,                 arm64_sequoia: "d3aaa726bd349cc30a81762fd0a1b0601e4d9cf866023c29ff63a6e60226620c"
+    sha256 cellar: :any,                 arm64_sonoma:  "abe65b73e6079f2b796164a3290cff1570ce7a2eeb1c310ebab9ec2160ac97c6"
+    sha256 cellar: :any,                 arm64_ventura: "f49d942f1152dbe63628654fb6063e621b17397ec41c46b1741acd2caaacfd3c"
+    sha256 cellar: :any,                 sonoma:        "3b4ace3dfc2511c747a5dfe7a5ae9b214694d2908b3443c07284883b046df9e2"
+    sha256 cellar: :any,                 ventura:       "bec15845f74bb0ea00e16a708fc4eca25e133357693dd80b3f460b189d93fa0e"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "7b811346839863479eee8eb09a6537da5b7dfcc211cd2e532ffe82989e5111df"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "403a1c58f940fa9bb9bf5d4acccf8b64c88b105c37295220bcd07bc89f3d5282"
   end
 
-  depends_on "pkg-config" => [:build, :test]
+  depends_on "pkgconf" => [:build, :test]
 
   depends_on "cairo"
   depends_on "gdal"
@@ -32,12 +33,16 @@ class SimpleTiles < Formula
     depends_on "harfbuzz"
   end
 
-  # Update waf for python 3.12
-  # Use resource instead of patch since applying corrupts waf
-  # https://github.com/propublica/simple-tiles/pull/23
+  # Update waf for py3.13
   resource "waf" do
-    url "https://raw.githubusercontent.com/propublica/simple-tiles/e402d6463f6afefd96a2e2d5ce630d909ba96af1/waf"
-    sha256 "dcec3e179f9c33a66544f1b3d7d91f20f6373530510fa6a858cddb6bfdcde14b"
+    url "https://raw.githubusercontent.com/propublica/simple-tiles/d4bae6b932ef84cd115cc327651b4fad49557409/waf"
+    sha256 "dd9dd1895f939d288823a7e23d7914c4f9fb018828da64842953e2a857a08713"
+  end
+
+  # update tools/clang_compilation_database.py for py3.13
+  patch do
+    url "https://github.com/propublica/simple-tiles/commit/a6e8b5738bb7b935d0579a5b514c49720e9eeeff.patch?full_index=1"
+    sha256 "b0d9226069b8c5cedd95d3150b46d123a14259a60f79d2827a5a99b9ce6e8944"
   end
 
   def install
@@ -48,7 +53,7 @@ class SimpleTiles < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <simple-tiles/simple_tiles.h>
 
       int main(){
@@ -56,8 +61,8 @@ class SimpleTiles < Formula
         simplet_map_free(map);
         return 0;
       }
-    EOS
-    cflags = shell_output("pkg-config --cflags simple-tiles").chomp.split
+    C
+    cflags = shell_output("pkgconf --cflags simple-tiles").chomp.split
     system ENV.cc, "test.c", *cflags, "-L#{lib}", "-lsimple-tiles", "-o", "test"
     system "./test"
   end

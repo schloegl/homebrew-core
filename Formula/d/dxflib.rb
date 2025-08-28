@@ -10,6 +10,8 @@ class Dxflib < Formula
     regex(/href=.*?dxflib[._-]v?(\d+(?:\.\d+)+)-src\.t/i)
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     sha256 cellar: :any,                 arm64_sonoma:   "b82a6721fde448b539b34656cbde8cdd0699373ca2ce134f7d7424d8cdd29c66"
     sha256 cellar: :any,                 arm64_ventura:  "6807f88414e5cf6c874dd7eebd579298ecc0e99babb950a9a454cc9a55541071"
@@ -49,7 +51,7 @@ class Dxflib < Formula
   test do
     resource("testfile").stage testpath
 
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <dxflib/dl_dxf.h>
       #include <dxflib/dl_creationadapter.h>
 
@@ -71,7 +73,7 @@ class Dxflib < Formula
         if (!dxf->in("cube.dxf", &f)) return 1;
         return 0;
       }
-    EOS
+    CPP
 
     system ENV.cxx, "test.cpp", "-o", "test",
            "-I#{include}/dxflib", "-L#{lib}", "-ldxflib"

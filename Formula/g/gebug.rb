@@ -20,7 +20,6 @@ class Gebug < Formula
   end
 
   depends_on "go" => :build
-  depends_on "docker" => :test
 
   def install
     ldflags = %W[
@@ -38,7 +37,7 @@ class Gebug < Formula
     (testpath/".gebug/docker-compose.yml").write("")
     (testpath/".gebug/Dockerfile").write("")
 
-    assert_match "Failed to perform clean up", shell_output(bin/"gebug clean 2>&1", 1)
-    assert_match version.to_s, shell_output(bin/"gebug version")
+    assert_match "Failed to perform clean up", shell_output("#{bin}/gebug clean 2>&1", 1)
+    assert_match version.to_s, shell_output("#{bin}/gebug version")
   end
 end

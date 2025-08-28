@@ -1,8 +1,8 @@
 class Nqp < Formula
   desc "Lightweight Raku-like environment for virtual machines"
   homepage "https://github.com/Raku/nqp"
-  url "https://github.com/Raku/nqp/releases/download/2024.09/nqp-2024.09.tar.gz"
-  sha256 "03de709b6353c4cc80aeb8ba2ef3fe54ec4bfe04ea6a10c631ca560b58cb181d"
+  url "https://github.com/Raku/nqp/releases/download/2025.06/nqp-2025.06.tar.gz"
+  sha256 "cfb396d6d0114d00f0dc2de4cf5f424fa72968e53c9c7cb75690bcdfd45bfcc5"
   license "Artistic-2.0"
 
   livecheck do
@@ -11,20 +11,18 @@ class Nqp < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia: "19f6ff9e6ee7caf200e224a09910706310d8692be62b1300da783ec2e24996ed"
-    sha256 arm64_sonoma:  "abd3a568acf24cf34839add6f70ff9a63c644a5bc7acf423b161ee851acb2c5c"
-    sha256 arm64_ventura: "889ba7306744be3d4e976098e16ece5ca9dbbf55150d48e930325efce3e9f32e"
-    sha256 sonoma:        "8da32de0a209b358e7ea6b6c478dd7ce34bcb3a0e0b1b25d73d4398014d27cb9"
-    sha256 ventura:       "09d06399e43ac57ecffe03a9aa0d4dc81d3707c2481ce43230cc3c8a804cdae6"
-    sha256 x86_64_linux:  "9972bfd1016fcf35afe5a0efbdfee9cdc47ecadb0cc9b395304d491a6fd4c740"
+    sha256 arm64_sequoia: "314cda261f3731d39b2dbd3b2c3a8c3fd20174ec08c3df1f2fbba50bfc29e10c"
+    sha256 arm64_sonoma:  "169056e41d207dc7a654c05f00f3b1d660405fa3478aa9e1a9b0fa5186ad5339"
+    sha256 arm64_ventura: "edc3a0cfeb895b4788039aa4b13490ca848c85e38a6d6c4bd2a22bd8dbf1c6b7"
+    sha256 sonoma:        "7dbef48daaee380f83a82c33b5df9b48aeca9b5d3d114dafc8a13619063e4e04"
+    sha256 ventura:       "e59ff2f9cfdabcdfff4b7a1d938a6b01a20b6eb41b743ee5d14008a64e8ebcb2"
+    sha256 arm64_linux:   "8d90f9b065b53f99470b196bc321e3d3df76ab0e6bbf3b893fe2a83c29535a54"
+    sha256 x86_64_linux:  "0076a6be82ff837cf5d21177c8a68d406b565ede8352e71033c27f9750e596eb"
   end
 
-  depends_on "libtommath"
-  depends_on "libuv"
   depends_on "moarvm"
 
   uses_from_macos "perl" => :build
-  uses_from_macos "libffi"
 
   conflicts_with "rakudo-star", because: "rakudo-star currently ships with nqp included"
 

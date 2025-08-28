@@ -1,9 +1,9 @@
 class Parallel < Formula
   desc "Shell command parallelization utility"
   homepage "https://savannah.gnu.org/projects/parallel/"
-  url "https://ftp.gnu.org/gnu/parallel/parallel-20240922.tar.bz2"
-  mirror "https://ftpmirror.gnu.org/parallel/parallel-20240922.tar.bz2"
-  sha256 "63210715e8b7c5e129e098f333cd7cdd5fc7a2f325e8e0fb9ed6edba9f1acbc4"
+  url "https://ftpmirror.gnu.org/gnu/parallel/parallel-20250822.tar.bz2"
+  mirror "https://ftp.gnu.org/gnu/parallel/parallel-20250822.tar.bz2"
+  sha256 "019d328722867cffe918c449364308c0df048456c69299b91451a3e6fac9167a"
   license "GPL-3.0-or-later"
   version_scheme 1
   head "https://git.savannah.gnu.org/git/parallel.git", branch: "master"
@@ -14,7 +14,7 @@ class Parallel < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "6be4f585d34d8153288fa1809c6baca932356a4a7c4843dde22f5310d7405bca"
+    sha256 cellar: :any_skip_relocation, all: "2cb6a355d66acced8be0999b8fb6226564249d94319834beb3aba66c428345e0"
   end
 
   conflicts_with "moreutils", because: "both install a `parallel` executable"
@@ -25,19 +25,6 @@ class Parallel < Formula
     system "./configure", "--prefix=#{prefix}"
     system "make", "install"
     bash_completion.install share/"bash-completion/completions/parallel"
-
-    inreplace_files = [
-      bin/"parallel",
-      doc/"parallel.texi",
-      doc/"parallel_design.texi",
-      doc/"parallel_examples.texi",
-      man1/"parallel.1",
-      man7/"parallel_design.7",
-      man7/"parallel_examples.7",
-    ]
-
-    # Ignore `inreplace` failures when building from HEAD or not building a bottle.
-    inreplace inreplace_files, "/usr/local", HOMEBREW_PREFIX, build.stable? && build.bottle?
   end
 
   def caveats

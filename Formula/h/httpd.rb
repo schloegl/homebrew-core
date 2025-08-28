@@ -1,20 +1,19 @@
 class Httpd < Formula
   desc "Apache HTTP server"
   homepage "https://httpd.apache.org/"
-  url "https://dlcdn.apache.org/httpd/httpd-2.4.62.tar.bz2"
-  mirror "https://downloads.apache.org/httpd/httpd-2.4.62.tar.bz2"
-  sha256 "674188e7bf44ced82da8db522da946849e22080d73d16c93f7f4df89e25729ec"
+  url "https://dlcdn.apache.org/httpd/httpd-2.4.65.tar.bz2"
+  mirror "https://downloads.apache.org/httpd/httpd-2.4.65.tar.bz2"
+  sha256 "58b8be97d9940ec17f7656c0c6b9f41b618aac468b894b534148e3296c53b8b3"
   license "Apache-2.0"
 
   bottle do
-    sha256 arm64_sequoia:  "d88e0c77616130710928d131e06659d58b241252cf53068b75d75a54df3d8ab3"
-    sha256 arm64_sonoma:   "e07d024239ee944db52ecebb1997c75e15144b343b347788b36dce01803bd7c0"
-    sha256 arm64_ventura:  "d497edfd46070f9f4552a5535901700cd20f885b48f2a45aa8550ad50b1f7ecc"
-    sha256 arm64_monterey: "f830c872c460dfe78c2a95ac3c21a2e0f432fa7f3e4dadacc0d1026e17d11c8a"
-    sha256 sonoma:         "f487133a012b379bfebc45bc90167a27c47e2a2985623b76f336ccb987638e87"
-    sha256 ventura:        "c3069f33e1bb675a6decd0228263f43a909d0351db6059d70bad2778bc83d36b"
-    sha256 monterey:       "ae984f66ee0b60b8955b6e9720ee7733226248f0bb052d195d9f67dc05b61641"
-    sha256 x86_64_linux:   "5a26f97286ecca3915f6a93910f0c624859205eb27f32756867b03708d98212b"
+    sha256 arm64_sequoia: "91a85b0c7d22e16b835c944594806651227b0740b0d74d8b0cbb5c8df275e27a"
+    sha256 arm64_sonoma:  "d2f0595ffacaefaecff8ab305c88f4f0c68c1f3493b662243c6fdea117d81915"
+    sha256 arm64_ventura: "c335d95bee9dc0d6c39abd07c94a57f019ae6f123c7f7b86929748858bea25b3"
+    sha256 sonoma:        "58446bbfe056b8b0cd590e7c2a41dfad18d75fbf4bca1d05c614cd5b23f30ad5"
+    sha256 ventura:       "f256ac4ff3824cde9a0b9cad87b5c6316f690b88d43d2662df54010f283ccdd0"
+    sha256 arm64_linux:   "ad4d6076d1b2f7e590bd2123438e9bd9bb29cb3b53402da6d5e4f4556af37162"
+    sha256 x86_64_linux:  "88ada0fcb0741422d513bec60d6dce0685ab8286bd640bc46ebc14ce11d5ad12"
   end
 
   depends_on "apr"
@@ -31,7 +30,7 @@ class Httpd < Formula
   def install
     # fixup prefix references in favour of opt_prefix references
     inreplace "Makefile.in",
-      '#@@ServerRoot@@#$(prefix)#', '#@@ServerRoot@@'"##{opt_prefix}#"
+      '#@@ServerRoot@@#$(prefix)#', "\#@@ServerRoot@@##{opt_prefix}#"
     inreplace "docs/conf/extra/httpd-autoindex.conf.in",
       "@exp_iconsdir@", "#{opt_pkgshare}/icons"
     inreplace "docs/conf/extra/httpd-multilang-errordoc.conf.in",
@@ -145,9 +144,9 @@ class Httpd < Formula
 
   test do
     # Ensure modules depending on zlib and xml2 have been compiled
-    assert_predicate lib/"httpd/modules/mod_deflate.so", :exist?
-    assert_predicate lib/"httpd/modules/mod_proxy_html.so", :exist?
-    assert_predicate lib/"httpd/modules/mod_xml2enc.so", :exist?
+    assert_path_exists lib/"httpd/modules/mod_deflate.so"
+    assert_path_exists lib/"httpd/modules/mod_proxy_html.so"
+    assert_path_exists lib/"httpd/modules/mod_xml2enc.so"
 
     begin
       port = free_port
@@ -166,10 +165,10 @@ class Httpd < Formula
         LoadModule mpm_prefork_module #{lib}/httpd/modules/mod_mpm_prefork.so
       EOS
 
-      pid = fork do
-        exec bin/"httpd", "-X", "-f", "#{testpath}/httpd.conf"
-      end
+      pid = spawn bin/"httpd", "-X", "-f", "#{testpath}/httpd.conf"
+
       sleep 3
+      sleep 2 if OS.mac? && Hardware::CPU.intel?
 
       assert_match expected_output, shell_output("curl -s 127.0.0.1:#{port}")
 

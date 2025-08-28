@@ -3,16 +3,15 @@ class Autopep8 < Formula
 
   desc "Automatically formats Python code to conform to the PEP 8 style guide"
   homepage "https://github.com/hhatto/autopep8"
-  url "https://files.pythonhosted.org/packages/6c/52/65556a5f917a4b273fd1b705f98687a6bd721dbc45966f0f6687e90a18b0/autopep8-2.3.1.tar.gz"
-  sha256 "8d6c87eba648fdcfc83e29b788910b8643171c395d9c4bcf115ece035b9c9dda"
+  url "https://files.pythonhosted.org/packages/50/d8/30873d2b7b57dee9263e53d142da044c4600a46f2d28374b3e38b023df16/autopep8-2.3.2.tar.gz"
+  sha256 "89440a4f969197b69a995e4ce0661b031f455a9f776d2c5ba3dbd83466931758"
   license "MIT"
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any_skip_relocation, all: "c2ff29cdf04fe9126d752f6097d6cd0634763d1302c9499b6feac765d89ed1c5"
+    sha256 cellar: :any_skip_relocation, all: "39c0c9c5772b9e788f36085b19638b0259fbf528267f56694e0b92a367941c16"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "pycodestyle" do
     url "https://files.pythonhosted.org/packages/43/aa/210b2c9aedd8c1cbeea31a50e42050ad56187754b34eb214c46709445801/pycodestyle-2.12.1.tar.gz"
@@ -24,7 +23,7 @@ class Autopep8 < Formula
   end
 
   test do
-    output = pipe_output("#{bin}/autopep8 -", "x='homebrew'")
+    output = pipe_output("#{bin}/autopep8 -", "x='homebrew'", 0)
     assert_equal "x = 'homebrew'", output.strip
   end
 end

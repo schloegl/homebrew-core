@@ -1,18 +1,19 @@
 class Mvfst < Formula
   desc "QUIC transport protocol implementation"
   homepage "https://github.com/facebook/mvfst"
-  url "https://github.com/facebook/mvfst/archive/refs/tags/v2024.09.30.00.tar.gz"
-  sha256 "3ee54db3110f26a7f979e016ecb44159fd5ca3992b169b9d31147952d041ef79"
+  url "https://github.com/facebook/mvfst/archive/refs/tags/v2025.08.25.00.tar.gz"
+  sha256 "116b6cf9f3dc82210bc840b5a9a560f4de82756cac9899d5ad7eab52f9a257ec"
   license "MIT"
   head "https://github.com/facebook/mvfst.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "9ac217b5535dc9e7d43b5ff20b68eabb475181ff16a23b423ac9812ce3f8421a"
-    sha256 cellar: :any,                 arm64_sonoma:  "be451b265857a55d304a8454f93d119930dd4a32631cba2fda170ad2301dd9bd"
-    sha256 cellar: :any,                 arm64_ventura: "288b4479fc1679f25d68b727a75d22553cc74c9e48ae8f5c40fb242e95a17b40"
-    sha256 cellar: :any,                 sonoma:        "3c98034d92a56668b55a83ebdc8c2e8bd8b1caade9ef8fcdae11bf5269318d08"
-    sha256 cellar: :any,                 ventura:       "ab2f38f05c9c06762ea4a5e8078091cb66bb53d6575460b56fa7328851ebb104"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5e9f4a4734a434378415cb409a199dcd2f3fa2e01f060c032b69ddd2946c83e9"
+    sha256                               arm64_sequoia: "fd09e7a8a070aa60e18b92984b744628a62c860ef2541e3847a6c95aee962592"
+    sha256                               arm64_sonoma:  "06cc9af6f99321b45b862e89bd0e5937f8d038c78612eb54829dcc2fa8f1248c"
+    sha256                               arm64_ventura: "07fae04f0b06fde8714b7063b0ca0a84ff3468b9772e9685ee87ded02d501d8b"
+    sha256 cellar: :any,                 sonoma:        "8a9e9622b9694cd0d24ebf4fdace9de6ffcca295ce148484fb8a57542f7c1186"
+    sha256 cellar: :any,                 ventura:       "72d410f1d8c261494c974cf117c7ff27f8420c9ed7d6539a93a6c23ca92e2992"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "bd2d44bfa3b632271ea4846c007565057fac7cd8c3856f6ae67fbd2e91342ec1"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "abe01899644db2b168fe3d13f261cbe058d15384d4987d9b8386aeb0eca2c991"
   end
 
   depends_on "cmake" => [:build, :test]
@@ -25,6 +26,12 @@ class Mvfst < Formula
   depends_on "glog"
   depends_on "libsodium"
   depends_on "openssl@3"
+
+  # Fix build with Boost 1.89.0, pr ref: https://github.com/facebook/mvfst/pull/405
+  patch do
+    url "https://github.com/facebook/mvfst/commit/77dfed2a86bd2d065b826c667ae7a26e642a61d9.patch?full_index=1"
+    sha256 "182e642819242a9afe130480fc7eaee5a7f63927efa700b33c0714339e33735c"
+  end
 
   def install
     shared_args = ["-DBUILD_SHARED_LIBS=ON", "-DCMAKE_INSTALL_RPATH=#{rpath}"]
@@ -59,27 +66,30 @@ class Mvfst < Formula
       )
       target_link_libraries(echo ${mvfst_LIBRARIES} fizz::fizz_test_support GTest::gmock)
       target_include_directories(echo PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+      set_target_properties(echo PROPERTIES BUILD_RPATH "#{lib};#{HOMEBREW_PREFIX}/lib")
     CMAKE
 
-    system "cmake", ".", *std_cmake_args
-    system "cmake", "--build", "."
+    system "cmake", "-S", ".", "-B", "build", *std_cmake_args
+    system "cmake", "--build", "build"
 
     server_port = free_port
-    server_pid = spawn "./echo", "--mode", "server",
-                                 "--host", "127.0.0.1", "--port", server_port.to_s
+    server_pid = spawn "./build/echo", "--mode", "server",
+                                       "--host", "127.0.0.1", "--port", server_port.to_s
     sleep 5
 
     Open3.popen3(
-      "./echo", "--mode", "client",
+      "./build/echo", "--mode", "client",
                 "--host", "127.0.0.1", "--port", server_port.to_s
-    ) do |stdin, _, stderr|
+    ) do |stdin, _, stderr, w|
       stdin.write "Hello world!\n"
-      Timeout.timeout(15) do
+      Timeout.timeout(60) do
         stderr.each do |line|
           break if line.include? "Client received data=echo Hello world!"
         end
       end
       stdin.close
+    ensure
+      Process.kill "TERM", w.pid
     end
   ensure
     Process.kill "TERM", server_pid

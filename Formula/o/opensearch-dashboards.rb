@@ -1,29 +1,29 @@
 class OpensearchDashboards < Formula
   desc "Open source visualization dashboards for OpenSearch"
-  homepage "https://opensearch.org/docs/dashboards/index/"
+  homepage "https://docs.opensearch.org/latest/dashboards/"
   url "https://github.com/opensearch-project/OpenSearch-Dashboards.git",
-      tag:      "2.16.0",
-      revision: "4b8826e7ffa6562825ca8aad676a8d89983c2d70"
+      tag:      "3.2.0",
+      revision: "9d91d4639ea0e0cbb909ccfda66de3288d0f02d7"
   license "Apache-2.0"
 
-  bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "29a2a2ffa16ed6b92e66477609c2fa076a732da8a4f87efc2c8912d9d05e0727"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "29a2a2ffa16ed6b92e66477609c2fa076a732da8a4f87efc2c8912d9d05e0727"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "37f6b7eb860603d67c101077883535d4afc3d9292587f5f5b29141544ea57ae3"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "37f6b7eb860603d67c101077883535d4afc3d9292587f5f5b29141544ea57ae3"
-    sha256 cellar: :any_skip_relocation, sonoma:         "51f9b9ccccbe2be9a2101f75e63c35b7e4be3bc79c806b687a29dcc67622427e"
-    sha256 cellar: :any_skip_relocation, ventura:        "49441a8290108bdd2af45495b38939d22b569b5eb006eda1e3ea793e3b8e6337"
-    sha256 cellar: :any_skip_relocation, monterey:       "49441a8290108bdd2af45495b38939d22b569b5eb006eda1e3ea793e3b8e6337"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "ac64ea414f80d36a22d3af482bac52a0fae73f631e708d038ec6f94214f0bb4a"
+  livecheck do
+    url :stable
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
   end
 
-  # Match deprecation date of `node@18`.
-  # disable! date: "2025-04-30", because: "uses deprecated `node@18`"
-  deprecate! date: "2024-10-29", because: "uses deprecated `node@18`"
+  bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "06ef29ddb7b2fae29aea89491c495a359db9cda91ae82b4c5d3be1f5d77cedef"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "5659412cb97b6d9a6e9f9906c85b682bf33220cd017430589decc91eb8ed8e9d"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "910cdadddfa28a1491bc6ea9fcc4680b47c4cbe5faf9db83af7ccc54021c351e"
+    sha256 cellar: :any_skip_relocation, sonoma:        "1150e0e52620adffafa7e393afd2be5874b7ad2eca7fd328f20f831d245a65e4"
+    sha256 cellar: :any_skip_relocation, ventura:       "97d4d7f82fac9fc3f9af0c1e3e7410a3d2593ba51d77f0b9f0754c9afa2fbed8"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "fe915d04e7505a67722abd8cf89156462a9f63c402c1b462ccb79fecd33e8db8"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "af36f450b282678a5c61e29a1c55c1a8b6fe9fc2657af56d5418d295d997b7d9"
+  end
 
   depends_on "yarn" => :build
   depends_on "opensearch" => :test
-  depends_on "node@18"
+  depends_on "node@20"
 
   # - Do not download node and discard all actions related to this node
   patch :DATA
@@ -37,7 +37,7 @@ class OpensearchDashboards < Formula
     cd "build/opensearch-dashboards-#{version}-#{os}-#{arch}" do
       inreplace "bin/use_node",
                 /NODE=".+"/,
-                "NODE=\"#{Formula["node@18"].opt_bin/"node"}\""
+                "NODE=\"#{Formula["node@20"].opt_bin/"node"}\""
 
       inreplace "config/opensearch_dashboards.yml",
                 /#\s*pid\.file: .+$/,
@@ -89,11 +89,11 @@ class OpensearchDashboards < Formula
                                                    "-Epath.logs=#{testpath}/logs"
     end
 
-    (testpath/"config.yml").write <<~EOS
+    (testpath/"config.yml").write <<~YAML
       server.host: "127.0.0.1"
       path.data: #{testpath}/data
       opensearch.hosts: ["http://127.0.0.1:#{os_port}"]
-    EOS
+    YAML
 
     osd_port = free_port
     fork { exec bin/"opensearch-dashboards", "-p", osd_port.to_s, "-c", testpath/"config.yml" }

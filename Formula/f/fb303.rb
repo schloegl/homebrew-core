@@ -1,21 +1,23 @@
 class Fb303 < Formula
   desc "Thrift functions for querying information from a service"
   homepage "https://github.com/facebook/fb303"
-  url "https://github.com/facebook/fb303/archive/refs/tags/v2024.09.30.00.tar.gz"
-  sha256 "1689506cd243c3f20d18b18472b19f91ca8c4bcc4b41939b3bc06194aad38025"
+  url "https://github.com/facebook/fb303/archive/refs/tags/v2025.08.25.00.tar.gz"
+  sha256 "5f7e6d7484ef58a0ffabf1610aa4938b0f6b166255b18cf8c111019972b786d3"
   license "Apache-2.0"
   head "https://github.com/facebook/fb303.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "541d71d3901f6532e67aced500fc35d306f9d271ea0e481388cca54b88c94c03"
-    sha256 cellar: :any,                 arm64_sonoma:  "c38fc6440e28b567530125269dc5ca25fdb43a07fccc46d0480e9e3342ed15a5"
-    sha256 cellar: :any,                 arm64_ventura: "0afe8704b0761ee0f7c82df67ebda795475cfa10cf3595f124494a17e0026170"
-    sha256 cellar: :any,                 sonoma:        "4623c75c3c6c2ac945f14f4519554671929c49eed1544cf728bd2e5c23e4ecf6"
-    sha256 cellar: :any,                 ventura:       "e7fc267fba1a4e6bbea24680381f816bb0d8bf558d16440812e8ad14f41fcd6a"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b92eef87ba49555ed510bfc834a51c460caa643abd8b25b86d13c3c55e97a433"
+    sha256                               arm64_sequoia: "cf2ebcbdfe6f9054633476ea7325605cac64c916895fc8677aab54d07ff6a134"
+    sha256                               arm64_sonoma:  "fdf10643a4fe0867bf70f5f58e874c7aeb7193d4fae8af20d70d75b0722ba915"
+    sha256                               arm64_ventura: "bdf730a32ea672b8c328749e65cb9893607c75f2cce0bc14617b482444bb3c97"
+    sha256 cellar: :any,                 sonoma:        "f8ce0643b0f52ead732009a0b7da2a9779bcf2d21c64eafd201a5c511bec8bb2"
+    sha256 cellar: :any,                 ventura:       "f8d9e62ccacdf5c300a56bf3fef0a961fa622de3dcf38021985d8a8c66c3bccd"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "b9ad26257f8badfd3b5dcba3800296b4711fc35894af8e48cfc3dc374000b654"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b40520ebbe927baea93a9f2f1ecba4e86866d5c4231483ac98548398049091c4"
   end
 
   depends_on "cmake" => :build
+  depends_on "mvfst" => :build
   depends_on "fbthrift"
   depends_on "fizz"
   depends_on "fmt"
@@ -23,8 +25,6 @@ class Fb303 < Formula
   depends_on "gflags"
   depends_on "glog"
   depends_on "openssl@3"
-
-  fails_with gcc: "5" # C++17
 
   def install
     shared_args = ["-DBUILD_SHARED_LIBS=ON", "-DCMAKE_INSTALL_RPATH=#{rpath}"]
@@ -36,7 +36,7 @@ class Fb303 < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include "fb303/thrift/gen-cpp2/BaseService.h"
       #include <iostream>
       int main() {
@@ -44,14 +44,14 @@ class Fb303 < Formula
         std::cout << service.getGeneratedName() << std::endl;
         return 0;
       }
-    EOS
+    CPP
 
     if Tab.for_formula(Formula["folly"]).built_as_bottle
       ENV.remove_from_cflags "-march=native"
       ENV.append_to_cflags "-march=#{Hardware.oldest_cpu}" if Hardware::CPU.intel?
     end
 
-    ENV.append "CXXFLAGS", "-std=c++17"
+    ENV.append "CXXFLAGS", "-std=c++20"
     system ENV.cxx, *ENV.cxxflags.split, "test.cpp", "-o", "test",
                     "-I#{include}", "-I#{Formula["openssl@3"].opt_include}",
                     "-L#{lib}", "-lfb303_thrift_cpp",

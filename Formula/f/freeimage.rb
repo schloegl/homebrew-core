@@ -7,6 +7,8 @@ class Freeimage < Formula
   license "FreeImage"
   head "https://svn.code.sf.net/p/freeimage/svn/FreeImage/trunk/"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     rebuild 3
     sha256 cellar: :any,                 arm64_sequoia:  "0c56e5950270ba19800a0b51d0fb516689c82921c2651c30c9fc17934bfb2fdc"
@@ -52,7 +54,7 @@ class Freeimage < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <stdlib.h>
       #include <FreeImage.h>
       int main() {
@@ -60,7 +62,7 @@ class Freeimage < Formula
          FreeImage_DeInitialise();
          exit(0);
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-I#{include}", "-L#{lib}", "-lfreeimage", "-o", "test"
     system "./test"
   end

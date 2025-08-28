@@ -1,18 +1,18 @@
 class Opa < Formula
   desc "Open source, general-purpose policy engine"
   homepage "https://www.openpolicyagent.org"
-  url "https://github.com/open-policy-agent/opa/archive/refs/tags/v0.69.0.tar.gz"
-  sha256 "1048675edb03e3d6c72a95d9fe3334eb17b63296d0bf8c1b220bd70602877b3a"
+  url "https://github.com/open-policy-agent/opa/archive/refs/tags/v1.8.0.tar.gz"
+  sha256 "739e949f8646c1a6552d3222154f72d66c6b1c8f3373382199b1f368a3efb592"
   license "Apache-2.0"
   head "https://github.com/open-policy-agent/opa.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "7e83db47e02982c3fa24a8354fdd7b654c593953d9d4ec04b4d5376ea511e1f8"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "2f1561f1c7bfce6411cb8e0ee109cacc77d0446c9373084de77eec41300ace9c"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "e0af7005edaef4b73acb66603a3718e9ba354d9f9179ca4cad32d4acd89c2c83"
-    sha256 cellar: :any_skip_relocation, sonoma:        "c4e536e222d36fef62b07922d2f8e6e343b8876133a1fed3605c8ac409267aea"
-    sha256 cellar: :any_skip_relocation, ventura:       "616febbc5474c059029fce73fc3585a7919e2d364284bcd6ffda9fe3016de579"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "97eb07c1e015110e89ab1e26851ce13c70e417ea124f2b590af2dfd6f4bceb06"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "4660ed252a6c442c9c9de921efc14a4a72a71c9ae7c009c08ef7590bee10d054"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "cae863293d08e4d2ad9010a570217132f68107350994f5d749587cf1dbb0877c"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "71e2b6c349dc354803013d1d61ffc72e3f862899e2fdfba7c4a99cdeb9069eae"
+    sha256 cellar: :any_skip_relocation, sonoma:        "39236467077df9112eb5daab7793fa407725406c87b24578d7710801e375599e"
+    sha256 cellar: :any_skip_relocation, ventura:       "e64e8bc13056ee0bda277658009cdbd2d1d965fa6f0a6705fe8a4215af582f80"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "389f5252380738f92ade864a04d9283eadf5217ce0a965141c6843ef379978e7"
   end
 
   depends_on "go" => :build

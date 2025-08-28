@@ -1,18 +1,19 @@
 class Usage < Formula
   desc "Tool for working with usage-spec CLIs"
   homepage "https://usage.jdx.dev/"
-  url "https://github.com/jdx/usage/archive/refs/tags/v0.8.4.tar.gz"
-  sha256 "7f1a0fa1442bd6e09c4e471e0f62c129cbabcdf6050e3e69c0ad3780e6b93aca"
+  url "https://github.com/jdx/usage/archive/refs/tags/v2.2.2.tar.gz"
+  sha256 "76dfbe9b31769d386f8932ead95afd98f60efd0ac0069879e86e45274e5e93fe"
   license "MIT"
   head "https://github.com/jdx/usage.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "8cbafe56f4c76327b2e746d7ef8246f5c7d44d0b5ef67d3402c1960255479fb8"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "5b35c295f8daf4fa29581f2db2abc150852904dc40ff86c04b89fb64d3d39097"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "efd823995d97dac25d582ac7817ff8692eec7845c202fcff3601374faf00b554"
-    sha256 cellar: :any_skip_relocation, sonoma:        "1ed192b30d2c756bcba2199c646b8e5c32beb00ecfb10c824584d051bd54755f"
-    sha256 cellar: :any_skip_relocation, ventura:       "318589cb743138493a9ddc96ced68ac11a10f9510b3c0501f943489a001d6467"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c10ac4f297776fad2e03a82e61b42cee76ad8a508aa02fffae89d3a4468081e5"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "71aec98b26ebdceca78f743b994dcebacbadef9c43984bda9524745433c904f6"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "a8f32020592139dae98c5cf4b2a476d1b879b0b265e819f22b7456e104a3dcde"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "56d420afffb8ce61c2276422ce4033e761a95c638d6711b1f30e28b878a4c104"
+    sha256 cellar: :any_skip_relocation, sonoma:        "96a777701a31a8788531a957a737c81c8b8594a963821136b7fe31ee372423ee"
+    sha256 cellar: :any_skip_relocation, ventura:       "bfd34239df5f6c1bc38132303bbaf7320934f38223dace37808004ec20a981f2"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "c496e6964537e432e115820e5edb9a35cd6c8c8f3708e3734953bf63195cdeef"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5fd3d32455d435866ae3f8abc9a318f21e6b5d9c73676829181c532af9e14416"
   end
 
   depends_on "rust" => :build
@@ -22,7 +23,7 @@ class Usage < Formula
   end
 
   test do
-    assert_match "usage-cli", shell_output(bin/"usage --version").chomp
-    assert_equal "--foo", shell_output(bin/"usage complete-word --spec 'flag \"--foo\"' -").chomp
+    assert_match "usage-cli", shell_output("#{bin}/usage --version").chomp
+    assert_equal "--foo", shell_output("#{bin}/usage complete-word --spec 'flag \"--foo\"' -").chomp
   end
 end

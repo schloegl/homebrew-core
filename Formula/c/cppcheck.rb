@@ -1,8 +1,8 @@
 class Cppcheck < Formula
   desc "Static analysis of C and C++ code"
   homepage "https://sourceforge.net/projects/cppcheck/"
-  url "https://github.com/danmar/cppcheck/archive/refs/tags/2.15.0.tar.gz"
-  sha256 "98bcc40ac8062635b492fb096d7815376a176ae26749d6c708083f4637f7c0bb"
+  url "https://github.com/danmar/cppcheck/archive/refs/tags/2.18.0.tar.gz"
+  sha256 "dc74e300ac59f2ef9f9c05c21d48ae4c8dd1ce17f08914dd30c738ff482e748f"
   license "GPL-3.0-or-later"
   head "https://github.com/danmar/cppcheck.git", branch: "main"
 
@@ -15,32 +15,32 @@ class Cppcheck < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "3ea489375f8c4c924b50ccbe0a87d6483f11cc05eac21c6bf72cb8759587b97f"
-    sha256 arm64_sonoma:   "9f5ec5154d362414f230ad9b94567fc43472e654282b2d9a70a0a33d5153ab36"
-    sha256 arm64_ventura:  "0d3c433850bed501f2c819024ea16065acbec6111ca28141a5afe77704df2945"
-    sha256 arm64_monterey: "3a5d4211496ee5c5980725b239a6a896aaa5053415992764a82711679c23bcaa"
-    sha256 sonoma:         "bdfc1329eed78facd99a182463bc342d7e6a58bf679492a6a19758fac778c63c"
-    sha256 ventura:        "1207bb2fe229239e94c194ee7c7bc8b80ada5e23eebc29145c7ccbb786374e47"
-    sha256 monterey:       "fa7dc521b729821186cf9b6a0b846ed7559c03e27533108edc3447de33a0d393"
-    sha256 x86_64_linux:   "64be07e02d9965a951e708fc8e3463eb9ab7dca8e27c79e58a72e7e67b76e024"
+    sha256 arm64_sequoia: "eb0097b36c50984dbb4704c8b92fc9ddc3539b3b0aadacb3447da6d23ddcd8d7"
+    sha256 arm64_sonoma:  "c06383cecb03fc3211e5b454793ef27933502cc15fa82e5c691b74d232818159"
+    sha256 arm64_ventura: "b76f080212e75b4974ab8e9a7fd436cc40366a0f8f21263d9b2773f389d59a5e"
+    sha256 sonoma:        "e201b7dac8a206ce0666b1b45057145f4bfac0392618f309a20af1d6a653e367"
+    sha256 ventura:       "abb6c2780925ded8421fbe46c69266b6ae715e562ad6f4e8092be5d8bc69fc50"
+    sha256 arm64_linux:   "320398fbfeed342b0a4886ae92483bfc7031f75dfa1fe3758b578fb0addaac24"
+    sha256 x86_64_linux:  "bc93065d64304be2541b1ad5bb86588e6020a7e3a935e1415836b65d6f7200a5"
   end
 
   depends_on "cmake" => :build
-  depends_on "python@3.12" => [:build, :test]
+  depends_on "python@3.13" => [:build, :test]
   depends_on "pcre"
   depends_on "tinyxml2"
 
   uses_from_macos "libxml2"
 
   def python3
-    which("python3.12")
+    which("python3.13")
   end
 
   def install
+    ENV.deparallelize
+
     args = %W[
       -DHAVE_RULES=ON
       -DUSE_BUNDLED_TINYXML2=OFF
-      -DENABLE_OSS_FUZZ=OFF
       -DPYTHON_EXECUTABLE=#{python3}
       -DFILESDIR=#{pkgshare}
     ]
@@ -53,7 +53,7 @@ class Cppcheck < Formula
   test do
     # Execution test with an input .cpp file
     test_cpp_file = testpath/"test.cpp"
-    test_cpp_file.write <<~EOS
+    test_cpp_file.write <<~CPP
       #include <iostream>
       using namespace std;
 
@@ -76,19 +76,19 @@ class Cppcheck < Formula
       {
         number = initialNumber;
       }
-    EOS
+    CPP
     system bin/"cppcheck", test_cpp_file
 
     # Test the "out of bounds" check
     test_cpp_file_check = testpath/"testcheck.cpp"
-    test_cpp_file_check.write <<~EOS
+    test_cpp_file_check.write <<~CPP
       int main()
       {
         char a[10];
         a[10] = 0;
         return 0;
       }
-    EOS
+    CPP
     output = shell_output("#{bin}/cppcheck #{test_cpp_file_check} 2>&1")
     assert_match "out of bounds", output
 
@@ -102,7 +102,7 @@ class Cppcheck < Formula
     assert_parse_message = "Error: sampleaddon.py: failed: can't parse the #{name} dump."
 
     sample_addon_file = testpath/"sampleaddon.py"
-    sample_addon_file.write <<~EOS
+    sample_addon_file.write <<~PYTHON
       #!/usr/bin/env #{python3}
       """A simple test addon for #{name}, prints function names and token count"""
       import sys
@@ -123,11 +123,11 @@ class Cppcheck < Formula
           detected_token_count = len(fConfig.tokenlist)
           # Print the function names on the first line and the token count on the second
           print("%s\\n%s" %(detected_functions, detected_token_count))
-    EOS
+    PYTHON
 
     system bin/"cppcheck", "--dump", test_cpp_file
     test_cpp_file_dump = "#{test_cpp_file}.dump"
-    assert_predicate testpath/test_cpp_file_dump, :exist?
+    assert_path_exists testpath/test_cpp_file_dump
     output = shell_output("#{python3} #{sample_addon_file} #{test_cpp_file_dump}")
     assert_match "#{expect_function_names}\n#{expect_token_count}", output
   end

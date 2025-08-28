@@ -1,24 +1,25 @@
 class Partio < Formula
   desc "Particle library for 3D graphics"
   homepage "https://github.com/wdas/partio"
-  url "https://github.com/wdas/partio/archive/refs/tags/v1.17.3.tar.gz"
-  sha256 "08a571ca75cf133f373415dfd50b7d0e33a0dd1811dfb63409f0ae46652033c1"
+  url "https://github.com/wdas/partio/archive/refs/tags/v1.19.0.tar.gz"
+  sha256 "128913266a88a0939aaa4bc951ae4d4da1c380408bcc0ea9e7f526556afeaad0"
   license "BSD-3-Clause"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "413ac13271b05b1b3914de6d024d20c3e9db2599d4873084f37a8e68d899d614"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "797ccfe2fbd825a19397be286127b6324e0f667adbfe1cb7ed55e3dbebb0738d"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "f94e796a8de500173d1f38abb5dfd2df90efd79b53f3eb0c720a29a262178c68"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "a454868fbfb8cae81d7378f2cceb8a0a80090e68be97b951fcf8112e286416e1"
-    sha256 cellar: :any_skip_relocation, sonoma:         "b6471ee7399bb0a5716d8da41ebd57a67650f65829b56d36ad74732b29e489a2"
-    sha256 cellar: :any_skip_relocation, ventura:        "a962b61c79ebbf651f653e5199a44ca809057dc3c771b511bd354babfe711880"
-    sha256 cellar: :any_skip_relocation, monterey:       "673b079ad6d8a85208d26a41412e6d9f79182e200fa9e8f56ef74f099ce61b32"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "484bcec4c5896ca121126bf1a1ea79f82e4babfac09461e164a8aa77c8d9d752"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "d590d5b336289ccc4cd9f862c647d95bbd69f338667fe20b7919b85aaa0be0cd"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "915f63605c761393c849667661d157e7dea78ad590877de5b5bac17e94c746a6"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "7b11218fc52dd89ebea09525a28d6c545598962faf5b9faf63607c357944fcc5"
+    sha256 cellar: :any_skip_relocation, sonoma:        "95b4c5061132adf97267f3a52c0a35476124df0f40ad54c93d7e0c141605277f"
+    sha256 cellar: :any_skip_relocation, ventura:       "7300f161aaa679f5798b6a8bab305da1a22777b5a17e6a07ee7e4d2b750ba93e"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "5866cdd8c7d761d3cacdea80dc76cf177dc986e9b0b2e2518b2d325b2b556a76"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5376a76f425c703390142d15aec36b56a8b14cd9ef133abca229838a377c238c"
   end
 
   depends_on "cmake" => :build
   depends_on "doxygen" => :build
-  depends_on "python@3.12"
+  depends_on "python@3.13"
+
+  uses_from_macos "zlib"
 
   on_linux do
     depends_on "freeglut"

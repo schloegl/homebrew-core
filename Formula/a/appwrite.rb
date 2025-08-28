@@ -1,26 +1,28 @@
 class Appwrite < Formula
   desc "Command-line tool for Appwrite"
   homepage "https://appwrite.io"
-  url "https://registry.npmjs.org/appwrite-cli/-/appwrite-cli-6.0.0.tgz"
-  sha256 "2e30ad57d2b93b0debdde67aae2996f29e77c82164ff8d335ec1ecfa7c5391e8"
+  url "https://registry.npmjs.org/appwrite-cli/-/appwrite-cli-9.0.2.tgz"
+  sha256 "971b1e32014af3374756eb6b9cec3f42883774cf215ca50bb2c9a3d8844af867"
   license "BSD-3-Clause"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "6ee7a434b8b43e7ed20a91ab40df740fade43c3e13ed0b976395edad1c6b8cbb"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "6ee7a434b8b43e7ed20a91ab40df740fade43c3e13ed0b976395edad1c6b8cbb"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "6ee7a434b8b43e7ed20a91ab40df740fade43c3e13ed0b976395edad1c6b8cbb"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "6ee7a434b8b43e7ed20a91ab40df740fade43c3e13ed0b976395edad1c6b8cbb"
-    sha256 cellar: :any_skip_relocation, sonoma:         "ec46bc84cc8bf0819d01714db93049ded7be0c6ec64f687b013ff5f6fb0a9542"
-    sha256 cellar: :any_skip_relocation, ventura:        "ec46bc84cc8bf0819d01714db93049ded7be0c6ec64f687b013ff5f6fb0a9542"
-    sha256 cellar: :any_skip_relocation, monterey:       "ec46bc84cc8bf0819d01714db93049ded7be0c6ec64f687b013ff5f6fb0a9542"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "6ee7a434b8b43e7ed20a91ab40df740fade43c3e13ed0b976395edad1c6b8cbb"
+    sha256 cellar: :any_skip_relocation, all: "f1f0e4b62bf6a6d470f057f8c532d086bf1aea313db2525f542ba64391c3e17e"
   end
 
   depends_on "node"
 
   def install
     system "npm", "install", *std_npm_args
-    bin.install_symlink Dir["#{libexec}/bin/*"]
+    bin.install_symlink libexec.glob("bin/*")
+
+    # Ensure uniform bottles
+    file = libexec/"lib/node_modules/appwrite-cli/lib/commands/update.js"
+    homebrew_check_str = "scriptPath.includes('/opt/homebrew/') || scriptPath.includes('/usr/local/Cellar/')"
+    inreplace file do |s|
+      s.gsub! "scriptPath.includes('/usr/local/lib/node_modules/')", "scriptPath.includes('/lib/node_modules/')"
+      s.gsub! "scriptPath.includes('/opt/homebrew/lib/node_modules/') ||", ""
+      s.gsub! homebrew_check_str, "true"
+    end
   end
 
   test do

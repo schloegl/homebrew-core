@@ -1,8 +1,8 @@
 class OpenjdkAT21 < Formula
   desc "Development kit for the Java programming language"
   homepage "https://openjdk.java.net/"
-  url "https://github.com/openjdk/jdk21u/archive/refs/tags/jdk-21.0.4-ga.tar.gz"
-  sha256 "9223a0f1db1b7ee0ca480e010d6473a8be72eaae93d883fd31ef9ba6dcc41014"
+  url "https://github.com/openjdk/jdk21u/archive/refs/tags/jdk-21.0.8-ga.tar.gz"
+  sha256 "e0758d17991a51967931854523ca6e287eb4240f0b3e3bc231b2ddb0e77cf71b"
   license "GPL-2.0-only" => { with: "Classpath-exception-2.0" }
 
   livecheck do
@@ -11,19 +11,19 @@ class OpenjdkAT21 < Formula
   end
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any, arm64_sequoia: "ff9be059a2b547f3cfdddb1b792d685364bc16de5eaa9f5ae8445427406c2c42"
-    sha256 cellar: :any, arm64_sonoma:  "662eb304057aca4c0cc576ae5d8a6c758cca8c74a1b4fccae1c907e230f058e5"
-    sha256 cellar: :any, arm64_ventura: "ba67b3a2342fca6c59979ccb74635c93e5175a403f48c5f45e86ad2c31e3d2a1"
-    sha256 cellar: :any, sonoma:        "fda375d3c9a697bdb4ae19828119c70197df8a66c8016cb77bc964abbbf48f19"
-    sha256 cellar: :any, ventura:       "ef7bda0b95553f2bc976a96737c950a2cecfd44b14543924edde5e1373a4da99"
-    sha256               x86_64_linux:  "6af28eff1edd803ef9893b52897854a9a09c97993133fb5850a8410cc0b67a98"
+    sha256 cellar: :any, arm64_sequoia: "865c05515d99ac49635f867517dee4a8356e90aadbdc272f4cee56f22a41ee56"
+    sha256 cellar: :any, arm64_sonoma:  "785691d172261b88b6e02647ad4402cf0fdfae0223060f2b0e9b95bc8ab9da66"
+    sha256 cellar: :any, arm64_ventura: "f550a6dabf40631b821d7e79fa89d97df12afc612e77fe2c3a45b23ac7cd375f"
+    sha256 cellar: :any, sonoma:        "8d6cc829ea05e01e2e200e53e640097488f2fec6ab1a1a9c26463459e75991cb"
+    sha256 cellar: :any, ventura:       "4cbf978228dc5f794ecd07028ba30f6321c68955bd46ea68bdc420f8aba4de66"
+    sha256               arm64_linux:   "291e0c47acb9b6617cb1788e76f5047805b1884d0538c72dee1dfe1f4c69094b"
+    sha256               x86_64_linux:  "55ca3f90fda31589fdf2b659af076f53010193208c3e498ed548344a1d836e46"
   end
 
   keg_only :versioned_formula
 
   depends_on "autoconf" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on xcode: :build # for metal
   depends_on "freetype"
   depends_on "giflib"
@@ -38,19 +38,6 @@ class OpenjdkAT21 < Formula
   uses_from_macos "zip"
   uses_from_macos "zlib"
 
-  on_macos do
-    if DevelopmentTools.clang_build_version == 1600
-      depends_on "llvm" => :build
-
-      fails_with :clang do
-        cause <<~EOS
-          Error: Unable to initialize main class build.tools.jigsaw.AddPackagesAttribute
-          Caused by: java.lang.ClassFormatError: StackMapTable format error: access beyond the end of attribute
-        EOS
-      end
-    end
-  end
-
   on_linux do
     depends_on "alsa-lib"
     depends_on "fontconfig"
@@ -62,8 +49,6 @@ class OpenjdkAT21 < Formula
     depends_on "libxt"
     depends_on "libxtst"
   end
-
-  fails_with gcc: "5"
 
   # From https://jdk.java.net/archive/
   resource "boot-jdk" do
@@ -90,12 +75,6 @@ class OpenjdkAT21 < Formula
   end
 
   def install
-    if DevelopmentTools.clang_build_version == 1600
-      ENV.llvm_clang
-      # Prevent linkage with LLVM libunwind.
-      ENV.remove "HOMEBREW_LIBRARY_PATHS", Formula["llvm"].opt_lib
-    end
-
     boot_jdk = buildpath/"boot-jdk"
     resource("boot-jdk").stage boot_jdk
     boot_jdk /= "Contents/Home" if OS.mac?
@@ -148,6 +127,10 @@ class OpenjdkAT21 < Formula
     end
     args << "--with-extra-ldflags=#{ldflags.join(" ")}"
 
+    if DevelopmentTools.clang_build_version == 1600
+      args << "--with-extra-cflags=-mllvm -enable-constraint-elimination=0"
+    end
+
     system "bash", "configure", *args
 
     ENV["MAKEFLAGS"] = "JOBS=#{ENV.make_jobs}"
@@ -177,13 +160,13 @@ class OpenjdkAT21 < Formula
   end
 
   test do
-    (testpath/"HelloWorld.java").write <<~EOS
+    (testpath/"HelloWorld.java").write <<~JAVA
       class HelloWorld {
         public static void main(String args[]) {
           System.out.println("Hello, world!");
         }
       }
-    EOS
+    JAVA
 
     system bin/"javac", "HelloWorld.java"
 

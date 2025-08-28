@@ -1,8 +1,8 @@
 class Openjdk < Formula
   desc "Development kit for the Java programming language"
   homepage "https://openjdk.java.net/"
-  url "https://github.com/openjdk/jdk23u/archive/refs/tags/jdk-23-ga.tar.gz"
-  sha256 "02e2c3b356c00c3cc7efcca2fbd37723f55349677a1de483a9be8a43f327de76"
+  url "https://github.com/openjdk/jdk24u/archive/refs/tags/jdk-24.0.2-ga.tar.gz"
+  sha256 "d5a1b364de4335d86590d2e91eb8fce0560ade28759734c531915b8293e502e8"
   license "GPL-2.0-only" => { with: "Classpath-exception-2.0" }
 
   livecheck do
@@ -11,19 +11,19 @@ class Openjdk < Formula
   end
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any, arm64_sequoia: "ababf9f922e2c91039ac07209e7e66ee1d5e55f7cbadae25597ce2d1324e328f"
-    sha256 cellar: :any, arm64_sonoma:  "0ba02cbe94e2fc2b1aec69f0e9a624cc8944055170f1b7ca4241ad4fc3b3ac7c"
-    sha256 cellar: :any, arm64_ventura: "e4d1c93665666a4b66b8b47d381e0ce2e1a7d3d615f20739ae216f92cd8d64e5"
-    sha256 cellar: :any, sonoma:        "caaf8ccee728ec17e0ceb124433c8a627084446c79a1041baf8908b8fd5c78a0"
-    sha256 cellar: :any, ventura:       "e2804a8040a8fd46fed466f103391f314be906e64d5c349963ee81cdd8e13742"
-    sha256               x86_64_linux:  "82fc99187027bf29857ea070a092b41ce76169bbedad8a91177c60f1d405829d"
+    sha256 cellar: :any, arm64_sequoia: "8bf81e5d8275e7f3254ea8763d35c31817493acd1aab32c2325cbf1bf24d9176"
+    sha256 cellar: :any, arm64_sonoma:  "53b07864628ca14780510d3b0e45e4e508c249730d303ae088fc011692cd556c"
+    sha256 cellar: :any, arm64_ventura: "7fbdfb2880f604f5b13e1fcee174c6b6492f8eddffbdc154bd9f6a769f686219"
+    sha256 cellar: :any, sonoma:        "e85b2b4420e2712200e13241cd90df9a2117682fb81aac422812310d42b403cc"
+    sha256 cellar: :any, ventura:       "1ba92e820302e56e7f9c6957ac9dca4dc42be95550d49836287353998f843484"
+    sha256               arm64_linux:   "95971b5825bf1982a8c7c9b22b17834fdd8cd12e4af31ba0fa98b88137398bbe"
+    sha256               x86_64_linux:  "b4ef478b28eaf1ea4670e286161417a2eb0cc89cc75b6ce06f0d7dbe481ab620"
   end
 
   keg_only :shadowed_by_macos
 
   depends_on "autoconf" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on xcode: :build # for metal
   depends_on "freetype"
   depends_on "giflib"
@@ -38,20 +38,6 @@ class Openjdk < Formula
   uses_from_macos "zip"
   uses_from_macos "zlib"
 
-  on_macos do
-    if DevelopmentTools.clang_build_version == 1600
-      depends_on "llvm" => :build
-
-      fails_with :clang do
-        cause <<~EOS
-          Exception in thread "main" java.lang.ClassFormatError: StackMapTable format error: bad verification type
-            at jdk.compiler/com.sun.tools.javac.Main.compile(Main.java:64)
-            at jdk.compiler/com.sun.tools.javac.Main.main(Main.java:52)
-        EOS
-      end
-    end
-  end
-
   on_linux do
     depends_on "alsa-lib"
     depends_on "fontconfig"
@@ -64,49 +50,40 @@ class Openjdk < Formula
     depends_on "libxtst"
   end
 
-  fails_with gcc: "5"
-
   # From https://jdk.java.net/archive/
   resource "boot-jdk" do
     on_macos do
       on_arm do
-        url "https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4581645e8/9/GPL/openjdk-22.0.2_macos-aarch64_bin.tar.gz"
-        sha256 "3dab98730234e1a87aec14bcb8171d2cae101e96ff4eed1dab96abbb08e843fd"
+        url "https://download.java.net/java/GA/jdk23.0.2/6da2a6609d6e406f85c491fcb119101b/7/GPL/openjdk-23.0.2_macos-aarch64_bin.tar.gz"
+        sha256 "bff699bb27455c2bb51d6e8f2467b77a4833388412aa2d95ec1970ddfb0e7b6c"
       end
       on_intel do
-        url "https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4581645e8/9/GPL/openjdk-22.0.2_macos-x64_bin.tar.gz"
-        sha256 "e8b3ec7a7077711223d31156e771f11723cd7af31c2017f1bd2eda20855940fb"
+        url "https://download.java.net/java/GA/jdk23.0.2/6da2a6609d6e406f85c491fcb119101b/7/GPL/openjdk-23.0.2_macos-x64_bin.tar.gz"
+        sha256 "b4cc7d7b51520e99308e1b4d3f8467790072c42319b9d3838ec8cfd4f69f0bc1"
       end
     end
     on_linux do
       on_arm do
-        url "https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4581645e8/9/GPL/openjdk-22.0.2_linux-aarch64_bin.tar.gz"
-        sha256 "25fba2bd5585e1e9923134dc827f2bd5a2beaca3d242ae00b7e68c152faf7ba6"
+        url "https://download.java.net/java/GA/jdk23.0.2/6da2a6609d6e406f85c491fcb119101b/7/GPL/openjdk-23.0.2_linux-aarch64_bin.tar.gz"
+        sha256 "8e9b2c7e0f138de785dc754ad1dfa067671de66672b5e84bb7f6f6c219a6b02b"
       end
       on_intel do
-        url "https://download.java.net/java/GA/jdk22.0.2/c9ecb94cd31b495da20a27d4581645e8/9/GPL/openjdk-22.0.2_linux-x64_bin.tar.gz"
-        sha256 "41536f115668308ecf4eba92aaf6acaeb0936225828b741efd83b6173ba82963"
+        url "https://download.java.net/java/GA/jdk23.0.2/6da2a6609d6e406f85c491fcb119101b/7/GPL/openjdk-23.0.2_linux-x64_bin.tar.gz"
+        sha256 "017f4ed8e8234d85e5bc1e490bb86f23599eadb6cfc9937ee87007b977a7d762"
       end
     end
-  end
-
-  # Fix build with `--with-harfbuzz=system`.
-  # https://github.com/openjdk/jdk/pull/19739
-  patch do
-    url "https://github.com/openjdk/jdk/commit/ba5a4670b8ad86fefb41a939752754bf36aac9dc.patch?full_index=1"
-    sha256 "ff6c66f3fa81bef3fb18e88196c520cfa867aa5d57ebf26574635723b4d06d16"
   end
 
   def install
-    if DevelopmentTools.clang_build_version == 1600
-      ENV.llvm_clang
-      ENV.remove "HOMEBREW_LIBRARY_PATHS", Formula["llvm"].opt_lib
-    end
-
     boot_jdk = buildpath/"boot-jdk"
     resource("boot-jdk").stage boot_jdk
     boot_jdk /= "Contents/Home" if OS.mac?
     java_options = ENV.delete("_JAVA_OPTIONS")
+
+    # Remove the offending ISO-8859-1 resource (JDK-8354449)
+    # upstream pr ref, https://github.com/openjdk/jdk24u/pull/220
+    rm "src/java.xml.crypto/share/classes/com/sun/org/apache/xml/internal/security/resource/xmlsecurity_de.properties"
+    odie "Remove the above resource patch" if build.stable? && version.major > "24"
 
     args = %W[
       --disable-warnings-as-errors
@@ -158,6 +135,11 @@ class Openjdk < Formula
     end
     args << "--with-extra-ldflags=#{ldflags.join(" ")}"
 
+    # Workaround for Xcode 16 bug: https://bugs.openjdk.org/browse/JDK-8340341.
+    if DevelopmentTools.clang_build_version == 1600
+      args << "--with-extra-cflags=-mllvm -enable-constraint-elimination=0"
+    end
+
     system "bash", "configure", *args
 
     ENV["MAKEFLAGS"] = "JOBS=#{ENV.make_jobs}"
@@ -187,13 +169,13 @@ class Openjdk < Formula
   end
 
   test do
-    (testpath/"HelloWorld.java").write <<~EOS
+    (testpath/"HelloWorld.java").write <<~JAVA
       class HelloWorld {
         public static void main(String args[]) {
           System.out.println("Hello, world!");
         }
       }
-    EOS
+    JAVA
 
     system bin/"javac", "HelloWorld.java"
 

@@ -1,8 +1,8 @@
 class Vttest < Formula
   desc "Test compatibility of VT100-compatible terminals"
   homepage "https://invisible-island.net/vttest/"
-  url "https://invisible-mirror.net/archives/vttest/vttest-20240708.tgz", using: :homebrew_curl
-  sha256 "c195449eb2d2299ca3c0a24788a9aab569fe41c2e0e83128b5c29ba96e5abb1b"
+  url "https://invisible-mirror.net/archives/vttest/vttest-20241208.tgz"
+  sha256 "8fee3bac7e87d4aa4a217bd2b38ab9910c3b8cf9a605b450c76ccc0ad2a6519d"
   license "BSD-3-Clause"
 
   livecheck do
@@ -10,15 +10,16 @@ class Vttest < Formula
     regex(/href=.*?vttest[._-]v?(\d+(?:[.-]\d+)*)\.t/i)
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "ccdcaaabe61dece07d72f9b6077b0387c6f3a42ae1d678b6c5269e4aeb861271"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "69c97efb95a1b780b9ca1702a22084de2830c512db6df2f5e4b34bfe13c4fc8b"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "713a46c6a0df4a65d990814d46d956862776ccfc5be0931c08466206b8cdf5d0"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "77819cca774ece7bb3374e5ad014b47ac6cd26ef614facc5faa82e10adb51942"
-    sha256 cellar: :any_skip_relocation, sonoma:         "f7ffde78f54131579ce5915951fa80fcb65deb3fb907caef736ffb1e23f23822"
-    sha256 cellar: :any_skip_relocation, ventura:        "d5b0a9c2ec0f68c7c2b0d8e9ba2770d0ca7b714da718f96c0a112cfb3f41bb98"
-    sha256 cellar: :any_skip_relocation, monterey:       "94015c34c88bbfb880374ee0e8bd8b2c57ff95afe2c728cfc2a9c04443642dd7"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "11e8aede521accf9eb5c66a9d6651d5c6934b37bbe022edec647ab2bcd210f0b"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "5c0bf421235c658ec8217bcb7a68799df68c5f060b05940bb20f97e7fb43a7b3"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "7cdb02a9f59bf22b59a6efb440d27427e380fb411d7408b2cece68856c120ca8"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "5ce70a33f514b64a73dd2012c56b0654a599cae4df45d7987f76ae50f6c84a6c"
+    sha256 cellar: :any_skip_relocation, sonoma:        "f6297dcf4f42e03066edf5ecf2440a4c40e19a63a57f3dd1857600adeb29422c"
+    sha256 cellar: :any_skip_relocation, ventura:       "1fa08429b674d918c8e3c4f68c070228f155fce751bfde191875b65f34a455de"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "a961a2d59fc8e50c696c22fa6b129751d3c8eefbff8778abd51f6c67597d31ab"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e0e0ebc43609027dc1615b1b71dd18f1d4a7e662cee41e3cd57ea480130f5205"
   end
 
   def install
@@ -28,6 +29,6 @@ class Vttest < Formula
   end
 
   test do
-    assert_match version.to_s, shell_output(bin/"vttest -V")
+    assert_match version.to_s, shell_output("#{bin}/vttest -V")
   end
 end

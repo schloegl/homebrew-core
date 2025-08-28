@@ -6,11 +6,6 @@ class Spago < Formula
   license "BSD-3-Clause"
   head "https://github.com/purescript/spago.git", branch: "master"
 
-  livecheck do
-    url :stable
-    regex(/^v?(\d+(?:\.\d+)+)$/i)
-  end
-
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "9d5eab4b1fb90ac9d885b97b5babd968405a5d5de9e868646f9a999eda30ea46"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "a1c516a357d01efcef8d2dc263ca4785c24b3e48559974925e8dfd985a672bf3"
@@ -27,6 +22,7 @@ class Spago < Formula
   # due to `spago -> bower-json -> aeson-better-errors -> aeson<2.1 -> ghc-prim<0.9`.
   # Can be un-deprecated/restored if PureScript rewrite has a stable release.
   deprecate! date: "2024-08-15", because: "depends on GHC 9.2 to build"
+  disable! date: "2025-08-16", because: "depends on GHC 9.2 to build"
 
   depends_on "ghc@9.2" => :build
   depends_on "haskell-stack" => :build
@@ -71,10 +67,10 @@ class Spago < Formula
 
   test do
     system bin/"spago", "init"
-    assert_predicate testpath/"packages.dhall", :exist?
-    assert_predicate testpath/"spago.dhall", :exist?
-    assert_predicate testpath/"src"/"Main.purs", :exist?
+    assert_path_exists testpath/"packages.dhall"
+    assert_path_exists testpath/"spago.dhall"
+    assert_path_exists testpath/"src"/"Main.purs"
     system bin/"spago", "build"
-    assert_predicate testpath/"output"/"Main"/"index.js", :exist?
+    assert_path_exists testpath/"output"/"Main"/"index.js"
   end
 end

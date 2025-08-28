@@ -1,10 +1,12 @@
 class Recutils < Formula
   desc "Tools to work with human-editable, plain text data files"
   homepage "https://www.gnu.org/software/recutils/"
-  url "https://ftp.gnu.org/gnu/recutils/recutils-1.9.tar.gz"
-  mirror "https://ftpmirror.gnu.org/gnu/recutils/recutils-1.9.tar.gz"
+  url "https://ftpmirror.gnu.org/gnu/recutils/recutils-1.9.tar.gz"
+  mirror "https://ftp.gnu.org/gnu/recutils/recutils-1.9.tar.gz"
   sha256 "6301592b0020c14b456757ef5d434d49f6027b8e5f3a499d13362f205c486e0e"
   license "GPL-3.0-or-later"
+
+  no_autobump! because: :requires_manual_review
 
   bottle do
     sha256 cellar: :any, arm64_sequoia:  "f1c4d50014f990bf82b005678e5e50d0437c4832db83e80094e0fcfbad824078"
@@ -17,6 +19,7 @@ class Recutils < Formula
     sha256 cellar: :any, monterey:       "feac0920394addceefb8a23fc38a7406fed04b71bde433d14dfa703b852c5089"
     sha256 cellar: :any, big_sur:        "8bd10813a8870b76fdac43c99062d3449bd4275ae54af0410c85c69ba3f9ab08"
     sha256 cellar: :any, catalina:       "d92195d721c086a0f14fa0dcdd8014869af600d43e31749a8b8af580f49fafba"
+    sha256               arm64_linux:    "57f094907d4b5a4075731cb05a68fb1dd726dc245c914cc695bab138c1362596"
     sha256               x86_64_linux:   "09224d89dd80efca59a618cb2b966ad1a2a1847d992bc27c014fe997db0148af"
   end
 
@@ -42,10 +45,10 @@ class Recutils < Formula
   end
 
   test do
-    (testpath/"test.csv").write <<~EOS
+    (testpath/"test.csv").write <<~CSV
       a,b,c
       1,2,3
-    EOS
+    CSV
     system bin/"csv2rec", "test.csv"
 
     (testpath/"test.rec").write <<~EOS

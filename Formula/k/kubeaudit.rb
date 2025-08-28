@@ -17,6 +17,9 @@ class Kubeaudit < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "36c94b606075a297fd812aa94fa7c8c95f5cac0dcec866d0f3d6d7c6ec6e8a74"
   end
 
+  # https://github.com/Shopify/kubeaudit/pull/594
+  deprecate! date: "2025-01-10", because: :repo_archived, replacement_formula: "kube-bench"
+
   depends_on "go" => :build
 
   def install
@@ -32,7 +35,7 @@ class Kubeaudit < Formula
   end
 
   test do
-    output = shell_output(bin/"kubeaudit --kubeconfig /some-file-that-does-not-exist all 2>&1", 1).chomp
+    output = shell_output("#{bin}/kubeaudit --kubeconfig /some-file-that-does-not-exist all 2>&1", 1).chomp
     assert_match "failed to open kubeconfig file /some-file-that-does-not-exist", output
   end
 end

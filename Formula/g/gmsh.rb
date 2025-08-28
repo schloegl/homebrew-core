@@ -1,10 +1,9 @@
 class Gmsh < Formula
   desc "3D finite element grid generator with CAD engine"
   homepage "https://gmsh.info/"
-  url "https://gmsh.info/src/gmsh-4.13.1-source.tgz"
-  sha256 "77972145f431726026d50596a6a44fb3c1c95c21255218d66955806b86edbe8d"
+  url "https://gmsh.info/src/gmsh-4.14.0-source.tgz"
+  sha256 "db4d7da2062e9a4356a820832138ab99f97af6388bfeb21599a2eadfb0b76a28"
   license "GPL-2.0-or-later"
-  revision 1
   head "https://gitlab.onelab.info/gmsh/gmsh.git", branch: "master"
 
   livecheck do
@@ -13,56 +12,56 @@ class Gmsh < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "ed45482acf3bcbc86d9126c68718128f0ea1525f3fc546ab879f2926192791fb"
-    sha256 cellar: :any,                 arm64_sonoma:   "9f3836c4ba6bc88d80f5b4b16bb75dfb424abc9cb6ad157eb66de1c0ead79f38"
-    sha256 cellar: :any,                 arm64_ventura:  "b2eca4d0f50393fd431f2f4e35f6ef32b17b07f7edcca72f53ae526a2c639357"
-    sha256 cellar: :any,                 arm64_monterey: "7c11588d5e558f65d930ce46f2c9587e9a846e5a7471cd8e86a7c1e7be6ebb60"
-    sha256 cellar: :any,                 sonoma:         "3de1102defd21daeb01d71f767e3f4d527ff4c6e64eea1af91d4df0125adae58"
-    sha256 cellar: :any,                 ventura:        "4e254c102c8b53c09f26affbead6ebd48ea19037c0ac694df0179988498f49c0"
-    sha256 cellar: :any,                 monterey:       "19f99aa08e30266ee8d24c60d5c63d6627cce0885084e10a782ea6a93900c08d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "8605e75e4d5f0f44cc7408191ffdeaa21e9af2c93586f0436b87cb1957823c4d"
+    sha256 cellar: :any,                 arm64_sequoia: "8c50799466377882e5045b15f4c23a8a4c1040dfbe955489788a6a2b31a8779e"
+    sha256 cellar: :any,                 arm64_sonoma:  "32e4da3c38f226be85aa36455b2d92e306c32260098c18c2bb7e0d1b87bb67f4"
+    sha256 cellar: :any,                 arm64_ventura: "1fc4a3ef69f860ac4a91bd1051cc36ec129a969d6f1329c4c91c68e9464c453f"
+    sha256 cellar: :any,                 sonoma:        "96ca92471114ec67e694440cc3a8be930de5bdabf52c69c596f29e28e11de7e7"
+    sha256 cellar: :any,                 ventura:       "0f618c7b6204e38f549ced91f1dca50eb1d77dd214e8bea4f59bac29c28c8dce"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f4d2413693690bbe55855c96c8c2e05c7e66424f8c5b7bb3fc77dfda659be007"
   end
 
   depends_on "cmake" => :build
+  depends_on "eigen" => :build
   depends_on "cairo"
   depends_on "fltk"
-  depends_on "gcc" # for gfortran
   depends_on "gmp"
   depends_on "jpeg-turbo"
   depends_on "libpng"
-  depends_on "open-mpi"
+  depends_on "metis"
   depends_on "opencascade"
 
   uses_from_macos "zlib"
 
   on_macos do
     depends_on "freetype"
+    depends_on "libomp"
   end
 
   on_linux do
-    depends_on "libx11"
     depends_on "mesa"
     depends_on "mesa-glu"
   end
 
   def install
+    # Remove some bundled libraries to make sure brew formula is used
+    rm_r(%w[
+      contrib/eigen
+      contrib/metis
+    ])
+
     # Fix compile with newer Clang
     ENV.append_to_cflags "-Wno-implicit-function-declaration" if DevelopmentTools.clang_build_version >= 1403
 
     ENV["CASROOT"] = Formula["opencascade"].opt_prefix
 
-    args = %W[
-      -DENABLE_OS_SPECIFIC_INSTALL=0
-      -DGMSH_BIN=#{bin}
-      -DGMSH_LIB=#{lib}
-      -DGMSH_DOC=#{pkgshare}/gmsh
-      -DGMSH_MAN=#{man}
+    args = %w[
+      -DENABLE_OS_SPECIFIC_INSTALL=OFF
       -DENABLE_BUILD_LIB=ON
       -DENABLE_BUILD_SHARED=ON
-      -DENABLE_NATIVE_FILE_CHOOSER=ON
       -DENABLE_PETSC=OFF
       -DENABLE_SLEPC=OFF
       -DENABLE_OCC=ON
+      -DENABLE_SYSTEM_CONTRIB=ON
     ]
 
     system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args

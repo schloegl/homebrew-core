@@ -1,19 +1,18 @@
 class Czkawka < Formula
   desc "Duplicate file utility"
   homepage "https://github.com/qarmin/czkawka"
-  url "https://github.com/qarmin/czkawka/archive/refs/tags/7.0.0.tar.gz"
-  sha256 "ce7d072056dedc4f2ca4d3647dc786ba071d4f3c58e79415da18d7dafd62e87b"
+  url "https://github.com/qarmin/czkawka/archive/refs/tags/10.0.0.tar.gz"
+  sha256 "66ff3c231abe2feaeb377f52bb188eb81686c162d7f3fd28ed5b7374f0046c48"
   license all_of: ["MIT", "CC-BY-4.0"]
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "60ba9120940e106aa4bdd82dbb29469a7d7084907db7e84ee1df0a5de2d87c4b"
-    sha256 cellar: :any,                 arm64_sonoma:   "d17367de2f7b896a58efae5ca41830614a2e4fd689e8668c305133c937ea2c76"
-    sha256 cellar: :any,                 arm64_ventura:  "fa017774f8c98c96c11cbb8bb76b2bedd7abd591d2636ede733ab62c371cb784"
-    sha256 cellar: :any,                 arm64_monterey: "b5553b503b7500cfe3c582426760d63b132cd9f4cd8ee24b4d2b41844afe2f4e"
-    sha256 cellar: :any,                 sonoma:         "baa04c19350433d017831d7457d5a35c75c7fbc5290b4112bb994787bc7f06d9"
-    sha256 cellar: :any,                 ventura:        "b7bcab24f61e453034cc803bb2743d0fce7c2e2345e2749063514a163cb3ff44"
-    sha256 cellar: :any,                 monterey:       "ece5ccc15c1f8f9a47986026bbb20f259d164d968d2d4684c63237ad3a33532e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3194269936ed396ae49ec4dbccf8ac6525af961a2fb98910c6d1efa916216f84"
+    sha256 cellar: :any,                 arm64_sequoia: "35db07b1b1bef523a45fe9002787d4ebcff68432a58e4cf913679f6f2461c99c"
+    sha256 cellar: :any,                 arm64_sonoma:  "d6d43d9a49087f484f4a1f57c841af0f43f3ac759d29dbb1b859d6e73e4c77dd"
+    sha256 cellar: :any,                 arm64_ventura: "a3a6a7b083e8ef0c108266bfe655e5eb0b5e86fbe1ddc25755f91282b07d5927"
+    sha256 cellar: :any,                 sonoma:        "53069a822076a0697f185295f98020aa02dc46f57bbf003f6bbd33999d919b0a"
+    sha256 cellar: :any,                 ventura:       "00c95856ea26ce2bb938f4ce818a00016cac2f15859de268b14dd579f36fba69"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "e5b9bfbf32993274579f8e2bcdddf3a8206bee9469258c47d61beb59d57168b5"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5daae00fdaafdd3e5e5596ce3ad4768383f9b14e2d6212dd607ad53d1bf631fe"
   end
 
   depends_on "rust" => :build
@@ -26,7 +25,7 @@ class Czkawka < Formula
   depends_on "libheif"
   depends_on "librsvg"
   depends_on "pango"
-  depends_on "pkg-config"
+  depends_on "pkgconf"
   depends_on "webp-pixbuf-loader"
 
   uses_from_macos "bzip2"
@@ -35,12 +34,6 @@ class Czkawka < Formula
     depends_on "gettext"
     depends_on "graphene"
     depends_on "harfbuzz"
-  end
-
-  # patch time crate to fix rust 1.80+ build failure, upstream pr ref, https://github.com/qarmin/czkawka/pull/1342
-  patch do
-    url "https://github.com/qarmin/czkawka/commit/a0be5f5af81fd5dfef985fb20edce995b810a761.patch?full_index=1"
-    sha256 "84ccf86840eda4ecabfcea710a45eac1bb9f0788fa4450ace8a89f49fcc0aa30"
   end
 
   def install
@@ -60,8 +53,8 @@ class Czkawka < Formula
   end
 
   test do
-    output = shell_output("#{bin}/czkawka_cli dup --directories #{testpath}")
-    assert_match "Not found any duplicates", output
+    system bin/"czkawka_cli", "dup", "--directories", testpath, "--file-to-save", "results.txt"
+    assert_match "Not found any duplicates", File.read("results.txt")
 
     assert_match version.to_s, shell_output("#{bin}/czkawka_cli --version")
   end

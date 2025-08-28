@@ -1,23 +1,24 @@
 class Folly < Formula
   desc "Collection of reusable C++ library artifacts developed at Facebook"
   homepage "https://github.com/facebook/folly"
-  url "https://github.com/facebook/folly/archive/refs/tags/v2024.09.30.00.tar.gz"
-  sha256 "38ae1861cfbbe3a1ce2ed74b66fa9b7971319847918c0c7551bf33b72483cf6f"
+  url "https://github.com/facebook/folly/archive/refs/tags/v2025.08.25.00.tar.gz"
+  sha256 "38bdbad9f1551c6b5a6f16420005f3a126892830c351afdcf5477b858c09c4a2"
   license "Apache-2.0"
   head "https://github.com/facebook/folly.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "81562053d804c75b559d44098bdca22b999d6f1ccd68556f4978c9c68a841906"
-    sha256 cellar: :any,                 arm64_sonoma:  "e30d9fc2a60a0fc7886c954c4dbc06bccf945d178c958e9affc7b74b4f9f5002"
-    sha256 cellar: :any,                 arm64_ventura: "03955b7a1b843adbf432c7afbc870c047c3359f71c1756c42f4b793a567ed990"
-    sha256 cellar: :any,                 sonoma:        "98396e966e3553796fbb31520304a0ab0e614a9802b38bb8431a0fad1f8bd998"
-    sha256 cellar: :any,                 ventura:       "ecf83ae1b0e912468552c25f52570ca07c3b58993d0d7608fac8c95ff1e30da4"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "425e37e1699beabbda89a08a317597dc1332ae4b0567b47ed74508a73968d1e4"
+    sha256 cellar: :any,                 arm64_sequoia: "4f01882cdcff41caafdf761faf17ded24955d824ca7c0a5252ae50a82c2627e9"
+    sha256 cellar: :any,                 arm64_sonoma:  "6c7121c2ed479210a20c80ee4330f70ae3ce07307266e9e74741d2932194d267"
+    sha256 cellar: :any,                 arm64_ventura: "3f33897c927321db8bfe56ace92c5a90372b914b8a884fca4bb0a306a9d0ce12"
+    sha256 cellar: :any,                 sonoma:        "748a6b91622c50cb11cff00dc5ee1e7e1014d2b003115259c9c91cdca6790d4d"
+    sha256 cellar: :any,                 ventura:       "9ef7a6ebbf7930e5d880538299922a06df080589aa68238cb604b246e36b36fe"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "3f58a0e06422710b8faa1ff4965a591e45236341dcdce76621e3fa2d32710ec9"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d1c89ca69297e4f737b8ad4f29f7e054db8aad5ee360e61e3c0d3f5c38fbaff9"
   end
 
   depends_on "cmake" => :build
   depends_on "fast_float" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "boost"
   depends_on "double-conversion"
   depends_on "fmt"
@@ -41,13 +42,15 @@ class Folly < Formula
   fails_with :clang do
     build 1100
     # https://github.com/facebook/folly/issues/1545
-    cause <<-EOS
+    cause <<~EOS
       Undefined symbols for architecture x86_64:
         "std::__1::__fs::filesystem::path::lexically_normal() const"
     EOS
   end
 
-  fails_with gcc: "5"
+  # Workaround for Boost 1.89.0 until upstream fix.
+  # Issue ref: https://github.com/facebook/folly/issues/2489
+  patch :DATA
 
   def install
     ENV.llvm_clang if OS.mac? && (DevelopmentTools.clang_build_version <= 1100)
@@ -75,7 +78,7 @@ class Folly < Formula
     # Force use of Clang rather than LLVM Clang
     ENV.clang if OS.mac?
 
-    (testpath/"test.cc").write <<~EOS
+    (testpath/"test.cc").write <<~CPP
       #include <folly/FBVector.h>
       int main() {
         folly::fbvector<int> numbers({0, 1, 2, 3});
@@ -86,9 +89,35 @@ class Folly < Formula
         assert(numbers[6] == 12);
         return 0;
       }
-    EOS
+    CPP
     system ENV.cxx, "-std=c++17", "test.cc", "-I#{include}", "-L#{lib}",
                     "-lfolly", "-o", "test"
     system "./test"
   end
 end
+
+__END__
+diff --git a/CMake/folly-config.cmake.in b/CMake/folly-config.cmake.in
+index 0b96f0a10..800a3d90b 100644
+--- a/CMake/folly-config.cmake.in
++++ b/CMake/folly-config.cmake.in
+@@ -38,7 +38,6 @@ find_dependency(Boost 1.51.0 MODULE
+     filesystem
+     program_options
+     regex
+-    system
+     thread
+   REQUIRED
+ )
+diff --git a/CMake/folly-deps.cmake b/CMake/folly-deps.cmake
+index 7dafece7d..eaf8c2379 100644
+--- a/CMake/folly-deps.cmake
++++ b/CMake/folly-deps.cmake
+@@ -41,7 +41,6 @@ find_package(Boost 1.51.0 MODULE
+     filesystem
+     program_options
+     regex
+-    system
+     thread
+   REQUIRED
+ )

@@ -1,8 +1,8 @@
 class Perltidy < Formula
   desc "Indents and reformats Perl scripts to make them easier to read"
   homepage "https://perltidy.sourceforge.net/"
-  url "https://downloads.sourceforge.net/project/perltidy/20240903/Perl-Tidy-20240903.tar.gz"
-  sha256 "22fba4ba84cf2ba5fb4ade3ae65c6deb48a0ee61fe446858d3ae8c5e00f37e81"
+  url "https://downloads.sourceforge.net/project/perltidy/20250711/Perl-Tidy-20250711.tar.gz"
+  sha256 "347aa90bcefbde2b590daf48d387ef1fd9b7a73a996b040269f11ab6fb8ba448"
   license "GPL-2.0-or-later"
 
   livecheck do
@@ -11,14 +11,13 @@ class Perltidy < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "bb8899ed668a66a1cf0b1b81d9fa9b3dcb456925b47a8da0312d8dfdaa9336da"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "bb8899ed668a66a1cf0b1b81d9fa9b3dcb456925b47a8da0312d8dfdaa9336da"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "3163c8cd853f61f071145fe936c1aefe3690e2fa1c6e162054c46d45ae60446b"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "3163c8cd853f61f071145fe936c1aefe3690e2fa1c6e162054c46d45ae60446b"
-    sha256 cellar: :any_skip_relocation, sonoma:         "37004c7bca8ec46163442d76e7599b17acba936b4dad26f53fbf4ca578669b78"
-    sha256 cellar: :any_skip_relocation, ventura:        "a0edd728a606f2404c8e72186accf24e5feafb239feeb0ced28da1e823246f03"
-    sha256 cellar: :any_skip_relocation, monterey:       "a0edd728a606f2404c8e72186accf24e5feafb239feeb0ced28da1e823246f03"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "74e8a657dd5facba5abd7ee9bb5b1f475be8a8d6f8031368f4cdb0c4b3e2f27e"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "b748cb7033651de878ac5ca6de091abbd87bca61041f28f6e5cd38f06437f8a1"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "b748cb7033651de878ac5ca6de091abbd87bca61041f28f6e5cd38f06437f8a1"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "aa4dc54757306928be38ea61919c738f6c5c932d7f4fb6179826667141c0bf51"
+    sha256 cellar: :any_skip_relocation, sonoma:        "6dff9fd45152bee6c945e8d4a4644263d8659e7333d6083240c4218fc8286bc0"
+    sha256 cellar: :any_skip_relocation, ventura:       "c717758af025f5fbcec639ac8122e542a3af35a1649e2505944c7cf05d2a1675"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "89180806b8d38b67feae773dc10e0b30a76d8833baa5547b65ccba757e7de903"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "6489a45437753dbf0dc0c2477c6318985f959dd748481e327466bd599fd9cb95"
   end
 
   uses_from_macos "perl"
@@ -35,18 +34,30 @@ class Perltidy < Formula
   end
 
   test do
-    (testpath/"testfile.pl").write <<~EOS
+    (testpath/"testfile.pl").write <<~PERL
       print "Help Desk -- What Editor do you use?";
       chomp($editor = <STDIN>);
       if ($editor =~ /emacs/i) {
-        print "Why aren't you using vi?\n";
+        print "Why aren't you using vi?";
       } elsif ($editor =~ /vi/i) {
-        print "Why aren't you using emacs?\n";
+        print "Why aren't you using emacs?";
       } else {
-        print "I think that's the problem\n";
+        print "I think that's the problem";
       }
-    EOS
+    PERL
     system bin/"perltidy", testpath/"testfile.pl"
-    assert_predicate testpath/"testfile.pl.tdy", :exist?
+    assert_equal <<~PERL, (testpath/"testfile.pl.tdy").read
+      print "Help Desk -- What Editor do you use?";
+      chomp( $editor = <STDIN> );
+      if ( $editor =~ /emacs/i ) {
+          print "Why aren't you using vi?";
+      }
+      elsif ( $editor =~ /vi/i ) {
+          print "Why aren't you using emacs?";
+      }
+      else {
+          print "I think that's the problem";
+      }
+    PERL
   end
 end

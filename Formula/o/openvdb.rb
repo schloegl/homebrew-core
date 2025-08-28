@@ -1,21 +1,20 @@
 class Openvdb < Formula
   desc "Sparse volumetric data processing toolkit"
   homepage "https://www.openvdb.org/"
-  url "https://github.com/AcademySoftwareFoundation/openvdb/archive/refs/tags/v11.0.0.tar.gz"
-  sha256 "6314ff1db057ea90050763e7b7d7ed86d8224fcd42a82cdbb9c515e001b96c74"
+  url "https://github.com/AcademySoftwareFoundation/openvdb/archive/refs/tags/v12.1.0.tar.gz"
+  sha256 "ebb9652ad1d67274e2c85e6736cced5f04e313c5671ae1ae548f174cc76e9e64"
   license "MPL-2.0"
-  revision 3
+  revision 1
   head "https://github.com/AcademySoftwareFoundation/openvdb.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "0d02cf53eccd0c359fcc880feb82f78d7eaf71cc54374d04c48a4a9ed14ef294"
-    sha256 cellar: :any,                 arm64_sonoma:   "2e438c59d4d2cb1905c395e7aecf06ffd8d31e1ce364dbeede6cee719525a43f"
-    sha256 cellar: :any,                 arm64_ventura:  "6331dfd7b9a92f4e5107a08d4a0d1df9b2a3c89b182e543d41c7fa86fb615b6b"
-    sha256 cellar: :any,                 arm64_monterey: "2a43a1edffe1a2ad2a9b6bb44074d07682caff5ac5a3349c2fa72dcc5bf8caeb"
-    sha256 cellar: :any,                 sonoma:         "076615ec23b41f4964411ca5ff4e5089d2ca6a45bc9ace90ae88054b5661c53f"
-    sha256 cellar: :any,                 ventura:        "db0bba1bc1b53a719660e375db433144c7f4e8ff35f688ed83410d1d8fcd0813"
-    sha256 cellar: :any,                 monterey:       "a0f29c79abd63667a4827b905c1491b6c7d68ded8b391279db5caaefb674e00e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "47b4dba9cf936c2a44873e232b804c784222e1a80ee88a243933bea4c6acdeda"
+    sha256 cellar: :any,                 arm64_sequoia: "f7b1ae1b4714ee2a3054ed21f7614fbf558806b8ac712036f859da671804493f"
+    sha256 cellar: :any,                 arm64_sonoma:  "b12361d329988e7e23f9d09f74869171caff33520419ec0a9333d076c8b6af4b"
+    sha256 cellar: :any,                 arm64_ventura: "6147b904295c5d09e05b80d3e3d345c9a3d4b085562e0e3c8b97339323c43ed9"
+    sha256 cellar: :any,                 sonoma:        "23505396f7baaacc017de11e2d2864b7ed646e72a9470bc9d364dff35995b81b"
+    sha256 cellar: :any,                 ventura:       "1a9228f339b3294a3c141c7018fd680bd6176549bdc1fd6fb287cac384c1def6"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "ee4ea667d3e8f0439641e82f26c2685f29bb3571985855a3c758e2166244fee8"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ef171922b7fc92150b734b959ee16e99a3fd3a0f0deffa5d507d65af55e02d03"
   end
 
   depends_on "cmake" => :build

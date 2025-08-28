@@ -1,23 +1,32 @@
 class Mlt < Formula
   desc "Author, manage, and run multitrack audio/video compositions"
   homepage "https://www.mltframework.org/"
-  url "https://github.com/mltframework/mlt/releases/download/v7.28.0/mlt-7.28.0.tar.gz"
-  sha256 "bc425bf9602213f5f4855b78cfbbcd43eeb78097c508588bde44415963955aa1"
   license "LGPL-2.1-only"
+  revision 3
   head "https://github.com/mltframework/mlt.git", branch: "master"
 
+  stable do
+    url "https://github.com/mltframework/mlt/releases/download/v7.32.0/mlt-7.32.0.tar.gz"
+    sha256 "1ca5aadfe27995c879b9253b3a48d1dcc3b1247ea0b5620b087d58f5521be028"
+
+    # Backport support for FFmpeg 8.0
+    patch :DATA # https://github.com/mltframework/mlt/commit/604972b255c53927082de3989237f857b7827b74
+    patch do
+      url "https://github.com/mltframework/mlt/commit/ae83ceee72a0a39c063b02310f6ce928839712a2.patch?full_index=1"
+      sha256 "2a3fc8552f068766f1d829aa973e1f913040a83898476c0afd73119e500f2713"
+    end
+  end
+
   bottle do
-    sha256 arm64_sonoma:   "5fdf077b8f22a6504af534516cc3e4fff6ce9cfe2bc2bd24fcd022fd6ecda08b"
-    sha256 arm64_ventura:  "4b23883a06273748bdd195e6d79ed57bdc6442ef00aaba81014de46f4c4fd036"
-    sha256 arm64_monterey: "a2151d1e9b01de46825920802c7d69cde820ab277d8b5714f439f8f8a4e7ece5"
-    sha256 sonoma:         "6db195573da77805d7162a9c496e36241ba9e6261e670adc0dc8445b14c84d27"
-    sha256 ventura:        "1c77b4fce2d5bd9e570a14559b466fdc74beae0e00e7407731787f5957ae448c"
-    sha256 monterey:       "cfec4b04ec534a31c694ab6d50789614f18d05c5678082ad7ca2145f6f4431f8"
-    sha256 x86_64_linux:   "190642ee62312b496773bb7b4b65caf8d34bd24cd608ee929110adf28c1c66c3"
+    sha256 arm64_sonoma:  "4b598973ef11d89bb7f97ef4674d1c82d10e795384e31136b335eaee7b5c7988"
+    sha256 arm64_ventura: "2b8776a511b6a429588f08937de41284c842803007d7568bdb8f567185619759"
+    sha256 sonoma:        "099633d6e641dc539f68946b535d790bcfc6028c4989af49a989f02f2cdc8fb2"
+    sha256 ventura:       "296847ba9350fc2166907a045e195ae76afeabf7be88b0405b7740ecb78bba9b"
+    sha256 x86_64_linux:  "83f198ba55bd1f942d03dc9956f7a38e210076b9a31184591a87f88790084129"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "ffmpeg"
   depends_on "fftw"
@@ -50,8 +59,6 @@ class Mlt < Formula
     depends_on "pulseaudio"
   end
 
-  fails_with gcc: "5"
-
   def install
     rpaths = [rpath, rpath(source: lib/"mlt")]
 
@@ -78,3 +85,26 @@ class Mlt < Formula
     assert_match "help", shell_output("#{bin}/melt -help")
   end
 end
+
+__END__
+diff --git a/src/modules/avformat/producer_avformat.c b/src/modules/avformat/producer_avformat.c
+index 25f81d60e4bc8188c4a537489721ad74aba97431..6984ba286c1141de9bbc21b33e44f5d0ef7fb7dd 100644
+--- a/src/modules/avformat/producer_avformat.c
++++ b/src/modules/avformat/producer_avformat.c
+@@ -2598,7 +2575,6 @@ static int producer_get_image(mlt_frame frame,
+                                             || codec_params->field_order == AV_FIELD_TB;
+                 }
+                 self->video_frame->top_field_first = self->top_field_first;
+-#ifdef AVFILTER
+                 if ((self->autorotate || mlt_properties_get(properties, "filtergraph"))
+                     && !setup_filters(self) && self->vfilter_graph) {
+                     int ret = av_buffersrc_add_frame(self->vfilter_in, self->video_frame);
+@@ -2614,7 +2590,7 @@ static int producer_get_image(mlt_frame frame,
+                         }
+                     }
+                 }
+-#endif
++
+                 set_image_size(self, width, height);
+                 if ((image_size
+                      = allocate_buffer(frame, codec_params, buffer, *format, *width, *height))) {

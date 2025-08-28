@@ -1,8 +1,8 @@
 class Corsixth < Formula
   desc "Open source clone of Theme Hospital"
   homepage "https://github.com/CorsixTH/CorsixTH"
-  url "https://github.com/CorsixTH/CorsixTH/archive/refs/tags/v0.67.tar.gz"
-  sha256 "4e88cf1916bf4d7c304b551ddb91fb9194f110bad4663038ca73d31b939d69e3"
+  url "https://github.com/CorsixTH/CorsixTH/archive/refs/tags/v0.69.1.tar.gz"
+  sha256 "08eec141bdd8adf265f341a8452601f844a3eaab0378535b2655198fd373a7f8"
   license "MIT"
   revision 1
   head "https://github.com/CorsixTH/CorsixTH.git", branch: "master"
@@ -16,14 +16,13 @@ class Corsixth < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "869c7e2ff9e9af71a6b8f7fd39444b3544471832c24334f189e77ecceabb5602"
-    sha256 arm64_sonoma:   "753b467230849193995df1896fdad06d676fdf0b9d9a2874bfab2c884722097e"
-    sha256 arm64_ventura:  "8f40760b12987c4563a65dfe7bb6797e5726ecfc615983660f0508f179d39aa2"
-    sha256 arm64_monterey: "8f4a453fddd84c16c5a7359dd32343a08c3049c0297e3ee822d32b95f81e443b"
-    sha256 sonoma:         "9533e126bf883c696cff563b4073e66b73a76c5ee8b5dabf9584aa2993583684"
-    sha256 ventura:        "1b11fdf93d13e5b07ec0f8e4de0f50ff17b421a561da1f46b30556ed8d4937f7"
-    sha256 monterey:       "b4baf26ba433ef5bf8637f8491a5e8bd2a45c2e181ab806a72437c61be405fe0"
-    sha256 x86_64_linux:   "3bb1fcde57e74e97f5a94c2b0d8d438901b0bef8b85898c5b80681ae9d080acd"
+    sha256 arm64_sequoia: "3cb067dfba410ffb3801e0e70d5d4a79841742cdf81b1d295aa378b2702f0d20"
+    sha256 arm64_sonoma:  "915084f0279e8c300639051bc5ac2451afdc29676b48bd3ecb4c61d18710c9b6"
+    sha256 arm64_ventura: "753909b4988900d132e387f99e064d2979063e1543e984e5825880f561db419f"
+    sha256 sonoma:        "c5f817b34df2a948e14936c85ccabf8b13bbc58208031a142f68d9904e8bf67c"
+    sha256 ventura:       "529c7ad432164591a315b326e0aaa2c0f50ff96ab75265072cb29a5f588c844b"
+    sha256 arm64_linux:   "eab424f31ed2b847de8ad0be1637b02471ea557609652143bb361c849f6603fb"
+    sha256 x86_64_linux:  "649e38315d446085d93dfcf3014a204d878ceb68ff4d999cf7a42d4071af90ab"
   end
 
   depends_on "cmake" => :build
@@ -34,6 +33,8 @@ class Corsixth < Formula
   depends_on "lua"
   depends_on "sdl2"
   depends_on "sdl2_mixer"
+
+  uses_from_macos "curl"
 
   on_linux do
     depends_on "mesa"
@@ -104,6 +105,7 @@ class Corsixth < Formula
 
     PTY.spawn(bin/"CorsixTH") do |r, _w, pid|
       sleep 30
+      sleep 30 if OS.mac? && Hardware::CPU.intel?
       Process.kill "KILL", pid
 
       output = ""

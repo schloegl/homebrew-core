@@ -1,57 +1,73 @@
 class Libdpp < Formula
   desc "C++ Discord API Bot Library"
   homepage "https://github.com/brainboxdotcc/DPP"
-  url "https://github.com/brainboxdotcc/DPP/releases/download/v10.0.31/DPP-10.0.31.tar.gz"
-  sha256 "3e392868c0dc3d0f13a00cfa190a925a20bde62bea58fd87d4acf14de11062bf"
+  url "https://github.com/brainboxdotcc/DPP/archive/refs/tags/v10.1.3.tar.gz"
+  sha256 "a32d94dcd6b23430afff82918234e4e28e0616bd2ddf743c5ab2f1778c5a600b"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "caca507c748a87343aa57cd401b3f6a877908a871067150214aaa7886dd3f6b4"
-    sha256 cellar: :any,                 arm64_sonoma:  "02a2eb1a65915b5c94149c61def6885f535d79ef5bfb06bc1c99d15594da4e07"
-    sha256 cellar: :any,                 arm64_ventura: "d34a8ba6bfea8971c54f047f53605c96e2573efe011ff7d73be71eca6e2ef82a"
-    sha256 cellar: :any,                 sonoma:        "6f6367a163706da5ecd97e9bd9a75748f4564b3652b6323638d1aec7ea85e41d"
-    sha256 cellar: :any,                 ventura:       "2c8a3d92988233d81fb220951b0e0bc45b59761af50941cf34225b1beeb65de4"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "37a8a895a2484c52498d2e35f151224a5050345fa516abaedf8c368e91550312"
+    sha256 cellar: :any,                 arm64_sequoia: "ddc7973cf1ac5476c7fa54a2114a44b96822ccc8014217d4fc5eaf0d12753752"
+    sha256 cellar: :any,                 arm64_sonoma:  "716410144df8562e95571a6e1312bee9f4a22d9859ebf3b9a6feb62681917ca2"
+    sha256 cellar: :any,                 arm64_ventura: "930866492ac48f28e53f750da08afb3f60fe135b344e78f7aec20ebb47248065"
+    sha256 cellar: :any,                 sonoma:        "d8bffea263432cb8387895e869d453cb1a2766275a92937392e2f774bb2207de"
+    sha256 cellar: :any,                 ventura:       "e802c41a7832725d8dc8a308deb9369d7c3191fdd099e8a7898ab65af2cec11a"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "619c395f2ee566b0993475a995f522262b21b2121d25bd3478a9f09510a02533"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fbd8551af03bb02344fe511a9757df305d2997e90a1d5cbb4e3b516c4dbd7fae"
   end
 
   depends_on "cmake" => :build
-  depends_on "libsodium"
+  depends_on "nlohmann-json" => :build
   depends_on "openssl@3"
   depends_on "opus"
-  depends_on "pkg-config"
+  depends_on "pkgconf"
 
   uses_from_macos "zlib"
 
   def install
-    system "cmake", "-S", ".", "-B", "build", "-DDPP_CORO=on", *std_cmake_args
+    system "cmake", "-S", ".", "-B", "build",
+                    "-DDPP_BUILD_TEST=OFF",
+                    "-DDPP_NO_CONAN=ON",
+                    "-DDPP_NO_VCPKG=ON",
+                    "-DDPP_USE_EXTERNAL_JSON=ON",
+                    "-DRUN_LDCONFIG=OFF",
+                    *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <dpp/dpp.h>
+      #include <unistd.h> // for alarm
+
+      void timeout_handler(int signum) {
+          std::cerr << "Connection error: timed out" << std::endl;
+          exit(1);
+      }
 
       int main() {
-        dpp::cluster bot("invalid_token");
+          std::signal(SIGALRM, timeout_handler);
+          alarm(2);
 
-        bot.on_log(dpp::utility::cout_logger());
+          dpp::cluster bot("invalid_token");
 
-        try {
-          bot.start(dpp::st_wait);
-        }
-        catch (const dpp::connection_exception& e) {
-          std::cout << "Connection error: " << e.what() << std::endl;
-          return 1;
-        }
-        catch(dpp::invalid_token_exception& e) {
-          std::cout << "Invalid token." << std::endl;
-          return 1;
-        }
-        return 0;
+          bot.on_log(dpp::utility::cout_logger());
+
+          try {
+              bot.start(dpp::st_wait);
+          }
+          catch (const dpp::connection_exception &e) {
+              std::cout << "Connection error: " << e.what() << std::endl;
+              return 1;
+          }
+          catch (const dpp::invalid_token_exception &e) {
+              std::cout << "Invalid token." << std::endl;
+              return 1;
+          }
+          return 0;
       }
-    EOS
-    system ENV.cxx, "-std=c++17", "-L#{lib}", "-I#{include}", "test.cpp", "-o", "test", "-ldpp"
+    CPP
+    system ENV.cxx, "-std=c++20", "-L#{lib}", "-I#{include}", "test.cpp", "-o", "test", "-ldpp"
     assert_match "Connection error", shell_output("./test 2>&1", 1)
   end
 end

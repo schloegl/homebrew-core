@@ -1,9 +1,9 @@
 class Metview < Formula
   desc "Meteorological workstation software"
   homepage "https://metview.readthedocs.io/en/latest/"
-  url "https://confluence.ecmwf.int/download/attachments/51731119/MetviewBundle-2024.4.0-Source.tar.gz"
-  version "5.22.0"
-  sha256 "ec8b04db35968d1851c32c2600fc44928abcfc3b8a3d5e052d101e88530e23dc"
+  url "https://confluence.ecmwf.int/download/attachments/51731119/MetviewBundle-2025.4.0-Source.tar.gz"
+  version "5.25.0"
+  sha256 "ebfa17e3db63c72a2caad5a13136d0e86f300cc8cdaa31c98ed4ff5034aebc09"
   license "Apache-2.0"
 
   livecheck do
@@ -11,18 +11,18 @@ class Metview < Formula
     regex(%r{>\s*Metview\s*<.+?<td[^>]*?>\s*v?(\d+(?:\.\d+)+)\s*</td}im)
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 arm64_sonoma:   "acb23385168d8ae5e8562486c43810bbb171d298e6865a99455c1c5beacaacb8"
-    sha256 arm64_ventura:  "6c1e59523ecf1721d44188cd539af4a4fa7c391cd8d11322f37d118cd3f3491a"
-    sha256 arm64_monterey: "ebf98c1043aeec1bee93777fb2fd40006703e796cfa4d504c26e50b76c0f4330"
-    sha256 sonoma:         "33af8f64bbddbcf56d93ef0462d4ccfdcf464a6d1c28dd36a8d793efaf1d3f09"
-    sha256 ventura:        "93a4110779ba74ef222d9ce6f257a6a23734fe9ac7c2ae9817b63774992a64e4"
-    sha256 monterey:       "0a79a846f34ff65fa956aa22ddb022ab789bd9fd730f5da5216818bf807eb345"
-    sha256 x86_64_linux:   "4f445d199a4e2ddec19008d389dc535653db51d33d6e1e95bdf5aeb72045b325"
+    sha256 arm64_sonoma:  "876917b5c9621b6efb3b45381e33741484588dbbda49fa69d01c1af12f79f830"
+    sha256 arm64_ventura: "328738471e53512d4f170c1792eb7dd4f44210ae134391e5aefb87f14a5dc719"
+    sha256 sonoma:        "8436e13d3f7adbd5862345c1d8e366d5b479121f0d089c428573c5853a619872"
+    sha256 ventura:       "4b989db8ccf78dbec26dddc01b0a4601b47f647bc4896271ff80f71bcbf424c4"
+    sha256 x86_64_linux:  "9913a8f66586218ffe992531c8fb2d29ba5d45282b428fe18beb00166ac1550d"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "cairo"
   depends_on "eccodes"
   depends_on "eigen"
@@ -33,6 +33,7 @@ class Metview < Formula
   depends_on "libpng"
   depends_on "lz4"
   depends_on "netcdf"
+  depends_on "netcdf-cxx"
   depends_on "openssl@3"
   depends_on "pango"
   depends_on "proj"
@@ -56,6 +57,8 @@ class Metview < Formula
   end
 
   def install
+    # https://jira.ecmwf.int/plugins/servlet/desk/portal/4/SD-110363
+    inreplace "metview/CMakeLists.txt", "cmake_policy(SET CMP0046 OLD)", "cmake_policy(SET CMP0046 NEW)"
     args = %W[
       -DBUNDLE_SKIP_ECCODES=1
       -DENABLE_MIR_DOWNLOAD_MASKS=OFF
@@ -108,6 +111,6 @@ class Metview < Formula
       plot(grib, grid_shading)
     EOS
     system bin/"metview", "-nocreatehome", "-b", "test_binary_run_grib_plot.mv"
-    assert_predicate testpath/"test.1.png", :exist?
+    assert_path_exists testpath/"test.1.png"
   end
 end

@@ -1,10 +1,12 @@
 class Glpk < Formula
   desc "Library for Linear and Mixed-Integer Programming"
   homepage "https://www.gnu.org/software/glpk/"
-  url "https://ftp.gnu.org/gnu/glpk/glpk-5.0.tar.gz"
-  mirror "https://ftpmirror.gnu.org/glpk/glpk-5.0.tar.gz"
+  url "https://ftpmirror.gnu.org/gnu/glpk/glpk-5.0.tar.gz"
+  mirror "https://ftp.gnu.org/gnu/glpk/glpk-5.0.tar.gz"
   sha256 "4a1013eebb50f728fc601bdd833b0b2870333c3b3e5a816eeba921d95bec6f15"
   license "GPL-3.0-or-later"
+
+  no_autobump! because: :requires_manual_review
 
   bottle do
     sha256 cellar: :any,                 arm64_sequoia:  "d1711f363503b065183cf833d4d58ecd91dd06ac2b168af7bb217727a46e8f7b"
@@ -18,6 +20,7 @@ class Glpk < Formula
     sha256 cellar: :any,                 big_sur:        "3f577566f72aa88262e78c5df12974f25f76ebca6632f8e9ccecf7b5ff222d2b"
     sha256 cellar: :any,                 catalina:       "dd6461053c93e0fc37577251f83a17de325efe8382805f5bc883c8a3a018e74b"
     sha256 cellar: :any,                 mojave:         "2fbd223a7089b352aa9a6e424660aec34edbcaa8fbac7665fe7a9cab2b3f7aac"
+    sha256 cellar: :any_skip_relocation, arm64_linux:    "140cfbb13c5618591618a2c3426be507ca93fedcb9447ed784903a7e518fb2e3"
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "b2917fa8ab16e56c8f786514f5334598dcc81a939aa7c6c13be41c21d4e1b283"
   end
 
@@ -44,7 +47,7 @@ class Glpk < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <stdio.h>
       #include "glpk.h"
 
@@ -53,7 +56,7 @@ class Glpk < Formula
         printf("%s", glp_version());
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-L#{lib}", "-I#{include}", "-lglpk", "-o", "test"
     assert_match version.to_s, shell_output("./test")
 

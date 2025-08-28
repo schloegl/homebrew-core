@@ -3,9 +3,9 @@ class Redex < Formula
   include Language::Python::Virtualenv
 
   desc "Bytecode optimizer for Android apps"
-  homepage "https://github.com/facebook/redex"
+  homepage "https://fbredex.com/"
   license "MIT"
-  revision 17
+  revision 20
   head "https://github.com/facebook/redex.git", branch: "main"
 
   stable do
@@ -38,13 +38,16 @@ class Redex < Formula
     patch :DATA
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "195759cd2ff485c23aef91a7be40130e2f63c7ca0cb7a492590f2c02d7094bec"
-    sha256 cellar: :any,                 arm64_sonoma:  "713a4142b95031e25172e217ddfe327c38417be89c29e8cc6733ad0945abf13a"
-    sha256 cellar: :any,                 arm64_ventura: "a5d162ffeaf8a98f4502b2600868e9967709fdaf79d3a901fcd41e504af2054f"
-    sha256 cellar: :any,                 sonoma:        "e3e025dd6c016a786e8bc4d5f00ba047b60d18aa8395089d5156fa3f7a7c5c20"
-    sha256 cellar: :any,                 ventura:       "cb91db6e0591f7d4fb6adf5a08470f6c26d709d2e04bc46c4000a37d68ace327"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "22c03b5d6c5279fd965f95022203aeeff062d7e369eed9201c1b95062f19bcb7"
+    sha256 cellar: :any,                 arm64_sequoia: "6fd7f506ee8571973646bb564d1c73a5e2ff5143e190d144d75cdcdd8fec2231"
+    sha256 cellar: :any,                 arm64_sonoma:  "df07315f29742d0a4d43f8d1ebc6a1bd68f082603fcf7fdd1196d3f728c0c32e"
+    sha256 cellar: :any,                 arm64_ventura: "3cc462535b6d47cd2a65e846a203431b3f09b684cd90b985b7d92f70b3024459"
+    sha256 cellar: :any,                 sonoma:        "45bf906a221af854ad97f570f32cc2d614d9701f14f64d29119e8add6340daa2"
+    sha256 cellar: :any,                 ventura:       "26ae6a587173f41403c4222044bcb6307adaeb42978c5cde5efe91f103880c62"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "33695004d04b690c9ef97ec7a1b93277933d9a2d19a67c5307aa838f3b3f60e9"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "972ea4c2f3357bf1adbf4777cf949aa636ab5e221e07383017053f236db28503"
   end
 
   depends_on "autoconf" => :build
@@ -53,7 +56,7 @@ class Redex < Formula
   depends_on "libtool" => :build
   depends_on "boost"
   depends_on "jsoncpp"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "setuptools" do
     url "https://files.pythonhosted.org/packages/4d/5b/dc575711b6b8f2f866131a40d053e30e962e633b332acf7cd2c24843d83d/setuptools-69.2.0.tar.gz"
@@ -72,7 +75,7 @@ class Redex < Formula
       ENV.cxx11
     end
 
-    venv = virtualenv_create(libexec, "python3.12")
+    venv = virtualenv_create(libexec, "python3.13")
     venv.pip_install resources
 
     python_scripts = %w[
@@ -103,7 +106,7 @@ class Redex < Formula
 
     testpath.install resource("homebrew-test_apk")
     system bin/"redex", "--ignore-zipalign", "redex-test.apk", "-o", "redex-test-out.apk"
-    assert_predicate testpath/"redex-test-out.apk", :exist?
+    assert_path_exists testpath/"redex-test-out.apk"
   end
 end
 

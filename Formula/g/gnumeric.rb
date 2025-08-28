@@ -1,25 +1,24 @@
 class Gnumeric < Formula
   desc "GNOME Spreadsheet Application"
   homepage "https://projects.gnome.org/gnumeric/"
-  url "https://download.gnome.org/sources/gnumeric/1.12/gnumeric-1.12.57.tar.xz"
-  sha256 "aff50b1b62340c24fccf453d5fad3e7fb73f4bc4b34f7e34b6c3d2d9af6a1e4f"
+  url "https://download.gnome.org/sources/gnumeric/1.12/gnumeric-1.12.59.tar.xz"
+  sha256 "cb3750b176d641f9423df721b831658c829557552f8887fedf8a53d907eceb51"
   license any_of: ["GPL-3.0-only", "GPL-2.0-only"]
 
   bottle do
-    sha256                               arm64_sequoia:  "dc450b2534ce288a9589fc5646898c49faae013c6027b3af43fb75a14d402036"
-    sha256                               arm64_sonoma:   "9ac4b6038db349fcb894b3f16b2b5450e8b97e130609e8b509e117346eb3edf6"
-    sha256                               arm64_ventura:  "d0cb4f9530d15cd61556bc16915e80d0496805fa3a5555d543543ed918de3ec0"
-    sha256                               arm64_monterey: "a94bc870862a5c7d92ea8b1baaf3c7cb84e189b17cb1fdc66130e8e080738f48"
-    sha256                               sonoma:         "61fe8907d180ec8d1fbc1e810b8f276566822fb916d582bb1e4264c0f3a6fd2e"
-    sha256                               ventura:        "046dd2fbc0294941ae45432b97715fb80d4b5159edc05fd83d256a0b08c91422"
-    sha256                               monterey:       "640060260af9ef39b76959b827f81c511351aaf6b70b31a43f958c47a95855f5"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "22083c21842d8e41c7a37d5af2bb683d6fb1fb52347db917785fd02024a6a341"
+    sha256                               arm64_sequoia: "e1f8052c8c05397eeb4bf31306d84731f16c37a6cf6285f359633319f823d00a"
+    sha256                               arm64_sonoma:  "4121c93b13a0454fda9a4e94832a32a1c40b9f088987e0c15ff540e3b73b4083"
+    sha256                               arm64_ventura: "b3db35307a7753e36193530495205e12e2a375745687fd565d0f292002830f35"
+    sha256                               sonoma:        "011604f935d00185e04de4dab0593c4cda3869531e7d8da3c7c16f60b5e7adc4"
+    sha256                               ventura:       "431655b749b2dc4e9540390d9101df685bd2d4dc844826937e5a91d07c69198e"
+    sha256                               arm64_linux:   "d63099284e1adac91e09c19878c6a1e65bc4621ff1f9e3172ae7026f1a058734"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0bf651f16b89c62b500b4da5773a75dc96ddab040d055ba13f9a3d697a8e4ea5"
   end
 
   depends_on "gettext" => :build
   depends_on "intltool" => :build
   depends_on "itstool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "adwaita-icon-theme"
   depends_on "at-spi2-core"
@@ -43,20 +42,18 @@ class Gnumeric < Formula
   end
 
   on_linux do
-    depends_on "perl-xml-parser"
+    depends_on "perl-xml-parser" => :build
   end
 
   def install
-    ENV.prepend_path "PERL5LIB", Formula["perl-xml-parser"].opt_libexec/"lib/perl5" unless OS.mac?
-
     # ensures that the files remain within the keg
     inreplace "component/Makefile.in",
               "GOFFICE_PLUGINS_DIR = @GOFFICE_PLUGINS_DIR@",
               "GOFFICE_PLUGINS_DIR = @libdir@/goffice/@GOFFICE_API_VER@/plugins/gnumeric"
 
-    system "./configure", *std_configure_args,
+    system "./configure", "--disable-schemas-compile",
                           "--disable-silent-rules",
-                          "--disable-schemas-compile"
+                          *std_configure_args
     system "make", "install"
   end
 

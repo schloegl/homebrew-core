@@ -1,8 +1,8 @@
 class Lilv < Formula
   desc "C library to use LV2 plugins"
   homepage "https://drobilla.net/software/lilv.html"
-  url "https://download.drobilla.net/lilv-0.24.24.tar.xz"
-  sha256 "6bb6be9f88504176d0642f12de809b2b9e2dc55621a68adb8c7edb99aefabb4f"
+  url "https://download.drobilla.net/lilv-0.24.26.tar.xz"
+  sha256 "22feed30bc0f952384a25c2f6f4b04e6d43836408798ed65a8a934c055d5d8ac"
   license "ISC"
 
   livecheck do
@@ -11,20 +11,19 @@ class Lilv < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_sequoia:  "d12a1c387db13cdae25a30c3fb64f2421138bc8541955a16a8da32541d3aeb50"
-    sha256 cellar: :any, arm64_sonoma:   "b3e4a931c7922733020f34d6b8b25cd9bd85e3f1d1adb70a475d67a79842e2db"
-    sha256 cellar: :any, arm64_ventura:  "665a4b7a3fc791aae11b805098ae65e324b32f1ff3b00821fbc8223b8f684fc0"
-    sha256 cellar: :any, arm64_monterey: "6cc370093e1fe66b35ab7e42a6f3265b8641facce33b09becb9bff4259ed1c9e"
-    sha256 cellar: :any, sonoma:         "980d3580ee9ad524dbf0a5ace961c08e7070047d3ee5c5549e9aad4494f74939"
-    sha256 cellar: :any, ventura:        "b41c1eb6a90af9f924b48b4f7326ef3ac9e9ddae5b3c18f2ab94563d5f04da62"
-    sha256 cellar: :any, monterey:       "477f88914c2c32edf0f460f69f5232055315bb5efeae20a3836290e06c3ebfd7"
-    sha256               x86_64_linux:   "d37711f96389dbb6e78631ae3a67b6d6e41d672452b523f2aa77eafa6ee39fb6"
+    sha256 cellar: :any, arm64_sequoia: "3d7ca1236fe7b85cce89cbe85925978028bf312d872e59be8adbba6db9d4b2e3"
+    sha256 cellar: :any, arm64_sonoma:  "9123841283fe4c867f2ba7f393c8b09668ce3cc4d2bffa1ba401c5c6f6f48e0b"
+    sha256 cellar: :any, arm64_ventura: "d431fdcb61334aa6cc1c87690d60fb8c7c797323ee1367a76f7dc21d90191897"
+    sha256 cellar: :any, sonoma:        "7b52532cfaf18e979cba4759c99b09613da4a5a26dac78961fe2f3f49ce3f240"
+    sha256 cellar: :any, ventura:       "60b045f4327237d0bc4913bfd0f5628efb2c19a86a26f939eb65100a0aa2da4c"
+    sha256               arm64_linux:   "7ba6affd762fbf6e51a685e9c1eb5e763a820ead40d96f1d3eb9e744378ebed2"
+    sha256               x86_64_linux:  "061f4cfac8ca9ea8567fd399f092805e3ec13a29403e36e46345d371d3103447"
   end
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
-  depends_on "python@3.12" => [:build, :test]
+  depends_on "pkgconf" => :build
+  depends_on "python@3.13" => [:build, :test]
   depends_on "libsndfile"
   depends_on "lv2"
   depends_on "serd"
@@ -33,7 +32,7 @@ class Lilv < Formula
   depends_on "zix"
 
   def python3
-    "python3.12"
+    "python3.13"
   end
 
   def install
@@ -51,14 +50,14 @@ class Lilv < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <lilv/lilv.h>
 
       int main(void) {
         LilvWorld* const world = lilv_world_new();
         lilv_world_free(world);
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-I#{include}/lilv-0", "-L#{lib}", "-llilv-0", "-o", "test"
     system "./test"
 

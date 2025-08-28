@@ -1,25 +1,26 @@
 class Picat < Formula
   desc "Simple, and yet powerful, logic-based multi-paradigm programming language"
-  homepage "http://picat-lang.org/"
-  url "http://picat-lang.org/download/picat37_src.tar.gz"
-  version "3.7"
-  sha256 "65b28cede94442d9b38cd8a9c5faf3d96c7dd81110398cb2825d3a5a7394ef41"
+  homepage "https://picat-lang.org/"
+  url "https://picat-lang.org/download/picat39_src.tar.gz"
+  version "3.9"
+  sha256 "1d5c8bad46da6017b6fa72238fe38968f6c53d66ab744202eb9c07114b0a19a9"
   license "MPL-2.0"
 
   livecheck do
-    url "http://picat-lang.org/download.html"
+    url "https://picat-lang.org/download.html"
     regex(/>\s*?Released version v?(\d+(?:[.#]\d+)+)\s*?,/i)
   end
 
+  no_autobump! because: :incompatible_version_format
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "40d2d3c516684f4f5d84b188df3f38fadaac62a9e7364dd59f3e32f25ca0e988"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "41a8357957061027fa117db6f182fbd2ed1963882a2c58fee34df499bffdd42b"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "ada862573506f31365c089f07ddcad78f9b9584a867439de6dfa32064d070833"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "5bef2001e18fe6aeaff008f15a22409507985bf7c6f87f818e83a43c4047552d"
-    sha256 cellar: :any_skip_relocation, sonoma:         "67de472ddbf884bbd3a2d9025470bb0f6739bef146ccaefac16b52145437992c"
-    sha256 cellar: :any_skip_relocation, ventura:        "3737e45b985ab3d8c531a25cfbd6b34a2391070d9204f98acb452c1e41cf3f88"
-    sha256 cellar: :any_skip_relocation, monterey:       "f986ad40642357958593818df9ca9d5f4437213c9ff9e245e4ba0f226c139ac9"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "b1d2248d9720aefca12a6c9e8b86fb8999e644688f5564ceb6828b2f0d9e104f"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "48eff97f8df158c9421a0d343a4e89e1ead7a7b845ed40d43b11fc951584ddfa"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "18ac9b07f0f34278049cef38e0eb2228227cd97733f259449c8d206e508b4b94"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "268d96345c612348601b1fde96e800ec83f29a187acf66a04a03ddb0979cd9bd"
+    sha256 cellar: :any_skip_relocation, sonoma:        "f1685ce9e3bb7d3416d8c1fc7f06bb0fe0bda1939a66abb7327414cc79fdeaa2"
+    sha256 cellar: :any_skip_relocation, ventura:       "646aabc4032bca75a228f67923d20443587c27c2f3aba539c074d7003a00de99"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "80b733c4dac8c71e2bd7af06d6b45db948d351fb5147aa1fbec81e2b45137741"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0ac1b5b8b0ce4a7d9bd346f63e291359eb352832eed68277e2b199dbbf44021f"
   end
 
   def install

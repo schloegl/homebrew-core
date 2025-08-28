@@ -1,20 +1,19 @@
 class Naabu < Formula
   desc "Fast port scanner"
-  homepage "https://github.com/projectdiscovery/naabu"
-  url "https://github.com/projectdiscovery/naabu/archive/refs/tags/v2.3.1.tar.gz"
-  sha256 "48d69813363c0236cd3ee24ec71f96bd404e6f11ed09264d37172d9000d5ebb8"
+  homepage "https://docs.projectdiscovery.io/tools/naabu/overview"
+  url "https://github.com/projectdiscovery/naabu/archive/refs/tags/v2.3.5.tar.gz"
+  sha256 "6b754a7cb49e8cbc68b64ca7ed0130c2f6fe6436b4cf3d1acb8b62a5e83a56a3"
   license "MIT"
   head "https://github.com/projectdiscovery/naabu.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "d1c5fa6ea9a5dfe005927f4d4a71786baa81b4c40f8f2fe5a3a144f1a63dfa6b"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "59614ba0b594cdd14bf01f9b4b0a57c15c93c17fd2765b70403ba3599cc6d213"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "3e475ef023c121d74a47f396118118f967a5e796f288eae7e7a4a643b1718a6b"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "67233f93a4169d346b05651428f366fb1cbcc6a727afda2caf59c641f0d21e72"
-    sha256 cellar: :any_skip_relocation, sonoma:         "703a341778e74c1057337b132239281cbb56d5a4a215c897a7080aa8e0ab372a"
-    sha256 cellar: :any_skip_relocation, ventura:        "c03c7f073c04dc754198f756c4a3bd18fd629e5609c358aab4c76bc1f885f481"
-    sha256 cellar: :any_skip_relocation, monterey:       "f62101b1ff75db46f2a15d9eba914fe8b6735a459849483aa18144539188ddbe"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "9208c17030923067a553bda48f6dff91ab20e71e8a07c4cdd04c82d4e507b660"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "e8555f19b0ece4d28bede4c65bc0dacf9d45c10506ecafaa58ee2ab8945665e3"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "3843a160c6ed12a2e39664619aa947ed98a6de5b9630f0a3ce032423af9a806d"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "ce5bca033caa3bc9a1a6302927f394f278065c0602d291fddf1c69828a329896"
+    sha256 cellar: :any_skip_relocation, sonoma:        "669da278198ac01b56f2d21aec752e16ed89e0aff21ceb9ba8f0cf48eca3981e"
+    sha256 cellar: :any_skip_relocation, ventura:       "775a53f96a8c848c2740de35f262c6da866329fe61dc074757280f75a80f68cc"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "9c112b3262e6423754bf1f68990aabc2f7ea07edcbb0cf01abe2e0262be4c3b6"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "91d01ff344133fe4d95196c6133f1d7416a5325f1c7db27b3e621b8262b6afcd"
   end
 
   depends_on "go" => :build
@@ -22,12 +21,12 @@ class Naabu < Formula
   uses_from_macos "libpcap"
 
   def install
-    cd "v2" do
-      system "go", "build", *std_go_args(ldflags: "-s -w"), "./cmd/naabu"
-    end
+    system "go", "build", *std_go_args(ldflags: "-s -w"), "./cmd/naabu"
   end
 
   test do
     assert_match "brew.sh:443", shell_output("#{bin}/naabu -host brew.sh -p 443")
+
+    assert_match version.to_s, shell_output("#{bin}/naabu --version 2>&1")
   end
 end

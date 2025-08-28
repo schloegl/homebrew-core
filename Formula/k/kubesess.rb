@@ -1,19 +1,20 @@
 class Kubesess < Formula
   desc "Manage multiple kubernetes cluster at the same time"
-  homepage "https://rentarami.se/posts/2022-08-05-kube-context-2/"
-  url "https://github.com/Ramilito/kubesess/archive/refs/tags/1.2.11.tar.gz"
-  sha256 "2f2112a984b1c176cff17070b4bf79a4b9b01fa30551bfc1b6a7b2224a5baacb"
+  homepage "https://blog.rentarami.se/posts/2022-08-05-kube-context-2/"
+  url "https://github.com/Ramilito/kubesess/archive/refs/tags/2.0.3-1.tar.gz"
+  sha256 "a5cfbf0637968124d9655109a44222de49b97a882831b56ccf3f11360872dfcd"
   license "MIT"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "858cce58281a3f15f613adedd45f3a9b4e31ac003dc00755730b3d8462de2228"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "b65646e6b6830f53f60f2b7ba38aba5d34025872192e822da02664a9d637d179"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "7d16dc4dcad0df7eb422f6deca08785214e3e14a0fecd6655ad7379bedb916f2"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "76f55efe0d3882ea70d9ca470884d78af2f9090169c06348913264be1c9b572b"
-    sha256 cellar: :any_skip_relocation, sonoma:         "d9b0ed8cbc35dd6b81a39122dce9f2cdd5456463e33049383c64ca4102079155"
-    sha256 cellar: :any_skip_relocation, ventura:        "0311c706a29c0c8f4d12b2a31767449f15afe9d40e4b70a4de6d41a7c0a9cb26"
-    sha256 cellar: :any_skip_relocation, monterey:       "642eb485b50dd9bab9d723b7c28e1493ffcd3be2d853c518110ce043caa3b4a8"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "f00a52baa80cb6fb70ec9d41d2e6aeac573688a3991286d64c51f399e824da67"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "344f52b08299ed4b08e8af8ae17d5d75ab56cd8c8f2bb017ded8ef2de861eb44"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "3da56f2c3569d78ebba5c172eed393c45c528a6dd08562317496b152ba114481"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "789022cb8bd1473a7fde65f34f13cff32fda018872b98dc2e399a90de058cb3d"
+    sha256 cellar: :any_skip_relocation, sonoma:        "b8e0d2cad2d5ca85325a13a99672b71cf4fae01e677a8e9b55036c4e050614a8"
+    sha256 cellar: :any_skip_relocation, ventura:       "0430737333abb2ec5cba2abb5c222dbb2c2a03a288b47dce7b6b3f7042b3740d"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "b048c156580c152238c72864e731433a1efd29372470df0f78b0fadc26ac6b01"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3837dc2f129ab4793fb7d69dfabc3f1830b085991b7cf8faabf04b04f5d6e443"
   end
 
   depends_on "rust" => :build
@@ -31,7 +32,7 @@ class Kubesess < Formula
   end
 
   test do
-    (testpath/".kube/config").write <<~EOS
+    (testpath/".kube/config").write <<~YAML
       kind: Config
       apiVersion: v1
       current-context: docker-desktop
@@ -49,7 +50,7 @@ class Kubesess < Formula
       users:
       - user:
         name: docker-desktop
-    EOS
+    YAML
 
     output = shell_output("#{bin}/kubesess -v docker-desktop context 2>&1")
     assert_match "docker-desktop", output

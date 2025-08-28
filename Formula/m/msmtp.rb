@@ -1,8 +1,8 @@
 class Msmtp < Formula
   desc "SMTP client that can be used as an SMTP plugin for Mutt"
   homepage "https://marlam.de/msmtp/"
-  url "https://marlam.de/msmtp/releases/msmtp-1.8.26.tar.xz"
-  sha256 "6cfc488344cef189267e60aea481f00d4c7e2a59b53c6c659c520a4d121f66d8"
+  url "https://marlam.de/msmtp/releases/msmtp-1.8.30.tar.xz"
+  sha256 "f826a3c500c4dfeed814685097cead9b2b3dca5a2ec3897967cb9032570fa9ab"
   license "GPL-3.0-or-later"
 
   livecheck do
@@ -11,23 +11,22 @@ class Msmtp < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "16a0cbf6e0c43a1f2c54b0107b477d68422a21a8bc32be12b49f65964ad2859b"
-    sha256 arm64_sonoma:   "9b5033e58a0c952161ece88e2b4c554af6e7c171e7e740bf02aa5f2e74767041"
-    sha256 arm64_ventura:  "56711594d87c2709e82f626e1d8296b71aa9b1071d214bc0a8c00d2a7ddeb956"
-    sha256 arm64_monterey: "f6298cd53a86c6b7dc877598260ff2f0d5b93a51dd3a93d49e090365e1721a40"
-    sha256 sonoma:         "87c6b49b175acd851200467f401a492e6c7cdf53ea564e5fd7bb6e2265866cdd"
-    sha256 ventura:        "8a14bfa72ab0de378e8e7b840165105c7cd7f1434ca2bd4bd53536378aea03f4"
-    sha256 monterey:       "10ff50baba4c580c49131bf41773ce9cf979fb1d1d3162f87255bdce0190868f"
-    sha256 x86_64_linux:   "71df3b5a4e31df54427f47a395df4506704fd495995cc807f8aad54131088b09"
+    sha256 cellar: :any, arm64_sequoia: "38068c142cd311018f9df7b5f830d9d8f276dfbd5b92e53421b9a0d237c89714"
+    sha256 cellar: :any, arm64_sonoma:  "49fa246ddc32ff8c42d489a4319e9899b717ed9beb8ab1a0241fa1eb0a5d4237"
+    sha256 cellar: :any, arm64_ventura: "fa42011c0c5dfebdfb290fc14b4824272d4cf7953a0c7b7a08bb3d137e1404e4"
+    sha256 cellar: :any, sonoma:        "792a7e947d956b79bc035f203a763195ab00a0f9cc4fe237c8dc584ae606e8ea"
+    sha256 cellar: :any, ventura:       "feabf234f1333ae0e89243d288ef0a58908324290d52413956da4d5b96fb4949"
+    sha256               arm64_linux:   "709e18cbad71d93a8c0e658e25ebbc042ab6f7d5a21a7981f60b52d154ddaaeb"
+    sha256               x86_64_linux:  "e3e8a2abfee28a3f75af8d4d7bf46dc6d30f023b63647824ef9873cbab7edd2a"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "gettext"
   depends_on "gnutls"
   depends_on "libidn2"
 
   def install
-    system "./configure", *std_configure_args, "--disable-silent-rules", "--with-macosx-keyring"
+    system "./configure", "--disable-silent-rules", "--with-macosx-keyring", *std_configure_args
     system "make", "install"
     (pkgshare/"scripts").install "scripts/msmtpq"
   end

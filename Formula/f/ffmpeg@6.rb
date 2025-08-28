@@ -1,12 +1,12 @@
 class FfmpegAT6 < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-6.1.2.tar.xz"
-  sha256 "3b624649725ecdc565c903ca6643d41f33bd49239922e45c9b1442c63dca4e38"
+  url "https://ffmpeg.org/releases/ffmpeg-6.1.3.tar.xz"
+  sha256 "bc5f1e4a4d283a6492354684ee1124129c52293bcfc6a9169193539fbece3487"
   # None of these parts are used by default, you have to explicitly pass `--enable-gpl`
   # to configure to activate them. In this case, FFmpeg's license changes to GPL v2+.
   license "GPL-2.0-or-later"
-  revision 3
+  revision 1
 
   livecheck do
     url "https://ffmpeg.org/download.html"
@@ -14,17 +14,18 @@ class FfmpegAT6 < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia: "5d54158b8f70b18c48e92abb63f797820bc5c981f62cfa9b7bc5fd2c1148bfe2"
-    sha256 arm64_sonoma:  "d2912673745744ea72f55451ef21e02a0cd68969834d7c6e6891867bf4589452"
-    sha256 arm64_ventura: "0d795c9b56ee515ba67998cbec4242b831e716b6d4c39be202f6d3767335f1a8"
-    sha256 sonoma:        "16d21d6a68bda3ade7c8de491290ea3447ab7134dc2f16b6d5e84e3477a3604b"
-    sha256 ventura:       "d6c1f00cd256e57e28bab5885c385119ba338e49a6649cf5d2bd77702cb261c6"
-    sha256 x86_64_linux:  "670438f630a20352e5aa5b825fbc7c082a80bd9b583b1c3d64f2a5abe855cc68"
+    sha256 arm64_sequoia: "cd6699c50c281be8a491fc80d6a579923c7d8d5ebc7167fd4d09866fb83e5bf6"
+    sha256 arm64_sonoma:  "ef98108591d84707ed5bcf99f32fc27d11a332a266acafb9fd3a20f54df52a96"
+    sha256 arm64_ventura: "ff06252a7384eca46ca9699a3b079ce3866fab3a5e8cf14df8ab694fe3c0f5c9"
+    sha256 sonoma:        "0ad4653623d543d0f9e4579017d97a9e7df3d66757642258b770812f12eaef1f"
+    sha256 ventura:       "2699a840258353a6297480efc90b1312cf320d0d3eaa07ff5a0de8d4c5b6acdd"
+    sha256 arm64_linux:   "4ce3d2f3001d48f37f45310e63bea01f59a72ee12da27ba6aa292d1f1c6af9cd"
+    sha256 x86_64_linux:  "9f5610fd6ed387b9df8b2756ea8733b68ddbad3b46f7faba27c5d8f7115ead16"
   end
 
   keg_only :versioned_formula
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "aom"
   depends_on "aribb24"
   depends_on "dav1d"
@@ -86,13 +87,17 @@ class FfmpegAT6 < Formula
     depends_on "nasm" => :build
   end
 
-  fails_with gcc: "5"
-
   # Fix for QtWebEngine, do not remove
   # https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=270209
   patch do
     url "https://gitlab.archlinux.org/archlinux/packaging/packages/ffmpeg/-/raw/5670ccd86d3b816f49ebc18cab878125eca2f81f/add-av_stream_get_first_dts-for-chromium.patch"
     sha256 "57e26caced5a1382cb639235f9555fc50e45e7bf8333f7c9ae3d49b3241d3f77"
+  end
+
+  # Backport support for recent svt-av1 (3.0.0)
+  patch do
+    url "https://github.com/FFmpeg/FFmpeg/commit/d1ed5c06e3edc5f2b5f3664c80121fa55b0baa95.patch?full_index=1"
+    sha256 "0eb23ab90c0e5904590731dd3b81c86a4127785bc2b367267d77723990fb94a2"
   end
 
   def install
@@ -169,6 +174,6 @@ class FfmpegAT6 < Formula
     # Create an example mp4 file
     mp4out = testpath/"video.mp4"
     system bin/"ffmpeg", "-filter_complex", "testsrc=rate=1:duration=1", mp4out
-    assert_predicate mp4out, :exist?
+    assert_path_exists mp4out
   end
 end

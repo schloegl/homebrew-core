@@ -3,20 +3,18 @@ class GitRemoteHg < Formula
 
   desc "Transparent bidirectional bridge between Git and Mercurial"
   homepage "https://github.com/felipec/git-remote-hg"
-  url "https://github.com/felipec/git-remote-hg/archive/refs/tags/v0.6.tar.gz"
-  sha256 "1d49ffda290c8a307d32191655bdd85015e0e2f68bb2d64cddea04d8ae50a4bf"
+  url "https://github.com/felipec/git-remote-hg/archive/refs/tags/v0.7.tar.gz"
+  sha256 "ada593c2462bed5083ab0fbd50b9406b8e83b04a6c882de80483e7c77ce8bf07"
   license "GPL-2.0-only"
-  revision 2
   head "https://github.com/felipec/git-remote-hg.git", branch: "master"
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any_skip_relocation, all: "62aaad29bee197840f65142bd9d7206a9c432dece29bf17197a4055fc4976295"
+    sha256 cellar: :any_skip_relocation, all: "9c34492a26b47d11afe1c03ccd0e9ab9ec8f08050c8d54b70f5530d227a2aac5"
   end
 
   depends_on "asciidoctor" => :build
   depends_on "mercurial"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   conflicts_with "git-cinnabar", because: "both install `git-remote-hg` binaries"
 

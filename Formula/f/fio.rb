@@ -1,8 +1,8 @@
 class Fio < Formula
   desc "I/O benchmark and stress test"
   homepage "https://github.com/axboe/fio"
-  url "https://github.com/axboe/fio/archive/refs/tags/fio-3.37.tar.gz"
-  sha256 "b59099d42d5c62a8171974e54466a688c8da6720bf74a7f16bf24fb0e51ff92d"
+  url "https://github.com/axboe/fio/archive/refs/tags/fio-3.40.tar.gz"
+  sha256 "9fc81e3a490a53fe821d76dd759d64f229d0ac6b4d2c711837bcad158242e3b2"
   license "GPL-2.0-only"
 
   livecheck do
@@ -11,19 +11,21 @@ class Fio < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "6dcbb883408a9ed76f6a188e178af9ae2a0a446f752943e4fc37fe02ada1ecfe"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "4606a60336899fd6999316c0d7de2a23b87467f6d77b0eef9000260e899a31fc"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "14600f40dc8304b14b5e9620ea0d58c4d518cebf581b1a44e0adf78206c6f3a2"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "e975b49bbc2f53fc937ef2efd886dffc00b14221056c378bfa12a98ce1bb9aff"
-    sha256 cellar: :any_skip_relocation, sonoma:         "18c52b3d11e199a2f960a0781007204b7d0d9de26f26f13670262c6e4a4db5b0"
-    sha256 cellar: :any_skip_relocation, ventura:        "15e4e2f977211365ccae723d41eb8e1d73722a2d28ab9f0fc4887a3814a8dfe9"
-    sha256 cellar: :any_skip_relocation, monterey:       "a3d576aba0d1979b57fc1083143b703c0876c932688156ed7de3c7ecd5aa7082"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "fc5fb7416705b1cfed6f18938ba6e54c5da7f9aa81a1ef77380afb67171cf47c"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "1c8b504d3c62bbce8a96efc01c00ec5b15f88bd9437f70c591337bf00f0626bf"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "ba52e1f825848a101aeb18e688c55475860e8b5a9da0eb477bc43937260aa4d0"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "3f3091669df862a3f00777bb99dadd95dc53134cb7fa680312bed8d95003b141"
+    sha256 cellar: :any_skip_relocation, sonoma:        "be7e0fd80ca53413a6088a2ff4893fa070d228d619129a1cf603255a1af37037"
+    sha256 cellar: :any_skip_relocation, ventura:       "d02aec7122860d588cd7c7876dd14361a1f14f95b950b708ec6cb6ad907f1136"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "e4fa34b174d429c002102c6ae454922caf983339a2cb7ded9bbbf0dc29e2e226"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c41753bb19a895a1d21cb9d89e367846c171aefc177aa869c1bc3a54605437e6"
   end
 
   uses_from_macos "zlib"
 
+  conflicts_with "fiona", because: "both install `fio` binaries"
+
   def install
+    ENV.runtime_cpu_detection
     system "./configure"
     # fio's CFLAGS passes vital stuff around, and crushing it will break the build
     system "make", "prefix=#{prefix}",

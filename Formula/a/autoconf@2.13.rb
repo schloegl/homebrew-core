@@ -1,8 +1,8 @@
 class AutoconfAT213 < Formula
   desc "Automatic configure script builder"
   homepage "https://www.gnu.org/software/autoconf/"
-  url "https://ftp.gnu.org/gnu/autoconf/autoconf-2.13.tar.gz"
-  mirror "https://ftpmirror.gnu.org/autoconf/autoconf-2.13.tar.gz"
+  url "https://ftpmirror.gnu.org/gnu/autoconf/autoconf-2.13.tar.gz"
+  mirror "https://ftp.gnu.org/gnu/autoconf/autoconf-2.13.tar.gz"
   sha256 "f0611136bee505811e9ca11ca7ac188ef5323a8e2ef19cffd3edb3cf08fd791e"
   license "GPL-2.0-or-later"
 
@@ -24,6 +24,7 @@ class AutoconfAT213 < Formula
   end
 
   deprecate! date: "2024-02-22", because: :unsupported
+  disable! date: "2025-02-24", because: :unsupported
 
   uses_from_macos "m4"
 

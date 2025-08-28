@@ -1,17 +1,18 @@
 class WebExt < Formula
   desc "Command-line tool to help build, run, and test web extensions"
   homepage "https://github.com/mozilla/web-ext"
-  url "https://registry.npmjs.org/web-ext/-/web-ext-8.3.0.tgz"
-  sha256 "c653efdb1e8082f80512a1b635dea6b475748bff4f363f7e59e36fe0b4eb3503"
+  url "https://registry.npmjs.org/web-ext/-/web-ext-8.9.0.tgz"
+  sha256 "3b683ffbcb50c57e03b7ff5d9c4a118c1d9d04f834617d4809138fb3f1410295"
   license "MPL-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "847da99b4c45299aa173a610674bc9eea5881887d31f366b1888fbd9ba1e2cb7"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "847da99b4c45299aa173a610674bc9eea5881887d31f366b1888fbd9ba1e2cb7"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "847da99b4c45299aa173a610674bc9eea5881887d31f366b1888fbd9ba1e2cb7"
-    sha256 cellar: :any_skip_relocation, sonoma:        "73a0f4a766251f92aef4a57637d12b6df26c52a55fd9d43de0bfa0f11b32b1eb"
-    sha256 cellar: :any_skip_relocation, ventura:       "73a0f4a766251f92aef4a57637d12b6df26c52a55fd9d43de0bfa0f11b32b1eb"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8e311108a697d9f161f1b31b9068724ef0aca3729ca2b529bb7ccd9f298d801c"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "3841f0cb6c0f92acc8ac16b33f6009e92059128b1e79fa2f848046489f92a83c"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "3841f0cb6c0f92acc8ac16b33f6009e92059128b1e79fa2f848046489f92a83c"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "3841f0cb6c0f92acc8ac16b33f6009e92059128b1e79fa2f848046489f92a83c"
+    sha256 cellar: :any_skip_relocation, sonoma:        "c1d5c298d0399714d03afec2266ca86f9e47dee14fe83343c956f4a837adda75"
+    sha256 cellar: :any_skip_relocation, ventura:       "c1d5c298d0399714d03afec2266ca86f9e47dee14fe83343c956f4a837adda75"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "3c725fc7b120bdff7c405044fae2b39b937f159b2301549c9879dd1683b14c96"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3c725fc7b120bdff7c405044fae2b39b937f159b2301549c9879dd1683b14c96"
   end
 
   depends_on "node"
@@ -39,13 +40,13 @@ class WebExt < Formula
   end
 
   test do
-    (testpath/"manifest.json").write <<~EOF
+    (testpath/"manifest.json").write <<~JSON
       {
         "manifest_version": 2,
         "name": "minimal web extension",
         "version": "0.0.1"
       }
-    EOF
+    JSON
     assert_equal <<~EOF, shell_output("#{bin}/web-ext lint").gsub(/ +$/, "")
       Validation Summary:
 

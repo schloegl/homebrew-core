@@ -1,8 +1,8 @@
 class Hurl < Formula
   desc "Run and Test HTTP Requests with plain text and curl"
   homepage "https://hurl.dev"
-  url "https://github.com/Orange-OpenSource/hurl/archive/refs/tags/5.0.1.tar.gz"
-  sha256 "2b5a42fc95b74c876257a35d13b603e06f1f2c58e0ca44a2c0bb23d023227c29"
+  url "https://github.com/Orange-OpenSource/hurl/archive/refs/tags/7.0.0.tar.gz"
+  sha256 "3f505848aabd9eec78360928b0fcbfea237a049b5c8d25b8d9e0aeb3f9d8dfed"
   license "Apache-2.0"
   head "https://github.com/Orange-OpenSource/hurl.git", branch: "master"
 
@@ -15,21 +15,21 @@ class Hurl < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "f68c999d12879fe9960980ff26b5279ca0a6ff220a2744693e6021bef4624891"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "20f6bd5e3dd48632b4dfbd0aef95166b8504b21a0559a8356325abf2f416212c"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "84df0713ef2cf35ff01b418e6b7a96ff964d50b93ef8f38c9e0ddcbcc7873687"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "35bf3554910bbe8d63f5dee7273614070cb1e88f7fe4a1c607d59b9e8f7f67a9"
-    sha256 cellar: :any_skip_relocation, sonoma:         "aeb37dec9f5e50a21152e4be7ea9cb64d82aadc04e6b3f87b6834235fab35151"
-    sha256 cellar: :any_skip_relocation, ventura:        "e57ada90e68d0b54522c650a022754484860b5c6a6fbcc69f6265015eba6f596"
-    sha256 cellar: :any_skip_relocation, monterey:       "62e3b2a5c78467e09b91626191785952c17e484f5cb9a97d87682951d320ad69"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "da088a0c38d10658b71d7baddf5cdb9efad45068455fc7db526a7f90d6a2fe44"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "02271320877e0025edd124cfac43983c66d7e434a00d01c71fa12fd48bf1d174"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "569b483cb9265abea3607bcc534363052304c71ef72982377ac9112d658dadc1"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "9fc5113c8ed3bcb8952ba034a152daa71da8fd84ac7e46ac576f088bbee2a9c0"
+    sha256 cellar: :any_skip_relocation, sonoma:        "056bdf68cc286e87ea170f3802a46d7a0a09eb9c7ff7f0feba68ad747d3ad3fc"
+    sha256 cellar: :any_skip_relocation, ventura:       "63cb4d7e897774ec1ef425771e88aaccbef5bf823aaaf184c765f6749d06513b"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "f4164ea2b7cfca670493aad3b2dd761a2f44077fbba3b4339eeaa1191b98b119"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "bd38d4a95494e8df47aac5fe57b8b3585358afedb990683fd26ac7c1de49728c"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
 
   uses_from_macos "curl"
   uses_from_macos "libxml2"
+  uses_from_macos "llvm" # for libclang
 
   def install
     # FIXME: This formula uses the `openssl-sys` crate on Linux but does not link with our OpenSSL.

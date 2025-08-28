@@ -1,18 +1,18 @@
 class Muffet < Formula
   desc "Fast website link checker in Go"
   homepage "https://github.com/raviqqe/muffet"
-  url "https://github.com/raviqqe/muffet/archive/refs/tags/v2.10.3.tar.gz"
-  sha256 "8b4d4904593c2d7bb97d3e2da76fbd7f653f7446f61ae7c80175a8a316cbefd5"
+  url "https://github.com/raviqqe/muffet/archive/refs/tags/v2.11.0.tar.gz"
+  sha256 "c54af3f50150d7a58d83d1d33b98a489f6bc0d0290887b3ae18e6677e08e1737"
   license "MIT"
-  head "https://github.com/raviqqe/muffet.git", branch: "master"
+  head "https://github.com/raviqqe/muffet.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "ca3a5bc9b13c9d45e74077e72adca0432b3fe4bc206ff2759b3f4789e63d1102"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "ca3a5bc9b13c9d45e74077e72adca0432b3fe4bc206ff2759b3f4789e63d1102"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "ca3a5bc9b13c9d45e74077e72adca0432b3fe4bc206ff2759b3f4789e63d1102"
-    sha256 cellar: :any_skip_relocation, sonoma:        "063b9700a2fdd5b1ea1c0ddbbb5c695169c2c0b2ff831a1393648010ca5e3613"
-    sha256 cellar: :any_skip_relocation, ventura:       "063b9700a2fdd5b1ea1c0ddbbb5c695169c2c0b2ff831a1393648010ca5e3613"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2b59b34c04355a04366bd9ca997aaae5f5ab36a283329082ed49b973b7bcb395"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "f58e2b267538228d28ea3069c1c5b432fdd2e9c475c65ba9183a3adc083e7b3b"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "f58e2b267538228d28ea3069c1c5b432fdd2e9c475c65ba9183a3adc083e7b3b"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "f58e2b267538228d28ea3069c1c5b432fdd2e9c475c65ba9183a3adc083e7b3b"
+    sha256 cellar: :any_skip_relocation, sonoma:        "149591faaca9fa1d39b175089c689fab3406dd32d85b5fe87e10eb358717bcdd"
+    sha256 cellar: :any_skip_relocation, ventura:       "149591faaca9fa1d39b175089c689fab3406dd32d85b5fe87e10eb358717bcdd"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a641c254962700602d855f28fd858d73eb692c5047326baaf81c4b625f903fed"
   end
 
   depends_on "go" => :build

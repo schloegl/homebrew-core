@@ -1,9 +1,9 @@
 class ArmNoneEabiGcc < Formula
   desc "GNU compiler collection for arm-none-eabi"
   homepage "https://gcc.gnu.org"
-  url "https://ftp.gnu.org/gnu/gcc/gcc-14.2.0/gcc-14.2.0.tar.xz"
-  mirror "https://ftpmirror.gnu.org/gcc/gcc-14.2.0/gcc-14.2.0.tar.xz"
-  sha256 "a7b39bc69cbf9e25826c5a60ab26477001f7c08d85cec04bc0e29cabed6f3cc9"
+  url "https://ftpmirror.gnu.org/gnu/gcc/gcc-15.2.0/gcc-15.2.0.tar.xz"
+  mirror "https://ftp.gnu.org/gnu/gcc/gcc-15.2.0/gcc-15.2.0.tar.xz"
+  sha256 "438fd996826b0c82485a29da03a72d71d6e3541a83ec702df4271f6fe025d24e"
   license "GPL-3.0-or-later" => { with: "GCC-exception-3.1" }
 
   livecheck do
@@ -11,14 +11,13 @@ class ArmNoneEabiGcc < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "7e99a55c38570d03ab85afd156bad3a40153405d8e8427ab4e75e8291a472acb"
-    sha256 arm64_sonoma:   "110e080cf05531cf7d97c9efc1c39b23b2bd2bec38cf536814d94ea6b0103c27"
-    sha256 arm64_ventura:  "7eb18a5b0768335ec37cd994e073e7c7bd8b3e32437c6c8fa8966f4014eecc42"
-    sha256 arm64_monterey: "7feb6f35385f0c35b2b74ef2b735ba1040e4fbf82a3386ffa6e97a92a07cc755"
-    sha256 sonoma:         "7ff497dd7128127e645c9994e914a4fd72feefa12a1010e6f99abaa758467c47"
-    sha256 ventura:        "7e3aa22bd54f564cd5c51a381b3822ceb6b0b3d19a04eceb2040691a26ab581e"
-    sha256 monterey:       "1d4d2b9c82111c5e906ae204ec2905a6e9ca2d06e5a0487e62451b9b65e10676"
-    sha256 x86_64_linux:   "b5bb4cee7a5e1d1a6eb896b40854911a4616e98a0b66b6a8590a9b481a8b308e"
+    sha256 arm64_sequoia: "47c0d0ced3dd45b08d524e79c6bbb260aaaefa9f1b3c7b9125aca936ca7d8b6c"
+    sha256 arm64_sonoma:  "70af1c1ff0e2fe89bd5a48fcd474b7e20f5b8beaba7c0cab685abfd575abbdb9"
+    sha256 arm64_ventura: "ea891b743bfa1d20750b0bf3a6d42d26a75735e2915db2274aeeba005741af7c"
+    sha256 sonoma:        "ffaedf2d455c5355e38e12bb6e7cb6e48461207645b645de0d63c4a7cd21eaa1"
+    sha256 ventura:       "f2afbcf4b04dd28df9aa429637246aba842181c85a7e926c1ece700695a41d3a"
+    sha256 arm64_linux:   "68de611434d96d73eeb8428e02b7c9d66b4bae87ce814a6d49a2a171d6c517b4"
+    sha256 x86_64_linux:  "7fe586dbc32997229e4454d233077b94563d2a36802a5c2b608bd7edcd9e00c0"
   end
 
   depends_on "arm-none-eabi-binutils"
@@ -42,6 +41,8 @@ class ArmNoneEabiGcc < Formula
                              "--with-ld=#{Formula["arm-none-eabi-binutils"].bin}/arm-none-eabi-ld",
                              "--enable-languages=c,c++,objc,lto",
                              "--enable-lto",
+                             "--enable-multilib",
+                             "--with-multilib-list=aprofile,rmprofile",
                              "--with-system-zlib",
                              "--with-zstd",
                              *std_configure_args
@@ -56,14 +57,14 @@ class ArmNoneEabiGcc < Formula
   end
 
   test do
-    (testpath/"test-c.c").write <<~EOS
+    (testpath/"test-c.c").write <<~C
       int main(void)
       {
         int i=0;
         while(i<10) i++;
         return i;
       }
-    EOS
+    C
     system bin/"arm-none-eabi-gcc", "-c", "-o", "test-c.o", "test-c.c"
     assert_match "file format elf32-littlearm",
                  shell_output("#{Formula["arm-none-eabi-binutils"].bin}/arm-none-eabi-objdump -a test-c.o")

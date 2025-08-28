@@ -1,26 +1,25 @@
 class Mpi4py < Formula
   desc "Python bindings for MPI"
   homepage "https://mpi4py.github.io/"
-  url "https://github.com/mpi4py/mpi4py/releases/download/4.0.0/mpi4py-4.0.0.tar.gz"
-  sha256 "820d31ae184d69c17d9b5d55b1d524d56be47d2e6cb318ea4f3e7007feff2ccc"
+  url "https://github.com/mpi4py/mpi4py/releases/download/4.1.0/mpi4py-4.1.0.tar.gz"
+  sha256 "817492796bce771ccd809a6051cf68d48689815493b567a696ce7679260449cd"
   license "BSD-3-Clause"
 
   bottle do
-    sha256 cellar: :any, arm64_sequoia:  "b51ba8421ae0f43cf3954780e7e16c58be0b167e2a2e07d6ef6e6d8bb636bb87"
-    sha256 cellar: :any, arm64_sonoma:   "af0b502535e60fc352f583f6dc3e6f22656d51b2b8a6879e286d5746eadbaeaf"
-    sha256 cellar: :any, arm64_ventura:  "3f8f8cd4ab3bf101d205bd7750a0ba506b44f19e4d4a0a77165e9cf3ad485cca"
-    sha256 cellar: :any, arm64_monterey: "e5db582124c03962a6b713df7f224d0c39860e61d60ee8d7bbe3b09fd7a58648"
-    sha256 cellar: :any, sonoma:         "623f199ac2973c68186eccba9126fc3c9845bd2ca5f28eeba2da167df66d745e"
-    sha256 cellar: :any, ventura:        "b4f16e256a6eae84ce6ba36302267080010e9d03ea6bc84098ac19652a0388f9"
-    sha256 cellar: :any, monterey:       "406ac34f87b65a4227b974a1b5f39d20f499a5783900618d6253c206cb051658"
-    sha256               x86_64_linux:   "75879be194af8dc54e5a70960f0fef8e289e10482f85f377e4e298eacd7f6c51"
+    sha256 cellar: :any, arm64_sequoia: "61a98a4cb90a3a16484e15c427afb8f98401ce4d6a5b4f40fdc419cb219799e7"
+    sha256 cellar: :any, arm64_sonoma:  "92a9daced60284a5d9cd9969719d3a29c2014d794b1cc2c9f40ed5cdf1cc2006"
+    sha256 cellar: :any, arm64_ventura: "761063a583be9a8f05e2fa7dc63c8ebac069785dbd5e968ebd161ed449132b18"
+    sha256 cellar: :any, sonoma:        "c8d291f48a76502621409a808db8a74492a4e3ebf66cd39402fabd550da912cb"
+    sha256 cellar: :any, ventura:       "2d8eacea786cc0bc99690dfece29172c435c92fd4dbc621d6a296881bd9a9610"
+    sha256               arm64_linux:   "3c4bbc35ab042230c0371df833fc924512ceadb2b315bf192b4b47c5dd78fc76"
+    sha256               x86_64_linux:  "b7a29ffe65f402fb6040a6a000fb43b8ead0826b8d0426f62a8f48779cefd8af"
   end
 
   depends_on "open-mpi"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   def python3
-    "python3.12"
+    "python3.13"
   end
 
   def install

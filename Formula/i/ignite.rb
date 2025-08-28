@@ -1,30 +1,32 @@
 class Ignite < Formula
   desc "Build, launch, and maintain any crypto application with Ignite CLI"
-  homepage "https://github.com/ignite/cli"
-  url "https://github.com/ignite/cli/archive/refs/tags/v28.5.3.tar.gz"
-  sha256 "4ef44890f75b969829560910ffe16450541413d5604bd1b87e4544b2dc5037ea"
+  homepage "https://docs.ignite.com/"
+  url "https://github.com/ignite/cli/archive/refs/tags/v29.3.1.tar.gz"
+  sha256 "f501ad2737cb24c1d761905caf5592728a2d0b2440e2dde39ef90a082273b8ad"
   license "Apache-2.0"
+  head "https://github.com/ignite/cli.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "b3dc5a49aeecf795471a46a6e086076f6a0ba5356eeec9ec4af30f5e1231232b"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "1fea7bd32ea7b7f09457b2950e8b4ad4d06f4bd7b9a719739624b6d3bd47e215"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "bae4d0d86be09c2dd0fdebe9b770579d88c36fc5b6a4c82909d30829a4ae50e2"
-    sha256 cellar: :any_skip_relocation, sonoma:        "c6ee772822f34c41e34aefae650f2def5e37906195a712aa59e6f8decb8dcd63"
-    sha256 cellar: :any_skip_relocation, ventura:       "abf5f9a6ed59dec4cf6a429cee37d55981d7ae7b439999774d2dce5167106a68"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a821731ad42e4866bafa3648ab3ad13a692fd8e0bc2d537ec16a505316166042"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "09e37bf37fe54f64d51de3078a3ebfde3c1474f566e2b0087d4ab109a47692ec"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "c30b4d2d4c221326ffd6a506d6ab63d636d9b3972427244a1cf1f688c34626ae"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "45b34f9f06fa6488b4b0f1ff198f7a382d4d1651ed794e94dc04e621d52def2a"
+    sha256 cellar: :any_skip_relocation, sonoma:        "03baf493774b97e582c543cf457113d851789aefe5ba1a3e03ed601ca445ed77"
+    sha256 cellar: :any_skip_relocation, ventura:       "065e961abfaf91b299fbdacc26213a90ef88112cbac4d920fbd4f1cd1fff5bfd"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e44aa860b5f3a226414f4ee884f28ff3cc64d147c0cfda92797fd4f3a9878dcf"
   end
 
   depends_on "go"
   depends_on "node"
 
   def install
-    system "go", "build", "-mod=readonly", *std_go_args(output: bin/"ignite"), "./ignite/cmd/ignite"
+    system "go", "build", "-mod=readonly", *std_go_args(ldflags: "-s -w", output: bin/"ignite"), "./ignite/cmd/ignite"
   end
 
   test do
     ENV["DO_NOT_TRACK"] = "1"
     system bin/"ignite", "s", "chain", "mars"
     sleep 2
-    assert_predicate testpath/"mars/go.mod", :exist?
+    sleep 2 if OS.mac? && Hardware::CPU.intel?
+    assert_path_exists testpath/"mars/go.mod"
   end
 end

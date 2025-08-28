@@ -1,20 +1,20 @@
 class Mfem < Formula
   desc "Free, lightweight, scalable C++ library for FEM"
   homepage "https://mfem.org/"
-  url "https://github.com/mfem/mfem/archive/refs/tags/v4.7.tar.gz"
-  sha256 "731bc2665c13d4099f9c9c946eb83ab07cd2e78a9575d4fa62a96cdb40d6ba0f"
+  url "https://github.com/mfem/mfem/archive/refs/tags/v4.8.tar.gz"
+  sha256 "65472f732d273832c64b2c39460649dd862df674222c71bfa82cf2da76705052"
   license "BSD-3-Clause"
+  revision 1
   head "https://github.com/mfem/mfem.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "d849e8b598c7fc8d73fce62e130f27baeb6018a39bffa7d1f39c937410db08b9"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "caeb6d44d99d2b8c681539b8c6fcd2139eca0079e9427eff4cc20df9b5b12067"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "abbe3f843317bde2dcd3f396cbc4f132e53f4601ca63712e790c5819b90f19ce"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "42815e0cca7be31b3b2ad59e9ba48dc79f9c998b051666a22bd0c5eed18cc723"
-    sha256 cellar: :any_skip_relocation, sonoma:         "410e2f119420078698e8e4c52c7792e045b28771cc48e3735ab94941a10db203"
-    sha256 cellar: :any_skip_relocation, ventura:        "3ec94b67bd753a1d01768c3dcd68e28b3cf87d6683c8fd5ed01115e495647386"
-    sha256 cellar: :any_skip_relocation, monterey:       "f4a349a5fef6c5ad572fd3392ebc70851e65c947a9e1d81045ed45378b973233"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3c36512101f6aff6a51c2fdf1a5374a2ad899b22e3242316b142f8f8b892bf85"
+    sha256 cellar: :any,                 arm64_sequoia: "bb5a4a26df2514afdc22b0c2c113972977f69d08f215a9cd76061bcdf4f54458"
+    sha256 cellar: :any,                 arm64_sonoma:  "277537e5f261f748b80b10694d879edee4f466630910010d19845ce9f026e9d0"
+    sha256 cellar: :any,                 arm64_ventura: "4e70d2abd91e5f0bbebe67e57a7c100090372520430923d8a9ce88c6b3ff9b0b"
+    sha256 cellar: :any,                 sonoma:        "b96357702ef792b1efab68780c3f817b7f3e94e455e3ee3d023968386f9cf430"
+    sha256 cellar: :any,                 ventura:       "478f94973d73e5d051867e087e08ea8131c1bcc5833aeb0122f3317eaeecc896"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "f82f2ce00bdca773da25b025a96d5c7a18f857f182c9c0b0a5180500134c0883"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "dd773f4de9a8d70d6c53073032adb139af3873659c56d49af7a43b16b65bb709"
   end
 
   depends_on "cmake" => :build
@@ -32,6 +32,7 @@ class Mfem < Formula
     inreplace "config/config.mk.in", "@MFEM_HOST_CXX@", ENV.cxx
 
     args = [
+      "-DBUILD_SHARED_LIBS=ON",
       "-DCMAKE_INSTALL_RPATH=#{rpath}",
       "-DMFEM_USE_MPI=YES",
       "-DMFEM_USE_METIS_5=YES",

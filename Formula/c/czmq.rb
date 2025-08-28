@@ -22,6 +22,8 @@ class Czmq < Formula
     end
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     rebuild 1
     sha256 cellar: :any,                 arm64_sequoia:  "563fccc28279b87f02a5545f8e041090ead4e42f04f5df7e50b421abbb88f1eb"
@@ -33,6 +35,7 @@ class Czmq < Formula
     sha256 cellar: :any,                 ventura:        "67d8bb3b5214620f2e55a65b779e4d92affde8d6468ac25eccc5b4d1ac504ee8"
     sha256 cellar: :any,                 monterey:       "300244e12b2cc498876e3b6a346f8ad24ccf1a256d8dc84c4e00b594c71c4bce"
     sha256 cellar: :any,                 big_sur:        "d5abd045c165de80872c22ecf503132110c26e35d05b0b50c78dec97fd31e628"
+    sha256 cellar: :any_skip_relocation, arm64_linux:    "55340fbd1cbc1236fd899f432fcbf4501f9ec3761c7e3d141a0efd3e807fe75d"
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "376bc4229fd95f09cf0fed87437a5b7ede0698f2846abd1199cde96aae7a86fe"
   end
 
@@ -45,7 +48,7 @@ class Czmq < Formula
   end
 
   depends_on "asciidoc" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "xmlto" => :build
   depends_on "lz4"
   depends_on "zeromq"
@@ -54,7 +57,7 @@ class Czmq < Formula
     ENV["XML_CATALOG_FILES"] = "#{etc}/xml/catalog"
 
     system "./autogen.sh" if build.head?
-    system "./configure", "--disable-dependency-tracking", "--prefix=#{prefix}"
+    system "./configure", *std_configure_args
     system "make"
     system "make", "ZSYS_INTERFACE=lo0", "check-verbose"
     system "make", "install"
@@ -62,7 +65,7 @@ class Czmq < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <czmq.h>
 
       int main(void)
@@ -80,7 +83,7 @@ class Czmq < Formula
 
         return 0;
       }
-    EOS
+    C
 
     flags = ENV.cflags.to_s.split + %W[
       -I#{include}

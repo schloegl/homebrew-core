@@ -1,18 +1,16 @@
 class Qxmpp < Formula
   desc "Cross-platform C++ XMPP client and server library"
-  homepage "https://github.com/qxmpp-project/qxmpp/"
-  url "https://github.com/qxmpp-project/qxmpp/archive/refs/tags/v1.8.1.tar.gz"
-  sha256 "f307dde71dbaf9e17dc0472fafe68cabe2572b22ae759b6af24f8e1183b8db71"
+  homepage "https://invent.kde.org/libraries/qxmpp"
+  url "https://invent.kde.org/libraries/qxmpp/-/archive/v1.10.4/qxmpp-v1.10.4.tar.bz2"
+  sha256 "92d7e491be736598b2ef20250b5a5e387df584f4a61e0b5d34a3536fa99b3e72"
   license "LGPL-2.1-or-later"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "35ecf017c6e3831bfde3214cd3e3494640487ded3181aae0b976633fbd4b8357"
-    sha256 cellar: :any,                 arm64_ventura:  "9552066925505dfbe08a5cf08047612e591b3df2e3ee5004f0bb582dd7d0e029"
-    sha256 cellar: :any,                 arm64_monterey: "9154b994b01159d648d18cdfabc70f262905d6b34dbc8d65eaf5c2bdd86f6b13"
-    sha256 cellar: :any,                 sonoma:         "f3a50a20f603418572d79ecb09ea82a3b0f7288358ef349fbca4a91c2ea8704f"
-    sha256 cellar: :any,                 ventura:        "c2b5b8702dbd5705c238bd7ce83fb69515c81b265ea5298590ca5fa363125444"
-    sha256 cellar: :any,                 monterey:       "a71c28054571afc618796c9b9b0193a9be622a94ea7dc8a1024ee6f58fac75a4"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "29bd2b35ecf089919a9938af9fbeb2d582a364e3a53d14a3e21b60043be42fd1"
+    sha256 cellar: :any,                 arm64_sonoma:  "927f6f32f2f6748c6db4bdcf726f503e4be2626a772babf37d2e8be17fc9fc64"
+    sha256 cellar: :any,                 arm64_ventura: "599abd8cea19f8951f3518bb649fbdd1cf7f35a3c85e414231a85aed0438060e"
+    sha256 cellar: :any,                 sonoma:        "2b4215786c74e012e8e6a22eda45ddb14e22493a260c57da48d2ff88c955ce7d"
+    sha256 cellar: :any,                 ventura:       "da033a9b7a6211fe8b598863765ca3feadf6deb390939e6fcb29f5e19817db4d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "31c2d1dbdec20af0800b293d32e01a8b009961a69d61538e3f6eea021269d187"
   end
 
   depends_on "cmake" => :build
@@ -56,17 +54,17 @@ class Qxmpp < Formula
       QMAKE_RPATHDIR += #{lib}
     EOS
 
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <QXmppQt6/QXmppClient.h>
       int main() {
         QXmppClient client;
         return 0;
       }
-    EOS
+    CPP
 
     system "#{Formula["qt"].bin}/qmake", "test.pro"
     system "make"
-    assert_predicate testpath/"test", :exist?, "test output file does not exist!"
+    assert_path_exists testpath/"test", "test output file does not exist!"
     system "./test"
   end
 end

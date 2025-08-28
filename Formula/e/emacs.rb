@@ -1,20 +1,19 @@
 class Emacs < Formula
   desc "GNU Emacs text editor"
   homepage "https://www.gnu.org/software/emacs/"
-  url "https://ftp.gnu.org/gnu/emacs/emacs-29.4.tar.xz"
-  mirror "https://ftpmirror.gnu.org/emacs/emacs-29.4.tar.xz"
-  sha256 "ba897946f94c36600a7e7bb3501d27aa4112d791bfe1445c61ed28550daca235"
+  url "https://ftpmirror.gnu.org/gnu/emacs/emacs-30.2.tar.xz"
+  mirror "https://ftp.gnu.org/gnu/emacs/emacs-30.2.tar.xz"
+  sha256 "b3f36f18a6dd2715713370166257de2fae01f9d38cfe878ced9b1e6ded5befd9"
   license "GPL-3.0-or-later"
 
   bottle do
-    sha256 arm64_sequoia:  "84ac311b2af10a54d054df729006650bf9473539e9d09095f9ca17ce34a0bca6"
-    sha256 arm64_sonoma:   "20e7866b16eaa06b26353cafaf9711eb1666617c22fc4b49ed04e3049e6d569b"
-    sha256 arm64_ventura:  "8f8df523a30e54eb217adc577d6618c9c2d1da1718a15050b6921d9076fa7ca8"
-    sha256 arm64_monterey: "894efa66a9caa6f2e20de12cea7d67f1709d94d702485ae7bbf472e25243cd32"
-    sha256 sonoma:         "5b900dc9417f61ce1cc348df7e6d5c3fcfb3fa82254473379b3883f097633b29"
-    sha256 ventura:        "88d3bf3ff1d9d7b10bf2c19bd4dda3143f9b886887f5e22a867725a5d000f276"
-    sha256 monterey:       "a5be71f542b675dd3eb4d7aee4ea94d42446c984813284c04ad7f70bc7059d2d"
-    sha256 x86_64_linux:   "75407dd7ca74edf2fab75546fd7a387c6477a360fb5ffb7ba63ef38b53ff0a71"
+    sha256 arm64_sequoia: "6fd75aed5b6ef68991921b6e61b001272310d572e9cc3b4945aff00dfc381f59"
+    sha256 arm64_sonoma:  "72c66b6f50be54465008831896d1fe2c073d8a529fd85b0d3ee434bcd683342a"
+    sha256 arm64_ventura: "afebd58c6452170b9e5fe63f17c0adb4dd22c38d14617076725257154f689839"
+    sha256 sonoma:        "ecb254288e6a370c502a18c3813e901862fdbd849e67aaf73378b20001bc5c05"
+    sha256 ventura:       "4d1435c4b9b75e2cdfd4a55a10ead687a562ce7c755984c8ee0d04ffe2244e2b"
+    sha256 arm64_linux:   "fead760aab7f1f4f4d8f092bf855366fd4ec0e40bac33270912380bede575df6"
+    sha256 x86_64_linux:  "0648d7634a70f7fa72ef5de26506063a2142e613059a744ebd2b8d9140ef959c"
   end
 
   head do
@@ -24,11 +23,10 @@ class Emacs < Formula
     depends_on "gnu-sed" => :build
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "texinfo" => :build
   depends_on "gmp"
   depends_on "gnutls"
-  depends_on "jansson"
   depends_on "tree-sitter"
 
   uses_from_macos "libxml2"
@@ -39,6 +37,10 @@ class Emacs < Formula
     depends_on "jpeg-turbo"
   end
 
+  conflicts_with cask: "emacs-app"
+  conflicts_with cask: "emacs-app@nightly"
+  conflicts_with cask: "emacs-app@pretest"
+
   def install
     # Mojave uses the Catalina SDK which causes issues like
     # https://github.com/Homebrew/homebrew-core/issues/46393
@@ -46,6 +48,7 @@ class Emacs < Formula
     ENV["ac_cv_func_aligned_alloc"] = "no" if OS.mac? && MacOS.version == :mojave
 
     args = %W[
+      --disable-acl
       --disable-silent-rules
       --enable-locallisppath=#{HOMEBREW_PREFIX}/share/emacs/site-lisp
       --infodir=#{info}/emacs

@@ -1,20 +1,19 @@
 class Handbrake < Formula
   desc "Open-source video transcoder available for Linux, Mac, and Windows"
   homepage "https://handbrake.fr/"
-  url "https://github.com/HandBrake/HandBrake/releases/download/1.7.3/HandBrake-1.7.3-source.tar.bz2"
-  sha256 "228681e9f361a69f1e813a112e9029d90fcf89e54172e7ff1863ce1995eae79a"
+  url "https://github.com/HandBrake/HandBrake/releases/download/1.10.1/HandBrake-1.10.1-source.tar.bz2"
+  sha256 "eafa87d64b99c457240675f6b89a7f6aa3c1eb56352ec057a0a0949ba449fe8e"
   license "GPL-2.0-only"
   head "https://github.com/HandBrake/HandBrake.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "a1cd088e8531f4280b6e1504620e167de44498b357ed72d08ec14cadd54190dc"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "347873f90a91e53fa45ebbbc35e36616359c5579472b1b959c9385de469a324d"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "c3b32cc386437c1ccb01c2ad1ec36d05534a50eba83f971d0575a0ff161bf852"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "d21dca5e31bcf0fad0295ca4bc9d2e941e2dfcbeb291d0cd3f722fa401311718"
-    sha256 cellar: :any_skip_relocation, sonoma:         "b338d003052d23a3199240f566dbe5bbd915eedab30098ce5f892952317eeffa"
-    sha256 cellar: :any_skip_relocation, ventura:        "ccec04e70d6034016ca392aac8692cf8d95621f69d4efb3adadbd01edb45d476"
-    sha256 cellar: :any_skip_relocation, monterey:       "aba4457f9045b7be4e966d8bedbf1db2d43c3d599d8a170de718c3f0b66f9ae9"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "99e46b6be919867b917eb6db71151c02b601712d7e4403ea60aaa22d154d2db3"
+    sha256 cellar: :any,                 arm64_sequoia: "73e3779f544c82080f013f96cdb7ec5e76d9d018a7244c7fed7f6d830216a9e2"
+    sha256 cellar: :any,                 arm64_sonoma:  "7794d9edb3ffe560774d9ec00db5992bc900f847ca28c87df84251a34f8b43c0"
+    sha256 cellar: :any,                 arm64_ventura: "bea23ce93467204404fac8cb461f162dde5ce5b8d775d39bef7ec85bee5e4454"
+    sha256 cellar: :any,                 sonoma:        "71a39bd0e91c8383a9ddf3d2d78029d2fb00f4b2809e6dbddadf9831f4231955"
+    sha256 cellar: :any,                 ventura:       "2822759289bafa7b29e5df3e2f1f0b101f59ffa4f63b20469bfbd0c325a4755c"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "3f49a99f61d05f19f70c28568455b552a1e78736be1dc15816861bc01079d47b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f4b2132c55ed38ea390c0920eb645cf15f09d627608cc563285cb573ca638af1"
   end
 
   depends_on "autoconf" => :build
@@ -24,8 +23,30 @@ class Handbrake < Formula
   depends_on "meson" => :build
   depends_on "nasm" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "yasm" => :build
+
+  depends_on "dav1d"
+  depends_on "freetype"
+  depends_on "fribidi"
+  depends_on "harfbuzz"
+  depends_on "jansson"
+  depends_on "jpeg-turbo"
+  depends_on "lame"
+  depends_on "libass"
+  depends_on "libbluray"
+  depends_on "libdvdnav"
+  depends_on "libdvdread"
+  depends_on "libogg"
+  depends_on "libvorbis"
+  depends_on "libvpx"
+  depends_on "opus"
+  depends_on "speex"
+  depends_on "svt-av1"
+  depends_on "theora"
+  depends_on "x264"
+  depends_on "xz"
+  depends_on "zimg"
 
   uses_from_macos "m4" => :build
   uses_from_macos "python" => :build
@@ -34,22 +55,52 @@ class Handbrake < Formula
   uses_from_macos "zlib"
 
   on_linux do
-    depends_on "jansson"
-    depends_on "jpeg-turbo"
-    depends_on "lame"
-    depends_on "libass"
-    depends_on "libvorbis"
-    depends_on "libvpx"
     depends_on "numactl"
-    depends_on "opus"
-    depends_on "speex"
-    depends_on "theora"
-    depends_on "x264"
-    depends_on "xz"
   end
 
   def install
+    # Several vendored dependencies, including x265 and svt-av1, attempt detection
+    # of supported CPU features in the compiler via -march flags.
+    ENV.runtime_cpu_detection
+
+    # Remove bundled dependencies and use homebrew formulae
+    # ffmpeg : error: use of undeclared identifier 'AV_FRAME_DATA_DOVI_RPU_BUFFER_T35'
+    # x265 : error: no member named 'ambientIlluminance' in 'struct x265_param'
+    libs = %w[
+      freetype fribidi harfbuzz jansson lame
+      libass libbluray libdav1d libdvdread libdvdnav
+      libjpeg-turbo libogg libopus libspeex libtheora
+      libvorbis libvpx svt-av1 x264 zimg
+    ]
+    inreplace "make/include/main.defs" do |s|
+      libs.each { |dep| s.gsub! "contrib/#{dep}", "" }
+    end
+
     inreplace "contrib/ffmpeg/module.defs", "$(FFMPEG.GCC.gcc)", "cc"
+
+    if OS.linux? && Hardware::CPU.arm?
+      # Disable SVE2 for ARM builds, as it causes issues with the x265 module.
+      inreplace ["contrib/x265_10bit/module.defs", "contrib/x265_12bit/module.defs", "contrib/x265_8bit/module.defs"],
+                "-DENABLE_CLI=OFF",
+                "-DENABLE_CLI=OFF -DENABLE_SVE2=OFF"
+
+      # Fix AArch64 assembly for pixel-util.S
+      (buildpath/"contrib/x265/A09-aarch64-fix.patch").write <<~PATCH
+        diff --git a/source/common/aarch64/pixel-util.S b/source/common/aarch64/pixel-util.S
+        index e2b31e4..1bcaf4a 100644
+        --- a/source/common/aarch64/pixel-util.S
+        +++ b/source/common/aarch64/pixel-util.S
+        @@ -860,7 +860,7 @@ function PFX(scanPosLast_neon)
+             lsl             w13, w13, w6
+             lsl             w15, w15, w6
+             extr            w14, w14, w13, #31
+        -    bfc             w15, #31, #1
+        +    bfm             w15, wzr, #31, #31
+             cbnz            w15, .Loop_spl_1
+         .Lpext_end:
+             strh            w14, [x2], #2
+      PATCH
+    end
 
     ENV.append "CFLAGS", "-I#{Formula["libxml2"].opt_include}/libxml2" if OS.linux?
 

@@ -1,9 +1,9 @@
 class Mpich < Formula
   desc "Implementation of the MPI Message Passing Interface standard"
   homepage "https://www.mpich.org/"
-  url "https://www.mpich.org/static/downloads/4.2.2/mpich-4.2.2.tar.gz"
-  mirror "https://fossies.org/linux/misc/mpich-4.2.2.tar.gz"
-  sha256 "883f5bb3aeabf627cb8492ca02a03b191d09836bbe0f599d8508351179781d41"
+  url "https://www.mpich.org/static/downloads/4.3.1/mpich-4.3.1.tar.gz"
+  mirror "https://fossies.org/linux/misc/mpich-4.3.1.tar.gz"
+  sha256 "acc11cb2bdc69678dc8bba747c24a28233c58596f81f03785bf2b7bb7a0ef7dc"
   license "mpich2"
 
   livecheck do
@@ -12,14 +12,13 @@ class Mpich < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "b4ba01d58d75977d7b6d8830324228948447a576ced43d881c6f83399eaa6484"
-    sha256 cellar: :any,                 arm64_sonoma:   "c5b5ab7d0674675590177b2d20b37e86856128aca461a2af7dde49e7c9c70f00"
-    sha256 cellar: :any,                 arm64_ventura:  "da9c6d133f71eebf83e38a3056d5dfc0498cc1f03a8b21d2b263fd4054baec0e"
-    sha256 cellar: :any,                 arm64_monterey: "5fde2da657a3daf95a9638e00738c5a6c5eecfdd8f07575fad67ac30582d02e7"
-    sha256 cellar: :any,                 sonoma:         "91fbcf3d4aa9ccb628ec8c3ee7fd78a7fc5ed17baa921b877bd1787d4a34722d"
-    sha256 cellar: :any,                 ventura:        "0cbcd09fa585654779ad16d7c6d7efec007f90903a06f203eb7d4f857008e077"
-    sha256 cellar: :any,                 monterey:       "c6193b32c96e742311ee2946d0aa4c4702ddf36115c041355ad4c118f52c987b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "b90cf62a321d9ac4d6cf97c6b2cdc72fb0388894c34fbff5b03db47e3a29a580"
+    sha256 cellar: :any,                 arm64_sequoia: "26b19ddaa079c787e0a5665c999a5a5bc3de8a8b75fe4e270cf4728aab122bf1"
+    sha256 cellar: :any,                 arm64_sonoma:  "0e2907b9052bd594ef9a9136a93989bc92666f1e2b9099b385e03f50f5d8b7de"
+    sha256 cellar: :any,                 arm64_ventura: "10f31ee723eafb5f160ccbbcbc2b8e6526faa7736b362c607b3a8b23a589b37e"
+    sha256 cellar: :any,                 sonoma:        "1423b89869d7afe1838bcaa57e2a17a5c251f016fbf8468e4c3ca049d4500d96"
+    sha256 cellar: :any,                 ventura:       "342289b771ccbf881a9fc8f54fe8d4e65c907373b5634a5a4e8cb509613238d4"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "a23d4e7f4e6a658e9efa8bf571578e721dbf0c8f2f3444a7657928d2a649ca61"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9df4b2cf8352ece5365b61ac5988962f85ffdd6b9cdeb9bf28f044729d4e35c4"
   end
 
   head do
@@ -82,7 +81,7 @@ class Mpich < Formula
   end
 
   test do
-    (testpath/"hello.c").write <<~EOS
+    (testpath/"hello.c").write <<~C
       #include <mpi.h>
       #include <stdio.h>
 
@@ -98,12 +97,12 @@ class Mpich < Formula
         MPI_Finalize();
         return 0;
       }
-    EOS
+    C
     system bin/"mpicc", "hello.c", "-o", "hello"
     system "./hello"
     system bin/"mpirun", "-np", "4", "./hello"
 
-    (testpath/"hellof.f90").write <<~EOS
+    (testpath/"hellof.f90").write <<~FORTRAN
       program hello
       include 'mpif.h'
       integer rank, size, ierror, tag, status(MPI_STATUS_SIZE)
@@ -113,7 +112,7 @@ class Mpich < Formula
       print*, 'node', rank, ': Hello Fortran world'
       call MPI_FINALIZE(ierror)
       end
-    EOS
+    FORTRAN
     system bin/"mpif90", "hellof.f90", "-o", "hellof"
     system "./hellof"
     system bin/"mpirun", "-np", "4", "./hellof"

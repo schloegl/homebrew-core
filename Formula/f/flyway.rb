@@ -1,17 +1,12 @@
 class Flyway < Formula
   desc "Database version control to control migrations"
-  homepage "https://flywaydb.org/"
-  url "https://search.maven.org/remotecontent?filepath=org/flywaydb/flyway-commandline/10.18.2/flyway-commandline-10.18.2.tar.gz"
-  sha256 "c9cf5c19ddc310422dd773820539cce14bdb1d4dcefb4578d7a4e42aa2894516"
+  homepage "https://www.red-gate.com/products/flyway/community/"
+  url "https://github.com/flyway/flyway/releases/download/flyway-11.11.2/flyway-commandline-11.11.2.tar.gz"
+  sha256 "54c8a2331a58884e41b8ed3e22396d60d304321c1931540bb48d630740bb8213"
   license "Apache-2.0"
 
-  livecheck do
-    url "https://search.maven.org/remotecontent?filepath=org/flywaydb/flyway-commandline/maven-metadata.xml"
-    regex(%r{<version>v?(\d+(?:\.\d+)+)</version>}i)
-  end
-
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "8045aa3e2eeacb9ec36b9520d5a6045735b627b9d7610501ff6a34d0a010451f"
+    sha256 cellar: :any_skip_relocation, all: "7924e5e63d2084fc2c8e8a89eba5dad46db26a54d750413452d9681498a23952"
   end
 
   depends_on "openjdk"
@@ -24,6 +19,9 @@ class Flyway < Formula
   end
 
   test do
-    system bin/"flyway", "-url=jdbc:h2:mem:flywaydb", "validate"
+    assert_match version.to_s, shell_output("#{bin}/flyway --version")
+
+    assert_match "Successfully validated 0 migrations",
+      shell_output("#{bin}/flyway -url=jdbc:h2:mem:flywaydb validate")
   end
 end

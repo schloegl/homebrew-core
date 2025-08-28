@@ -1,22 +1,21 @@
 class Enchant < Formula
   desc "Spellchecker wrapping library"
-  homepage "https://abiword.github.io/enchant/"
-  url "https://github.com/AbiWord/enchant/releases/download/v2.8.2/enchant-2.8.2.tar.gz"
-  sha256 "8f19535adb5577b83b00e02f330fe9b9eb40dd21f19e2899636fc4d3a7696375"
+  homepage "https://rrthomas.github.io/enchant/"
+  url "https://github.com/rrthomas/enchant/releases/download/v2.8.12/enchant-2.8.12.tar.gz"
+  sha256 "20e5fab2ca0f95ba9d1ef5052fe5b028e3e1d66d4cdea6b9adfcbd3e524c2a09"
   license "LGPL-2.1-or-later"
 
   bottle do
-    sha256 arm64_sequoia:  "19eeaec7ada86c6fd72e94de82f2c1647dc712274ac0a67a072057db8ae7675e"
-    sha256 arm64_sonoma:   "4327d3746697c8a0935580936c827a2ded1dd92d91bc2655d4ba9ee643ede046"
-    sha256 arm64_ventura:  "912e6067764e4402e6c718a909cca6b1fe1a380902d5e536cae1fe05d6cad047"
-    sha256 arm64_monterey: "e617eed7551db798a3b0fbcf8da0f8fbb51c72a351952309a5ba5a70b189dc12"
-    sha256 sonoma:         "7c53b37a59b7be9b065d5a45e75a4b605fd671c6e4495abd96b3e689b8624aba"
-    sha256 ventura:        "f6ea7979e2ef7d12132449e590ef560b6c1d2a068da3bbe42206051d00f08eca"
-    sha256 monterey:       "10cdfb36ac05c8f07d43cf0687425f3677a03cddcd0ab39c42065aad1e7d0f22"
-    sha256 x86_64_linux:   "d0aab4334f7a0feb7d168863bb81a4800982aacd709bee3b96146328b0a9f097"
+    sha256 arm64_sequoia: "bb220c90e4f079d85f882ae8fab9e69fd2bbcb1e782a223da88655123ff6f83b"
+    sha256 arm64_sonoma:  "f5652e7e3fad548a1243f1aaa60b53c61288611f10d78b68520350cf6a5f72f5"
+    sha256 arm64_ventura: "15c468f5a93b2af19773e987d03d7f85f532d7bd73b1860be8c4c356bbab2604"
+    sha256 sonoma:        "0a3aa608e5d3875f113129c9469c655cb6effc2699143593f6cc62d214fffc27"
+    sha256 ventura:       "58a5ddf739b3000c50e27453684ac320da080b2ee0dc21cd803fdd4c0cd74cea"
+    sha256 arm64_linux:   "7a74f8e77fb9d3d5d59f334fd01b68d43a7a7ad63b2e4259fc72205acf4f1ce2"
+    sha256 x86_64_linux:  "052362b93ff0d370b961bb39aff6da875260d1eee9c8281f3ce581e16a051c79"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "aspell"
   depends_on "glib"
 

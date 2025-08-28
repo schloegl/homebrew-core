@@ -4,25 +4,24 @@ class Fftw < Formula
   url "https://fftw.org/fftw-3.3.10.tar.gz"
   sha256 "56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467"
   license all_of: ["GPL-2.0-or-later", "BSD-2-Clause"]
-  revision 1
+  revision 2
 
   livecheck do
     url :homepage
     regex(%r{latest official release.*? <b>v?(\d+(?:\.\d+)+)</b>}i)
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "d506a2d2ca1b49fdfe64bf2ffca4fca70f7e86d4e1006979dabcde37fc359c9b"
-    sha256 cellar: :any,                 arm64_sonoma:   "0bb0537238a59cc4677738091ec67b65e7bd12fafe3072e091e20a1143232322"
-    sha256 cellar: :any,                 arm64_ventura:  "f118b9b10a302aaa0a937b9c3004a1610a522f365022ab12e90e7ee929823ff4"
-    sha256 cellar: :any,                 arm64_monterey: "ac39928c08c6cec08f61b31c37ea69be21f6020c5c50bbdc66751fc1907ee600"
-    sha256 cellar: :any,                 arm64_big_sur:  "de50d4cd3e5de39ccbc168a8eb8555f9e36609198c9e4f91c1d1da122674d066"
-    sha256 cellar: :any,                 sonoma:         "3a0edb94f8ab04e42f953dc408ff0e7dcee211771091dcb6db93f9cfca79ae0a"
-    sha256 cellar: :any,                 ventura:        "31e8c75b13d33a17164163f3c5f5bb6605e26b2328a617696b0fae5aa08e8ad4"
-    sha256 cellar: :any,                 monterey:       "dc7a704928be8c4724db42be3161aebf3f0d3b8e0f79e893bc1b294aed4ca770"
-    sha256 cellar: :any,                 big_sur:        "bd3ae1b553913b3b627bd1af592d84da4c6a93e45dde5af4df7c393564b0f174"
-    sha256 cellar: :any,                 catalina:       "f2b0548dfd646545af732cb6ee7f1d58c1950067e4f7fd558655fb388e464897"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "c2b552eb0c8d31f577713c2e39ed6a22bd430d30d430d242767f253057839dca"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia: "f6a6799b0982ed9e7941d8e98061fd286a5062971d9b8d24ea5dbf31b16e01fe"
+    sha256 cellar: :any,                 arm64_sonoma:  "e10f62334e9400d2206f97f27341f40a6a00313b3ba0841273719a378da72e92"
+    sha256 cellar: :any,                 arm64_ventura: "7a199712be0d1f3f939bd6b87713bce221a971a478490be5f0b9ab7957fcdcf7"
+    sha256 cellar: :any,                 sonoma:        "9da96486f698487496f226fac865a83be03898621e336030c9af62ff2330eff5"
+    sha256 cellar: :any,                 ventura:       "51f48b1e29b2fdea49be26e90a65644ed6983839d565b0b071a9ac12f1cc2d6a"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "05293e1ec5bbf794d245cb750566afe30bab65fbcae78b6201b109832a19691b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5508eb65401d0b5df3c9e8ebe3e8474a4d5b91e10e03132e4f5032008926fdcf"
   end
 
   depends_on "open-mpi"
@@ -32,6 +31,12 @@ class Fftw < Formula
   end
 
   fails_with :clang
+
+  # Fix the cmake config file when configured with autotools, upstream pr ref, https://github.com/FFTW/fftw3/pull/338
+  patch do
+    url "https://github.com/FFTW/fftw3/commit/394fa85ab5f8914b82b3404844444c53f5c7f095.patch?full_index=1"
+    sha256 "2f3c719ad965b3733e5b783a1512af9c2bd9731bb5109879fbce5a76fa62eb14"
+  end
 
   def install
     ENV.runtime_cpu_detection
@@ -76,7 +81,7 @@ class Fftw < Formula
   test do
     # Adapted from the sample usage provided in the documentation:
     # https://www.fftw.org/fftw3_doc/Complex-One_002dDimensional-DFTs.html
-    (testpath/"fftw.c").write <<~EOS
+    (testpath/"fftw.c").write <<~C
       #include <fftw3.h>
       int main(int argc, char* *argv)
       {
@@ -91,7 +96,7 @@ class Fftw < Formula
           fftw_free(in); fftw_free(out);
           return 0;
       }
-    EOS
+    C
 
     system ENV.cc, "-o", "fftw", "fftw.c", "-L#{lib}", "-lfftw3"
     system "./fftw"

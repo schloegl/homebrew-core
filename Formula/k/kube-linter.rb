@@ -1,20 +1,19 @@
 class KubeLinter < Formula
   desc "Static analysis tool for Kubernetes YAML files and Helm charts"
   homepage "https://github.com/stackrox/kube-linter"
-  url "https://github.com/stackrox/kube-linter/archive/refs/tags/v0.6.8.tar.gz"
-  sha256 "4d3e5d8f006d4907e5fca03a9064d79e6267942cb2b0ae31dfbaa61e9d403568"
+  url "https://github.com/stackrox/kube-linter/archive/refs/tags/v0.7.5.tar.gz"
+  sha256 "a6622df542b4eff596cd8bb06a317823bb1837ddb19d9f8945df85e337354a72"
   license "Apache-2.0"
   head "https://github.com/stackrox/kube-linter.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "c509bed9270c2d7e850af0bf01a929957680c04ffd2108a370c7fc8a22b81a67"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "051386ab60886bdf547bcbb69aa9c87f73e476f1fd47e653ea58f9275a4c87c7"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "051386ab60886bdf547bcbb69aa9c87f73e476f1fd47e653ea58f9275a4c87c7"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "051386ab60886bdf547bcbb69aa9c87f73e476f1fd47e653ea58f9275a4c87c7"
-    sha256 cellar: :any_skip_relocation, sonoma:         "6369533123f9bc09dc97856c029b7eb48755c606a7217858b29ca96cf3fe240f"
-    sha256 cellar: :any_skip_relocation, ventura:        "6369533123f9bc09dc97856c029b7eb48755c606a7217858b29ca96cf3fe240f"
-    sha256 cellar: :any_skip_relocation, monterey:       "6369533123f9bc09dc97856c029b7eb48755c606a7217858b29ca96cf3fe240f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "98c79930386ea6b3c753dfd5bb33abeb75f16e6f0088efba8c1d791bd43b0337"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "0968e84b1374de5d5faa476532357afb5d71de0a895fe840bd87762c987f4d1d"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "0968e84b1374de5d5faa476532357afb5d71de0a895fe840bd87762c987f4d1d"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "0968e84b1374de5d5faa476532357afb5d71de0a895fe840bd87762c987f4d1d"
+    sha256 cellar: :any_skip_relocation, sonoma:        "fa6b59b308d2163c4472619f8937df2e20ad418cf1d76047abcd6553bde449c4"
+    sha256 cellar: :any_skip_relocation, ventura:       "fa6b59b308d2163c4472619f8937df2e20ad418cf1d76047abcd6553bde449c4"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "3dfb83243350eca96a11aaffef522c6fdafebb9f897f329730f5f90f9528cc99"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "10e547efaf3430c45e516e8a81c69718627bf6f2627fe9d42fce7cd909c8b038"
   end
 
   depends_on "go" => :build
@@ -28,7 +27,7 @@ class KubeLinter < Formula
   end
 
   test do
-    (testpath/"pod.yaml").write <<~EOS
+    (testpath/"pod.yaml").write <<~YAML
       apiVersion: v1
       kind: Pod
       metadata:
@@ -50,7 +49,7 @@ class KubeLinter < Formula
               cpu: "250m"
           securityContext:
             readOnlyRootFilesystem: true
-    EOS
+    YAML
 
     # Lint pod.yaml for default errors
     assert_match "No lint errors found!", shell_output("#{bin}/kube-linter lint pod.yaml 2>&1").chomp

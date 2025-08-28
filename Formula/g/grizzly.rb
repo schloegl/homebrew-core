@@ -1,29 +1,30 @@
 class Grizzly < Formula
   desc "Command-line tool for managing and automating Grafana dashboards"
   homepage "https://grafana.github.io/grizzly/"
-  url "https://github.com/grafana/grizzly/archive/refs/tags/v0.4.8.tar.gz"
-  sha256 "4d05939982bbf6423373673b186a1e34d7ec2cdb9a9bce397b26d211b9867d6c"
+  url "https://github.com/grafana/grizzly/archive/refs/tags/v0.7.1.tar.gz"
+  sha256 "81811b684ef1bddd3b7147c5095224552a0b35dc3ff210d10e6cbc5e12331160"
   license "Apache-2.0"
+  head "https://github.com/grafana/grizzly.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "6effb1fc86729013a53e2c215f6cb43422aba8dacc38f483956432f6caa4f36b"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "6effb1fc86729013a53e2c215f6cb43422aba8dacc38f483956432f6caa4f36b"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "6effb1fc86729013a53e2c215f6cb43422aba8dacc38f483956432f6caa4f36b"
-    sha256 cellar: :any_skip_relocation, sonoma:        "436a297f6b8024a39c02e30b66c31a85322c30360dcf32bf57a8d7b912086599"
-    sha256 cellar: :any_skip_relocation, ventura:       "436a297f6b8024a39c02e30b66c31a85322c30360dcf32bf57a8d7b912086599"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7c4ad6540d603f8d6cac571b851decc400170ee3f58737c19fa2bd3795a2e62c"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "9c00e5b79f192d86d855287c9abb183eede829f47d6892bfef011d0977fb45cc"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "9c00e5b79f192d86d855287c9abb183eede829f47d6892bfef011d0977fb45cc"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "9c00e5b79f192d86d855287c9abb183eede829f47d6892bfef011d0977fb45cc"
+    sha256 cellar: :any_skip_relocation, sonoma:        "679f770b4eff802b8e9b6eb199fb9ae076f14093ea58342fcc1752d43985415f"
+    sha256 cellar: :any_skip_relocation, ventura:       "679f770b4eff802b8e9b6eb199fb9ae076f14093ea58342fcc1752d43985415f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a1cd0d526f55b71f84e88c4bda49551c661b56f7dcace86fbbbb637a27fd4274"
   end
 
   depends_on "go" => :build
 
   def install
-    ldflags = "-s -w -X main.Version=#{version}"
+    ldflags = "-s -w -X github.com/grafana/grizzly/pkg/config.Version=#{version}"
     system "go", "build", *std_go_args(ldflags:, output: bin/"grr"), "./cmd/grr"
   end
 
   test do
     sample_dashboard = testpath/"dashboard_simple.yaml"
-    sample_dashboard.write <<~EOS
+    sample_dashboard.write <<~YAML
       apiVersion: grizzly.grafana.com/v1alpha1
       kind: Dashboard
       metadata:
@@ -36,7 +37,7 @@ class Grizzly < Formula
         timezone: browser
         title: Production Overview
         uid: prod-overview
-    EOS
+    YAML
 
     assert_match "prod-overview", shell_output("#{bin}/grr list #{sample_dashboard}")
 

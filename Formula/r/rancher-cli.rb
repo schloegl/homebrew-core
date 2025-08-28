@@ -1,8 +1,8 @@
 class RancherCli < Formula
   desc "Unified tool to manage your Rancher server"
   homepage "https://github.com/rancher/cli"
-  url "https://github.com/rancher/cli/archive/refs/tags/v2.9.2.tar.gz"
-  sha256 "6da91cd58ad5c56d51a14a21ffc27201e46ad25c7fa91ecedad3230bc00fb085"
+  url "https://github.com/rancher/cli/archive/refs/tags/v2.12.0.tar.gz"
+  sha256 "f5e3cba6e4156c68ce0785216898376b636cca8c032cb3807328805eba502189"
   license "Apache-2.0"
   head "https://github.com/rancher/cli.git", branch: "master"
 
@@ -15,18 +15,18 @@ class RancherCli < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "d72b61b1c6a8278d1663edfc9775ed64fa2375a728462cd541a8e89da91c569a"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "d72b61b1c6a8278d1663edfc9775ed64fa2375a728462cd541a8e89da91c569a"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "d72b61b1c6a8278d1663edfc9775ed64fa2375a728462cd541a8e89da91c569a"
-    sha256 cellar: :any_skip_relocation, sonoma:        "9d4ec9d2baef93bf960cfca6200809a7444117b19d6a930b99ad2efe0322b9d9"
-    sha256 cellar: :any_skip_relocation, ventura:       "9d4ec9d2baef93bf960cfca6200809a7444117b19d6a930b99ad2efe0322b9d9"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b4f38f7c08aa6dc3e2616602bdea83e13b3737e20e09710f83ea1ead1b2159ae"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "3711aaf5f1769a6a00dd98cc869d9bf068435628f58c6b05312989cb282567d7"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "776e12e582df98007ddcb0c9553b44fc1b0a46381066e21f4cfeb8e59670fb65"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "5ad65c2494db289a6f77fc876febf68106591332b51351ca48533cd96f515000"
+    sha256 cellar: :any_skip_relocation, sonoma:        "7f6bd7f57d76d252fc279200935d6782b00da3fea816db3a0e965fa413514274"
+    sha256 cellar: :any_skip_relocation, ventura:       "8d2c8e814033fffc3078b1677fb08116d447ef717cbd9956cb218abdb9357206"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a5acc630163369ce5cf5185b44c63fc23c5ea50c4174eed2788fc78681c9740a"
   end
 
   depends_on "go" => :build
 
   def install
-    system "go", "build", *std_go_args(ldflags: "-s -w -X main.VERSION=#{version}"), "-o", bin/"rancher"
+    system "go", "build", *std_go_args(ldflags: "-s -w -X main.VERSION=#{version}", output: bin/"rancher")
   end
 
   test do

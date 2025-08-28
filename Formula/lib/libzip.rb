@@ -1,8 +1,8 @@
 class Libzip < Formula
   desc "C library for reading, creating, and modifying zip archives"
   homepage "https://libzip.org/"
-  url "https://libzip.org/download/libzip-1.11.1.tar.xz", using: :homebrew_curl
-  sha256 "721e0e4e851073b508c243fd75eda04e4c5006158a900441de10ce274cc3b633"
+  url "https://libzip.org/download/libzip-1.11.4.tar.xz"
+  sha256 "8a247f57d1e3e6f6d11413b12a6f28a9d388de110adc0ec608d893180ed7097b"
   license "BSD-3-Clause"
 
   livecheck do
@@ -10,13 +10,16 @@ class Libzip < Formula
     regex(/href=.*?libzip[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
+  no_autobump! because: "unable to get versions"
+
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "8edff4d317c07b10668d8966db23bf568b55cfcf1b52a772fd5bde020d3c4753"
-    sha256 cellar: :any,                 arm64_sonoma:  "3dce66ccd6891fa5af53a195d2dced3a3ef1c4738f3f57e288c4fd5d1cf02d73"
-    sha256 cellar: :any,                 arm64_ventura: "56225b61b948c8f44ab4818bde528c3c4c84f90c02362d13f215a726961112a9"
-    sha256 cellar: :any,                 sonoma:        "9a8d6612ce96978694b6e309473a230cc1e338fedca339f9366010670880c50b"
-    sha256 cellar: :any,                 ventura:       "d1887f3ee534207c478ea5bad5ff822bcbdfa247c1c5b59957e8ff0e41d0d2ab"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "03bf2c4dd2b97ab8a4e111bedf1f58074b0f859874cbbbb1c9b158c3e3f6d1ca"
+    sha256 cellar: :any,                 arm64_sequoia: "01dbf417152e6679f7816936846b57170635558954c001964b594caee1c0dc33"
+    sha256 cellar: :any,                 arm64_sonoma:  "9c9a3a40e3b80edf45e7e7b8e315d45e70262653d5f272c215f7e0a34357b32b"
+    sha256 cellar: :any,                 arm64_ventura: "65696504b9278cc61b0b9dbdd20c4de31792b1a429316ce956d5a3473e3ac01e"
+    sha256 cellar: :any,                 sonoma:        "99bf4ceaa405fcfa00f81e9afe430fcb9b6cb9485b35e807664629ed14ea8eff"
+    sha256 cellar: :any,                 ventura:       "8feb1d8792de37063c569e8653d7ee1a0ddb4a030759ba99951a47b8eec9ca2a"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "e4e4593f93a74e7fc0ed1252c83b7ca85dd3d862d6cc0a883947cb4152e76b43"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7bef3ccff46322f8b7af9b89c1849b54d5bb2b18f7a849988d113ed3cef52397"
   end
 
   depends_on "cmake" => :build
@@ -34,16 +37,17 @@ class Libzip < Formula
   conflicts_with "libtcod", because: "libtcod and libzip install a `zip.h` header"
 
   def install
-    crypto_args = %w[
+    args = %w[
       -DENABLE_GNUTLS=OFF
       -DENABLE_MBEDTLS=OFF
+      -DBUILD_REGRESS=OFF
+      -DBUILD_EXAMPLES=OFF
     ]
-    crypto_args << "-DENABLE_OPENSSL=OFF" if OS.mac? # Use CommonCrypto instead.
-    system "cmake", ".", *std_cmake_args,
-                         *crypto_args,
-                         "-DBUILD_REGRESS=OFF",
-                         "-DBUILD_EXAMPLES=OFF"
-    system "make", "install"
+    args << "-DENABLE_OPENSSL=OFF" if OS.mac? # Use CommonCrypto instead.
+
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   test do

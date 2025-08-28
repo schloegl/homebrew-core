@@ -1,8 +1,8 @@
 class Direvent < Formula
   desc "Monitors events in the file system directories"
   homepage "https://www.gnu.org.ua/software/direvent/direvent.html"
-  url "https://ftp.gnu.org/gnu/direvent/direvent-5.4.tar.gz"
-  mirror "https://ftpmirror.gnu.org/direvent/direvent-5.4.tar.gz"
+  url "https://ftpmirror.gnu.org/gnu/direvent/direvent-5.4.tar.gz"
+  mirror "https://ftp.gnu.org/gnu/direvent/direvent-5.4.tar.gz"
   sha256 "1dbbc6192aab67e345725148603d570c6a2828380c964215762af91524d795ba"
   license "GPL-3.0-or-later"
 
@@ -14,6 +14,7 @@ class Direvent < Formula
     sha256 cellar: :any_skip_relocation, sonoma:         "93e741a317f67a70c7ec7a51ee68b16b9af06e0038eea6477332543c657246cc"
     sha256 cellar: :any_skip_relocation, ventura:        "55d5411f9552456a39cb6bee0fd86cc40f88a19f6e3deb1fbc52dbe0a63fac5a"
     sha256 cellar: :any_skip_relocation, monterey:       "aa9149e69d6ed55b6a4de7cb345c9202dfb8136197ec40d99d3d9f4d805b3678"
+    sha256                               arm64_linux:    "1c64f0b91a2b262581b83717c051b3cc781ab418ed36315c1e81a27e9b06d630"
     sha256                               x86_64_linux:   "c8fb131f7845cd016244b0f5285c3e2ca52efcb52b5c1d2c9a7ac301f5b7152e"
   end
 

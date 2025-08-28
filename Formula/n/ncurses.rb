@@ -1,12 +1,14 @@
 class Ncurses < Formula
   desc "Text-based UI library"
   homepage "https://invisible-island.net/ncurses/announce.html"
-  url "https://ftp.gnu.org/gnu/ncurses/ncurses-6.5.tar.gz"
+  url "https://ftpmirror.gnu.org/gnu/ncurses/ncurses-6.5.tar.gz"
   mirror "https://invisible-mirror.net/archives/ncurses/ncurses-6.5.tar.gz"
   mirror "ftp://ftp.invisible-island.net/ncurses/ncurses-6.5.tar.gz"
-  mirror "https://ftpmirror.gnu.org/ncurses/ncurses-6.5.tar.gz"
+  mirror "https://ftp.gnu.org/gnu/ncurses/ncurses-6.5.tar.gz"
   sha256 "136d91bc269a9a5785e5f9e980bc76ab57428f604ce3e5a5a90cebc767971cc6"
   license "MIT"
+
+  no_autobump! because: :requires_manual_review
 
   bottle do
     sha256 arm64_sequoia:  "4a529cb864994c26766c55ae8e506297523b36319e0f5f5af0faf8250a451f77"
@@ -16,12 +18,13 @@ class Ncurses < Formula
     sha256 sonoma:         "eb22b3753261f99aa36f5d9e1511a0bca5ea70cd645f7068af2ac5514aafd6a7"
     sha256 ventura:        "d6316fb9989753d52db231cc4dfe20746c5e2b6dced2ba6136ad1f11e99814aa"
     sha256 monterey:       "9c262007804eca602c67d686878778051d2ff813237d6805665831a1ea705477"
+    sha256 arm64_linux:    "a41105c555fcaf7cc16cf53be73187724576129a8c39902378d742a8dc396850"
     sha256 x86_64_linux:   "7c49662d0f319baec24475d38210b2f9c754b2ec1d21a4a3ff39ce81d8605f03"
   end
 
   keg_only :provided_by_macos
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   on_linux do
     depends_on "gpatch" => :build
@@ -32,6 +35,8 @@ class Ncurses < Formula
     # macOS: mkdir: /usr/lib/pkgconfig:/opt/homebrew/Library/Homebrew/os/mac/pkgconfig/12: Operation not permitted
     # Linux: configure: error: expected a pathname, not ""
     (lib/"pkgconfig").mkpath
+
+    ENV.delete("TERMINFO")
 
     args = [
       "--prefix=#{prefix}",
@@ -46,6 +51,9 @@ class Ncurses < Formula
       "--without-ada",
     ]
     args << "--with-terminfo-dirs=#{share}/terminfo:/etc/terminfo:/lib/terminfo:/usr/share/terminfo" if OS.linux?
+
+    odie "`-std=gnu17` workaround should be removed!" if build.stable? && version > "6.5"
+    ENV.append_to_cflags "-std=gnu17" if OS.linux? && DevelopmentTools.gcc_version("gcc") >= 15
 
     system "./configure", *args
     system "make", "install"

@@ -3,46 +3,39 @@ class GitReview < Formula
 
   desc "Submit git branches to gerrit for review"
   homepage "https://opendev.org/opendev/git-review"
-  url "https://files.pythonhosted.org/packages/79/ae/1c161f8914731ca5a5b3ce0784f5bc47d9a68f4ce33123d431bf30fc90b6/git-review-2.4.0.tar.gz"
-  sha256 "a350eaa9c269a1fe3177a5ffd4ae76f2b604e1af122eb0de08ab07252001722a"
+  url "https://files.pythonhosted.org/packages/da/92/ddc922d34061791a4d0fd483ee4ffc5e026e93783b70fe5a29a129d0cf63/git_review-2.5.0.tar.gz"
+  sha256 "1bcffaef02848a5a3b066e8268c7d700a77cbd8b2e56b128d30f60cd431cf0a8"
   license "Apache-2.0"
-  revision 3
+  revision 2
   head "https://opendev.org/opendev/git-review.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "cae9224c13007fd9cf1fb29d57163e6830642f0c041da43ba65aaff91653c74a"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "0d319cfba612259e187ba7d3fc76b46f945212cf6472fdedfe5afe7610e28b7f"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "0d319cfba612259e187ba7d3fc76b46f945212cf6472fdedfe5afe7610e28b7f"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "0d319cfba612259e187ba7d3fc76b46f945212cf6472fdedfe5afe7610e28b7f"
-    sha256 cellar: :any_skip_relocation, sonoma:         "00a568c3b6096dab8773b8f7538a19b075bb644fa87de2359e146737f62df689"
-    sha256 cellar: :any_skip_relocation, ventura:        "00a568c3b6096dab8773b8f7538a19b075bb644fa87de2359e146737f62df689"
-    sha256 cellar: :any_skip_relocation, monterey:       "0d319cfba612259e187ba7d3fc76b46f945212cf6472fdedfe5afe7610e28b7f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "fbaece9735f4e55c122a6426df7e87473cc213bedfe33645d06eaac079781a0a"
+    sha256 cellar: :any_skip_relocation, all: "e403d3a14381f154f428561ae52e2f918cb5811510359206d348d557e52dafd1"
   end
 
   depends_on "certifi"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   conflicts_with "gerrit-tools", because: "both install `git-review` binaries"
 
   resource "charset-normalizer" do
-    url "https://files.pythonhosted.org/packages/63/09/c1bc53dab74b1816a00d8d030de5bf98f724c52c1635e07681d312f20be8/charset-normalizer-3.3.2.tar.gz"
-    sha256 "f30c3cb33b24454a82faecaf01b19c18562b1e89558fb6c56de4d9118a032fd5"
+    url "https://files.pythonhosted.org/packages/e4/33/89c2ced2b67d1c2a61c19c6751aa8902d46ce3dacb23600a283619f5a12d/charset_normalizer-3.4.2.tar.gz"
+    sha256 "5baececa9ecba31eff645232d59845c07aa030f0c81ee70184a90d35099a0e63"
   end
 
   resource "idna" do
-    url "https://files.pythonhosted.org/packages/21/ed/f86a79a07470cb07819390452f178b3bef1d375f2ec021ecfc709fc7cf07/idna-3.7.tar.gz"
-    sha256 "028ff3aadf0609c1fd278d8ea3089299412a7a8b9bd005dd08b9f8285bcb5cfc"
+    url "https://files.pythonhosted.org/packages/f1/70/7703c29685631f5a7590aa73f1f1d3fa9a380e654b86af429e0934a32f7d/idna-3.10.tar.gz"
+    sha256 "12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9"
   end
 
   resource "requests" do
-    url "https://files.pythonhosted.org/packages/63/70/2bf7780ad2d390a8d301ad0b550f1581eadbd9a20f896afe06353c2a2913/requests-2.32.3.tar.gz"
-    sha256 "55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760"
+    url "https://files.pythonhosted.org/packages/e1/0a/929373653770d8a0d7ea76c37de6e41f11eb07559b103b1c02cafb3f7cf8/requests-2.32.4.tar.gz"
+    sha256 "27d0316682c8a29834d3264820024b62a36942083d52caf2f14c0591336d3422"
   end
 
   resource "urllib3" do
-    url "https://files.pythonhosted.org/packages/43/6d/fa469ae21497ddc8bc93e5877702dca7cb8f911e337aca7452b5724f1bb6/urllib3-2.2.2.tar.gz"
-    sha256 "dd505485549a7a552833da5e6063639d0d177c04f23bc3864e41e5dc5f612168"
+    url "https://files.pythonhosted.org/packages/15/22/9ee70a2574a4f4599c47dd506532914ce044817c7752a79b6a51286319bc/urllib3-2.5.0.tar.gz"
+    sha256 "3fc47733c7e419d4bc3f6b3dc2b4f890bb743906a30d56ba4a5bfa4bbff92760"
   end
 
   def install
@@ -58,6 +51,7 @@ class GitReview < Formula
     (testpath/"foo").write "test file"
     system "git", "add", "foo"
     system "git", "commit", "-m", "test"
-    system bin/"git-review", "--dry-run"
+    # submit code to `main` branch (default is `master`)
+    system bin/"git-review", "--dry-run", "main"
   end
 end

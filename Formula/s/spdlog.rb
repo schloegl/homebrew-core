@@ -1,37 +1,32 @@
 class Spdlog < Formula
   desc "Super fast C++ logging library"
   homepage "https://github.com/gabime/spdlog"
-  url "https://github.com/gabime/spdlog/archive/refs/tags/v1.14.1.tar.gz"
-  sha256 "1586508029a7d0670dfcb2d97575dcdc242d3868a259742b69f100801ab4e16b"
+  url "https://github.com/gabime/spdlog/archive/refs/tags/v1.15.3.tar.gz"
+  sha256 "15a04e69c222eb6c01094b5c7ff8a249b36bb22788d72519646fb85feb267e67"
   license "MIT"
-  revision 1
   head "https://github.com/gabime/spdlog.git", branch: "v1.x"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "294c2eacc174d2112dcb7d43a3b952c6051da94b1c835f61859d3673c97571ea"
-    sha256 cellar: :any,                 arm64_sonoma:   "94a51165d021eedd4262d15dad7c14c83f0f33eeda096d86ee762f08f831bbba"
-    sha256 cellar: :any,                 arm64_ventura:  "fa3a2b18afd9c0b6211a2315d253360a9ba5bcc3256303cc8ad6cce5ebd3586c"
-    sha256 cellar: :any,                 arm64_monterey: "d0c4e6684ca59fa4859bd412003c25847f9e377f1151404ce293d5aeb5d13980"
-    sha256 cellar: :any,                 sonoma:         "6ffe5ad092446c9c74b4a72e10b1f77daf4ea21d6fe5fa29cbeead408be37210"
-    sha256 cellar: :any,                 ventura:        "3186075434c83929ac6d41bfd2d48edd6bafa7e84c03600c6718f4c606068e47"
-    sha256 cellar: :any,                 monterey:       "044d54b7073502383bb0776f545dde9a98178ba4da6e40e7d2a62adf1e799ac5"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "89a7b397614d329f87cdc031c3b6842e0526827f4a5b6de2ee4f06d369068766"
+    sha256 cellar: :any,                 arm64_sequoia: "b885d77ddec4626dd6f31bc9a94fae28b4bd3ac4e5e91c36624891d262d6d3de"
+    sha256 cellar: :any,                 arm64_sonoma:  "222a1f363fe1b82e9e830c7a42f98d73c7b9673e7256502cdc66093193e2fee3"
+    sha256 cellar: :any,                 arm64_ventura: "78d3b81c70195115a7d762b9b39efaef6d45652488654a1104c237138a5f3898"
+    sha256 cellar: :any,                 sonoma:        "6407f99157debc92ed12594a56cc98b9513e6d3617c5bf0ccad7127c8e0340a1"
+    sha256 cellar: :any,                 ventura:       "f62555b2fb8dcc64a581c3f2efca87e50b49aecbc62d3492b4fb910c97442cb3"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "774a3ccba115e20c6b0c594bb4c6b554de3c65f1454666d86a4aa0028d8591ff"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "334f9f05e98a52ecea6bbdbaebbfb597936d4169c935018eff7cd2f1789dcebd"
   end
 
   depends_on "cmake" => :build
   depends_on "fmt"
 
-  # error: specialization of 'template<class T, ...> struct fmt::v8::formatter' in different namespace
-  fails_with gcc: "5"
-
   def install
     ENV.cxx11
 
-    inreplace "include/spdlog/tweakme.h", "// #define SPDLOG_FMT_EXTERNAL", <<~EOS
+    inreplace "include/spdlog/tweakme.h", "// #define SPDLOG_FMT_EXTERNAL", <<~C
       #ifndef SPDLOG_FMT_EXTERNAL
       #define SPDLOG_FMT_EXTERNAL
       #endif
-    EOS
+    C
 
     args = std_cmake_args + %W[
       -Dpkg_config_libdir=#{lib}
@@ -49,7 +44,7 @@ class Spdlog < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include "spdlog/sinks/basic_file_sink.h"
       #include <iostream>
       #include <memory>
@@ -65,11 +60,11 @@ class Spdlog < Formula
           return 1;
         }
       }
-    EOS
+    CPP
 
     system ENV.cxx, "-std=c++11", "test.cpp", "-I#{include}", "-L#{Formula["fmt"].opt_lib}", "-lfmt", "-o", "test"
     system "./test"
-    assert_predicate testpath/"basic-log.txt", :exist?
+    assert_path_exists testpath/"basic-log.txt"
     assert_match "Test", (testpath/"basic-log.txt").read
   end
 end

@@ -1,31 +1,32 @@
 class Pan < Formula
   desc "Usenet newsreader that's good at both text and binaries"
   homepage "https://gitlab.gnome.org/GNOME/pan"
-  url "https://gitlab.gnome.org/GNOME/pan/-/archive/v0.160/pan-v0.160.tar.bz2"
-  sha256 "6506955fc3c94a7e395f82763f45a63dcb564028419ea32249090997c08962a9"
+  url "https://gitlab.gnome.org/GNOME/pan/-/archive/v0.164/pan-v0.164.tar.bz2"
+  sha256 "862609baaabbc516fe23fd9f62ae54f1a6b6481178913f3c5a6f4597d0c39244"
   license "GPL-2.0-only"
 
   bottle do
-    sha256 arm64_sequoia:  "3d99d6d19ec9376983bf307625e57a86bd42112ac88a02b4fe662e86ace693ff"
-    sha256 arm64_sonoma:   "ed0101aa7ef6a55f7c44f5dd93d321e5f91731819017843c2e0972d231c375d3"
-    sha256 arm64_ventura:  "150c7878f91aa47b9bb5d207dd35ef1fb6b3a118365a9ccfd06fd98b0a4f3629"
-    sha256 arm64_monterey: "aab4b5bfc736daa16ea5fe040b8df21fef8b7e714c8934002921a1eba6410c4f"
-    sha256 sonoma:         "e0073c66807b3e8232900fec88462999893bf4e32c3536bb70b2f0fadc856f6c"
-    sha256 ventura:        "66cd09584cc4d9db3d300f7ddcf015c8ca2d49d12795b9f73a8580db981b10c9"
-    sha256 monterey:       "e19ee512b8432bd1865a3ac97df9b7468a345e736df5dc5fe5a9f94fe29756d3"
-    sha256 x86_64_linux:   "fa9be5e5e4c9047dbaf84acf4920464e2c04767de4826943f39d76719b8e92fb"
+    sha256 arm64_sequoia: "deb86a97c8007b261347fea9f0db7b925f5b8081629097a5f5480a668ffba530"
+    sha256 arm64_sonoma:  "21d6e8b62f18043750c6f509c7bd3868d8832b3e568a252c15a604759ae4fe40"
+    sha256 arm64_ventura: "9d051c43ee5c8a43212f69b9c3fb9c1235d822c5522bb31fa710899325f5bec0"
+    sha256 sonoma:        "14f55fb5865ea9b048326801a5826e5ca3509ac733d239f136a3f16f555acc3a"
+    sha256 ventura:       "6a0c7b8e2bfea9de1de7f94be6b132ea4505c4c46d4d9429487d99c0690e8930"
+    sha256 arm64_linux:   "31b3fc10fe506b19e6d70602566a5a4991b51b5167c593fc5a2586341fe76ff9"
+    sha256 x86_64_linux:  "f66553706f7464e5296b8251b55bace50e3cf3d6a5527b42405b9d8f9dba5983"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "gettext" => :build
+  depends_on "pkgconf" => :build
+
   depends_on "adwaita-icon-theme"
   depends_on "cairo"
   depends_on "enchant"
   depends_on "gdk-pixbuf"
-  depends_on "gettext"
   depends_on "glib"
   depends_on "gmime"
   depends_on "gnutls"
+  depends_on "gspell"
   depends_on "gtk+3"
   depends_on "gtkspell3"
   depends_on "harfbuzz"
@@ -35,6 +36,7 @@ class Pan < Formula
 
   on_macos do
     depends_on "at-spi2-core"
+    depends_on "gettext"
   end
 
   def install
@@ -48,7 +50,7 @@ class Pan < Formula
     return if OS.linux? && ENV["HOMEBREW_GITHUB_ACTIONS"]
 
     minimal = testpath/"minimal.nzb"
-    minimal.write <<~EOS
+    minimal.write <<~XML
       <?xml version="1.0" encoding="iso-8859-1"?>
       <!DOCTYPE nzb PUBLIC "-//newzBin//DTD NZB 0.9//EN" "http://www.newzbin.com/DTD/nzb/nzb-0.9.dtd">
       <nzb xmlns="http://www.newzbin.com/DTD/2003/nzb">
@@ -61,7 +63,7 @@ class Pan < Formula
           </segments>
         </file>
       </nzb>
-    EOS
+    XML
 
     # this test works only if pan has not yet been configured with news servers
     assert_match "Please configure Pan's news servers before using it as an nzb client.",

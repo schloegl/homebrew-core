@@ -1,20 +1,18 @@
 class Oauth2Proxy < Formula
   desc "Reverse proxy for authenticating users via OAuth 2 providers"
   homepage "https://oauth2-proxy.github.io/oauth2-proxy/"
-  url "https://github.com/oauth2-proxy/oauth2-proxy/archive/refs/tags/v7.6.0.tar.gz"
-  sha256 "2beac9e817d59b37f2277efefeda68447418355792a60da709a80c278628fcd8"
+  url "https://github.com/oauth2-proxy/oauth2-proxy/archive/refs/tags/v7.12.0.tar.gz"
+  sha256 "72eddf28b2fd7dc4f841fac47a9376a3f660d3d467f1fc17e69badd14870c5f4"
   license "MIT"
   head "https://github.com/oauth2-proxy/oauth2-proxy.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "94aaac03b69c92b86b72747e86b54d9feaf6d85b51ccfe584f5749134354fd8f"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "c37d7676bce62ee0a6e5346d810e2d243b46b7a0ba65860a31ecc68522a58c0c"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "87d555a042df67ee5bc8d5bca7c59f3107c97479f1cad35dc56feda25a939e36"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "33c05af537b1e4ac7211d8fd8860984766827b17441d0d95f113e2ab657b63db"
-    sha256 cellar: :any_skip_relocation, sonoma:         "7bf5231364318054cf8a5781dd63265ed83b2b3637398ba41f7e4e81965c3706"
-    sha256 cellar: :any_skip_relocation, ventura:        "ce8fac9329569a0cb1be83dca9bf6b13b96893606cf1a52344c5a652a820edf2"
-    sha256 cellar: :any_skip_relocation, monterey:       "982d3fe7eef4c0465446a02d97e4948f5af429f2c88ed37ab38255fd112767b7"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "d0eba1f060c2fa8237aa1b3769b2d3244aa4fdd307acb6f59fdd623024df6ee4"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "9ea4dcb47280288cc86c4c8a9db91c724044f65a8eefbaf966799bbc43d99691"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "56ea0e2993ee1c28aaf75b8f2c89963c28dc19f42e74bf059876d590e01f3dbf"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "7b7f25b4651eb613fdd72c7c2feb1d179f3bc0b3696d4e5f7898c874fe50f629"
+    sha256 cellar: :any_skip_relocation, sonoma:        "60cdd8f32912f026b1b4d79d65c6e26ab4d083cd6ac99dbd0972938d1785c122"
+    sha256 cellar: :any_skip_relocation, ventura:       "4a47b133a8e94537de109b52b32dd4b6d61addc31d402ab153959619d1005335"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "19a332ed0f0b04571737bf898e5201351f93bbf1a098e87c4aa28984462b1d9e"
   end
 
   depends_on "go" => :build

@@ -1,11 +1,12 @@
 class Openldap < Formula
   desc "Open source suite of directory software"
   homepage "https://www.openldap.org/software/"
-  url "https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.6.8.tgz"
-  mirror "http://fresh-center.net/linux/misc/openldap-2.6.8.tgz"
-  mirror "http://fresh-center.net/linux/misc/legacy/openldap-2.6.8.tgz"
-  sha256 "48969323e94e3be3b03c6a132942dcba7ef8d545f2ad35401709019f696c3c4e"
+  url "https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-2.6.10.tgz"
+  mirror "http://fresh-center.net/linux/misc/openldap-2.6.10.tgz"
+  mirror "http://fresh-center.net/linux/misc/legacy/openldap-2.6.10.tgz"
+  sha256 "c065f04aad42737aebd60b2fe4939704ac844266bc0aeaa1609f0cad987be516"
   license "OLDAP-2.8"
+  revision 1
 
   livecheck do
     url "https://www.openldap.org/software/download/OpenLDAP/openldap-release/"
@@ -13,18 +14,18 @@ class Openldap < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "623ddc86e72704e5a7f5314befd075a3cb54e9df4af9c642b5c13c315a0baec5"
-    sha256 arm64_sonoma:   "4c412f0de4d43928958127a53299a1ae73da1f9bbc47f1560a3bd946a4919a5a"
-    sha256 arm64_ventura:  "6e1ed35e3e324539f4cc112d7f3d24aa36c550756e6ea42bad8ed81299ce0171"
-    sha256 arm64_monterey: "0a90d388c85985489af2bc6fc77c868d71460098549b2bbb83f5138e32b057ec"
-    sha256 sonoma:         "6ce29ea406a5839bab5071a1844b49d4df905cfa88a9868673b03290d43f263b"
-    sha256 ventura:        "02d09a4818dc91507c4ea8306459dabb331b983c573c2f2855ecb3c7afac3e32"
-    sha256 monterey:       "f70846e774dd546e9514ada3057e7f8b550521c5301908f547b8a4cc435a59db"
-    sha256 x86_64_linux:   "8b49f676a7948a38bdc1b8089400628c95502330a0d2569635d4741bce3d1e53"
+    sha256 arm64_sequoia: "a1dc03b12f5d087bf8eca0c017483a45548a88ad62e27e0c0efe499f19cf57ff"
+    sha256 arm64_sonoma:  "fc1c7897033c6869b7bcc0e9e7589c7e2dc1bcda9f1939bc571f6afc9586b97f"
+    sha256 arm64_ventura: "2940262081277489fbb0b6187269efb4dca69ad6000b1793ce2e67a8fcce5513"
+    sha256 sonoma:        "6360ceeaf23775210ee3c9f739ff8d7b3cd83b2dfce7bf7ae4cd69065b3ec544"
+    sha256 ventura:       "f3da0ae98808e034485d22f56185b01715e544387d6d5a61df4f7cd4dadb2930"
+    sha256 arm64_linux:   "56958d2700c221fd98383fc04078a18e3f9b28afae795c2b15b0cb5fcba10b62"
+    sha256 x86_64_linux:  "79ace347f02583cfe9e64e4e28b96a965b5b4a96d98db2ce0d746be4ad5da3b9"
   end
 
   keg_only :provided_by_macos
 
+  depends_on "cyrus-sasl"
   depends_on "openssl@3"
 
   uses_from_macos "mandoc" => :build
@@ -60,9 +61,11 @@ class Openldap < Formula
       --enable-refint
       --enable-retcode
       --enable-seqmod
+      --enable-sssvlv
       --enable-translucent
       --enable-unique
       --enable-valsort
+      --with-cyrus-sasl
       --without-systemd
     ]
 
@@ -88,7 +91,7 @@ class Openldap < Formula
     # Passing `build.bottle?` ensures that inreplace failures result in build failures
     # only when building a bottle. This helps avoid problems for users who build from source
     # and may have an old version of these files in `etc`.
-    inreplace etc.glob("openldap/slapd.{conf,ldif}"), prefix, opt_prefix, build.bottle?
+    inreplace etc.glob("openldap/slapd.{conf,ldif}"), prefix, opt_prefix, audit_result: build.bottle?
   end
 
   test do

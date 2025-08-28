@@ -1,19 +1,18 @@
 class Chroma < Formula
   desc "General purpose syntax highlighter in pure Go"
   homepage "https://github.com/alecthomas/chroma"
-  url "https://github.com/alecthomas/chroma/archive/refs/tags/v2.14.0.tar.gz"
-  sha256 "beff1d23ee8343c66f62aa30f1f18da5813018dcdff147f3ac4bdd734a908821"
+  url "https://github.com/alecthomas/chroma/archive/refs/tags/v2.20.0.tar.gz"
+  sha256 "63aec3843db10acb8d6455ffd768ea987e3a5687f88b61aa33e6e5003c2786ac"
   license "MIT"
+  head "https://github.com/alecthomas/chroma.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "18f7a9576f470a8599324829accdfa900a26b73f2bf3dfce9e579f56ae3790dd"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "80254f05c1da39aa6e08632a3a5615ab8fbc2e55377fac876eb1a1f512a5916d"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "80254f05c1da39aa6e08632a3a5615ab8fbc2e55377fac876eb1a1f512a5916d"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "80254f05c1da39aa6e08632a3a5615ab8fbc2e55377fac876eb1a1f512a5916d"
-    sha256 cellar: :any_skip_relocation, sonoma:         "2cea7131a26e52d213671770734533eb60651f9013f824f409c4298be650cb9e"
-    sha256 cellar: :any_skip_relocation, ventura:        "2cea7131a26e52d213671770734533eb60651f9013f824f409c4298be650cb9e"
-    sha256 cellar: :any_skip_relocation, monterey:       "239814f474928850034eb3dd571cd398659bd69e618f7e82e2cde85bca23125b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "cd705c1e6b537ae633275b6e062f04acc786ab8f6db4126a6326f86e2f479b66"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "cdb12c76b2e422651a57d5825f0a932e63df62c452366ee34c6412ccd71fb7ec"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "cdb12c76b2e422651a57d5825f0a932e63df62c452366ee34c6412ccd71fb7ec"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "cdb12c76b2e422651a57d5825f0a932e63df62c452366ee34c6412ccd71fb7ec"
+    sha256 cellar: :any_skip_relocation, sonoma:        "3f935044062a7903bbd3585905a8bb564844236dcd232806fdb69828b18d1df0"
+    sha256 cellar: :any_skip_relocation, ventura:       "3f935044062a7903bbd3585905a8bb564844236dcd232806fdb69828b18d1df0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c2601da81eafe25841d6fd42c87f7b312a29166f7ccc3dfe53d17ac73e1057bd"
   end
 
   depends_on "go" => :build

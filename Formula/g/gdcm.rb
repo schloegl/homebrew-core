@@ -11,35 +11,37 @@ class Gdcm < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "58ab3720e3224ffe2eddf7fdc9c09786dc6d9aedc9137ad041cd0593f72aa0a7"
-    sha256 arm64_sonoma:   "b3c59d76d3075c22b131d69ffa1692c28a0fd2357a537b57b412e026f0a2d382"
-    sha256 arm64_ventura:  "847ee192e58ed159a28116d4e02c849203adff75eee0bc27e865a1c9269966aa"
-    sha256 arm64_monterey: "6e2a348a3aab4f5193aad6120e780605a3022393a4ffdb0af363dd89d306ab6e"
-    sha256 sonoma:         "e98f96ff6b897d241feddb12eb0d1340b612e033126f52dc9a675465d88c11d0"
-    sha256 ventura:        "8bada768a0e1349507f4e8c4cfece34f606c168bae51b81e2df16bc2ec98916d"
-    sha256 monterey:       "fd68db00f804806164c14a880ac66b107892461753d55731d134b39a06deac5b"
-    sha256 x86_64_linux:   "fe50e950bb25f9e13d890b92e82570887b3f1bc7174b508a46709a0ffaa35e09"
+    rebuild 2
+    sha256 arm64_sequoia: "29f4afca40589ee225e365d19784cefaea6a645bb74c8846fc380b4ab6182020"
+    sha256 arm64_sonoma:  "fde25b20f1705d89a85dec3c6e159877d6725b90ca38574083a3ba6beac9c0b3"
+    sha256 arm64_ventura: "5de66afd7a971ab36ee2a088d9cad724e664a9c54f86de0487097d4100603537"
+    sha256 sonoma:        "709bd1ed5c21684c70b26bc5eb01557c1651be434a17a7d29bec098c3c4d695b"
+    sha256 ventura:       "23c61e5a51e3c5d5b0abb2a9df18b06c4a5eda9e14c05850643bca44a9bdbae1"
+    sha256 arm64_linux:   "fd227edb28e56e51c23bf3bbc1d00ab4986e0c0b34ce8927baeb35b74e3741d9"
+    sha256 x86_64_linux:  "8bc43d0b2244b3218545c1aa4fba961b365c514d85bb3a158087e4fbe421350d"
   end
 
   depends_on "cmake" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
+  depends_on "python@3.13" => [:build, :test] # for bindings, avoid runtime dependency due to `expat`
   depends_on "swig" => :build
+  depends_on "charls"
+  depends_on "json-c"
   depends_on "openjpeg"
   depends_on "openssl@3"
-  depends_on "python@3.12"
 
   uses_from_macos "expat"
+  uses_from_macos "libxml2"
   uses_from_macos "zlib"
 
   on_linux do
+    depends_on "python@3.13"
     depends_on "util-linux" # for libuuid
   end
 
-  fails_with gcc: "5"
-
   def python3
-    which("python3.12")
+    which("python3.13")
   end
 
   def install
@@ -59,11 +61,14 @@ class Gdcm < Formula
       "-DGDCM_BUILD_EXAMPLES=OFF",
       "-DGDCM_BUILD_DOCBOOK_MANPAGES=OFF",
       "-DGDCM_USE_VTK=OFF", # No VTK 9 support: https://sourceforge.net/p/gdcm/bugs/509/
+      "-DGDCM_USE_SYSTEM_CHARLS=ON",
       "-DGDCM_USE_SYSTEM_EXPAT=ON",
-      "-DGDCM_USE_SYSTEM_ZLIB=ON",
-      "-DGDCM_USE_SYSTEM_UUID=ON",
+      "-DGDCM_USE_SYSTEM_JSON=ON",
+      "-DGDCM_USE_SYSTEM_LIBXML2=ON",
       "-DGDCM_USE_SYSTEM_OPENJPEG=ON",
       "-DGDCM_USE_SYSTEM_OPENSSL=ON",
+      "-DGDCM_USE_SYSTEM_UUID=ON",
+      "-DGDCM_USE_SYSTEM_ZLIB=ON",
       "-DGDCM_WRAP_PYTHON=ON",
       "-DPYTHON_EXECUTABLE=#{python3}",
       "-DPYTHON_INCLUDE_DIR=#{python_include}",
@@ -83,17 +88,16 @@ class Gdcm < Formula
   end
 
   test do
-    (testpath/"test.cxx").write <<~EOS
+    (testpath/"test.cxx").write <<~CPP
       #include "gdcmReader.h"
       int main(int, char *[])
       {
         gdcm::Reader reader;
         reader.SetFileName("file.dcm");
       }
-    EOS
+    CPP
 
-    system ENV.cxx, "-std=c++11", "-isystem", "#{include}/gdcm-3.0", "-o", "test.cxx.o", "-c", "test.cxx"
-    system ENV.cxx, "-std=c++11", "test.cxx.o", "-o", "test", "-L#{lib}", "-lgdcmDSED"
+    system ENV.cxx, "-std=c++11", "test.cxx", "-o", "test", "-I#{include}/gdcm-3.0", "-L#{lib}", "-lgdcmDSED"
     system "./test"
 
     system python3, "-c", "import gdcm"

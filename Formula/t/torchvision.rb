@@ -2,9 +2,9 @@ class Torchvision < Formula
   include Language::Python::Virtualenv
 
   desc "Datasets, transforms, and models for computer vision"
-  homepage "https://github.com/pytorch/vision"
-  url "https://github.com/pytorch/vision/archive/refs/tags/v0.19.1.tar.gz"
-  sha256 "083e75c467285595ec3eb3c7aa8493c19e53d7eb42f13046fb56a07c8897e5a8"
+  homepage "https://pytorch.org/vision/stable/index.html"
+  url "https://github.com/pytorch/vision/archive/refs/tags/v0.23.0.tar.gz"
+  sha256 "db5a91569e5eb4a3b02e9eaad6080335f5ae3824890a697f5618541999f04027"
   license "BSD-3-Clause"
 
   livecheck do
@@ -12,42 +12,41 @@ class Torchvision < Formula
     regex(/^v?(\d+(?:\.\d+)+)$/i)
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "5a1b6d729c2e3d039e3ccea262764d442bbd5993815850e762790a52a81ad2a8"
-    sha256 cellar: :any,                 arm64_sonoma:  "9180e25c850189a8f5bd51512758bfb671e46efadf5ff7609dd34d553060ef6f"
-    sha256 cellar: :any,                 arm64_ventura: "69665bfdbc14bc07b6b344a4919c78c6bf89c401b52ffdffd71c441938953312"
-    sha256 cellar: :any,                 sonoma:        "272f58db99105bceca7e33ebf135f71fbcc6e3900082600d74ee5f12f37397a7"
-    sha256 cellar: :any,                 ventura:       "db376520a2dc03ac1a2ad7cf742126ec5e138572109f4997d1e9be15365fc907"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "6f5de0ae1b6c65a6c14b8b8546e4d4728c047efd0bcc8ca47ff5c5a84b32c94d"
+    sha256 cellar: :any,                 arm64_sequoia: "dde2edbf7868bb33698d12bd1232ea51202e04dc0f0c12157c40bd61d65f5e0b"
+    sha256 cellar: :any,                 arm64_sonoma:  "35372083b2d7f01e60f20bceb909ce7cb23b044b31a6bb44fbd17d27c745b075"
+    sha256 cellar: :any,                 arm64_ventura: "537c9d9461ba7ce76625333971d708d05a107f0ddce2eb23b1999a7085ecadad"
+    sha256 cellar: :any,                 sonoma:        "253465e994198933cedcbf71cc3f51d63435eaf2d64470962a008b648dd46632"
+    sha256 cellar: :any,                 ventura:       "f965c4b2b3a7ef6cacfce1e75e810639c192e02b433fb9b429ec9172d0933a17"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "72b856c25d99e6ab1c1cee4448d55d0e929394616dff162c7d697c0389248ee9"
   end
 
   depends_on "cmake" => :build
   depends_on "ninja" => :build
-  depends_on "python@3.12" => [:build, :test]
-  depends_on "abseil"
-  depends_on "certifi"
+  depends_on "python@3.13" => [:build, :test]
   depends_on "jpeg-turbo"
   depends_on "libpng"
   depends_on "numpy"
   depends_on "pillow"
-  depends_on "protobuf"
   depends_on "pytorch"
-
-  on_macos do
-    depends_on "libomp"
-  end
+  depends_on "webp"
 
   def install
-    system "cmake", "-S", ".", "-B", "build", *std_cmake_args
+    # Avoid overlinking to `abseil`, `libomp` and `protobuf`
+    args = OS.mac? ? ["-DCMAKE_SHARED_LINKER_FLAGS=-Wl,-dead_strip_dylibs"] : []
+
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
 
     jpeg = Formula["jpeg-turbo"]
     inreplace "setup.py",
-      "(jpeg_found, jpeg_conda, jpeg_include, jpeg_lib) = find_library(\"jpeglib\", vision_include)",
-      "(jpeg_found, jpeg_conda, jpeg_include, jpeg_lib) = (True, False, \"#{jpeg.include}\", \"#{jpeg.lib}\")"
+      'jpeg_found, jpeg_include_dir, jpeg_library_dir = find_library(header="jpeglib.h")',
+      "jpeg_found, jpeg_include_dir, jpeg_library_dir = True, '#{jpeg.include}', '#{jpeg.lib}'"
 
-    python3 = "python3.12"
+    python3 = "python3.13"
     venv = virtualenv_create(libexec, python3)
     venv.pip_install resources
 
@@ -66,7 +65,7 @@ class Torchvision < Formula
   test do
     # test that C++ libraries are available
     # See also https://github.com/pytorch/vision/issues/2134#issuecomment-1793846900
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <assert.h>
       #include <torch/script.h>
       #include <torch/torch.h>
@@ -77,7 +76,7 @@ class Torchvision < Formula
         auto& ops = torch::jit::getAllOperatorsFor(torch::jit::Symbol::fromQualString("torchvision::nms"));
         assert(ops.size() == 1);
       }
-    EOS
+    CPP
     pytorch = Formula["pytorch"]
     openmp_flags = if OS.mac?
       libomp = Formula["libomp"]
@@ -99,11 +98,11 @@ class Torchvision < Formula
 
     # test that the `torchvision` Python module is available
     cp test_fixtures("test.png"), "test.png"
-    system libexec/"bin/python", "-c", <<~EOS
+    system libexec/"bin/python", "-c", <<~PYTHON
       import torch
       import torchvision
       t = torchvision.io.read_image("test.png")
       assert isinstance(t, torch.Tensor)
-    EOS
+    PYTHON
   end
 end

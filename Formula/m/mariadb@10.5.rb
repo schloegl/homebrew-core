@@ -1,8 +1,8 @@
 class MariadbAT105 < Formula
   desc "Drop-in replacement for MySQL"
   homepage "https://mariadb.org/"
-  url "https://archive.mariadb.org/mariadb-10.5.26/source/mariadb-10.5.26.tar.gz"
-  sha256 "dd5f99a1d30ae47365fc18b1deeff6dc0ab38ac84e7d9fd9c8c04ff6b01961f1"
+  url "https://archive.mariadb.org/mariadb-10.5.29/source/mariadb-10.5.29.tar.gz"
+  sha256 "de49ed417f6fa90e8fee72a41e526e0983dc47f388caff9e703803cec263b826"
   license "GPL-2.0-only"
 
   livecheck do
@@ -18,14 +18,13 @@ class MariadbAT105 < Formula
   end
 
   bottle do
-    sha256 arm64_sequoia:  "646f9700bbdbffb31f42a664d5ce8d8704c019e471d63dff9731c76dba093c2d"
-    sha256 arm64_sonoma:   "b980085f198edf5c25bf4e56c5908308f341c9173e5302e1761ed668c7bc46eb"
-    sha256 arm64_ventura:  "0b5299fa909c77573b55a3a52003152f77f8542debfb4ac6c745936b9197da14"
-    sha256 arm64_monterey: "3fcd92aabf3e95d1a7502913cad181ad92fedb21425883c6091aa9901b776e88"
-    sha256 sonoma:         "a95bcb1174d7ac2c47cde0aeee5ead358a17fb46b179251bad72a15a8b3c9a16"
-    sha256 ventura:        "c9d6dbdfd5764d07bf653e377a9c384205c27c3e19445b5a1534abbf6cbe41f0"
-    sha256 monterey:       "42a220f6c5aa2bf4bd72c02c4298b83c0f3bdb769396ea1bdfd1839de1fc5436"
-    sha256 x86_64_linux:   "556854cdf541e5a090fd11cc455292179eb99a1e1fc427d0d6934957ebdb363b"
+    sha256 arm64_sequoia: "fbc6c60828c5b08de909657354aa0ae4b61ed7016e16fe3cb0ba0202f761a163"
+    sha256 arm64_sonoma:  "4d82bc0d05b270c8d6b1aff58a8303b9eaaa694c4c6d99ffb3f980dd95a9ad6e"
+    sha256 arm64_ventura: "b639bb146a4e838d542810b16b2fe090b5223428d1d832e7bca6afdf0a976555"
+    sha256 sonoma:        "9820c413100a32e67e7efb0027a18b8a314eedd15dcd7fb6bb91b34c3fdef322"
+    sha256 ventura:       "12ef4bda287ca4dde510dbb1cee7ebddc8abdf8f2117fcc8f37cb23263d21015"
+    sha256 arm64_linux:   "50752547002571ba3b54aa3624e7ac74b8d3a514b9a23513c6c3e27336c6b64b"
+    sha256 x86_64_linux:  "a35b606e2aac03025965c0ac65a7894de48d6c1eb94e9786c60cc5ac3f9514db"
   end
 
   keg_only :versioned_formula
@@ -37,7 +36,7 @@ class MariadbAT105 < Formula
   depends_on "bison" => :build
   depends_on "cmake" => :build
   depends_on "openjdk" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "groonga"
   depends_on "lz4"
@@ -59,9 +58,16 @@ class MariadbAT105 < Formula
     depends_on "linux-pam"
   end
 
-  fails_with gcc: "5"
-
   def install
+    ENV.runtime_cpu_detection
+
+    # Backport fix for CMake 4.0 in columnstore submodule
+    # https://github.com/mariadb-corporation/mariadb-columnstore-engine/commit/726cc3684b4de08934c2b14f347799fd8c3aac9a
+    # https://github.com/mariadb-corporation/mariadb-columnstore-engine/commit/7e17d8825409fb8cc0629bfd052ffac6e542b50e
+    inreplace "storage/columnstore/columnstore/CMakeLists.txt",
+              "CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)",
+              "CMAKE_MINIMUM_REQUIRED(VERSION 3.10)"
+
     # Set basedir and ldata so that mysql_install_db can find the server
     # without needing an explicit path to be set. This can still
     # be overridden by calling --basedir= when calling.
@@ -141,12 +147,12 @@ class MariadbAT105 < Formula
     end
 
     # Install my.cnf that binds to 127.0.0.1 by default
-    (buildpath/"my.cnf").write <<~EOS
+    (buildpath/"my.cnf").write <<~INI
       # Default Homebrew MySQL server config
       [mysqld]
       # Only allow connections from localhost
       bind-address = 127.0.0.1
-    EOS
+    INI
     etc.install "my.cnf"
   end
 

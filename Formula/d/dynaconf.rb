@@ -3,16 +3,15 @@ class Dynaconf < Formula
 
   desc "Configuration Management for Python"
   homepage "https://www.dynaconf.com/"
-  url "https://files.pythonhosted.org/packages/56/1a/324f1bf234cc4f98445305fd8719245318466e310e05caea7ef052748ecd/dynaconf-3.2.6.tar.gz"
-  sha256 "74cc1897396380bb957730eb341cc0976ee9c38bbcb53d3307c50caed0aedfb8"
+  url "https://files.pythonhosted.org/packages/62/eb/e9d1249ff56b11e63fd8c7d0fcc1f94704e21693c16862bf0ebfb07bd61a/dynaconf-3.2.11.tar.gz"
+  sha256 "4cfc6a730c533bf1a1d0bf266ae202133a22236bb3227d23eff4b8542d4034a5"
   license "MIT"
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any_skip_relocation, all: "ef24e9f55aaeb333a904057639397a979f55e3c68ec33c63643b5ccbd4dc370f"
+    sha256 cellar: :any_skip_relocation, all: "a603acc6b39b5cfa1f02584927ce2071ef3a04d63f5853497ad93c77aa395116"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   def install
     virtualenv_install_with_resources
@@ -20,7 +19,7 @@ class Dynaconf < Formula
 
   test do
     system bin/"dynaconf", "init"
-    assert_predicate testpath/"settings.toml", :exist?
+    assert_path_exists testpath/"settings.toml"
     assert_match "from dynaconf import Dynaconf", (testpath/"config.py").read
   end
 end

@@ -1,8 +1,8 @@
 class Systemc < Formula
   desc "Core SystemC language and examples"
-  homepage "https://accellera.org/"
-  url "https://github.com/accellera-official/systemc/archive/refs/tags/3.0.0.tar.gz"
-  sha256 "4d0ab814719cfd6b1d195dd4bcb1b9e6edc5881b9a3e44117336a691992bf779"
+  homepage "https://systemc.org/overview/systemc/"
+  url "https://github.com/accellera-official/systemc/archive/refs/tags/3.0.1.tar.gz"
+  sha256 "d07765d0d2ffd6c01767880d0c6aaf53cd9487975f898c593ffffd713258fcbb"
   license "Apache-2.0"
 
   livecheck do
@@ -11,32 +11,44 @@ class Systemc < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "2740e733855c0ff23f257579f7dfd18457f6f3d24bc6a43bba6fd07ae051472a"
-    sha256 cellar: :any,                 arm64_sonoma:   "cc59814681c92112b42bad9029facfd7142ee6b61d6000c10bc6d6d412aad0d8"
-    sha256 cellar: :any,                 arm64_ventura:  "afb2a0c1006279804a2b73b4b2f38f085dd2931d11427ee773dfac5bd11bfe58"
-    sha256 cellar: :any,                 arm64_monterey: "26d56ae7d9d1e3a9b1c9c14f023a26b0a2901b35ae48153783749d56ba9157bb"
-    sha256 cellar: :any,                 sonoma:         "9510f8a6e4ae8e7b094af5a1ae26b4eb9eba7042f114c06efd3a354b204fe837"
-    sha256 cellar: :any,                 ventura:        "56d56ea7f88e20e5092899f72798691e2d9ee3bbaa744442a0ebc197741765b9"
-    sha256 cellar: :any,                 monterey:       "89cc5b92b23afd6cacc54a1f6d5d3ab77dd3bd8c7d8dd9c1c7e8044ad4880f3c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "5feaf33ecf5d11ecc9d3458aa214cea38a694b5ac31eb4c5aa0d90e2d15ab794"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia: "b2580caeadfaaa3e0dee957d949e24e1a7efea6d2e08a5ac5a944ed940af119f"
+    sha256 cellar: :any,                 arm64_sonoma:  "3caf64beca918351c3def6491f3f44ab6d6e30944256598042c06e27f4c3f69d"
+    sha256 cellar: :any,                 arm64_ventura: "2a53ee4fc148a6cff3e4dd3bc9fb90ead7473bea18330d1165df302eff50ca42"
+    sha256 cellar: :any,                 sonoma:        "2f71a7bdcf98225af604842ac634e8b6f6e5b6e04f88c220a870832620c67332"
+    sha256 cellar: :any,                 ventura:       "36d4a60c1bf2ed3f6af253cf8c7691c1bcf6d4c544a1eed52e1978bcc94f1808"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "323a1432c8de12dbab0de9552daf0ed9f399ba98cb708118e6aafd0493b50531"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "38bc41a193499a5d8487437cd0aa90ada0456938807ed8b091564ca301606b00"
   end
 
-  depends_on "cmake" => :build
+  depends_on "autoconf" => :build
+  depends_on "autoconf-archive" => :build
+  depends_on "automake" => :build
+  depends_on "doxygen" => :build
+  depends_on "libtool" => :build
+
+  # Workaround "No rule to make target 'DEVELOPMENT.md', needed by 'all-am'":
+  # Ref: https://forums.accellera.org/topic/8068-no-rule-to-make-target-developmentmd-needed-by-all-am/
+  patch do
+    url "https://sources.debian.org/data/main/s/systemc/3.0.1-1/debian/patches/doc-targets.patch"
+    sha256 "3c4c79453599fed2a0082b9564e6a2dd845615afcc173d0e235933b2d2b18bf4"
+  end
 
   def install
-    system "cmake", "-S", ".", "-B", "build", "-DCMAKE_CXX_STANDARD=17", *std_cmake_args
-    system "cmake", "--build", "build"
-    system "cmake", "--install", "build"
+    ENV.append "CXXFLAGS", "-std=gnu++17"
+    system "autoreconf", "--force", "--install", "--verbose"
+    system "./configure", "--with-unix-layout", *std_configure_args
+    system "make", "install"
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include "systemc.h"
 
       int sc_main(int argc, char *argv[]) {
         return 0;
       }
-    EOS
+    CPP
     system ENV.cxx, "-std=gnu++17", "-L#{lib}", "-lsystemc", "test.cpp"
     system "./a.out"
   end

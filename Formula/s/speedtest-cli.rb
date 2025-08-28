@@ -6,27 +6,30 @@ class SpeedtestCli < Formula
   url "https://github.com/sivel/speedtest-cli/archive/refs/tags/v2.1.3.tar.gz"
   sha256 "45e3ca21c3ce3c339646100de18db8a26a27d240c29f1c9e07b6c13995a969be"
   license "Apache-2.0"
-  revision 1
+  revision 2
   head "https://github.com/sivel/speedtest-cli.git", branch: "master"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    rebuild 3
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "9009cb6abe976ec1ff1d444c5d641b32b33d86fdbda6207dbc6971e14be4c9a9"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "8117d177addf62bfb9a98e708e89fd6f104585748180fd92c557fb9a9804a311"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "8117d177addf62bfb9a98e708e89fd6f104585748180fd92c557fb9a9804a311"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "8117d177addf62bfb9a98e708e89fd6f104585748180fd92c557fb9a9804a311"
-    sha256 cellar: :any_skip_relocation, sonoma:         "62201ed3f52ff7ea5e4bdf9a2ac0b1845857ce06f053ecb2c189b0e29e074fe4"
-    sha256 cellar: :any_skip_relocation, ventura:        "62201ed3f52ff7ea5e4bdf9a2ac0b1845857ce06f053ecb2c189b0e29e074fe4"
-    sha256 cellar: :any_skip_relocation, monterey:       "62201ed3f52ff7ea5e4bdf9a2ac0b1845857ce06f053ecb2c189b0e29e074fe4"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "b3cea7d2de8fe8d5d014b498e85fec5a179e3f93264ed18f630aa0100cac9a80"
+    sha256 cellar: :any_skip_relocation, all: "77a4dc453d1e58aee76c4145eb1e917d7514762cfd76d6014454e4f37b40fec3"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   # Support Python 3.10, remove on next release
   patch do
     url "https://github.com/sivel/speedtest-cli/commit/22210ca35228f0bbcef75a7c14587c4ecb875ab4.patch?full_index=1"
     sha256 "d0456eb9fded20fb1580dbc6e3bc451a10c3fbcd3441efea66035aa848440c09"
+  end
+
+  # Replace deprecated `datetime.datetime.utcnow()` function with supported
+  # `datetime.datetime.now(datetime.UTC)`
+  #
+  # https://github.com/sivel/speedtest-cli/pull/808
+  patch do
+    url "https://github.com/sivel/speedtest-cli/commit/305dce9bd28e797d32b6b7e4a9239a669ab35322.patch?full_index=1"
+    sha256 "468f7205cedcef51eb95eb565db56d08743c5663b1641be62d9d1247d0845f3b"
   end
 
   def install
@@ -38,8 +41,8 @@ class SpeedtestCli < Formula
 
   test do
     assert_match "speedtest-cli",
-                 shell_output(bin/"speedtest --version")
+                 shell_output("#{bin}/speedtest --version")
     assert_match "Command line interface for testing internet bandwidth using speedtest.net",
-                 shell_output(bin/"speedtest --help")
+                 shell_output("#{bin}/speedtest --help")
   end
 end

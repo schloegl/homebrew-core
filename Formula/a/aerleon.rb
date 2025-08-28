@@ -3,24 +3,23 @@ class Aerleon < Formula
 
   desc "Generate firewall configs for multiple firewall platforms"
   homepage "https://aerleon.readthedocs.io/en/latest/"
-  url "https://files.pythonhosted.org/packages/ca/bd/87869c1cb33a2b4d269c6f66056c44453e643925731cb85e6861d1121be8/aerleon-1.9.0.tar.gz"
-  sha256 "850cd621dda750263db313d4473302b48b82adaaa9220e6fd0677cb7900f95f6"
+  url "https://files.pythonhosted.org/packages/aa/59/bdfba424f08f2942bac1c630653ef8177938421e0cfd00ccaf358744bbed/aerleon-1.11.0.tar.gz"
+  sha256 "51ece6e194b802a21213a66a502e8b8f227b09542571c2b0d42b924750ec2dbb"
   license "Apache-2.0"
   head "https://github.com/aerleon/aerleon.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "8035c20f4b232aa3430edbb35e8c55cbb972dd74c096f3009cbe4387f1d5f96b"
-    sha256 cellar: :any,                 arm64_sonoma:   "66ed88e3888a7584e9574f20fda2afcd4535ce25c74d6694b1c1805502942cd8"
-    sha256 cellar: :any,                 arm64_ventura:  "7974e30641c93665207c6d6775118347f8acc75899a96a0f6463fbaf680eeae6"
-    sha256 cellar: :any,                 arm64_monterey: "31fbe5882a576becd288f72d63213654955713d4197621745a61bd995843d015"
-    sha256 cellar: :any,                 sonoma:         "0b6c03084055867198bcb9e9d6e87d15969fe814a3c393b9d2ac378b9a18cfee"
-    sha256 cellar: :any,                 ventura:        "b5fe4630ad59e7649acb26a635644428bf4c940e8f6435341782b135aaae174b"
-    sha256 cellar: :any,                 monterey:       "161cb0611f0565b6fb1b289190e6611dbca52b232da72df9b7783216c5fadb38"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "970a29563825fa5b291db0f44c4ababfa3e3528aed7c3511d0640f273a9772d2"
+    sha256 cellar: :any,                 arm64_sequoia: "a10cad27d2a3d178ccc21fc62dd38db82a23cfbfed046e619ecd369d9552fe0e"
+    sha256 cellar: :any,                 arm64_sonoma:  "6518f3f30fca6e177bfa1a5276c3d0312d94b06aa633de27c2caeecb3a161595"
+    sha256 cellar: :any,                 arm64_ventura: "65b1e553caea3550e4c23fe7dff1f8c47945cd9ef0582a69fea35b3684d0fb86"
+    sha256 cellar: :any,                 sonoma:        "ed7505055efae335fcef1e62edb2e93564108670583820ee6692e41499beb545"
+    sha256 cellar: :any,                 ventura:       "faf93ce8fefbd9f989cf636329dd31542c9e62b653db96ecf3d0196c3b52afae"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "1cd64bcb7ed9967b2aaf1aa1061d4694ff0ace8ef8fd9bbba2357159589aeadc"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0ada6de6f6e2ebb2ca4399c335ad261da8e6c3852b0d8bec18c24ae8af6db851"
   end
 
   depends_on "libyaml"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   conflicts_with "cgrep", because: "both install `cgrep` binaries"
 
@@ -35,13 +34,13 @@ class Aerleon < Formula
   end
 
   resource "pyyaml" do
-    url "https://files.pythonhosted.org/packages/cd/e5/af35f7ea75cf72f2cd079c95ee16797de7cd71f29ea7c68ae5ce7be1eda0/PyYAML-6.0.1.tar.gz"
-    sha256 "bfdf460b1736c775f2ba9f6a92bca30bc2095067b8a9d77876d1fad6cc3b4a43"
+    url "https://files.pythonhosted.org/packages/54/ed/79a089b6be93607fa5cdaedf301d7dfb23af5f25c398d5ead2525b063e17/pyyaml-6.0.2.tar.gz"
+    sha256 "d584d9ec91ad65861cc08d42e834324ef890a082e591037abe114850ff7bbc3e"
   end
 
   resource "typing-extensions" do
-    url "https://files.pythonhosted.org/packages/f6/f3/b827b3ab53b4e3d8513914586dcca61c355fa2ce8252dea4da56e67bf8f2/typing_extensions-4.11.0.tar.gz"
-    sha256 "83f085bd5ca59c80295fc2a82ab5dac679cbe02b9f33f7d83af68e241bea51b0"
+    url "https://files.pythonhosted.org/packages/98/5a/da40306b885cc8c09109dc2e1abd358d5684b1425678151cdaed4731c822/typing_extensions-4.14.1.tar.gz"
+    sha256 "38b39f4aeeab64884ce9f74c94263ef78f3c22467c8724005483154c26648d36"
   end
 
   def install
@@ -49,7 +48,7 @@ class Aerleon < Formula
   end
 
   test do
-    (testpath/"def/definitions.yaml").write <<~EOS
+    (testpath/"def/definitions.yaml").write <<~YAML
       networks:
         RFC1918:
           values:
@@ -87,9 +86,9 @@ class Aerleon < Formula
             protocol: tcp
           - port: 1024-65535
             protocol: udp
-    EOS
+    YAML
 
-    (testpath/"policies/pol/example.pol.yaml").write <<~EOS
+    (testpath/"policies/pol/example.pol.yaml").write <<~YAML
       filters:
       - header:
           comment: Example inbound
@@ -105,7 +104,7 @@ class Aerleon < Formula
           - name: default-deny
             comment: Deny anything else.
             action: deny#{"  "}
-    EOS
+    YAML
 
     assert_match "writing file: example.pol.acl", shell_output("#{bin}/aclgen 2>&1")
     assert_path_exists "example.pol.acl"

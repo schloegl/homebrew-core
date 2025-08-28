@@ -5,15 +5,17 @@ class Gcc < Formula
   head "https://gcc.gnu.org/git/gcc.git", branch: "master"
 
   stable do
-    url "https://ftp.gnu.org/gnu/gcc/gcc-14.2.0/gcc-14.2.0.tar.xz"
-    mirror "https://ftpmirror.gnu.org/gcc/gcc-14.2.0/gcc-14.2.0.tar.xz"
-    sha256 "a7b39bc69cbf9e25826c5a60ab26477001f7c08d85cec04bc0e29cabed6f3cc9"
+    url "https://ftpmirror.gnu.org/gnu/gcc/gcc-15.1.0/gcc-15.1.0.tar.xz"
+    mirror "https://ftp.gnu.org/gnu/gcc/gcc-15.1.0/gcc-15.1.0.tar.xz"
+    sha256 "e2b09ec21660f01fecffb715e0120265216943f038d0e48a9868713e54f06cea"
 
     # Branch from the Darwin maintainer of GCC, with a few generic fixes and
     # Apple Silicon support, located at https://github.com/iains/gcc-14-branch
     patch do
-      url "https://raw.githubusercontent.com/Homebrew/formula-patches/d5dcb918a951b2dcf2d7702db75eb29ef144f614/gcc/gcc-14.2.0.diff"
-      sha256 "70a994d2c7861f844dbfc8ca2700f6c1ce9881f51c45bb6fda2fd212ccb1ff03"
+      on_macos do
+        url "https://raw.githubusercontent.com/Homebrew/formula-patches/575ffcaed6d3112916fed77d271dd3799a7255c4/gcc/gcc-15.1.0.diff"
+        sha256 "360fba75cd3ab840c2cd3b04207f745c418df44502298ab156db81d41edf3594"
+      end
     end
   end
 
@@ -22,15 +24,17 @@ class Gcc < Formula
     regex(%r{href=["']?gcc[._-]v?(\d+(?:\.\d+)+)(?:/?["' >]|\.t)}i)
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256                               arm64_sequoia:  "28aade77b6754d6231cc5af51128399d27089972edcbf655f033a96a5f6c45ad"
-    sha256                               arm64_sonoma:   "1f68353bd346d182e0037a6cd24140e16c8984b3a26092578d4fe2c1e5560adb"
-    sha256                               arm64_ventura:  "ac0d447abd61d6e312942ca3df2ad03bc9e4ff41edff884816ffc9cdfb78331b"
-    sha256                               arm64_monterey: "485bee1b2f704a0a9a503c999bfd990daad938ca780d8fd8d0c32116ff22e120"
-    sha256                               sonoma:         "28abc77cbd95939a7048e89c74b994a7288309e9bf87f93a2434b7fcf676a8b5"
-    sha256                               ventura:        "556a4d7a23b6f3c697eff9fab92095ecf183c62aebe947555d368ed0440b8176"
-    sha256                               monterey:       "6ffeeef02dfcfcd8a7081910d59089eda12f5f4343864436da7cd0f472b429b3"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "a86493a7d4c2f4507c49a8599e9464367b812f9d051aa63e8690d6ed7096fb40"
+    sha256                               arm64_sequoia: "c805973f31312379b26ab86a4c7b8076392f8fa0c82cfc7fa0b0b77210b8b645"
+    sha256                               arm64_sonoma:  "e303f1155c61e85f35bba806ea975d6bf4fc0425bf7c0a11c0b368c3b852a5b2"
+    sha256                               arm64_ventura: "47bb2181ba767978af01831a7a5252fddea53dbc8c83ecc6a5044fb4a70a737b"
+    sha256                               sequoia:       "e1a3544b1d6447b03bdd912a5f479eb5f80870b1bd75fc054e765291bd97a1eb"
+    sha256                               sonoma:        "70d96023c835d25f95bbfe2ed9c38fbba338bee57d4c9bcbad132c2fad1e4b60"
+    sha256                               ventura:       "51491f90bea9c25ecd372ef13375232d8f75e3550e663021d3a5ecf6ed36bf46"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "4ecb05357b3eabeccb3783253df23e946f8f91bfd2c97a3fbf484ee6c1efec19"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9bf8afcd6fd5670f6a9aa88bfe8615359e080a3d6d0f6b4fcbbb24faba7f6531"
   end
 
   # The bottles are built on systems with the CLT installed, and do not work
@@ -73,9 +77,14 @@ class Gcc < Formula
 
     # We avoiding building:
     #  - Ada and D, which require a pre-existing GCC to bootstrap
+    #  - Cobol, not fully stable yet
     #  - Go, currently not supported on macOS
     #  - BRIG
-    languages = %w[c c++ objc obj-c++ fortran m2]
+    languages = %w[c c++ objc obj-c++ fortran]
+
+    # Modula-2 has problems with macOS 15 for now
+    # https://github.com/Homebrew/homebrew-core/pull/221029
+    languages << "m2" if !OS.mac? || MacOS.version < :sequoia
 
     pkgversion = "Homebrew GCC #{pkg_version} #{build.used_options*" "}".strip
 
@@ -106,7 +115,10 @@ class Gcc < Formula
       sdk = MacOS.sdk_path_if_needed
       args << "--with-sysroot=#{sdk}" if sdk
 
-      make_args = []
+      # Avoid this semi-random failure:
+      # "Error: Failed changing install name"
+      # "Updated load commands do not fit in the header"
+      make_args = %w[BOOT_LDFLAGS=-Wl,-headerpad_max_install_names]
     else
       # Fix cc1: error while loading shared libraries: libisl.so.15
       args << "--with-boot-ldflags=-static-libstdc++ -static-libgcc #{ENV.ldflags}"
@@ -253,18 +265,18 @@ class Gcc < Formula
   end
 
   test do
-    (testpath/"hello-c.c").write <<~EOS
+    (testpath/"hello-c.c").write <<~C
       #include <stdio.h>
       int main()
       {
         puts("Hello, world!");
         return 0;
       }
-    EOS
+    C
     system bin/"gcc-#{version_suffix}", "-o", "hello-c", "hello-c.c"
     assert_equal "Hello, world!\n", shell_output("./hello-c")
 
-    (testpath/"hello-cc.cc").write <<~EOS
+    (testpath/"hello-cc.cc").write <<~CPP
       #include <iostream>
       struct exception { };
       int main()
@@ -275,11 +287,11 @@ class Gcc < Formula
           catch (...) { }
         return 0;
       }
-    EOS
+    CPP
     system bin/"g++-#{version_suffix}", "-o", "hello-cc", "hello-cc.cc"
     assert_equal "Hello, world!\n", shell_output("./hello-cc")
 
-    (testpath/"test.f90").write <<~EOS
+    (testpath/"test.f90").write <<~FORTRAN
       integer,parameter::m=10000
       real::a(m), b(m)
       real::fact=0.5
@@ -289,9 +301,12 @@ class Gcc < Formula
       end do
       write(*,"(A)") "Done"
       end
-    EOS
+    FORTRAN
     system bin/"gfortran", "-o", "test", "test.f90"
     assert_equal "Done\n", shell_output("./test")
+
+    # Modula-2 is temporarily disabled on macOS 15
+    return if OS.mac? && MacOS.version >= :sequoia
 
     (testpath/"hello.mod").write <<~EOS
       MODULE hello;

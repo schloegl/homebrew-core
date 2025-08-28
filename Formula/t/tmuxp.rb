@@ -3,23 +3,22 @@ class Tmuxp < Formula
 
   desc "Tmux session manager. Built on libtmux"
   homepage "https://tmuxp.git-pull.com/"
-  url "https://files.pythonhosted.org/packages/2e/5b/66ceb26459b9324bbd425c673170172066f08a6c180c8da166de6a44cf45/tmuxp-1.47.0.tar.gz"
-  sha256 "1d863a08450fa5956f54af64578121c38c0693961f2154a4674faaa9fe8dcf87"
+  url "https://files.pythonhosted.org/packages/ca/6a/a3200410d5a1ad6b7dccb416fdba080bb5924e536f5764bde3642f6ca58e/tmuxp-1.55.0.tar.gz"
+  sha256 "ade0bad3d9d8d647664089c0a6101f9924d9410aa2b530fcf0406fff8994de1d"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "26bbc7df7f399603cd1e83437019a7f5dd2b99e9747ad0ce1d3713cede04bd3f"
-    sha256 cellar: :any,                 arm64_sonoma:   "41c1493154b827680cadf4db601f8dbe009e078525bd70e73b4719c84a4f6f09"
-    sha256 cellar: :any,                 arm64_ventura:  "ea5f4a155703f6fdb2b1fb435282c58acdd3c94dfa6fa31a51acb0e5d2468684"
-    sha256 cellar: :any,                 arm64_monterey: "103fb60fdd32218a5e412fa5e1d126080a17c8de53a5f556e32d0ea0bcb5e40c"
-    sha256 cellar: :any,                 sonoma:         "233a221828db71cad595763974d9c351ee8cd80ae6819e569ad1ebdae66dd0fb"
-    sha256 cellar: :any,                 ventura:        "c0f80e9190dd778997aafaa61bb75d84468cb19bb887290d49c6e55247b76c2f"
-    sha256 cellar: :any,                 monterey:       "bb617086716de2852c801a74ba7bf7a233b26f2a5496a38ae05d1883a9a886b2"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "b0cf1b16eb1e410f40c508da7b7800d38f31c38841d6c24fcfcf61eaa51f8f19"
+    sha256 cellar: :any,                 arm64_sequoia: "007147b2089ee3ecff6b52131c3fddd09482481589c4fc5fa3e94696cc1e6029"
+    sha256 cellar: :any,                 arm64_sonoma:  "098592d2e112a37f51ced1279638016aec09abde2765c25833b0357cf06585eb"
+    sha256 cellar: :any,                 arm64_ventura: "2efad5216e5848d0589bd982eb817e13d15b35b1f8ffe2ef7aeff12102d91c10"
+    sha256 cellar: :any,                 sonoma:        "f3d6b14bc8fa5a9474963273666960b9fa51b449571eb933d2912e506dfc2ac3"
+    sha256 cellar: :any,                 ventura:       "38b95a0e04c4205b5f95ee4eeeb334df76b6d4266153adcf49aa11781150eae1"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "f144d32f65534681b8ae2385d7eecbab29a491d9533a1056a91c0315a820ec2a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1650751946abbc08884a650d2761892329dfd1f90ec85b2a4b64a5f29ff805ad"
   end
 
   depends_on "libyaml"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "tmux"
 
   resource "colorama" do
@@ -28,13 +27,13 @@ class Tmuxp < Formula
   end
 
   resource "libtmux" do
-    url "https://files.pythonhosted.org/packages/4a/51/b2543613a0f85247559073bc69cdca4cc0ccb590a45c98ac3400a51ba877/libtmux-0.37.0.tar.gz"
-    sha256 "21955c5dce6332db41abad5e26ae8c4062ef2b9a89099bd57a36f52be1d5270f"
+    url "https://files.pythonhosted.org/packages/f6/97/2c783d2217a954427d24743f9dc1768ec836fe84258405a964577ce75d36/libtmux-0.46.0.tar.gz"
+    sha256 "65202494054ab2f6a72520a9f3ff0da29e3294af0365a96c51bb4a58cb9856ac"
   end
 
   resource "pyyaml" do
-    url "https://files.pythonhosted.org/packages/cd/e5/af35f7ea75cf72f2cd079c95ee16797de7cd71f29ea7c68ae5ce7be1eda0/PyYAML-6.0.1.tar.gz"
-    sha256 "bfdf460b1736c775f2ba9f6a92bca30bc2095067b8a9d77876d1fad6cc3b4a43"
+    url "https://files.pythonhosted.org/packages/54/ed/79a089b6be93607fa5cdaedf301d7dfb23af5f25c398d5ead2525b063e17/pyyaml-6.0.2.tar.gz"
+    sha256 "d584d9ec91ad65861cc08d42e834324ef890a082e591037abe114850ff7bbc3e"
   end
 
   def install
@@ -44,17 +43,17 @@ class Tmuxp < Formula
   test do
     assert_match version.to_s, shell_output("#{bin}/tmuxp --version")
 
-    (testpath/"test_session.yaml").write <<~EOS
+    (testpath/"test_session.yaml").write <<~YAML
       session_name: 2-pane-vertical
       windows:
       - window_name: my test window
         panes:
           - echo hello
           - echo hello
-    EOS
+    YAML
 
     system bin/"tmuxp", "debug-info"
     system bin/"tmuxp", "convert", "--yes", "test_session.yaml"
-    assert_predicate testpath/"test_session.json", :exist?
+    assert_path_exists testpath/"test_session.json"
   end
 end

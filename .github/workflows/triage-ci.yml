@@ -35,13 +35,13 @@ jobs:
     env:
       COMMENT_BODY_FILE: comment.txt
     steps:
-      - uses: Homebrew/actions/find-related-workflow-run-id@master
+      - uses: Homebrew/actions/find-related-workflow-run-id@main
         with:
           run-id: ${{ github.event.workflow_run.id }}
           workflow-name: Triage tasks
 
       - name: Download `event_payload` artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           name: event_payload
           github-token: ${{ github.token }}

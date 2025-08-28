@@ -1,20 +1,32 @@
 class Qsv < Formula
   desc "Ultra-fast CSV data-wrangling toolkit"
-  homepage "https://github.com/jqnatividad/qsv"
-  url "https://github.com/jqnatividad/qsv/archive/refs/tags/0.135.0.tar.gz"
-  sha256 "de2bf3ba3d0f4bc71a2628cb558e878da24e312c9addcbe3958c5169540d980c"
+  homepage "https://qsv.dathere.com/"
+  url "https://github.com/dathere/qsv/archive/refs/tags/6.0.1.tar.gz"
+  sha256 "d4a4dafad7cec344a927e92a1d42b4da210ea83061b9de8094da9d06f0d1427f"
   license any_of: ["MIT", "Unlicense"]
-  head "https://github.com/jqnatividad/qsv.git", branch: "master"
+  head "https://github.com/dathere/qsv.git", branch: "master"
 
-  bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "ec14051a3490b3e62d17146bbe81b1cf1f809610976886efe5f2981697f0f76d"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "a08f6a596a28787289e045c173576cfd30bd81705b1916842fd19046aa8c6d8c"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "58f746661889ae0d1a58d1d91cef2e455a99a49763bc8b4613de9671572d518a"
-    sha256 cellar: :any_skip_relocation, sonoma:        "047fb9f90eb501c7c7ab6bca1d766212143496176dcbc96061a007d72b20388d"
-    sha256 cellar: :any_skip_relocation, ventura:       "3ba695ad12f15dc8591866f848e7032ba7738a9f9a86edf2030c654bdd48e0fe"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "985c11f31db0f95f557129d6e223b0608b4d3d8b85e04ab5ba09bd083f79616b"
+  # There can be a notable gap between when a version is tagged and a
+  # corresponding release is created, so we check the "latest" release instead
+  # of the Git tags.
+  livecheck do
+    url :stable
+    strategy :github_latest
   end
 
+  bottle do
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "90f1a4eb8e70ca23a3eb60e9cad88847892d0bd8ad2107069b27cf3b8899a8cb"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "9629fc3fa5a64d0e94d8058bc3385592ffc853d633a4475a43dffed4760c2909"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "4efcfa4e20ae3e09c62bc75abae46e1a0e10b7a44156d498746d6220c9e24f97"
+    sha256 cellar: :any_skip_relocation, sonoma:        "1fcbafeec43807a8226ec161464966ded003bbce13a4e3361021add956ea6adc"
+    sha256 cellar: :any_skip_relocation, ventura:       "9aeaeb697b32246869a358a8a792cd130a86a86dad0ccc370f9f4b85369215ca"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "fd148c0c931c988f4aaa7de659b7edfafb8aeeb12d0ed7d64beeb9b662852f0a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "06ca24bd05fed268806ec6ac734fb7e36ccf100b71816f6e93f972c1aca9b00c"
+  end
+
+  depends_on "cmake" => :build # for libz-ng-sys
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
 
   on_linux do
@@ -22,18 +34,23 @@ class Qsv < Formula
   end
 
   def install
-    system "cargo", "install", *std_cargo_args, "--features", "apply,luau,feature_capable"
+    # Use explicit CPU target instead of "native" to avoid brittle behavior
+    # see discussion at https://github.com/briansmith/ring/discussions/2528#discussioncomment-13196576
+    ENV.append_to_rustflags "-C target-cpu=apple-m1" if OS.mac? && Hardware::CPU.arm?
+
+    system "cargo", "install", *std_cargo_args, "--features", "apply,lens,luau,feature_capable"
     bash_completion.install "contrib/completions/examples/qsv.bash" => "qsv"
     fish_completion.install "contrib/completions/examples/qsv.fish"
     zsh_completion.install "contrib/completions/examples/qsv.zsh" => "_qsv"
+    pwsh_completion.install "contrib/completions/examples/qsv.ps1" => "qsv"
   end
 
   test do
     (testpath/"test.csv").write("first header,second header")
     assert_equal <<~EOS, shell_output("#{bin}/qsv stats test.csv")
-      field,type,is_ascii,sum,min,max,range,sort_order,min_length,max_length,sum_length,avg_length,mean,sem,stddev,variance,cv,nullcount,max_precision,sparsity
-      first header,NULL,,,,,,,,,,,,,,,,0,,
-      second header,NULL,,,,,,,,,,,,,,,,0,,
+      field,type,is_ascii,sum,min,max,range,sort_order,sortiness,min_length,max_length,sum_length,avg_length,stddev_length,variance_length,cv_length,mean,sem,geometric_mean,harmonic_mean,stddev,variance,cv,nullcount,max_precision,sparsity
+      first header,NULL,,,,,,,,,,,,,,,,,,,,,,0,,
+      second header,NULL,,,,,,,,,,,,,,,,,,,,,,0,,
     EOS
   end
 end

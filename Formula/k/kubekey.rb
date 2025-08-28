@@ -2,8 +2,8 @@ class Kubekey < Formula
   desc "Installer for Kubernetes and / or KubeSphere, and related cloud-native add-ons"
   homepage "https://kubesphere.io"
   url "https://github.com/kubesphere/kubekey.git",
-      tag:      "v3.1.6",
-      revision: "5cad5b5357e80fee211faed743c8f9d452c13b5b"
+      tag:      "v3.1.10",
+      revision: "cdc54e0986ed98997703b527a49f8bab2c0ee950"
   license "Apache-2.0"
   head "https://github.com/kubesphere/kubekey.git", branch: "master"
 
@@ -16,21 +16,20 @@ class Kubekey < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "3427fe99d6c53b465e3fb1bd0d0fe8fe56517b357be871a0b09f9e31f1dbc70c"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "04f8788ac66545a2f38ed1246e06ad07cec31a2ec72025163e285e24e700031a"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "0ade4752ff835dacd2be037bdf9dfe413ad590e2073430ef9ab1c43128269dd7"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "aed5735fda315a782158af6943e0998cb8e843e62d5a4ddd6e151f3d387030ca"
-    sha256 cellar: :any_skip_relocation, sonoma:         "53fdc62b696235d765b0466ba7814f909445ed78475de0286e7e25c9bce52a56"
-    sha256 cellar: :any_skip_relocation, ventura:        "e8e63b2f6a64ef4ba41c2819338972da25e1e749ba8c807cca090fc7decdad79"
-    sha256 cellar: :any_skip_relocation, monterey:       "129e1e562f9560278b3c16612cbfcbda6d677c6084640fd3630cfeac9e25f615"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "123c0b6db59e01d39cfcea2f5ff0b649b3ebc43496126adac661656f1c986b3c"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "8eb07536020c35c08b9c3c8e2e479a98860d19818f84ee0d4ec83aba64719486"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "5dad9250063d8f04935e649383714f46644ee5e87f729120174add2277275af1"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "c341287bdc7285f60693d50d01ae45071920ebf615478a4de70ac5670aba472a"
+    sha256 cellar: :any_skip_relocation, sonoma:        "7e8c0998ad6da1eb3e8be84c1daadbc8ca6a117f8c7d8ca88426903e56596fc2"
+    sha256 cellar: :any_skip_relocation, ventura:       "a7ce5d7d44e57ef773180018038a072c21a27e6bd9476a65ecbb8be9984ed273"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "1dd737394f7d4cf1284ff1ab707503e73d875cfe0863877f4d14a46a480da7c2"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7e68af1256d23f755f6d7409e05288c1ac654ceef987c4afa13ec5bb6b53eebf"
   end
 
   depends_on "go" => :build
+  depends_on "pkgconf" => :build
   depends_on "gpgme"
 
   on_linux do
-    depends_on "pkg-config" => :build
     depends_on "btrfs-progs"
     depends_on "device-mapper"
   end
@@ -47,17 +46,17 @@ class Kubekey < Formula
       -X #{project}/version.gitTreeState=clean
       -X #{project}/version.buildDate=#{time.iso8601}
     ]
-    system "go", "build", *std_go_args(ldflags:, output: bin/"kk"), "-tags", tags, "./cmd/kk"
+    system "go", "build", *std_go_args(ldflags:, tags:, output: bin/"kk"), "./cmd/kk"
 
-    generate_completions_from_executable(bin/"kk", "completion", "--type", shells: [:bash, :zsh], base_name: "kk")
+    generate_completions_from_executable(bin/"kk", "completion", "--type", shells: [:bash, :zsh])
   end
 
   test do
-    version_output = shell_output(bin/"kk version")
+    version_output = shell_output("#{bin}/kk version")
     assert_match "Version:\"v#{version}\"", version_output
     assert_match "GitTreeState:\"clean\"", version_output
 
     system bin/"kk", "create", "config", "-f", "homebrew.yaml"
-    assert_predicate testpath/"homebrew.yaml", :exist?
+    assert_path_exists testpath/"homebrew.yaml"
   end
 end

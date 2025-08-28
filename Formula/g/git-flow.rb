@@ -22,9 +22,11 @@ class GitFlow < Formula
     end
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    rebuild 1
-    sha256 cellar: :any_skip_relocation, all: "e7442cededade2b577d356fe993deadf34718eed1bc0f5da5746e219ec2a22fe"
+    rebuild 2
+    sha256 cellar: :any_skip_relocation, all: "053355d898d7f3c171eec04b984fb2f4e06588b7ef58dd8f6024c5300933d27a"
   end
 
   head do
@@ -39,8 +41,6 @@ class GitFlow < Formula
     end
   end
 
-  conflicts_with "git-flow-avh", because: "both install `git-flow` binaries and completions"
-
   def install
     (buildpath/"shFlags").install resource("shFlags")
 
@@ -49,7 +49,7 @@ class GitFlow < Formula
     resource("completion").stage do
       # Fix a comment referencing `/usr/local` that causes deviations between bottles.
       inreplace "git-flow-completion.bash", "/usr/local", HOMEBREW_PREFIX
-      bash_completion.install "git-flow-completion.bash"
+      bash_completion.install "git-flow-completion.bash" => "git-flow"
     end
   end
 

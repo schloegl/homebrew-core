@@ -1,8 +1,8 @@
 class Simdutf < Formula
   desc "Unicode conversion routines, fast"
-  homepage "https://github.com/simdutf/simdutf"
-  url "https://github.com/simdutf/simdutf/archive/refs/tags/v5.5.0.tar.gz"
-  sha256 "47090a770b8eecf610ac4d1fafadde60bb7ba3c9d576d2a3a545aba989a3d749"
+  homepage "https://simdutf.github.io/simdutf/"
+  url "https://github.com/simdutf/simdutf/archive/refs/tags/v7.4.0.tar.gz"
+  sha256 "8fd729ebfd5ec56cb0395bcc176c4801e1f8a0ea834d166d52279d7b9e801283"
   license any_of: ["Apache-2.0", "MIT"]
   head "https://github.com/simdutf/simdutf.git", branch: "master"
 
@@ -12,18 +12,17 @@ class Simdutf < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_sequoia:  "2f9b5c974c697454c64207bb699dbe988139c7bc6d265f72ebf0d0cdb7c63173"
-    sha256 cellar: :any, arm64_sonoma:   "585ed9611fca65bedfdb8515176913390a290b394f10d0829a545b14df268e6a"
-    sha256 cellar: :any, arm64_ventura:  "c65475d47607e8dea2c68e0c3f2932340431e11cb18e1bfcddeb639b9d90ae9b"
-    sha256 cellar: :any, arm64_monterey: "888a5c340d08ee42f5253f62f0d710d4684ff8a9124a6a1bb8deaa78e2a85f52"
-    sha256 cellar: :any, sonoma:         "29fcd6954f014a2238c8b691fc9d5ad26be1ae0f66c7c7546aecafefc3900fa8"
-    sha256 cellar: :any, ventura:        "89e5773dea8ba07568de5ec3732caf408c89bb0af9de5931bbd3c3a35c979372"
-    sha256 cellar: :any, monterey:       "87100c5966e121734185c2b3d079c9eabf68c0978cb161dbbecc6b13bf61e1c2"
+    sha256 cellar: :any,                 arm64_sequoia: "1b009aa16671a4895fc41e373b24a4d2caee80427caf178209a631c1341e9161"
+    sha256 cellar: :any,                 arm64_sonoma:  "6a1aa7199d23529c22da6a71912dcd39c03bfecb983e7a7a8b9e737281bb3e98"
+    sha256 cellar: :any,                 arm64_ventura: "9966ecbc52b8d2dc3be7eabadcd0db28be035651681bd1f351f72ccbcd3c9ed2"
+    sha256 cellar: :any,                 sonoma:        "0ee159df569e9f5ce6bb19d57248c79fe47e85541909a156531e3c148da2e458"
+    sha256 cellar: :any,                 ventura:       "df9e32ea261a0065aebe87137650da74975e672c4c5a1687cbf9ded6cbc7bd89"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "8a92fa8de691b2b306b2caef9e0e4fbf0c3f93ecc826b303ff519b368ccc514b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "6b2f496997bddbc620314df98ad29b3863b570d626f9f5a279a99acbcafe38f5"
   end
 
   depends_on "cmake" => :build
-  depends_on "icu4c"
-  depends_on macos: :catalina
+  depends_on "icu4c@77"
 
   uses_from_macos "python" => :build
 
@@ -51,6 +50,6 @@ class Simdutf < Formula
   end
 
   test do
-    system bin/"sutf-benchmark", "--random-utf8", "1024", "-I", "20"
+    system bin/"sutf-benchmark", "--random-utf8", "10240", "-I", "100"
   end
 end

@@ -6,6 +6,8 @@ class Tfk8s < Formula
   license "MIT"
   head "https://github.com/jrhouston/tfk8s.git", branch: "main"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     sha256 cellar: :any_skip_relocation, arm64_sequoia:  "e499b7011e3ce354ecbcc659a9dfbd792a4c27a434bc433b591878417c0e1d2a"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "c997b7b01ee594d2d0f3e080ac8c3577d2dc49f0165f1af655a6d03e650610d3"
@@ -26,16 +28,16 @@ class Tfk8s < Formula
   end
 
   test do
-    (testpath/"input.yml").write <<~EOS
+    (testpath/"input.yml").write <<~YAML
       apiVersion: v1
       kind: ConfigMap
       metadata:
         name: test
       data:
         TEST: test
-    EOS
+    YAML
 
-    expected = <<~EOS
+    expected = <<~HCL
       resource "kubernetes_manifest" "configmap_test" {
         manifest = {
           "apiVersion" = "v1"
@@ -48,11 +50,11 @@ class Tfk8s < Formula
           }
         }
       }
-    EOS
+    HCL
 
     system bin/"tfk8s", "-f", "input.yml", "-o", "output.tf"
     assert_equal expected, File.read("output.tf")
 
-    assert_match version.to_s, shell_output(bin/"tfk8s --version")
+    assert_match version.to_s, shell_output("#{bin}/tfk8s --version")
   end
 end

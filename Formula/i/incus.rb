@@ -1,20 +1,26 @@
 class Incus < Formula
   desc "CLI client for interacting with Incus"
   homepage "https://linuxcontainers.org/incus"
-  url "https://linuxcontainers.org/downloads/incus/incus-6.5.tar.xz"
-  sha256 "d79d76c42c430b0346f25fee1059dbe0ab0db2319faaa6e0eeb6ad3982023662"
+  url "https://linuxcontainers.org/downloads/incus/incus-6.15.tar.xz"
+  sha256 "5bf8247b7fc5a3e12e8309d4cb2d6cad51a823e653564d62a039af3efbcc8b64"
   license "Apache-2.0"
   head "https://github.com/lxc/incus.git", branch: "main"
 
+  livecheck do
+    url "https://linuxcontainers.org/incus/downloads/"
+    regex(/href=.*?incus[._-]v?(\d+(?:\.\d+)+)\.t/i)
+  end
+
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "a25b672915d710e1401aaf84c45656d7aa2c528d14a9319968a9331a3d4d91ff"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "a25b672915d710e1401aaf84c45656d7aa2c528d14a9319968a9331a3d4d91ff"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "a25b672915d710e1401aaf84c45656d7aa2c528d14a9319968a9331a3d4d91ff"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "a25b672915d710e1401aaf84c45656d7aa2c528d14a9319968a9331a3d4d91ff"
-    sha256 cellar: :any_skip_relocation, sonoma:         "5eb315a0c1fe2a6db9598ce6fb1e443d3dbf9b29583971504e8b467966fdfe5e"
-    sha256 cellar: :any_skip_relocation, ventura:        "5eb315a0c1fe2a6db9598ce6fb1e443d3dbf9b29583971504e8b467966fdfe5e"
-    sha256 cellar: :any_skip_relocation, monterey:       "5eb315a0c1fe2a6db9598ce6fb1e443d3dbf9b29583971504e8b467966fdfe5e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "ce2b5df0c67f192ac3206c9459f33bac01f1a0dfef02e1154830556d34e2def0"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "e24740cbd69e0c19f427ed2054a4f70dc2a6d3a115a584b558ce246cd912b9ab"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "e24740cbd69e0c19f427ed2054a4f70dc2a6d3a115a584b558ce246cd912b9ab"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "e24740cbd69e0c19f427ed2054a4f70dc2a6d3a115a584b558ce246cd912b9ab"
+    sha256 cellar: :any_skip_relocation, sonoma:        "7b0ef91404bf7dd3d7ad2399e2542db6e525281324aa2a7ba9c4dce6cf82d1a1"
+    sha256 cellar: :any_skip_relocation, ventura:       "7b0ef91404bf7dd3d7ad2399e2542db6e525281324aa2a7ba9c4dce6cf82d1a1"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "a1e880760e2e03249e47a61386f5b380cd0aca78df716ae550b0eb2f7560603b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d92541b8bce83ea9621af051ce04b7ba4958fd8f7ad5d40d4116a510c6f0ff8d"
   end
 
   depends_on "go" => :build

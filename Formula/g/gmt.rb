@@ -1,22 +1,25 @@
 class Gmt < Formula
   desc "Tools for manipulating and plotting geographic and Cartesian data"
   homepage "https://www.generic-mapping-tools.org/"
-  url "https://github.com/GenericMappingTools/gmt/releases/download/6.5.0/gmt-6.5.0-src.tar.xz"
-  mirror "https://mirrors.ustc.edu.cn/gmt/gmt-6.5.0-src.tar.xz"
-  sha256 "4022adb44033f9c1d5a4d275b69506449e4d486efe2218313f3ff7a6c6c3141e"
+  url "https://github.com/GenericMappingTools/gmt/releases/download/6.6.0/gmt-6.6.0-src.tar.xz"
+  mirror "https://mirrors.ustc.edu.cn/gmt/gmt-6.6.0-src.tar.xz"
+  sha256 "18ac98b11b8fc924463ce5138385c02e9426780fba9ff63a991e2e8ecdbd1082"
   license "LGPL-3.0-or-later"
-  revision 2
   head "https://github.com/GenericMappingTools/gmt.git", branch: "master"
 
+  livecheck do
+    url :stable
+    strategy :github_releases
+  end
+
   bottle do
-    sha256 arm64_sequoia:  "047e2493d8474d8fc0fce2c06a5750b3ffb86a91ce0ac70ed3686266c4390ad3"
-    sha256 arm64_sonoma:   "7a9e2b2d755984f837700e435ed9f7a178d97e731c9c035471216a2bc7229b6a"
-    sha256 arm64_ventura:  "d1417abc1165bddb1bf1a455daa6e9267a443cf45f80c0f0d18c004fb441a1ce"
-    sha256 arm64_monterey: "829748601cadad21494b220e3cbbd9fa73bac30e5653008badb806952d4b59c9"
-    sha256 sonoma:         "d208aa7a4f2583c23df3b997664c665f312246c93e6b5223cdc45e3cc2468e7e"
-    sha256 ventura:        "7fae084040a7434450bac91087439904765faa73e0243c4c5c22998d398a88e1"
-    sha256 monterey:       "9909ef3fdfc45c1e6832a32c32c92ca996b4cab44ea720af3001ea8afb4e0f49"
-    sha256 x86_64_linux:   "0be4e41f6fd938a58ccd09f4afc9d2b11df44c4f30120074e542ea96ac26cdc4"
+    sha256 arm64_sequoia: "7bd4ce2a85ec065d11d8025f237a21f76712d228bde64ee0b68912cc44806b1d"
+    sha256 arm64_sonoma:  "a7e852c449f21a1eed6becabbc990445574af18c01e711e257c5ebbbd7dc779e"
+    sha256 arm64_ventura: "666f6c1e74516d0b2d5af55c6b464546fb22855be9f2ebd9c0d45727459bc115"
+    sha256 sonoma:        "bf3484faee3c153be3077fd968edb3f3f2eac44813e3891783a0c1fa24f65fef"
+    sha256 ventura:       "51d28095facfc70be9d201943f385ef678e9420338cc15bf29acbed02787dd65"
+    sha256 arm64_linux:   "db209cd24b7a3f2bece27d88bb798750e38849d63bc9075584d482084362b100"
+    sha256 x86_64_linux:  "dd785cc7cdec9e4d8e1c4b516c1c38dd48047dee5544baec7b0eaeb5209bb524"
   end
 
   depends_on "cmake" => :build

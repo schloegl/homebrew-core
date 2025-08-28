@@ -1,21 +1,18 @@
 class Re2c < Formula
   desc "Generate C-based recognizers from regular expressions"
-  homepage "https://re2c.org"
-  url "https://github.com/skvadrik/re2c/releases/download/3.1/re2c-3.1.tar.xz"
-  sha256 "0ac299ad359e3f512b06a99397d025cfff81d3be34464ded0656f8a96676c029"
+  homepage "https://re2c.org/"
+  url "https://github.com/skvadrik/re2c/releases/download/4.3/re2c-4.3.tar.xz"
+  sha256 "51e88d6d6b6ab03eb7970276aca7e0db4f8e29c958b84b561d2fdcb8351c7150"
   license :public_domain
 
   bottle do
-    sha256 arm64_sequoia:  "19a523f3c74c860dfc8ea3c600c60fdcd29e83f5ad21825ffa88b13401283d76"
-    sha256 arm64_sonoma:   "b5197fcd4db8b6811e9a72bca29fc08e35d0b0581bc1fa390d17f702fa9af87d"
-    sha256 arm64_ventura:  "c213025ac8f67d67c7de7b42b18f02423b9b969f95d01217b0eb082e18e42d02"
-    sha256 arm64_monterey: "1132b82eada9b28d6ae914619f6471603986c51490c8bd5c75f64e4a17af7393"
-    sha256 arm64_big_sur:  "95c681abedf2a1fa92e68003a76eeb31ecde2d3816a6bb3d01372194a3a86346"
-    sha256 sonoma:         "639a90433de77050197aa58c0428986893af29728d905c05718f57f37ce36c27"
-    sha256 ventura:        "9d8ed384c1173e7ee72aae6ebc11b2556a501932c33c7c0558f534c1854ce5ac"
-    sha256 monterey:       "b6ad0a47af09087b366226d20e9538260e56a80b70bb118bdaf472e82bad1af4"
-    sha256 big_sur:        "343c4174f501aaeea7c339fef350d36bd26faffd130d1f07fd778239375fc826"
-    sha256 x86_64_linux:   "a30c3862ed53d4e5465ae66cc177253f717a4f611fe5a7533391bd6ca4d0cd72"
+    sha256 arm64_sequoia: "8af3d368bb97ad1fca52b58385bd33523a8587ed79036b0fdc233a6df0bdb865"
+    sha256 arm64_sonoma:  "4fdcab1947266afe8f2ecac94bf80060c75103d370588f61e7f1c85a12d40d30"
+    sha256 arm64_ventura: "d45992c2f3023ff4a762e448e3dcd5f2baa66b34868012e3fb77884c28c5cc1c"
+    sha256 sonoma:        "dc97c9542c9def4083ca1e4c62f62c10ec407e4706075c05c2e732e1c0deb8c8"
+    sha256 ventura:       "06ff78768145b697c5c6d0cee283ac49405df8114bbc74ec05d78ba1e955c208"
+    sha256 arm64_linux:   "d8f608d8de18762b59b5f5405d86fc714f08167055e073b766322a748c850c19"
+    sha256 x86_64_linux:  "9b743cf994ab2fdc44ef29d35a142f0a4115a045a4e5e6ba07abce9b8cfbba77"
   end
 
   uses_from_macos "python" => :build
@@ -27,7 +24,7 @@ class Re2c < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       unsigned int stou (const char * s)
       {
       #   define YYCTYPE char
@@ -44,7 +41,7 @@ class Re2c < Formula
               */
           }
       }
-    EOS
+    C
     system bin/"re2c", "-is", testpath/"test.c"
   end
 end

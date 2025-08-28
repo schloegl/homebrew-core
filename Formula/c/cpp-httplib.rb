@@ -1,16 +1,17 @@
 class CppHttplib < Formula
   desc "C++ header-only HTTP/HTTPS server and client library"
   homepage "https://github.com/yhirose/cpp-httplib"
-  url "https://github.com/yhirose/cpp-httplib/archive/refs/tags/v0.18.0.tar.gz"
-  sha256 "6ed5894bbbc4a34a0f4c5e962672d0003d2ea099bbadacc66f6dee2b213ff394"
+  url "https://github.com/yhirose/cpp-httplib/archive/refs/tags/v0.25.0.tar.gz"
+  sha256 "ac7c59fa72325d4cb9f73af266312d82632ac35a5c4c8a1be620c1f946ec9cea"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "d6f4e529d900b2b0d4c2d1a1c36e4450109b25bfceb5809a3e648b0361b3a0df"
+    sha256 cellar: :any_skip_relocation, all: "7984bf9a74071441856ef2d4438441caeb7faa859ed5b2eaf76d5109958ca1c4"
   end
 
-  depends_on "meson" => :build
-  depends_on "ninja" => :build
+  depends_on "cmake" => :build
+  depends_on "openssl@3" => :build
+  uses_from_macos "zlib" => :build
 
   fails_with :clang do
     build 1300
@@ -22,9 +23,16 @@ class CppHttplib < Formula
   end
 
   def install
-    system "meson", "setup", "build", *std_meson_args
-    system "meson", "compile", "-C", "build", "--verbose"
-    system "meson", "install", "-C", "build"
+    # Set args for consistent dependencies used in generated CMake config
+    args = %w[
+      -DHTTPLIB_REQUIRE_OPENSSL=ON
+      -DHTTPLIB_REQUIRE_ZLIB=ON
+      -DHTTPLIB_USE_BROTLI_IF_AVAILABLE=OFF
+    ]
+
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   test do

@@ -1,10 +1,10 @@
 class Mupdf < Formula
   desc "Lightweight PDF and XPS viewer"
   homepage "https://mupdf.com/"
-  url "https://mupdf.com/downloads/archive/mupdf-1.24.9-source.tar.gz"
-  sha256 "0b446aa0eecc114e9969dccd70c9789358fccb6589a81d470dc941a0874da98a"
+  url "https://mupdf.com/downloads/archive/mupdf-1.26.7-source.tar.gz"
+  sha256 "52014fcecac48ae3ead947eb90572ff7da9acf9550711675872944e8ef8c4966"
   license "AGPL-3.0-or-later"
-  head "https://git.ghostscript.com/mupdf.git", branch: "master"
+  head "git://git.ghostscript.com/mupdf.git", branch: "master"
 
   livecheck do
     url "https://mupdf.com/releases"
@@ -12,19 +12,19 @@ class Mupdf < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "eef2190c572764150e6858ad29807000644aac70780990596df4cc6a84dcc61d"
-    sha256 cellar: :any,                 arm64_sonoma:   "32cd3dac426f00ab587bed33dd60bf861179babb06fa806410433e552eed2132"
-    sha256 cellar: :any,                 arm64_ventura:  "46bf0dda1818ca6a5d94eb489c3498a9aa6e5bd8f9188a223c336a820e20f7c7"
-    sha256 cellar: :any,                 arm64_monterey: "6fbe9a412b689da2d09a3e113c48e4d8b242fe232649dc22922f88f2fef36d11"
-    sha256 cellar: :any,                 sonoma:         "9fcf9b17272159016a482d90eceaf739f5716482dfa7527344e264b7d9ead82c"
-    sha256 cellar: :any,                 ventura:        "26744f3074268252ef4147e1d72e80f47db544516ebb219af2c6dabb7d9c325a"
-    sha256 cellar: :any,                 monterey:       "5703f9d46c902dd5e538ba62cb24ff86cff69cf408c03ce4517b088014f9dc62"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "510087c1505b18d5f417bb5765ca4762d2a2df3a074a708b4749736ae215ae2f"
+    sha256 cellar: :any,                 arm64_sequoia: "abf53e217661f27d5113c54ff4349f9f1c0722af1df760ad30d809e4ce2a141b"
+    sha256 cellar: :any,                 arm64_sonoma:  "71af932e5342061a1cb0effd9c557f488a4094299df914b6391fff812c1f09a3"
+    sha256 cellar: :any,                 arm64_ventura: "8b7285a24c77618a3cd8f0e8e73042a6344c2f088814bb0441e4f14a7a09c362"
+    sha256 cellar: :any,                 sonoma:        "8e4a957fdfa0d3f806c743573104861a288328694780def543eb21410fdc3d62"
+    sha256 cellar: :any,                 ventura:       "e205f4b269ce2ac02ef98e4fc3dfd4c15d81e5c47a63dbde52870ce7f4967813"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "66bedf755d9340612beae43478e35fe008eb065a721ed8a6be3ffb613fc6f878"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1cb7e6ec1d26d988a2862dcd93f855f497236098b78eaf5f74586de1a852497c"
   end
 
   depends_on "llvm" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "swig" => :build
+  depends_on "brotli"
   depends_on "freetype"
   depends_on "gumbo-parser"
   depends_on "harfbuzz"
@@ -34,10 +34,14 @@ class Mupdf < Formula
   depends_on "mujs"
   depends_on "openjpeg"
   depends_on "openssl@3"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "tesseract"
 
   uses_from_macos "zlib"
+
+  on_macos do
+    depends_on "libarchive"
+  end
 
   on_linux do
     depends_on "freeglut"
@@ -54,7 +58,7 @@ class Mupdf < Formula
     (buildpath/"thirdparty").each_child { |path| rm_r(path) if keep.exclude? path.basename.to_s }
 
     # For python bindings needed by `pymupdf`: https://pymupdf.readthedocs.io/en/latest/packaging.html
-    site_packages = Language::Python.site_packages("python3.12")
+    site_packages = Language::Python.site_packages("python3.13")
     ENV.prepend_path "PYTHONPATH", Formula["llvm"].opt_prefix/site_packages
 
     args = %W[
@@ -79,9 +83,10 @@ class Mupdf < Formula
         ["LEPTONICA", "lept"],
         ["LIBJPEG", "libjpeg"],
         ["OPENJPEG", "libopenjp2"],
+        ["TESSERACT", "tesseract"],
       ].each do |argname, libname|
-        args << "SYS_#{argname}_CFLAGS=#{Utils.safe_popen_read("pkg-config", "--cflags", libname).strip}"
-        args << "SYS_#{argname}_LIBS=#{Utils.safe_popen_read("pkg-config", "--libs", libname).strip}"
+        args << "SYS_#{argname}_CFLAGS=#{Utils.safe_popen_read("pkgconf", "--cflags", libname).strip}"
+        args << "SYS_#{argname}_LIBS=#{Utils.safe_popen_read("pkgconf", "--libs", libname).strip}"
         args << "HAVE_SYS_#{argname}=yes"
       end
 

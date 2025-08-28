@@ -1,8 +1,8 @@
 class Exercism < Formula
   desc "Command-line tool to interact with exercism.io"
   homepage "https://exercism.io/cli/"
-  url "https://github.com/exercism/cli/archive/refs/tags/v3.5.1.tar.gz"
-  sha256 "e20e30ea0acc8a47d67d577e13af87fc7a189f133b0b9f092594a7b65993166b"
+  url "https://github.com/exercism/cli/archive/refs/tags/v3.5.7.tar.gz"
+  sha256 "dc8f06d9390a8ff11b24b251644287453e73f0f71eb4277f8fb53dca1825140a"
   license "MIT"
   head "https://github.com/exercism/cli.git", branch: "main"
 
@@ -12,14 +12,12 @@ class Exercism < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "fde71458363213bd329bb3c1afb7d7f148c82975ae96f7d2b1594f32fa5e6052"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "2bdb929be6c80961d14e4c1230c2c91304a7a914accce12887edee61fd7586e4"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "2bdb929be6c80961d14e4c1230c2c91304a7a914accce12887edee61fd7586e4"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "2bdb929be6c80961d14e4c1230c2c91304a7a914accce12887edee61fd7586e4"
-    sha256 cellar: :any_skip_relocation, sonoma:         "00ef18f587cdb3fda94f54cc962fdc74db15a46be81ae56e5572782714ff0973"
-    sha256 cellar: :any_skip_relocation, ventura:        "00ef18f587cdb3fda94f54cc962fdc74db15a46be81ae56e5572782714ff0973"
-    sha256 cellar: :any_skip_relocation, monterey:       "00ef18f587cdb3fda94f54cc962fdc74db15a46be81ae56e5572782714ff0973"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "db888fae539168d6ff92435349ee9d8715c40f37368d340877306a4933527a6f"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "aa0e2a9c3b15de521c76b939cc2ba4ccbdcb2491c195e22402dcc30d9f9f7e0d"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "aa0e2a9c3b15de521c76b939cc2ba4ccbdcb2491c195e22402dcc30d9f9f7e0d"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "aa0e2a9c3b15de521c76b939cc2ba4ccbdcb2491c195e22402dcc30d9f9f7e0d"
+    sha256 cellar: :any_skip_relocation, sonoma:        "e400ddac87b4d522c9555095857f9e76a083279b10034a818a56f6860a5db8b7"
+    sha256 cellar: :any_skip_relocation, ventura:       "e400ddac87b4d522c9555095857f9e76a083279b10034a818a56f6860a5db8b7"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "19a2bace200bf5ac57ae49ef36e7316a24e2a502944f5704f64bd500486b55c2"
   end
 
   depends_on "go" => :build
@@ -27,7 +25,7 @@ class Exercism < Formula
   def install
     system "go", "build", *std_go_args(ldflags: "-s -w"), "exercism/main.go"
 
-    bash_completion.install "shell/exercism_completion.bash"
+    bash_completion.install "shell/exercism_completion.bash" => "exercism"
     zsh_completion.install "shell/exercism_completion.zsh" => "_exercism"
     fish_completion.install "shell/exercism.fish"
   end

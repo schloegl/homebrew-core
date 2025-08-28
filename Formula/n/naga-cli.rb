@@ -1,25 +1,19 @@
 class NagaCli < Formula
   desc "Shader translation command-line tool"
-  homepage "https://github.com/gfx-rs/naga"
-  url "https://github.com/gfx-rs/naga/archive/refs/tags/v0.14.0.tar.gz"
-  sha256 "408128a255eba79763d9b7c5422d9c9d6a62019001f80f5ab28d34436c6189eb"
+  homepage "https://wgpu.rs/"
+  url "https://static.crates.io/crates/naga-cli/naga-cli-26.0.0.crate"
+  sha256 "df7820e4a2592266352b0052a4d136e39cde35f15786e8916aeef12b35059ddf"
   license any_of: ["Apache-2.0", "MIT"]
-  head "https://github.com/gfx-rs/naga.git", branch: "master"
-
-  livecheck do
-    url :stable
-    regex(/^v?(\d+(?:\.\d+)+)$/i)
-  end
+  head "https://github.com/gfx-rs/wgpu.git", branch: "trunk"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "c188ac74312bf3101d075a5246df61b578278f07762fb6e8493ad2b2624649af"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "42e71c4549c315dc91834ce7d227b9d9f0415be3597df973fa34704270ac6ab8"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "0001ad2fdf8d515a98cb9e6bbcdcb6fd758adc93a0a38e326b36a0c812e05d1b"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "08a1b293aaf4ba443bb0659b02392025643e86f6411cf5dfd9f5271392341e06"
-    sha256 cellar: :any_skip_relocation, sonoma:         "d79d01969fb1f617cd58a776b79a6861d7e9b85e5a0cccbee21b5062c269181e"
-    sha256 cellar: :any_skip_relocation, ventura:        "afee30c8dbbdf7abceb6ecc479b65074747bbc15004a06059b9d421d503adfd3"
-    sha256 cellar: :any_skip_relocation, monterey:       "edbddf341fd6349827649272141b8855daba030c4daf579f0007b9e59fae6b60"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "7fb254beea5acaaccb1215137b30271235382aa388c4f2e1a4a73815d1af2039"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "d9f2498e1f413a4bc408f742f724e6767c7e72e17868001ace66a71526dd1f85"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "6e4da1f2ac534171b246dc483316d1ad11da1f00352d526cc8d6cadaad85c8d0"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "0bf20f7dfcc5a6eeb49c490a153ae822051713f0dc11786a91ad2d2b0f94dc6e"
+    sha256 cellar: :any_skip_relocation, sonoma:        "f3376c7455a9067e5336ab0f88f307b3b863e0bb155a3b04f24bc52846ee03c9"
+    sha256 cellar: :any_skip_relocation, ventura:       "5f54c8bc5b07866e2ccec3e4c38b7e577be30a7544adc17aea1e5777d1394849"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "14dcd66f883e76f1a27156e671455408595678b72a848d2cf3e116a2b6d49dfb"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4489ccb0140424404a24634b6087a1ffefa9baa5ca27bcba1b734ce7cd77788b"
   end
 
   depends_on "rust" => :build
@@ -27,13 +21,13 @@ class NagaCli < Formula
   conflicts_with "naga", because: "both install `naga` binary"
 
   def install
-    system "cargo", "install", *std_cargo_args(path: "cli")
+    system "cargo", "install", *std_cargo_args
   end
 
   test do
     # sample taken from the Naga test suite
     test_wgsl = testpath/"test.wgsl"
-    test_wgsl.write <<~EOF
+    test_wgsl.write <<~WGSL
       @fragment
       fn derivatives(@builtin(position) foo: vec4<f32>) -> @location(0) vec4<f32> {
           let x = dpdx(foo);
@@ -41,8 +35,8 @@ class NagaCli < Formula
           let z = fwidth(foo);
           return (x + y) * z;
       }
-    EOF
-    assert_equal "Validation successful", shell_output("#{bin/"naga"} #{test_wgsl}").strip
+    WGSL
+    assert_equal "Validation successful", shell_output("#{bin}/naga #{test_wgsl}").strip
     test_out_wgsl = testpath/"test_out.wgsl"
     test_out_frag = testpath/"test_out.frag"
     test_out_metal = testpath/"test_out.metal"
@@ -50,7 +44,7 @@ class NagaCli < Formula
     test_out_dot = testpath/"test_out.dot"
     system bin/"naga", test_wgsl, test_out_wgsl, test_out_frag, test_out_metal, test_out_hlsl, test_out_dot,
            "--profile", "es310", "--entry-point", "derivatives"
-    assert_equal test_out_wgsl.read, <<~EOF
+    assert_equal <<~WGSL, test_out_wgsl.read
       @fragment#{" "}
       fn derivatives(@builtin(position) foo: vec4<f32>) -> @location(0) vec4<f32> {
           let x = dpdx(foo);
@@ -58,8 +52,8 @@ class NagaCli < Formula
           let z = fwidth(foo);
           return ((x + y) * z);
       }
-    EOF
-    assert_equal test_out_frag.read, <<~EOF
+    WGSL
+    assert_equal <<~GLSL, test_out_frag.read
       #version 310 es
 
       precision highp float;
@@ -76,8 +70,8 @@ class NagaCli < Formula
           return;
       }
 
-    EOF
-    assert_equal test_out_metal.read, <<~EOF
+    GLSL
+    assert_equal <<~CPP, test_out_metal.read
       // language: metal1.0
       #include <metal_stdlib>
       #include <simd/simd.h>
@@ -98,8 +92,8 @@ class NagaCli < Formula
           metal::float4 z = metal::fwidth(foo);
           return derivativesOutput { (x + y) * z };
       }
-    EOF
-    assert_equal test_out_hlsl.read, <<~EOF
+    CPP
+    assert_equal <<~HLSL, test_out_hlsl.read
       struct FragmentInput_derivatives {
           float4 foo_1 : SV_Position;
       };
@@ -112,8 +106,8 @@ class NagaCli < Formula
           float4 z = fwidth(foo);
           return ((x + y) * z);
       }
-    EOF
-    assert_equal test_out_dot.read, <<~EOF
+    HLSL
+    assert_equal <<~DOT, test_out_dot.read
       digraph Module {
       	subgraph cluster_globals {
       		label="Globals"
@@ -121,17 +115,17 @@ class NagaCli < Formula
       	subgraph cluster_ep0 {
       		label="Fragment/'derivatives'"
       		node [ style=filled ]
-      		ep0_e0 [ color="#8dd3c7" label="[1] Argument[0]" ]
-      		ep0_e1 [ color="#fccde5" label="[2] dXNone" ]
+      		ep0_e0 [ color="#8dd3c7" label="[0] Argument[0]" ]
+      		ep0_e1 [ color="#fccde5" label="[1] dXNone" ]
       		ep0_e0 -> ep0_e1 [ label="" ]
-      		ep0_e2 [ color="#fccde5" label="[3] dYNone" ]
+      		ep0_e2 [ color="#fccde5" label="[2] dYNone" ]
       		ep0_e0 -> ep0_e2 [ label="" ]
-      		ep0_e3 [ color="#fccde5" label="[4] dWidthNone" ]
+      		ep0_e3 [ color="#fccde5" label="[3] dWidthNone" ]
       		ep0_e0 -> ep0_e3 [ label="" ]
-      		ep0_e4 [ color="#fdb462" label="[5] Add" ]
+      		ep0_e4 [ color="#fdb462" label="[4] Add" ]
       		ep0_e2 -> ep0_e4 [ label="right" ]
       		ep0_e1 -> ep0_e4 [ label="left" ]
-      		ep0_e5 [ color="#fdb462" label="[6] Multiply" ]
+      		ep0_e5 [ color="#fdb462" label="[5] Multiply" ]
       		ep0_e3 -> ep0_e5 [ label="right" ]
       		ep0_e4 -> ep0_e5 [ label="left" ]
       		ep0_s0 [ shape=square label="Root" ]
@@ -153,6 +147,6 @@ class NagaCli < Formula
       		ep0_s4 -> ep0_e5 [ style=dotted ]
       	}
       }
-    EOF
+    DOT
   end
 end

@@ -1,20 +1,18 @@
 class Miller < Formula
   desc "Like sed, awk, cut, join & sort for name-indexed data such as CSV"
   homepage "https://github.com/johnkerl/miller"
-  url "https://github.com/johnkerl/miller/archive/refs/tags/v6.12.0.tar.gz"
-  sha256 "e97dab1a514ecd88da9374b2a5759cebc607476596f6b1d6d8fbe444b9e0eab2"
+  url "https://github.com/johnkerl/miller/archive/refs/tags/v6.15.0.tar.gz"
+  sha256 "91f1cbb91db6b6f93f0b582b73fede6659e37a730d8f30f7bb5e0ce5c356f63d"
   license "BSD-2-Clause"
   head "https://github.com/johnkerl/miller.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "bf8a4ac4f400113797abfc9cd88eb4d4f7afd1b5b007140488589da80976ed3f"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "67813805eb38c5cd356d01eb6479ec622d6727c1a2ff5ecc740a666d940f7fab"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "e8b026ce87877e8145ec7484568aea1bebf4fd632a2faaa77a2eda687290bf11"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "28bb68eaa5779ec6480d581b9aa5efd109f6f3a0e5d2126e36f3220d5c4c89ec"
-    sha256 cellar: :any_skip_relocation, sonoma:         "aedf19321800579b323902a37b5b63c375945b5d16d47b6d454ffc7c3e1d85d0"
-    sha256 cellar: :any_skip_relocation, ventura:        "5e2429253c23448844578c3915554da59746c1374eed0b6329b4279fa9da4c5f"
-    sha256 cellar: :any_skip_relocation, monterey:       "4ab9d095f213e22ae9e96309fb6bc0ed2a6006f65adbba20d2d458ecd55d05a3"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "b21d8681281339a5ad2c97e691a44d924b14eed4fbb36a90a01092af64260cc5"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "6b008968b4fc8b89b7fabf6964c89c2775ecb646d022baa9d2614069fce6e2a5"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "f3eae445bf047028a0033819c3d0a588579b194cdf23e472b372010fcce77c82"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "e6504b651c26a492d62230e6c09532202e5c32df554cae00271b48eb3f52f7f7"
+    sha256 cellar: :any_skip_relocation, sonoma:        "ee42004b75cd2da7573aad293dc14ae589600d069fc7e3838405f1623c5bc14d"
+    sha256 cellar: :any_skip_relocation, ventura:       "2895f2675b024752364186edf3af51e5f99c89c0d6b239df445223773c8f89d2"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0aa560465b9b2d0795ce24407319672b73be87b51035f4857254cb4ccea72d8a"
   end
 
   depends_on "go" => :build
@@ -26,11 +24,11 @@ class Miller < Formula
   end
 
   test do
-    (testpath/"test.csv").write <<~EOS
+    (testpath/"test.csv").write <<~CSV
       a,b,c
       1,2,3
       4,5,6
-    EOS
+    CSV
     output = pipe_output("#{bin}/mlr --csvlite cut -f a test.csv")
     assert_match "a\n1\n4\n", output
   end

@@ -2,20 +2,21 @@ class Tilt < Formula
   desc "Define your dev environment as code. For microservice apps on Kubernetes"
   homepage "https://tilt.dev/"
   url "https://github.com/tilt-dev/tilt.git",
-    tag:      "v0.33.20",
-    revision: "73707128f97c6f5ddfa0a530f664c2e238eb03a3"
+      tag:      "v0.35.1",
+      revision: "6656b4967d09714fbc01592f2c7247efb7dbdfcb"
   license "Apache-2.0"
   head "https://github.com/tilt-dev/tilt.git", branch: "master"
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "068a83c13bf0ca0d9983a9ed9fadf0d2693628360b14a2d3e933c58e220f38e1"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "8891ad14c958156fdddd309550df66de6c57f64e39c8c6b90e98da8b56ee866f"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "efe5e9af44122535ebc0ba55176feec05f63c16b8117ff1a77ff9ed7c356d7be"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "84c39a244a146695468ca2d49eeb3d2a42ddb1f353d969e94b6a8a10123d00ab"
-    sha256 cellar: :any_skip_relocation, sonoma:         "e0cd9fa0b63f57cbc9f248de39b5c159e875b9513284b84d7d97c25961eedd08"
-    sha256 cellar: :any_skip_relocation, ventura:        "164afd93851ef7719f325e4adf00bae188fe5367c8967ea7e86c423b858e43fd"
-    sha256 cellar: :any_skip_relocation, monterey:       "6ec200fc5bf94e676b6e279f9ac727ee4ab3517ce2c778fc70263f3b6144d983"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "0b5f125709b8bfc5b6ae7c987484b1be000d5041659c9382f16bec98de5bc46c"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "73239b26337ceecbf8183bec6d8c8cb785029c77b755550dbc9d70c30696c85f"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "085aca1affce3fc6d3f70bddfbff405cb13fdfb1e7ee0d1200b037710c5173fa"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "35a5c16e83a62c326e08206237c808113881742ec509ce42dbdf5ce440d5d8b2"
+    sha256 cellar: :any_skip_relocation, sonoma:        "ec95be490cb1dc3487e4b17ae7708bbef51e7b2abe15b0f7c04f28a58e512f3b"
+    sha256 cellar: :any_skip_relocation, ventura:       "e3ad53989f9762b5c4648a679dc24112392581ca318a799382b8c69490efeff5"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "a5916d4f519670b98748690f5950b104f68417f4be3d6206880def6124aa855a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4ed6e16225e9927f6b7c1112ad9c34a5253fbdd0bffa4ad4a6c07071d7b74cbe"
   end
 
   depends_on "go" => :build

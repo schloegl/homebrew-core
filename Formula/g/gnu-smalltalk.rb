@@ -5,8 +5,8 @@ class GnuSmalltalk < Formula
   revision 10
 
   stable do
-    url "https://ftp.gnu.org/gnu/smalltalk/smalltalk-3.2.5.tar.xz"
-    mirror "https://ftpmirror.gnu.org/smalltalk/smalltalk-3.2.5.tar.xz"
+    url "https://ftpmirror.gnu.org/gnu/smalltalk/smalltalk-3.2.5.tar.xz"
+    mirror "https://ftp.gnu.org/gnu/smalltalk/smalltalk-3.2.5.tar.xz"
     sha256 "819a15f7ba8a1b55f5f60b9c9a58badd6f6153b3f987b70e7b167e7755d65acc"
 
     # Backport fix to support ARM macOS and fix build with Xcode 15+
@@ -17,6 +17,8 @@ class GnuSmalltalk < Formula
     end
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     rebuild 2
     sha256 arm64_sequoia: "fa42deb9637324919358ee25610a53e01088fb726c82f4128f9472da1311935c"
@@ -24,6 +26,7 @@ class GnuSmalltalk < Formula
     sha256 arm64_ventura: "e737012cfb9f7029528a4f733125cc9dcf710b7f70fa2d2c19e5bbd16e7a6141"
     sha256 sonoma:        "0ee808a189abc91152255eb4b7401e56dafa3cad5a226b898e84aaf7a37fbdcf"
     sha256 ventura:       "a4df3db5ceb9a6d123906ee112131e3a33a25bc484124e3eaaf63858930492b7"
+    sha256 arm64_linux:   "cbecc28a3dc88c1ccd58ecf2facfd8d9f0edd686e31334b1c93dd82d4a8bc8f6"
     sha256 x86_64_linux:  "f3cc37783b2695b0a1fa9e8fd21e7b4b2a77f10a4aa0c9a97d4e86fbb2e6a524"
   end
 
@@ -38,7 +41,7 @@ class GnuSmalltalk < Formula
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "gawk" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "gdbm"
   depends_on "gmp"
   depends_on "gnutls"

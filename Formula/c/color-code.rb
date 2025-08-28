@@ -10,6 +10,8 @@ class ColorCode < Formula
     regex(/href=.*?ColorCode[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
+  no_autobump! because: :requires_manual_review
+
   bottle do
     sha256 cellar: :any,                 arm64_sequoia:  "eca15102195ecbf35b9b5db261ad63a1e7849f68048a9872757c99a300af2198"
     sha256 cellar: :any,                 arm64_sonoma:   "5279b770c1208847aa8bc485ffe5d60a457a22867ba8ae3b9b72a6ccb10b9cee"
@@ -21,10 +23,12 @@ class ColorCode < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "dd2a46ae5f69b106738617bd41d8fe1d2a71a34dcb876850ac1c698b4ca09496"
   end
 
+  # No means of contact or public tracker page to discuss/view Qt 6 status.
+  # Can undeprecate if new release with Qt 6 support is available.
+  deprecate! date: "2026-05-19", because: "needs end-of-life Qt 5"
+
   depends_on "cmake" => :build
   depends_on "qt@5"
-
-  fails_with gcc: "5"
 
   def install
     system "cmake", "-S", "src", "-B", "build_cmake", *std_cmake_args

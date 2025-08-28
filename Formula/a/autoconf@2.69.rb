@@ -1,8 +1,8 @@
 class AutoconfAT269 < Formula
   desc "Automatic configure script builder"
   homepage "https://www.gnu.org/software/autoconf/"
-  url "https://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.gz"
-  mirror "https://ftpmirror.gnu.org/autoconf/autoconf-2.69.tar.gz"
+  url "https://ftpmirror.gnu.org/gnu/autoconf/autoconf-2.69.tar.gz"
+  mirror "https://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.gz"
   sha256 "954bd69b391edc12d6a4a51a2dd1476543da5c6bbf05a95b59dc0dd6fd4c2969"
   license all_of: [
     "GPL-3.0-or-later",
@@ -26,7 +26,7 @@ class AutoconfAT269 < Formula
 
   keg_only :versioned_formula
 
-  deprecate! date: "2023-12-14", because: :versioned_formula
+  disable! date: "2024-12-14", because: :versioned_formula
 
   depends_on "m4"
   uses_from_macos "perl"
@@ -61,7 +61,7 @@ class AutoconfAT269 < Formula
 
     system bin/"autoconf"
     system "./configure"
-    assert_predicate testpath/"config.status", :exist?
+    assert_path_exists testpath/"config.status"
     assert_match(/\nCC=.*#{ENV.cc}/, (testpath/"config.log").read)
   end
 end

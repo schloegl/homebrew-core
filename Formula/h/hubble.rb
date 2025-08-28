@@ -1,9 +1,10 @@
 class Hubble < Formula
   desc "Network, Service & Security Observability for Kubernetes using eBPF"
   homepage "https://github.com/cilium/hubble"
-  url "https://github.com/cilium/hubble/archive/refs/tags/v1.16.1.tar.gz"
-  sha256 "5412ba0a63b2a3b296643563dc3dd4a66dfafa727025119adbf915b5f24d7dd8"
+  url "https://github.com/cilium/hubble/archive/refs/tags/v1.18.0.tar.gz"
+  sha256 "29f4a452a360829a184d5e20b4d6c54fc96c982f91fe3569cd26b0fec35cf010"
   license "Apache-2.0"
+  head "https://github.com/cilium/hubble.git", branch: "main"
 
   # There can be a notable gap between when a version is tagged and a
   # corresponding release is created, so we check the "latest" release instead
@@ -14,14 +15,13 @@ class Hubble < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "0658f692d19e0ade0a5f2df39707967a8f0bf4cf8808aa1cf83425406d3f409d"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "0658f692d19e0ade0a5f2df39707967a8f0bf4cf8808aa1cf83425406d3f409d"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "0658f692d19e0ade0a5f2df39707967a8f0bf4cf8808aa1cf83425406d3f409d"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "0658f692d19e0ade0a5f2df39707967a8f0bf4cf8808aa1cf83425406d3f409d"
-    sha256 cellar: :any_skip_relocation, sonoma:         "e1e42226fa13b0ca2c772b7b50fef406336a982d9f87a9c5b91a046fe469d75e"
-    sha256 cellar: :any_skip_relocation, ventura:        "e1e42226fa13b0ca2c772b7b50fef406336a982d9f87a9c5b91a046fe469d75e"
-    sha256 cellar: :any_skip_relocation, monterey:       "e1e42226fa13b0ca2c772b7b50fef406336a982d9f87a9c5b91a046fe469d75e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "0ecacfcc415915b36133c9a8c6ffc06a316d3b44a493fcbb55c3753a180bc6c3"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "0df2aa733b3749805b6fd4773f6e7e8cbd22e459e1b494daf9c437b057225fb2"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "32a248eb9d3635af481c3a28780a50800dc93dfcd4ccd0d514e9e64be7f22c8e"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "17ef999a277a36b81b58004a102d4501514ec936b63fc4ec9bd92882189601e8"
+    sha256 cellar: :any_skip_relocation, sonoma:        "766f5138a0119e9ad3e84c31bdc290eb6b4956624978a4cae69d6380d6828160"
+    sha256 cellar: :any_skip_relocation, ventura:       "c9430cdda0c5f413ffda9c32ae4329bef6811ffb347caca6d03c4476a25dd23a"
+    sha256 cellar: :any_skip_relocation, arm64_linux:   "fb7573d02547c359470a54d056437a26c951127868f0bae8d1614681f3170984"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d487082f3d109abe02f775b69854c5a04059dcc6f67a3ea05027e533fd453dc4"
   end
 
   depends_on "go" => :build
